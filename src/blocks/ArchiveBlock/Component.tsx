@@ -12,6 +12,7 @@ export const ArchiveBlock: React.FC<
     id?: string
   }
 > = async (props) => {
+  console.log(props)
   const { id, categories, introContent, limit: limitFromProps, populateBy, selectedDocs } = props
 
   const limit = limitFromProps || 3
