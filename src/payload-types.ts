@@ -202,6 +202,25 @@ export interface Page {
     | {
         title?: string | null;
         text?: string | null;
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
         id?: string | null;
         blockName?: string | null;
         blockType: 'strpsHero';
@@ -233,19 +252,7 @@ export interface Page {
         blockName?: string | null;
         blockType: 'strpsAbout';
       }
-    | {
-        title?: string | null;
-        skills?:
-          | {
-              text?: string | null;
-              percentage?: number | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'strpsSkills';
-      }
+    | StrpsSkillsBlock
     | {
         title?: string | null;
         text?: string | null;
@@ -585,14 +592,58 @@ export interface ArchiveBlock {
   categories?: (number | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
-    | {
-        relationTo: 'posts';
-        value: number | Post;
-      }[]
+    | (
+        | {
+            relationTo: 'posts';
+            value: number | Post;
+          }
+        | {
+            relationTo: 'projects';
+            value: number | Project;
+          }
+      )[]
     | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  title: string;
+  heroImage?: (number | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -796,41 +847,26 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projects".
+ * via the `definition` "StrpsSkillsBlock".
  */
-export interface Project {
-  id: number;
-  title: string;
-  heroImage?: (number | null) | Media;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    description?: string | null;
-  };
-  publishedAt?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
+export interface StrpsSkillsBlock {
+  title?: string | null;
+  skillGroup?:
+    | {
+        text?: string | null;
+        skills?:
+          | {
+              text?: string | null;
+              percentage?: number | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsSkills';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1131,6 +1167,16 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               title?: T;
               text?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                  };
               id?: T;
               blockName?: T;
             };
@@ -1153,20 +1199,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
-        strpsSkills?:
-          | T
-          | {
-              title?: T;
-              skills?:
-                | T
-                | {
-                    text?: T;
-                    percentage?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
+        strpsSkills?: T | StrpsSkillsBlockSelect<T>;
         strpsContact?:
           | T
           | {
@@ -1272,6 +1305,28 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsSkillsBlock_select".
+ */
+export interface StrpsSkillsBlockSelect<T extends boolean = true> {
+  title?: T;
+  skillGroup?:
+    | T
+    | {
+        text?: T;
+        skills?:
+          | T
+          | {
+              text?: T;
+              percentage?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
