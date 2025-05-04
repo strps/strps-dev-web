@@ -1,51 +1,81 @@
-import React from 'react'
+'use client'
+import React, { useMemo } from 'react'
+import { motion } from 'motion/react'
+import { cn } from '@/utilities/ui'
 
-const SVGCircles = ({ className }) => {
-  const style: React.CSSProperties = {
+interface SVGCirclesProps {
+  className?: string
+  width?: number
+  height?: number
+  numCircles?: number
+  minRadius?: number
+  maxRadius?: number
+  strokeWidth?: number
+  strokeColor?: string
+  strokeDasharray?: string
+  style?: React.CSSProperties
+}
+
+const SVGCircles: React.FC<SVGCirclesProps> = ({
+  className,
+  width = 150,
+  height = 150,
+  numCircles = 9,
+  minRadius = 20,
+  maxRadius = 80,
+  strokeWidth = 5,
+  strokeColor = '#303030',
+  strokeDasharray = '75',
+  style: customStyle,
+}) => {
+  // Generate initial rotation angles for circles
+  const circleRotations = useMemo(
+    () =>
+      Array.from({ length: numCircles }).map(() => ({
+        initial: Math.random() * 360,
+        animate: { rotate: [0, 360] },
+        transition: {
+          duration: Math.random() * 10 + 5, // Random duration between 5-15 seconds
+          repeat: Infinity,
+          ease: 'linear',
+        },
+      })),
+    [numCircles],
+  )
+
+  const defaultStyle: React.CSSProperties = {
     width: '100%',
-    height: '100vh',
-    // position: "absolute",
+    height: '100%',
     zIndex: -1,
   }
 
-  const i = 150
-  const j = 150
-
-  const arrayLength = 9
+  const combinedStyle = { ...defaultStyle, ...customStyle }
 
   return (
-    <svg style={style} className={className} viewBox={`${-i / 2} ${-j / 2} ${i} ${j}`}>
-      {Array.from({ length: arrayLength }).map((_, i) => {
+    <svg
+      style={combinedStyle}
+      className={cn(className)}
+      viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
+    >
+      {circleRotations.map((rotation, i) => {
+        const radius = minRadius + ((maxRadius - minRadius) * i) / (numCircles - 1)
         return (
-          <circle
+          <motion.circle
             key={i}
-            id={`c-${i}`}
+            initial={{ rotate: rotation.initial }}
+            animate={rotation.animate}
+            transition={rotation.transition}
             cx="0"
             cy="0"
-            r={i * -10 + 80}
+            r={radius}
             fill="none"
-            strokeWidth="5px"
-            stroke="#303030"
+            strokeWidth={`${strokeWidth}px`}
+            stroke={strokeColor}
             pathLength="100"
-            strokeDasharray="75"
-            transform={`rotate(${Math.random() * 360})`}
+            strokeDasharray={strokeDasharray}
           />
         )
       })}
-      <script>
-        {`console.log("hello")
-
-        const circles_arr = Array.from({ length: ${arrayLength} }).map((_, i) => ({circle: document.getElementById('c-' + i), rot: 0, rotSpeed: Math.random() * 2 - 1}))
-        
-        function animate() {
-          circles_arr.forEach((circle, i) => {
-            circle.rot += circle.rotSpeed
-            circle.circle.setAttribute("transform", \`rotate(\${circle.rot})\`)
-          })
-          requestAnimationFrame(animate)
-        }
-        animate()`}
-      </script>
     </svg>
   )
 }

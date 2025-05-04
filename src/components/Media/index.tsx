@@ -5,6 +5,7 @@ import type { Props } from './types'
 import { ImageMedia } from './ImageMedia'
 import { VideoMedia } from './VideoMedia'
 
+
 export const Media: React.FC<Props> = (props) => {
   const { className, htmlElement = 'div', resource } = props
 

@@ -1,63 +1,76 @@
-'use client';
-import React, { useState } from "react";
-import styles from "./index.module.sass";
+'use client'
+import React, { useState } from 'react'
+import type { Page } from '@/payload-types'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 
+type StrpsContactProps = Extract<Page['layout'][number], { blockType: 'strpsContact' }>
 
-export const StrpsContact = ({ disabled }: { disabled: boolean }) => {
+export const StrpsContact = ({
+  id,
+  title = 'Contact',
+  disabled = false,
+}: StrpsContactProps & { disabled?: boolean }) => {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [message, setMessage] = useState('')
 
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle form submission logic here
+  }
 
-
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle form submission logic here
-    };
-
-    return (
-        <section className={styles.contact}>
-            <div className={styles.content}>
-                {/* <Image className={styles.logo} src={logo} alt="logo" /> */}
-                <div>
-                    <h2>Contact</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                            <label htmlFor="name">Name:</label>
-                            <input
-                                type="text"
-                                id="name"
-                                value={name}
-                                disabled={disabled}
-                                onChange={(e) => setName(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="email">Email:</label>
-                            <input
-                                type="email"
-                                id="email"
-                                value={email}
-                                disabled={disabled}
-                                onChange={(e) => setEmail(e.target.value)
-                                }
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="message">Message:</label>
-                            <textarea
-                                id="message"
-                                value={message}
-                                disabled={disabled}
-                                onChange={(e) => setMessage(e.target.value)
-                                }
-                            ></textarea>
-                        </div>
-                        <button type="submit" disabled={disabled}>Submit</button>
-                    </form>
-                </div>
-            </div>
-        </section>
-    );
-};
+  return (
+    <div className="my-16" id={`block-${id}`}>
+      <section className="flex items-center justify-center relative">
+        <div className="container">
+          <div className="max-w-xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  type="text"
+                  id="name"
+                  value={name}
+                  disabled={disabled}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  value={email}
+                  disabled={disabled}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Message</Label>
+                <Textarea
+                  id="message"
+                  value={message}
+                  disabled={disabled}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Enter your message"
+                  className="min-h-[150px]"
+                />
+              </div>
+              <div className="text-center">
+                <Button type="submit" disabled={disabled}>
+                  Submit
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}

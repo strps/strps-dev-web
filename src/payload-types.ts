@@ -227,7 +227,21 @@ export interface Page {
       }
     | {
         title?: string | null;
-        text?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
         link: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
@@ -251,6 +265,43 @@ export interface Page {
         id?: string | null;
         blockName?: string | null;
         blockType: 'strpsAbout';
+      }
+    | {
+        title?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        media: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'strpsAboutAdjacent';
+      }
+    | {
+        title?: string | null;
+        storyBlocks?:
+          | {
+              heading: string;
+              content: string;
+              icon?: ('code' | 'palette' | 'monitor' | 'circuitBoard' | 'none') | null;
+              alt?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'strpsAboutStoryBlocks';
       }
     | StrpsSkillsBlock
     | {
@@ -1184,7 +1235,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               title?: T;
-              text?: T;
+              content?: T;
               link?:
                 | T
                 | {
@@ -1196,6 +1247,31 @@ export interface PagesSelect<T extends boolean = true> {
                     appearance?: T;
                   };
               image?: T;
+              id?: T;
+              blockName?: T;
+            };
+        strpsAboutAdjacent?:
+          | T
+          | {
+              title?: T;
+              content?: T;
+              media?: T;
+              id?: T;
+              blockName?: T;
+            };
+        strpsAboutStoryBlocks?:
+          | T
+          | {
+              title?: T;
+              storyBlocks?:
+                | T
+                | {
+                    heading?: T;
+                    content?: T;
+                    icon?: T;
+                    alt?: T;
+                    id?: T;
+                  };
               id?: T;
               blockName?: T;
             };

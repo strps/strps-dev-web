@@ -1,46 +1,129 @@
-import { CMSLink } from '@/components/Link'
-import { Media } from '@/components/Media'
 import React from 'react'
+import { Media } from '@/components/Media'
+import RichText from '@/components/RichText'
+import { CMSLink } from '@/components/Link'
+import type { Media as MediaType, Page } from '@/payload-types'
+import { Code, Palette, Monitor, CircuitBoard } from 'lucide-react'
+import { cn } from '@/utilities/ui'
 
-interface StrpsAboutProps {
-  text?: string
-  image?: any // Adjust type based on your Media type
-  link?: any // Adjust type based on your CMSLink prop type
-  title?: string
+type StrpsAboutProps = Extract<Page['layout'][number], { blockType: 'strpsAbout' }>
+type AboutImageAdjacentProps = Extract<Page['layout'][number], { blockType: 'strpsAboutAdjacent' }>
+
+export const StrpsAbout: React.FC<StrpsAboutProps> = (props) => {
+  const { id, title, content, link, image } = props
+
+  return (
+    <div className="my-16" id={`block-${id}`}>
+      <section className="relative">
+        {image && (
+          <div className="absolute inset-0 -z-10">
+            <Media
+              resource={image}
+              className="absolute inset-0 -z-10 object-cover w-full h-full opacity-80"
+              alt={
+                typeof image === 'object'
+                  ? image.alt || title || 'About section image'
+                  : title || 'About section image'
+              }
+            />
+          </div>
+        )}
+        <div className="container">
+          <div className="flex flex-col items-center justify-center min-h-screen gap-8 py-24 text-center">
+            {title && <h2 className="text-4xl font-bold">{title}</h2>}
+            {content && <RichText data={content} />}
+            {link && (
+              <CMSLink {...link} className={cn('inline-block')}>
+                {link.label}
+              </CMSLink>
+            )}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
 }
 
-export const StrpsAbout = ({ text, image, link, title }: StrpsAboutProps) => {
+// Placeholder image imports - replace with your actual image paths
+// import profileImage from '@/public/your-profile-image.jpg'
+// import generativeArtImage from '@/public/generative-art-example.png'
+
+export const AboutImageAdjacent = ({ id, media, content, title }: AboutImageAdjacentProps) => {
   return (
-    <section className="min-h-[80vh] flex items-center justify-center relative">
-      {image && (
-        <Media
-          resource={image}
-          className="absolute inset-0 -z-10 object-cover w-full h-full opacity-80"
-          alt={image?.alt || title || 'About section image'} // Add alt text for accessibility
-        />
-      )}
-      <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 py-16 md:py-24">
-        <div className="relative z-10 lg:order-2 flex justify-center items-center">
-          {image && (
-            <div className="rounded-lg shadow-lg overflow-hidden aspect-w-16 aspect-h-9 md:aspect-w-1 md:aspect-h-1 w-48 md:w-64">
-              <Media
-                resource={image}
-                className="object-cover w-full h-full"
-                alt={image?.alt || title || 'About me'}
-              />
-            </div>
-          )}
-        </div>
-        <div className="relative z-10 text-foreground lg:order-1 flex flex-col justify-center">
-          {title && <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{title}</h2>}
-          {text && <p className="text-lg text-muted-foreground mb-6">{text}</p>}
-          {link?.label && link?.href && (
-            <CMSLink {...link} className={cn('inline-block')}>
-              {link.label}
-            </CMSLink>
-          )}
+    <div className="my-16" id={`block-${id}`}>
+      <div className="container">
+        <div className="md:grid md:grid-cols-2 md:gap-8 items-center">
+          <div className="relative w-full aspect-w-1 aspect-h-1 rounded-md overflow-hidden shadow-md">
+            <Media
+              resource={media}
+              imgClassName="transition-opacity duration-300 object-cover"
+              fill
+              alt={title || 'Generative art'}
+            />
+          </div>
+          <div className="mt-4 md:mt-0">
+            {title && (
+              <h2 className="text-2xl font-bold tracking-tight mb-4 text-center">{title}</h2>
+            )}
+            {content && (
+              <div className="prose">
+                <RichText data={content} />
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  )
+}
+
+// Layout Option 3: Story Blocks
+interface StoryBlock {
+  heading: string
+  content: string
+  icon: 'code' | 'palette' | 'monitor' | 'circuitBoard' | 'none'
+  alt: string
+}
+
+interface AboutStoryBlocksProps {
+  id: string
+  title: string
+  storyBlocks: StoryBlock[]
+}
+
+export const AboutStoryBlocks = ({ id, title, storyBlocks }: AboutStoryBlocksProps) => {
+  const iconMap = {
+    code: Code,
+    palette: Palette,
+    monitor: Monitor,
+    circuitBoard: CircuitBoard,
+    none: null,
+  }
+
+  return (
+    <div className="my-16" id={`block-${id}`}>
+      <section className="flex flex-col items-center justify-center relative">
+        <div className="container">
+          {title && <h2 className="text-2xl font-bold tracking-tight mb-4 text-center">{title}</h2>}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {storyBlocks?.map((block, index) => {
+              const IconComponent = block.icon !== 'none' ? iconMap[block.icon] : null
+
+              return (
+                <div key={index} className="rounded-md shadow-md p-6">
+                  {IconComponent && (
+                    <div className="relative w-8 h-8 mb-2">
+                      <IconComponent className="w-full h-full" />
+                    </div>
+                  )}
+                  <h3 className="text-xl font-semibold tracking-tight">{block.heading}</h3>
+                  <p className="mt-2 text-md leading-relaxed">{block.content}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }

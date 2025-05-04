@@ -21,9 +21,8 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { StrpsHero } from '@/blocks/StrpsHero/config'
-import { StrpsAbout } from '@/blocks/StrpsAbout/config'
+import { StrpsAbout, StrpsAboutAdjacent, StrpsAboutStoryBlocks } from '@/blocks/StrpsAbout/config'
 import { StrpsSkills } from '@/blocks/StrpsSkills/config'
-import { StrpsCollection } from '@/blocks/StrpsCollection/config'
 import { StrpsContact } from '@/blocks/StrpsContact/config'
 
 export const Pages: CollectionConfig<'pages'> = {
@@ -88,6 +87,8 @@ export const Pages: CollectionConfig<'pages'> = {
                 FormBlock,
                 StrpsHero,
                 StrpsAbout,
+                StrpsAboutAdjacent,
+                StrpsAboutStoryBlocks,
                 StrpsSkills,
                 StrpsContact,
               ],

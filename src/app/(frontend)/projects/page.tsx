@@ -22,8 +22,10 @@ export default async function Page() {
     select: {
       title: true,
       slug: true,
-      categories: true,
       meta: true,
+      content: true,
+      updatedAt: true,
+      createdAt: true,
     },
   })
 
@@ -58,6 +60,6 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `César Jerez | Projects`,
+    title: `Payload Website Template Projects`,
   }
 }

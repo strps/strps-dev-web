@@ -87,7 +87,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                 {navItems.map(({ link }, i) => {
                   return (
                     <li key={i}>
-                      <CMSLink {...link} appearance="link" onClick={handleClick} />
+                      <CMSLink {...link} appearance="link" />
                     </li>
                   )
                 })}

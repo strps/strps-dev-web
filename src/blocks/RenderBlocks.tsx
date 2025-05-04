@@ -8,9 +8,9 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { StrpsHero } from '@/blocks/StrpsHero/component'
-import { StrpsAbout } from '@/blocks/StrpsAbout/Component'
+import { AboutImageAdjacent, AboutStoryBlocks, StrpsAbout } from '@/blocks/StrpsAbout/Component'
 import { StrpsSkills } from './StrpsSkills/component'
-import { StrpsCollectionArchive } from '@/blocks/StrpsCollection/component'
+import { StrpsContact } from './StrpsContact/component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -19,8 +19,11 @@ const blockComponents = {
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   strpsHero: StrpsHero,
-  strpsAbout: StrpsAbout,
   strpsSkills: StrpsSkills,
+  strpsAbout: StrpsAbout,
+  strpsAboutAdjacent: AboutImageAdjacent,
+  strpsAboutStoryBlocks: AboutStoryBlocks,
+  strpsContact: StrpsContact,
 }
 
 export const RenderBlocks: React.FC<{

@@ -12,7 +12,6 @@ export const ArchiveBlock: React.FC<
     id?: string
   }
 > = async (props) => {
-  console.log(props)
   const {
     id,
     categories,
@@ -27,7 +26,7 @@ export const ArchiveBlock: React.FC<
 
   let collection: Post[] | Project[] = []
 
-  if (populateBy === 'collection') {
+  if (populateBy === 'collection' && relationTo) {
     const payload = await getPayload({ config: configPromise })
 
     const flattenedCategories = categories?.map((category) => {
@@ -39,6 +38,15 @@ export const ArchiveBlock: React.FC<
       collection: relationTo,
       depth: 1,
       limit,
+      select: {
+        title: true,
+        slug: true,
+        categories: true,
+        meta: true,
+        content: true,
+        updatedAt: true,
+        createdAt: true,
+      },
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
             where: {
@@ -51,8 +59,6 @@ export const ArchiveBlock: React.FC<
     })
 
     collection = fetchedPosts.docs
-
-    console.log('Collection:', collection)
   } else {
     if (selectedDocs?.length) {
       const filteredSelectedPosts = selectedDocs.map((post) => {
@@ -70,7 +76,7 @@ export const ArchiveBlock: React.FC<
           <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
         </div>
       )}
-      <CollectionArchive collection={collection} />
+      {relationTo && <CollectionArchive collection={collection} collectionName={relationTo} />}
     </div>
   )
 }

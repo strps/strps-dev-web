@@ -47,9 +47,6 @@ export default async function Post({ params: paramsPromise }: Args) {
   const url = '/projects/' + slug
   const project = await queryPostBySlug({ slug })
 
-  console.log(slug)
-  console.log(project)
-
   if (!project) return <PayloadRedirects url={url} />
 
   return (
