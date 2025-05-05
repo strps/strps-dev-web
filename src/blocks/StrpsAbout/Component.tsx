@@ -104,7 +104,7 @@ export const AboutStoryBlocks = ({ id, title, storyBlocks }: AboutStoryBlocksPro
     <div className="my-16" id={`block-${id}`}>
       <section className="flex flex-col items-center justify-center relative">
         <div className="container">
-          {title && <h2 className="text-2xl font-bold tracking-tight mb-4 text-center">{title}</h2>}
+          {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {storyBlocks?.map((block, index) => {
               const IconComponent = block.icon !== 'none' ? iconMap[block.icon] : null
