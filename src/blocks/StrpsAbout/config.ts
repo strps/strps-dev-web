@@ -122,6 +122,10 @@ export const StrpsAboutStoryBlocks: Block = {
               value: 'circuitBoard',
             },
             {
+              label: 'Briefcase',
+              value: 'briefcase',
+            },
+            {
               label: 'None',
               value: 'none',
             },

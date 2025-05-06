@@ -18,6 +18,8 @@ import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
+import { resendAdapter } from '@payloadcms/email-resend'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -97,4 +99,14 @@ export default buildConfig({
     },
     tasks: [],
   },
+  localization: {
+    defaultLocale: 'en',
+    locales: ['en', 'es'],
+  },
+
+  email: resendAdapter({
+    apiKey: process.env.RESEND_API_KEY || '',
+    defaultFromAddress: process.env.RESEND_DEFAULT_FROM_ADDRESS || '',
+    defaultFromName: process.env.RESEND_DEFAULT_FROM_NAME || '',
+  }),
 })

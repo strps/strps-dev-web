@@ -3,7 +3,7 @@ import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { CMSLink } from '@/components/Link'
 import type { Media as MediaType, Page } from '@/payload-types'
-import { Code, Palette, Monitor, CircuitBoard } from 'lucide-react'
+import { Code, Palette, Monitor, CircuitBoard, Briefcase } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
 type StrpsAboutProps = Extract<Page['layout'][number], { blockType: 'strpsAbout' }>
@@ -97,26 +97,25 @@ export const AboutStoryBlocks = ({ id, title, storyBlocks }: AboutStoryBlocksPro
     palette: Palette,
     monitor: Monitor,
     circuitBoard: CircuitBoard,
+    briefcase: Briefcase,
     none: null,
   }
 
   return (
     <div className="my-16" id={`block-${id}`}>
-      <section className="flex flex-col items-center justify-center relative">
+      <section className="flex flex-col items-center justify-center">
         <div className="container">
           {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex flex-col items-center">
             {storyBlocks?.map((block, index) => {
               const IconComponent = block.icon !== 'none' ? iconMap[block.icon] : null
 
               return (
-                <div key={index} className="rounded-md shadow-md p-6">
-                  {IconComponent && (
-                    <div className="relative w-8 h-8 mb-2">
-                      <IconComponent className="w-full h-full" />
-                    </div>
-                  )}
-                  <h3 className="text-xl font-semibold tracking-tight">{block.heading}</h3>
+                <div key={index} className="p-6">
+                  <div className=" mb-2 flex flex-row items-center">
+                    {IconComponent && <IconComponent className="w-8 h-8 mr-2" />}
+                    <h3 className="text-xl font-semibold tracking-tight">{block.heading}</h3>
+                  </div>
                   <p className="mt-2 text-md leading-relaxed">{block.content}</p>
                 </div>
               )

@@ -2,15 +2,16 @@ import { Page } from '@/payload-types'
 import SVGCircles from './SVGCircles'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { CMSLink } from '@/components/Link'
 
 type StrpsHeroProps = Extract<Page['layout'][number], { blockType: 'strpsHero' }>
 
 export const StrpsHero: React.FC<StrpsHeroProps & { id?: string }> = (props) => {
-  const { id, text, title, link } = props
+  const { id, text, title, links } = props
 
   return (
-    <div className="my-16" id={`block-${id}`}>
-      <section className="min-h-[80vh] flex flex-col items-center justify-center overflow-hidden relative text-primary">
+    <div className="" id={`block-${id}`}>
+      <section className="h-svh flex flex-col items-center justify-center overflow-hidden relative text-primary">
         <SVGCircles
           className="absolute inset-0 w-full h-full opacity-10 dark:opacity-20"
           aria-hidden="true"
@@ -26,11 +27,19 @@ export const StrpsHero: React.FC<StrpsHeroProps & { id?: string }> = (props) => 
               {text}
             </p>
           )}
-          {link?.url && link?.label && (
+          {links && (
             <div className="text-center">
-              <Link href={link.url} aria-label={link.label}>
-                <Button variant="default">{link.label}</Button>
-              </Link>
+              {Array.isArray(links) && links.length > 0 && (
+                <ul className="flex md:justify-center gap-4">
+                  {links.map(({ link }, i) => {
+                    return (
+                      <li key={i}>
+                        <CMSLink {...link} />
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
             </div>
           )}
         </div>

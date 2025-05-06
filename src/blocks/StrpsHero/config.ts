@@ -1,4 +1,4 @@
-import { link } from '@/fields/link'
+import { linkGroup } from '@/fields/linkGroup'
 import { Block } from 'payload'
 
 export const StrpsHero: Block = {
@@ -18,6 +18,8 @@ export const StrpsHero: Block = {
       type: 'text',
       label: 'Text',
     },
-    link({ appearances: ['default', 'outline'] }),
+    linkGroup({
+      appearances: ['default', 'outline'],
+    }),
   ],
 }

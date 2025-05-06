@@ -20,6 +20,7 @@ export const ArchiveBlock: React.FC<
     populateBy,
     selectedDocs,
     relationTo,
+    title,
   } = props
 
   const limit = limitFromProps || 3
@@ -71,6 +72,7 @@ export const ArchiveBlock: React.FC<
 
   return (
     <div className="my-16" id={`block-${id}`}>
+      {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
       {introContent && (
         <div className="container mb-16">
           <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
