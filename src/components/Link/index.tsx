@@ -1,4 +1,4 @@
-import { Button, type ButtonProps } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import React from 'react'
@@ -6,7 +6,7 @@ import React from 'react'
 import type { Page, Post } from '@/payload-types'
 
 type CMSLinkType = {
-  appearance?: 'inline' | ButtonProps['variant']
+  appearance?: 'inline' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
   children?: React.ReactNode
   className?: string
   label?: string | null
@@ -15,7 +15,7 @@ type CMSLinkType = {
     relationTo: 'pages' | 'posts'
     value: Page | Post | string | number
   } | null
-  size?: ButtonProps['size'] | null
+  size?: 'default' | 'sm' | 'lg' | 'icon' | null
   type?: 'custom' | 'reference' | null
   url?: string | null
 }
