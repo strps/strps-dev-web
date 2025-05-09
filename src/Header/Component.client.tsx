@@ -1,5 +1,4 @@
 'use client'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -20,28 +19,12 @@ interface HeaderClientProps {
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   /* Storing the value in a useState to avoid hydration errors */
-  const [theme, setTheme] = useState<string | null>(null)
-  const { headerTheme, setHeaderTheme } = useHeaderTheme()
-  const pathname = usePathname()
-
-  useEffect(() => {
-    setHeaderTheme(null)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
-
-  useEffect(() => {
-    if (headerTheme && headerTheme !== theme) setTheme(headerTheme)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [headerTheme])
 
   return (
-    <header
-      className="container z-20 absolute top-0 left-0 right-0"
-      {...(theme ? { 'data-theme': theme } : {})}
-    >
-      <div className="py-4 md:py-8 h-40 flex justify-between items-center">
+    <header className="z-20 absolute top-0 left-0 right-0">
+      <div className="py-4 md:py-8 h-40 flex justify-between items-center mx-auto container">
         <Link href="/" aria-label="Go to homepage">
-          <Logo loading="eager" priority="high" className="h-8 w-auto invert dark:invert-0" />
+          <Logo className="h-16 w-auto fill-primary" />
         </Link>
         <HeaderNav data={data} />
       </div>

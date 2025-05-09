@@ -1,7 +1,7 @@
 const config = {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+    autoprefixer: {}, //TODO: Check i f this is necesary
+    '@tailwindcss/postcss': {},
   },
 }
 

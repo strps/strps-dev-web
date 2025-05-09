@@ -28,7 +28,7 @@ export const StrpsContact = ({
         <div className="container">
           <div className="max-w-xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -62,11 +62,9 @@ export const StrpsContact = ({
                   className="min-h-[150px]"
                 />
               </div>
-              <div className="text-center">
-                <Button type="submit" disabled={disabled}>
-                  Submit
-                </Button>
-              </div>
+              <Button className="self-end place-self-end" type="submit" disabled={disabled}>
+                Submit
+              </Button>
             </form>
           </div>
         </div>

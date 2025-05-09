@@ -14,9 +14,11 @@ export const StrpsSkills = (props: StrpsSkillsBlock) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {skillGroup &&
               skillGroup.map((group, i) => (
-                <Card key={i}>
+                <Card key={i} className="shadow-lg sha">
                   <CardHeader>
-                    <CardTitle>{group.text}</CardTitle>
+                    <CardTitle>
+                      <h3 className="text-xl font-semibold tracking-tight">{group.text}</h3>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {group.skills && group.skills.length > 0 ? (
