@@ -1,7 +1,5 @@
 import { Page } from '@/payload-types'
 import SVGCircles from './SVGCircles'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import { CMSLink } from '@/components/Link'
 
 type StrpsHeroProps = Extract<Page['layout'][number], { blockType: 'strpsHero' }>

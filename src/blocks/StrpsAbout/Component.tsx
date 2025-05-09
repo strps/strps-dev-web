@@ -2,7 +2,7 @@ import React from 'react'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { CMSLink } from '@/components/Link'
-import type { Media as MediaType, Page } from '@/payload-types'
+import type { Page } from '@/payload-types'
 import { Code, Palette, Monitor, CircuitBoard, Briefcase } from 'lucide-react'
 import { cn } from '@/utilities/ui'
 
