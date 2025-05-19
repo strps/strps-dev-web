@@ -1,8 +1,7 @@
 'use client'
 import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm, FormProvider } from 'react-hook-form'
-import type { FormFieldBlock } from '@payloadcms/plugin-form-builder/types'
+import { useForm, FormProvider, FieldValues } from 'react-hook-form'
 import type { Form as FormType } from '@/payload-types'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3'
@@ -11,6 +10,7 @@ import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
+import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 export type FormBlockType = {
   blockName?: string
@@ -35,6 +35,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
       redirect,
       submitButtonLabel,
       enableRecaptcha,
+      title,
     } = {},
     introContent,
     introTitle,
@@ -43,7 +44,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
   } = props
 
   const formMethods = useForm({
-    defaultValues: formFromProps.fields,
+    defaultValues: formFromProps.fields as FieldValues,
   })
   const {
     control,
@@ -61,7 +62,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
     const { executeRecaptcha } = useGoogleReCaptcha()
 
     const onSubmit = useCallback(
-      (data: FormFieldBlock[]) => {
+      (data: FieldValues) => {
         let loadingTimerID: ReturnType<typeof setTimeout>
         const submitForm = async () => {
           setError(undefined)
@@ -176,7 +177,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
             })}
         </div>
 
-        <Button form={formID} type="submit" variant="default">
+        <Button form={String(formID)} type="submit" variant="default">
           {submitButtonLabel}
         </Button>
       </form>
@@ -187,8 +188,8 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
     titleAndText:
       introTitle && introText ? (
         <>
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{introTitle}</h2>
-          <p className="text-muted-foreground text-center">{introText}</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{introTitle || title}</h2>
+          {introText && <p className="text-muted-foreground text-center">{introText}</p>}
         </>
       ) : null,
     richText: introContent ? <RichText data={introContent} enableGutter={false} /> : null,
@@ -203,7 +204,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
         <div className="p-4 md:p-24 w-full max-w-[48rem] border border-border rounded-[0.8rem] relative">
           <FormProvider {...formMethods}>
             {!isLoading && hasSubmitted && confirmationType === 'message' && (
-              <RichText data={confirmationMessage} />
+              <RichText data={confirmationMessage as DefaultTypedEditorState} />
             )}
             {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
             {error && (

@@ -43,6 +43,18 @@ This document outlines the step-by-step roadmap for implementing and enhancing t
   - [x] Card-based layout
   - [ ] Interactive skill visualization
 
+- [x] Strps Form (`src/blocks/StrpsForm`)
+  - [x] Client-side validation with React Hook Form
+  - [x] Server-side reCAPTCHA integration
+  - [x] Customizable confirmation messages and redirects
+  - [x] Improve form accessibility
+  - [ ] Improve form styling
+
+- [X] Strps About Me (`src/blocks/StrpsAbout`)
+  - [X] variant 
+    - [X] Story blocks
+    - [ ] Adjacent Image
+
 ### Strps Blocks
 - [ ] Strps About Us (`src/blocks/StrpsAboutUs`)
   - [ ] Mission, vision, values

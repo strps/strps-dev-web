@@ -734,6 +734,10 @@ export interface FormBlock {
  */
 export interface Form {
   id: number;
+  /**
+   * Enable reCAPTCHA for this form.
+   */
+  enableRecaptcha?: boolean | null;
   title: string;
   fields?:
     | (
@@ -899,10 +903,6 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Enable reCAPTCHA for this form.
-   */
-  enableRecaptcha?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1688,6 +1688,7 @@ export interface RedirectsSelect<T extends boolean = true> {
  * via the `definition` "forms_select".
  */
 export interface FormsSelect<T extends boolean = true> {
+  enableRecaptcha?: T;
   title?: T;
   fields?:
     | T
@@ -1813,7 +1814,6 @@ export interface FormsSelect<T extends boolean = true> {
         message?: T;
         id?: T;
       };
-  enableRecaptcha?: T;
   updatedAt?: T;
   createdAt?: T;
 }

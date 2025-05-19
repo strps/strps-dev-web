@@ -62,36 +62,36 @@ export const plugins: Plugin[] = [
     },
     formOverrides: {
       fields: ({ defaultFields }) => {
-        return [
-          ...defaultFields.map((field) => {
-            if ('name' in field && field.name === 'confirmationMessage') {
-              return {
-                ...field,
-                editor: lexicalEditor({
-                  features: ({ rootFeatures }) => {
-                    return [
-                      ...rootFeatures,
-                      FixedToolbarFeature(),
-                      HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    ]
-                  },
-                }),
-              }
+        const fields = defaultFields.map((field) => {
+          if ('name' in field && field.name === 'confirmationMessage') {
+            return {
+              ...field,
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    FixedToolbarFeature(),
+                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                  ]
+                },
+              }),
             }
-            return field
-          }),
+          }
+          return field
+        })
 
-          {
-            name: 'enableRecaptcha',
-            type: 'checkbox',
-            defaultValue: false,
-            label: 'Enable Recaptcha',
-            admin: {
-              description: 'Enable reCAPTCHA for this form.',
-              position: 'sidebar',
-            },
+        fields.splice(0, 0, {
+          name: 'enableRecaptcha',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Enable Recaptcha',
+          admin: {
+            description: 'Enable reCAPTCHA for this form.',
+            position: 'sidebar',
           },
-        ]
+        })
+
+        return fields
       },
     },
     formSubmissionOverrides: {

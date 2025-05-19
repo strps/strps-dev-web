@@ -6,7 +6,8 @@ import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import PageClient from './page.client'
+import Slideshow from '@/components/Slideshow/Slideshow'
+import { Media } from '@/components/Media'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -31,10 +32,23 @@ export default async function Page() {
 
   return (
     <div className="pt-24 pb-24">
-      <PageClient />
       <div className="container mb-16">
+        <Slideshow
+          interval={7000}
+          slides={projects.docs.map((project) => {
+            return (
+              <div key={project.id} className="w-full h-[600px] absolute">
+                <div className="absolute flex flex-col justify-center items-center w-full h-full bg-black/50 z-10">
+                  <h2 className="text-white z-10">{project.title}</h2>
+                  <h3 className="text-white z-10">{project.meta?.description}</h3>
+                </div>
+                <Media resource={project.meta?.image} alt={project.title} fill className="z-0" />
+              </div>
+            )
+          })}
+        />
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Projects</h1>
+          <h1 className="text-4xl font-bold">Projects</h1>
         </div>
       </div>
 

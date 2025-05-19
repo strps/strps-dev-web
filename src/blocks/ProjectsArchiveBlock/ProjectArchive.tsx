@@ -1,6 +1,6 @@
 import { cn } from '@/utilities/ui'
 import React from 'react'
-import { Card } from '@/components/Card'
+import { ArchiveCard } from '@/components/ArchiveCard'
 import type { Project } from '@/payload-types'
 
 export type Props = {
@@ -18,7 +18,7 @@ export const ProjectArchive: React.FC<Props> = (props) => {
             if (typeof result === 'object' && result !== null) {
               return (
                 <div className="col-span-4" key={index}>
-                  <Card className="h-full" doc={result} relationTo="projects" />
+                  <ArchiveCard className="h-full" doc={result} relationTo="projects" />
                 </div>
               )
             }

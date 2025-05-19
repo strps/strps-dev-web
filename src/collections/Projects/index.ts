@@ -46,6 +46,7 @@ export const Projects: CollectionConfig<'projects'> = {
     },
   },
   admin: {
+    group: 'Projects',
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) => {
