@@ -18,11 +18,6 @@ export const StrpsFormBlock: Block = {
       required: true,
     },
     {
-      name: 'enableRecaptcha',
-      type: 'checkbox',
-      label: 'Enable ReCaptcha',
-    },
-    {
       name: 'introType',
       type: 'select',
       defaultValue: 'richText',

@@ -975,7 +975,6 @@ export interface ProjectsArchiveBlock {
  */
 export interface StrpsFormBlock {
   form: number | Form;
-  enableRecaptcha?: boolean | null;
   introType?: ('richText' | 'titleAndText' | 'none') | null;
   introContent?: {
     root: {
@@ -1479,7 +1478,6 @@ export interface ProjectsArchiveBlockSelect<T extends boolean = true> {
  */
 export interface StrpsFormBlockSelect<T extends boolean = true> {
   form?: T;
-  enableRecaptcha?: T;
   introType?: T;
   introContent?: T;
   introTitle?: T;
