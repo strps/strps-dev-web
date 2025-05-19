@@ -146,4 +146,7 @@ html[data-theme='light'] {
   p {
     @apply font-serif;
   }
+  .grecaptcha-badge {
+    @apply invisible!;
+  }
 }
