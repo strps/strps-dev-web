@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import type { Page } from '@/payload-types'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
+import { ProjectsArchiveBlock } from '@/blocks/ProjectsArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
@@ -11,9 +12,11 @@ import { StrpsHero } from '@/blocks/StrpsHero/component'
 import { AboutImageAdjacent, AboutStoryBlocks, StrpsAbout } from '@/blocks/StrpsAbout/Component'
 import { StrpsSkills } from './StrpsSkills/component'
 import { StrpsContact } from './StrpsContact/component'
+import { StrpsFormBlock } from './StrpsForm/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
+  projectsArchive: ProjectsArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
@@ -24,6 +27,7 @@ const blockComponents = {
   strpsAboutAdjacent: AboutImageAdjacent,
   strpsAboutStoryBlocks: AboutStoryBlocks,
   strpsContact: StrpsContact,
+  strpsFormBlock: StrpsFormBlock,
 }
 
 export const RenderBlocks: React.FC<{

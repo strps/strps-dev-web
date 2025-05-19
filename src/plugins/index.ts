@@ -13,9 +13,10 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { verifyRecaptchaToken } from '@/blocks/StrpsForm/verify-recaptcha'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
+  return doc?.title ? `${doc.title} | César Jerez` : 'César Jerez'
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
@@ -61,23 +62,77 @@ export const plugins: Plugin[] = [
     },
     formOverrides: {
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
-          if ('name' in field && field.name === 'confirmationMessage') {
-            return {
-              ...field,
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    FixedToolbarFeature(),
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                  ]
-                },
-              }),
+        return [
+          ...defaultFields.map((field) => {
+            if ('name' in field && field.name === 'confirmationMessage') {
+              return {
+                ...field,
+                editor: lexicalEditor({
+                  features: ({ rootFeatures }) => {
+                    return [
+                      ...rootFeatures,
+                      FixedToolbarFeature(),
+                      HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+                    ]
+                  },
+                }),
+              }
             }
-          }
-          return field
-        })
+            return field
+          }),
+
+          {
+            name: 'enableRecaptcha',
+            type: 'checkbox',
+            defaultValue: false,
+            label: 'Enable Recaptcha',
+            admin: {
+              description: 'Enable reCAPTCHA for this form.',
+              position: 'sidebar',
+            },
+          },
+        ]
+      },
+    },
+    formSubmissionOverrides: {
+      hooks: {
+        beforeOperation: [
+          async ({ args, operation, req }) => {
+            const payload = req.payload
+            const body = req?.data
+
+            //if operation is create, check if recaptcha is enabled
+            if (operation === 'create') {
+              //check if form id has the recaptcha enabled
+              const recaptchaEnabled = (
+                await payload.findByID({
+                  collection: 'forms',
+                  id: body?.form,
+                  select: {
+                    enableRecaptcha: true,
+                  },
+                })
+              ).enableRecaptcha
+
+              //if recaptcha is enabled, verify the token
+              if (recaptchaEnabled) {
+                const recaptchaToken = body?.recaptchaToken
+                if (!recaptchaToken) {
+                  throw new Error('Recaptcha token is missing')
+                }
+                const isTokenValid = await verifyRecaptchaToken(recaptchaToken)
+                if (!isTokenValid) {
+                  throw new Error('Recaptcha token is invalids')
+                }
+                console.log('Recaptcha token is valid')
+                return args
+              }
+            }
+
+            //if recaptcha is not enabled, continue as normal
+            return args
+          },
+        ],
       },
     },
   }),

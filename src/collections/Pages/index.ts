@@ -24,6 +24,8 @@ import { StrpsHero } from '@/blocks/StrpsHero/config'
 import { StrpsAbout, StrpsAboutAdjacent, StrpsAboutStoryBlocks } from '@/blocks/StrpsAbout/config'
 import { StrpsSkills } from '@/blocks/StrpsSkills/config'
 import { StrpsContact } from '@/blocks/StrpsContact/config'
+import { ProjectsArchive } from '@/blocks/ProjectsArchiveBlock/config'
+import { StrpsFormBlock } from '@/blocks/StrpsForm/config'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -91,6 +93,8 @@ export const Pages: CollectionConfig<'pages'> = {
                 StrpsAboutStoryBlocks,
                 StrpsSkills,
                 StrpsContact,
+                ProjectsArchive,
+                StrpsFormBlock,
               ],
               required: true,
               admin: {

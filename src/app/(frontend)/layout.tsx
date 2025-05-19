@@ -5,14 +5,16 @@ import { Chivo, Lora } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
-import { Footer } from '@/Footer/Component'
-import { Header } from '@/Header/Component'
+import { Footer } from '@/components/Footer/Component'
+import { Header } from '@/components/Header/Component'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { ThemeProvider } from '@/providers/Theme/theme-provider'
+
+import { RecaptchaProvider } from '@/providers/recaptcha-provider'
 
 const chivo = Chivo({ subsets: ['latin'] })
 const lora = Lora({ subsets: ['latin'] })

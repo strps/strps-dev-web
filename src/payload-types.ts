@@ -319,6 +319,8 @@ export interface Page {
         blockName?: string | null;
         blockType: 'strpsContact';
       }
+    | ProjectsArchiveBlock
+    | StrpsFormBlock
   )[];
   meta?: {
     title?: string | null;
@@ -897,6 +899,10 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Enable reCAPTCHA for this form.
+   */
+  enableRecaptcha?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -922,6 +928,75 @@ export interface StrpsSkillsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'strpsSkills';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsArchiveBlock".
+ */
+export interface ProjectsArchiveBlock {
+  title?: string | null;
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  populateBy?: ('collection' | 'selection') | null;
+  relationTo?: 'projects' | null;
+  limit?: number | null;
+  selectedDocs?:
+    | (
+        | {
+            relationTo: 'posts';
+            value: number | Post;
+          }
+        | {
+            relationTo: 'projects';
+            value: number | Project;
+          }
+      )[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'projectsArchive';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsFormBlock".
+ */
+export interface StrpsFormBlock {
+  form: number | Form;
+  enableRecaptcha?: boolean | null;
+  introType?: ('richText' | 'titleAndText' | 'none') | null;
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  introTitle?: string | null;
+  introText?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsFormBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1260,6 +1335,8 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
               blockName?: T;
             };
+        projectsArchive?: T | ProjectsArchiveBlockSelect<T>;
+        strpsFormBlock?: T | StrpsFormBlockSelect<T>;
       };
   meta?:
     | T
@@ -1379,6 +1456,34 @@ export interface StrpsSkillsBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsArchiveBlock_select".
+ */
+export interface ProjectsArchiveBlockSelect<T extends boolean = true> {
+  title?: T;
+  introContent?: T;
+  populateBy?: T;
+  relationTo?: T;
+  limit?: T;
+  selectedDocs?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsFormBlock_select".
+ */
+export interface StrpsFormBlockSelect<T extends boolean = true> {
+  form?: T;
+  enableRecaptcha?: T;
+  introType?: T;
+  introContent?: T;
+  introTitle?: T;
+  introText?: T;
   id?: T;
   blockName?: T;
 }
@@ -1710,6 +1815,7 @@ export interface FormsSelect<T extends boolean = true> {
         message?: T;
         id?: T;
       };
+  enableRecaptcha?: T;
   updatedAt?: T;
   createdAt?: T;
 }
