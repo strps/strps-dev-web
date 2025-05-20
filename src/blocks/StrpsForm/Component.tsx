@@ -152,7 +152,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
     )
 
     return (
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form id={String(formID)} onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4 last:mb-0">
           {formFromProps &&
             formFromProps.fields &&
