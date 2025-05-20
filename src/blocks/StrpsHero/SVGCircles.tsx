@@ -70,7 +70,6 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
             r={radius}
             fill="none"
             strokeWidth={`${strokeWidth}px`}
-            stroke={strokeColor}
             pathLength="100"
             strokeDasharray={strokeDasharray}
           />

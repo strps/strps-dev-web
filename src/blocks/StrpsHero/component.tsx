@@ -9,26 +9,22 @@ export const StrpsHero: React.FC<StrpsHeroProps & { id?: string }> = (props) => 
 
   return (
     <div className="" id={`block-${id}`}>
-      <section className="h-svh flex flex-col items-center justify-center overflow-hidden relative text-primary">
+      <section className="h-svh flex flex-col items-center justify-center relative text-primary">
         <SVGCircles
-          className="absolute inset-0 w-full h-full opacity-10 dark:opacity-20"
+          className="absolute inset-0 w-full h-full stroke-[var(--svg-circle-color)]"
           aria-hidden="true"
         />
-        <div className="container">
-          {title && (
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-center">
-              {title}
-            </h1>
-          )}
+        <div className="container p-8">
+          {title && <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">{title}</h1>}
           {text && (
-            <p className="text-lg md:text-xl text-muted-foreground max-w-xl mb-8 text-center mx-auto">
+            <p className="text-lg self-center place-self-center md:text-xl text-muted-foreground max-w-xl mb-8">
               {text}
             </p>
           )}
           {links && (
-            <div className="text-center">
+            <div className="">
               {Array.isArray(links) && links.length > 0 && (
-                <ul className="flex md:justify-center gap-4">
+                <ul className="flex justify-center gap-4 mx-auto">
                   {links.map(({ link }, i) => {
                     return (
                       <li key={i}>

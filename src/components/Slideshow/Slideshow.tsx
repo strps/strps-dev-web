@@ -71,8 +71,6 @@ const Slideshow: React.FC<SlideshowHeroProps> = ({ slides, interval = 5000 }) =>
           <ChevronLeft />
         </button>
         {slides.map((slide, index) => {
-          console.log(slide)
-
           return (
             <motion.button
               key={index}

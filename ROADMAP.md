@@ -97,13 +97,48 @@ This document outlines the step-by-step roadmap for implementing and enhancing t
   - [ ] Short persuasive text
 
 ### Core Components
-- [ ] Header (`src/components/Header`)
-  - [ ] Logo
-  - [ ] Navigation menu with dropdown support
+
+- [ ] Logo (`src/components/Logo`)
+  - [ ] SVG logo
+  - [ ] Variant
+    - [ ] Horizontal
+    - [ ] Vertical
+    - [ ] Square
+    - [ ] Icon
+
+
+
+- [X] Header (`src/components/Header`)
+  - [X] Logo
+  - [X] Navigation menu with dropdown support
   - [ ] Mobile responsive menu
+  -[ ] Variants
+    - [ ] Variant
+      - [X] Modern
+      - [X] Classic
+      - [X] Plain
+      - [ ] Stack Left
+      - [ ] Stack Right
+      - [ ] Stack Center
+      - [ ] Magazine
+      - [ ] Creative Left, Right, Always Open
+      - [ ] Empty
+      - [ ] Simple
+      - [ ] Overlay
+      - [ ] Below Slider
+      - [ ] Below Slider with Split
+      - [ ] Split
+      This shuold be acheive this with the help of several variables 
+    - [ ] Background
+      - [ ] True
+      - [ ] False
+    - [ ] Container
+      - [ ] True
+      - [ ] False
   - [ ] CTA button (e.g., "Get a Quote")
   - [ ] Authentication status integration
   - [ ] Optional: Search or language selector
+
 
 
 

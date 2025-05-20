@@ -11,27 +11,204 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { CMSLink } from '@/components/Link'
 import Hamburger from 'hamburger-react'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/utilities/ui'
 
-interface HeaderClientProps {
+const defaultVariant = 'classic'
+const defaultContainer = true
+const defaultBackground = false
+
+const headerVariants = cva('z-20 absolute top-0 left-0 right-0', {
+  variants: {
+    variant: {
+      classic: 'flex flex-row justify-between items-center bg-background',
+      modern: 'flex flex-row justify-between items-center bg-transparent mx-auto p-5',
+      plain: 'flex flex-row justify-between items-center bg-background',
+      stackLeft: 'flex flex-row justify-between items-center bg-background',
+      stackRight: 'flex flex-row justify-between items-center bg-background',
+      stackCenter:
+        'flex flex-row justify-between items-center bg-background border-b border-border',
+      magazine: 'flex flex-row justify-between items-center bg-background border-b border-border',
+      creativeLeft:
+        'flex flex-row justify-between items-center bg-background border-b border-border',
+      creativeRight:
+        'flex flex-row justify-between items-center bg-background border-b border-border',
+      creativeAlwaysOpen:
+        'flex flex-row justify-between items-center bg-background border-b border-border',
+      empty: 'flex flex-row justify-between items-center bg-background border-b border-border',
+      simple: 'flex flex-row justify-between items-center bg-background border-b border-border',
+      overlay: 'flex flex-row justify-between items-center bg-background border-b border-border',
+      belowSlider:
+        'flex flex-row justify-between items-center bg-background border-b border-border',
+      belowSliderWithSplit:
+        'flex flex-row justify-between items-center bg-background border-b border-border',
+      split: 'flex flex-row justify-between items-center bg-background border-b border-border',
+    },
+    background: {
+      true: 'bg-background',
+      false: 'bg-transparent',
+    },
+    container: {
+      true: '',
+      false: '',
+    },
+  },
+  compoundVariants: [
+    {
+      variant: 'modern',
+      background: true,
+      className: 'bg-transparent',
+    },
+    {
+      variant: 'modern',
+      container: true,
+      className: 'container',
+    },
+  ],
+
+  defaultVariants: {
+    variant: defaultVariant,
+    background: defaultBackground,
+    container: defaultContainer,
+  },
+})
+
+const logoVariants = cva('', {
+  variants: {
+    variant: {
+      classic: 'fill-primary w-44',
+      modern: 'fill-white w-44',
+      plain: 'fill-primary w-44',
+      stackLeft: 'fill-primary w-44',
+      stackRight: 'fill-primary w-44',
+      stackCenter: 'fill-primary w-44',
+      magazine: 'fill-primary w-44',
+      creativeLeft: 'fill-primary w-44',
+      creativeRight: 'fill-primary w-44',
+      creativeAlwaysOpen: 'fill-primary w-44',
+      empty: 'fill-primary w-44',
+      simple: 'fill-primary w-44',
+      overlay: 'fill-primary w-44',
+      belowSlider: 'fill-primary w-44',
+      belowSliderWithSplit: 'fill-primary w-44',
+      split: 'fill-primary w-44',
+    },
+  },
+  defaultVariants: {
+    variant: defaultVariant,
+  },
+})
+
+const linksVariants = cva('', {
+  variants: {
+    variant: {
+      classic: 'flex flex-row gap-6',
+      modern: '',
+      plain: '',
+      stackLeft: '',
+      stackRight: '',
+      stackCenter: '',
+      magazine: '',
+      creativeLeft: '',
+      creativeRight: '',
+      creativeAlwaysOpen: '',
+      empty: '',
+      simple: '',
+      overlay: '',
+      belowSlider: '',
+      belowSliderWithSplit: '',
+      split: '',
+    },
+  },
+  defaultVariants: {
+    variant: defaultVariant,
+  },
+})
+
+const containerVariants = cva('mx-auto flex flex-row justify-between items-center', {
+  variants: {
+    variant: {
+      classic: ' px-20 py-10',
+      modern: 'px-20 py-8',
+      plain: 'px-20 py-8',
+      stackLeft: 'px-20 py-8',
+      stackRight: 'px-20 py-8',
+      stackCenter: 'px-20 py-8',
+      magazine: 'px-20 py-8',
+      creativeLeft: 'px-20 py-8',
+      creativeRight: 'px-20 py-8',
+      creativeAlwaysOpen: 'px-20 py-8',
+      empty: 'px-20 py-8',
+      simple: 'px-20 py-8',
+      overlay: 'px-20 py-8',
+      belowSlider: 'px-20 py-8',
+      belowSliderWithSplit: 'px-20 py-8',
+      split: 'px-20 py-8',
+    },
+    container: {
+      true: 'container',
+      false: 'w-full',
+    },
+    background: {
+      true: 'bg-background',
+      false: '',
+    },
+  },
+  compoundVariants: [
+    {
+      variant: 'modern',
+      background: true,
+      className: 'bg-background border m-5 mx-auto ',
+    },
+  ],
+  defaultVariants: {
+    container: defaultContainer,
+    variant: defaultVariant,
+    background: defaultBackground,
+  },
+})
+
+type HeaderClientProps = {
   data: Header
-}
+  container?: boolean
+  background?: boolean
+} & VariantProps<typeof headerVariants>
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+/**
+ * @description The header component for the client side
+ *
+ * @param data - The header data
+ * @param variant - The variant of the header
+ * @param container - Whether to use a container or not
+ * @param background - Whether to use a background or not
+ */
+export const HeaderClient: React.FC<HeaderClientProps> = ({
+  data,
+  variant,
+  container,
+  background,
+}) => {
   /* Storing the value in a useState to avoid hydration errors */
 
   return (
-    <header className="z-20 absolute top-0 left-0 right-0">
-      <div className="py-4 md:py-8 h-40 flex justify-between items-center mx-auto container">
+    <header className={cn(headerVariants({ variant, background, container }))}>
+      <div className={cn(containerVariants({ variant, container, background }))}>
         <Link href="/" aria-label="Go to homepage">
-          <Logo className="h-16 w-auto fill-primary" />
+          <Logo className={cn(logoVariants({ variant }), 'h-auto')} />
+          {/* h-auto in order to override the height of the svg */}
         </Link>
-        <HeaderNav data={data} />
+        <HeaderNav data={data} variant={variant} />
       </div>
     </header>
   )
 }
 
-export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+interface HeaderNavProps {
+  data: HeaderType
+  variant?: VariantProps<typeof linksVariants>['variant']
+}
+
+export const HeaderNav: React.FC<HeaderNavProps> = ({ data, variant = 'classic' }) => {
   const navItems = data?.navItems || []
 
   const [open, setOpen] = useState(false)
@@ -41,7 +218,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   }
 
   return (
-    <nav className="flex gap-3 md:gap-6 items-center">
+    <nav className={cn(linksVariants({ variant }))}>
       <ul className="hidden md:flex gap-6">
         {navItems.map(({ link }, i) => {
           return (

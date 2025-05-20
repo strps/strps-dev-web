@@ -31,8 +31,8 @@ export default async function Page() {
   })
 
   return (
-    <div className="pt-24 pb-24">
-      <div className="container mb-16">
+    <>
+      <div className="mb-16">
         <Slideshow
           interval={7000}
           slides={projects.docs.map((project) => {
@@ -52,7 +52,7 @@ export default async function Page() {
         </div>
       </div>
 
-      <div className="container mb-8">
+      <div className="mb-8">
         <PageRange
           collection="projects"
           currentPage={projects.page}
@@ -68,7 +68,7 @@ export default async function Page() {
           <Pagination page={projects.page} totalPages={projects.totalPages} />
         )}
       </div>
-    </div>
+    </>
   )
 }
 

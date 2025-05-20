@@ -6,6 +6,7 @@
   --radius: 0.3rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
+  --svg-circle-color: oklch(0.9315 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
@@ -38,9 +39,11 @@
 }
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
+  /* --background: oklch(0.141 0.005 285.823); */
+  --background: #161717;
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
+  --svg-circle-color: oklch(0.2629 0.0016 197.03);
+  --card: #262828;
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
@@ -73,23 +76,7 @@
 
 
 
-/* @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground min-h-[100vh] flex flex-col;
-  }
-}
 
-html {
-  opacity: 0;
-}
-
-html[data-theme='dark'],
-html[data-theme='light'] {
-  opacity: initial;
-} */
 
 @theme inline {
   --font-sans: Chivo, "Chivo Fallack", sans-serif;
