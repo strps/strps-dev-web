@@ -185,13 +185,15 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
   }
 
   const intros: Record<string, React.ReactNode> = {
-    titleAndText:
-      introTitle && introText ? (
-        <>
+    titleAndText: (
+      <>
+        {introTitle && (
           <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{introTitle || title}</h2>
-          {introText && <p className="text-muted-foreground text-center">{introText}</p>}
-        </>
-      ) : null,
+        )}
+        {introText && <p className="text-muted-foreground text-center">{introText}</p>}
+      </>
+    ),
+
     richText: introContent ? <RichText data={introContent} enableGutter={false} /> : null,
     none: null,
   }
