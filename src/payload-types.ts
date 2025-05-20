@@ -976,6 +976,11 @@ export interface ProjectsArchiveBlock {
 export interface StrpsFormBlock {
   form: number | Form;
   introType?: ('richText' | 'titleAndText' | 'none') | null;
+  sectionBackgroundType?: ('none' | 'image' | 'backgroundColor') | null;
+  backgroundColor?: string | null;
+  backgroundImage?: (number | null) | Media;
+  maskImage?: (number | null) | Media;
+  parallaxRatio?: number | null;
   introContent?: {
     root: {
       type: string;
@@ -1479,6 +1484,11 @@ export interface ProjectsArchiveBlockSelect<T extends boolean = true> {
 export interface StrpsFormBlockSelect<T extends boolean = true> {
   form?: T;
   introType?: T;
+  sectionBackgroundType?: T;
+  backgroundColor?: T;
+  backgroundImage?: T;
+  maskImage?: T;
+  parallaxRatio?: T;
   introContent?: T;
   introTitle?: T;
   introText?: T;

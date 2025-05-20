@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import { Media } from '@/components/Media'
+import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react'
 
 export type FormBlockType = {
   blockName?: string
@@ -22,6 +24,12 @@ export type FormBlockType = {
   introTitle?: string
   introText?: string
   introType?: 'richText' | 'titleAndText' | 'none'
+  sectionBackgroundType?: 'none' | 'image' | 'backgroundColor'
+  backgroundColor?: string
+  backgroundImage?: string
+  topMaskImage?: string
+  bottomMaskImage?: string
+  parallaxRatio?: number
 }
 
 export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
@@ -41,6 +49,12 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
     introTitle,
     introText,
     introType,
+    sectionBackgroundType,
+    backgroundColor,
+    backgroundImage,
+    topMaskImage,
+    bottomMaskImage,
+    parallaxRatio,
   } = props
 
   const formMethods = useForm({
@@ -198,12 +212,49 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
     none: null,
   }
 
+  //background color
+  const sectionBackgroundStyle =
+    backgroundColor && sectionBackgroundType === 'backgroundColor'
+      ? {
+          backgroundColor,
+        }
+      : undefined
+
+  console.log(backgroundColor)
+  console.log(sectionBackgroundType)
+
+  //parallax background
+
+  //parallax ratio
+  const parallaxRatioValue = parallaxRatio || 0
+
+  // Background moves slower
+  const { scrollY, scrollYProgress } = useScroll()
+  //listen to scrollY changes
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    console.log('Page scroll: ', latest)
+  })
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    console.log('Page scroll progress: ', latest)
+  })
+
+  // Foreground moves faster and has a slight vertical offset
+
+  const backgroundTranslateY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    [-10 * parallaxRatioValue, 10 * parallaxRatioValue],
+  )
+
   return (
     <div className="" id={`block-${id}`}>
-      <section className="h-svh flex flex-col items-center justify-center overflow-hidden relative text-primary">
+      <section
+        className={`h-svh flex flex-col items-center justify-center overflow-hidden relative text-primary`}
+        style={sectionBackgroundStyle}
+      >
         {intros[introType || 'none']}
 
-        <div className="p-4 md:p-24 w-full max-w-[48rem] border border-border rounded-[0.8rem] relative">
+        <div className="z-10 p-8 pb-24 md:p-24 w-full max-w-[48rem] border border-border rounded-[0.8rem] relative bg-card">
           <FormProvider {...formMethods}>
             {!isLoading && hasSubmitted && confirmationType === 'message' && (
               <RichText data={confirmationMessage as DefaultTypedEditorState} />
@@ -243,6 +294,19 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
             )}
           </FormProvider>
         </div>
+        {/* {sectionBackgroundType === 'image' && backgroundImage && (
+          <Media resource={backgroundImage} alt="background" fill className="z-0" />
+        )} */}
+        {parallaxRatio !== 0 && sectionBackgroundType === 'image' && backgroundImage && (
+          <motion.div
+            className="z-0 absolute w-full h-full"
+            style={{
+              translateY: backgroundTranslateY,
+            }}
+          >
+            <Media resource={backgroundImage} alt="background" fill />
+          </motion.div>
+        )}
       </section>
     </div>
   )

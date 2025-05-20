@@ -6,6 +6,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { sectionBackground } from '@/fields/sectionBackground'
 
 export const StrpsFormBlock: Block = {
   slug: 'strpsFormBlock',
@@ -37,6 +38,7 @@ export const StrpsFormBlock: Block = {
       ],
       label: 'Intro Type',
     },
+    ...sectionBackground(),
     {
       name: 'introContent',
       type: 'richText',
