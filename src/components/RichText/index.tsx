@@ -1,7 +1,5 @@
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import {
   DefaultNodeTypes,
-  SerializedBlockNode,
   SerializedLinkNode,
   type DefaultTypedEditorState,
 } from '@payloadcms/richtext-lexical'
@@ -10,23 +8,41 @@ import {
   LinkJSXConverter,
   RichText as ConvertRichText,
 } from '@payloadcms/richtext-lexical/react'
-
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
-
-import type {
-  BannerBlock as BannerBlockProps,
-  CallToActionBlock as CTABlockProps,
-  MediaBlock as MediaBlockProps,
-} from '@/payload-types'
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { cn } from '@/utilities/ui'
-import { CircleSmall, Square, SquareCheckBig } from 'lucide-react'
 
+// Import node components
+import {
+  BannerBlock,
+  MediaBlock,
+  CodeBlock,
+  CallToActionBlock,
+  Heading,
+  List,
+  Paragraph,
+  HorizontalRule,
+} from './node-components'
+
+// Import types
+import type { BannerBlock as BannerBlockType } from '@/payload-types'
+import type { CallToActionBlock as CTABlockType } from '@/payload-types'
+import type { MediaBlock as MediaBlockType } from '@/payload-types'
+import type { CodeBlockProps as CodeBlockType } from '@/blocks/Code/Component'
+import type { SerializedBlockNode } from '@payloadcms/richtext-lexical'
+
+/**
+ * Union type of all possible node types that can be rendered by the RichText component.
+ * Extends default node types with custom block types used in the application.
+ */
 type NodeTypes =
   | DefaultNodeTypes
-  | SerializedBlockNode<CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps>
+  | SerializedBlockNode<CTABlockType | MediaBlockType | BannerBlockType | CodeBlockType>
 
+/**
+ * Converts an internal document link to a URL path.
+ * @param linkNode - The link node containing document reference
+ * @returns The URL path for the linked document
+ * @throws {Error} If the document value is not an object
+ */
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== 'object') {
@@ -36,98 +52,52 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   return relationTo === 'posts' ? `/posts/${slug}` : `/${slug}`
 }
 
+/**
+ * Configuration for converting lexical nodes to React components.
+ * Maps each node type to its corresponding React component.
+ */
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   blocks: {
-    banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
-    mediaBlock: ({ node }) => (
-      <MediaBlock
-        className="col-start-1 col-span-3"
-        imgClassName="m-0"
-        {...node.fields}
-        captionClassName="mx-auto max-w-[48rem]"
-        enableGutter={false}
-        disableInnerContainer={true}
-      />
-    ),
-    code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
-    cta: ({ node }) => <CallToActionBlock {...node.fields} />,
+    banner: ({ node }) => <BannerBlock node={node} />,
+    mediaBlock: ({ node }) => <MediaBlock node={node} />,
+    code: ({ node }) => <CodeBlock node={node} />,
+    cta: ({ node }) => <CallToActionBlock node={node} />,
   },
-  // Custom heading converter
-  heading: ({ node, nodesToJSX }) => {
-    const text = nodesToJSX({ nodes: node.children })
-    const headings = {
-      h1: <h1 className="text-4xl font-bold mb-2">{text}</h1>,
-      h2: <h2 className="text-3xl font-bold mb-2">{text}</h2>,
-      h3: <h3 className="text-2xl font-bold mb-2">{text}</h3>,
-      h4: <h4 className="text-xl font-bold mb-2">{text}</h4>,
-      h5: <h5 className="text-lg font-bold mb-2">{text}</h5>,
-      h6: <h6 className="text-base font-bold mb-2">{text}</h6>,
-    }
-    const heading = headings[node.tag]
-    return heading
-  },
-  // Custom list converter
-  list: ({ node, nodesToJSX }) => {
-    const nodelistTypes = {
-      check: (
-        <ul className="list-none ml-4 my-2">
-          {node.children.map((child, i) => (
-            <li key={i} className="flex">
-              {child.checked ? (
-                <SquareCheckBig className="w-[1.25em] h-[1.25em] mr-[0.5em] shrink-0" />
-              ) : (
-                <Square className="w-[1.25em] h-[1.25em] mr-[0.5em] shrink-0" />
-              )}
-              {nodesToJSX({ nodes: child.children })}
-            </li>
-          ))}
-        </ul>
-      ),
-      bullet: (
-        <ul className="list-none ml-4">
-          {node.children.map((child, i) => (
-            <li key={i} className="flex">
-              <CircleSmall className="w-[1.25em] h-[1.25em] mr-[0.5em] shrink-0" />
-              {nodesToJSX({ nodes: child.children })}
-            </li>
-          ))}
-        </ul>
-      ),
-      number: (
-        <ol className="list-none ml-4">
-          {node.children.map((child, i) => (
-            <li key={i} className="flex">
-              <span className="block min-w-[1.25em] h-[1.25em] mr-[0.5em] pl-[0.5em] shrink-0">
-                {child.value}
-              </span>
-              {nodesToJSX({ nodes: child.children })}
-            </li>
-          ))}
-        </ol>
-      ),
-    }
-
-    const listNode = nodelistTypes[node.listType]
-    return listNode
-  },
-  paragraph: ({ node, nodesToJSX }) => {
-    const text = nodesToJSX({ nodes: node.children })
-    return <p className="mb-2 pl-4">{text}</p>
-  },
-  horizontalrule: () => {
-    console.log('horizontalrule')
-    return <hr className="my-6 h-1 border-none bg-muted-foreground" />
-  },
+  heading: Heading,
+  list: List,
+  paragraph: Paragraph,
+  horizontalrule: HorizontalRule,
 })
 
+/**
+ * Props for the RichText component
+ * @property {DefaultTypedEditorState} data - The rich text content to render
+ * @property {boolean} [enableGutter=true] - Whether to enable container gutters
+ * @property {boolean} [enableProse=true] - Whether to apply prose styling
+ */
 type Props = {
   data: DefaultTypedEditorState
   enableGutter?: boolean
   enableProse?: boolean
 } & React.HTMLAttributes<HTMLDivElement>
 
+/**
+ * A rich text renderer component that converts lexical editor state to React components.
+ * Supports various node types including custom blocks, headings, lists, and more.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <RichText
+ *   data={editorState}
+ *   enableGutter={true}
+ *   enableProse={true}
+ *   className="custom-class"
+ * />
+ * ```
+ */
 export default function RichText(props: Props) {
   const { className, enableProse = true, enableGutter = true, ...rest } = props
   return (
@@ -146,3 +116,12 @@ export default function RichText(props: Props) {
     />
   )
 }
+
+// Re-export types for external use
+export type { NodeTypes }
+
+/**
+ * Type alias for RichText component props.
+ * Can be used when you need to reference the component's props type.
+ */
+export type RichTextProps = Props
