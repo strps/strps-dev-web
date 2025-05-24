@@ -203,7 +203,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
       <section className="h-svh flex flex-col items-center justify-center overflow-hidden relative text-primary">
         {intros[introType || 'none']}
 
-        <div className="p-4 md:p-24 w-full max-w-[48rem] border border-border rounded-[0.8rem] relative">
+        <div className="p-4 md:p-24 flex gap-4 flex-col w-full max-w-[48rem] border border-border rounded-[0.8rem] relative">
           <FormProvider {...formMethods}>
             {!isLoading && hasSubmitted && confirmationType === 'message' && (
               <RichText data={confirmationMessage as DefaultTypedEditorState} />
@@ -223,7 +223,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
                 <FormComponent />
               ))}
             {enableRecaptcha && (
-              <p className="text-xs text-muted-foreground/50 absolute bottom-4 m-auto">
+              <p className="text-xs text-muted-foreground/50">
                 This site is protected by reCAPTCHA and the Google{' '}
                 <a
                   className="underline text-muted-foreground/60 hover:text-primary"
