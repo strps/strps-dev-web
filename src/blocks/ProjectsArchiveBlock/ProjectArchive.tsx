@@ -1,6 +1,6 @@
 import { cn } from '@/utilities/ui'
 import React from 'react'
-import { ArchiveCard } from '@/components/ArchiveCard'
+import { ArchiveCard } from '@/components/Cards/ArchiveCard'
 import type { Project } from '@/payload-types'
 
 export type Props = {

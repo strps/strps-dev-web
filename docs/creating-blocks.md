@@ -12,9 +12,8 @@ Each block should follow this directory structure:
 blocks/
 └── BlockName/               # Block name in PascalCase
     ├── BlockName.tsx        # React component
-    ├── schema.ts            # Payload block schema
-    ├── types.ts             # TypeScript types and interfaces
-    ├── index.ts             # Exports schema and component
+    ├── config.ts            # Payload block schema config
+    ├── types.ts             # TypeScript types and interfaces (optional)
     └── README.md            # Block documentation (optional)
 ```
 
@@ -29,13 +28,14 @@ cd src/blocks/YourBlockName
 
 ### 2. Create the Schema
 
-Create `schema.ts` to define your block's data structure:
+Create `config.ts` to define your block's data structure:
 
 ```typescript
 import { Block } from 'payload/types';
 
 export const YourBlock: Block = {
   slug: 'yourBlock',
+  interfaceName: 'YourBlock',
   labels: {
     singular: 'Your Block',
     plural: 'Your Blocks',
@@ -74,26 +74,6 @@ export const YourBlock: React.FC<YourBlockType> = (props) => {
 };
 ```
 
-### 4. Define Types
-
-Create `types.ts` for TypeScript types:
-
-```typescript
-export interface YourBlockType {
-  title: string;
-  // Add other props as needed
-}
-```
-
-### 5. Export the Block
-
-Create `index.ts` to export your block:
-
-```typescript
-export { YourBlock } from './YourBlock';
-export { YourBlock as schema } from './schema';
-```
-
 ### 6. Register the Block
 
 Update `src/blocks/index.ts` to include your new block:
@@ -106,10 +86,8 @@ export * from './YourBlock';
 
 ### Required Files
 
-- `schema.ts`: Payload block configuration
+- `config.ts`: Payload block configuration
 - `Component.tsx`: React component
-- `types.ts`: TypeScript types
-- `index.ts`: Exports
 
 ### Naming Conventions
 

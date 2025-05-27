@@ -1,11 +1,11 @@
 import type { Block } from 'payload'
-
 import {
   FixedToolbarFeature,
   HeadingFeature,
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
+import { SectionConfig } from '@/components/Section/config'
 
 export const ProjectsArchive: Block = {
   slug: 'projectsArchive',
@@ -81,6 +81,7 @@ export const ProjectsArchive: Block = {
       label: 'Selection',
       relationTo: ['posts', 'projects'],
     },
+    SectionConfig,
   ],
   labels: {
     plural: 'Projects Archives',

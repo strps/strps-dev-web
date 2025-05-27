@@ -5,12 +5,12 @@ import { useForm, FormProvider, FieldValues } from 'react-hook-form'
 import type { Form as FormType } from '@/payload-types'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3'
-
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import { Section } from '@/components/Section/Section'
 
 export type FormBlockType = {
   blockName?: string
@@ -22,6 +22,7 @@ export type FormBlockType = {
   introTitle?: string
   introText?: string
   introType?: 'richText' | 'titleAndText' | 'none'
+  enableRecaptcha?: boolean
 }
 
 export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
@@ -34,13 +35,13 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
       confirmationType,
       redirect,
       submitButtonLabel,
-      enableRecaptcha,
       title,
     } = {},
     introContent,
     introTitle,
     introText,
-    introType,
+    introType = 'none',
+    enableRecaptcha = false,
   } = props
 
   const formMethods = useForm({
@@ -68,7 +69,6 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
           setError(undefined)
 
           let recaptchaToken: string | undefined
-          //if recaptcha is enabled, get the token
           if (enableRecaptcha && executeRecaptcha) {
             try {
               recaptchaToken = await executeRecaptcha()
@@ -94,7 +94,6 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
             value,
           }))
 
-          // delay loading indicator by 1s
           loadingTimerID = setTimeout(() => {
             setIsLoading(true)
           }, 1000)
@@ -193,24 +192,29 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
         {introText && <p className="text-muted-foreground text-center">{introText}</p>}
       </>
     ),
-
     richText: introContent ? <RichText data={introContent} enableGutter={false} /> : null,
     none: null,
   }
 
   return (
-    <div className="" id={`block-${id}`}>
-      <section className="h-svh flex flex-col items-center justify-center overflow-hidden relative text-primary">
-        {intros[introType || 'none']}
-
-        <div className="p-4 md:p-24 flex gap-4 flex-col w-full max-w-[48rem] border border-border rounded-[0.8rem] relative">
+    <Section
+      id={id}
+      container={true}
+      backgroundContainer={false}
+      className="flex items-center justify-center py-16"
+    >
+      <div className="w-full max-w-4xl mx-auto">
+        {intros[introType]}
+        <div className="p-6 md:p-12 bg-card rounded-xl shadow-sm border border-border">
           <FormProvider {...formMethods}>
             {!isLoading && hasSubmitted && confirmationType === 'message' && (
               <RichText data={confirmationMessage as DefaultTypedEditorState} />
             )}
             {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
             {error && (
-              <div className="text-destructive p-4">{`${error.status || '500'}: ${error.message || ''}`}</div>
+              <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
+                {`${error.status || '500'}: ${error.message || ''}`}
+              </div>
             )}
             {!hasSubmitted &&
               (enableRecaptcha ? (
@@ -223,18 +227,22 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
                 <FormComponent />
               ))}
             {enableRecaptcha && (
-              <p className="text-xs text-muted-foreground/50">
+              <p className="text-xs text-muted-foreground mt-6 text-center">
                 This site is protected by reCAPTCHA and the Google{' '}
                 <a
-                  className="underline text-muted-foreground/60 hover:text-primary"
+                  className="underline hover:text-primary"
                   href="https://policies.google.com/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Privacy Policy
                 </a>{' '}
                 and{' '}
                 <a
-                  className="underline text-muted-foreground/60 hover:text-primary"
+                  className="underline hover:text-primary"
                   href="https://policies.google.com/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   Terms of Service
                 </a>{' '}
@@ -243,7 +251,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
             )}
           </FormProvider>
         </div>
-      </section>
-    </div>
+      </div>
+    </Section>
   )
 }

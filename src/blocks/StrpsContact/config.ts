@@ -1,4 +1,5 @@
 import { Block } from 'payload'
+import { SectionConfig } from '@/components/Section/config'
 
 export const StrpsContact: Block = {
   slug: 'strpsContact',
@@ -22,5 +23,6 @@ export const StrpsContact: Block = {
       type: 'point',
       label: 'Coordinates',
     },
+    SectionConfig,
   ],
 }

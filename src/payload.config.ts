@@ -1,5 +1,6 @@
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 
 import sharp from 'sharp' // sharp-import
 import path from 'path'
@@ -22,6 +23,19 @@ import { resendAdapter } from '@payloadcms/email-resend'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const db =
+  process.env.NODE_ENV === 'development'
+    ? postgresAdapter({
+        pool: {
+          connectionString: process.env.POSTGRES_URL || '',
+        },
+      })
+    : vercelPostgresAdapter({
+        pool: {
+          connectionString: process.env.POSTGRES_URL || '',
+        },
+      })
 
 export default buildConfig({
   admin: {
@@ -62,11 +76,7 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  db: vercelPostgresAdapter({
-    pool: {
-      connectionString: process.env.POSTGRES_URL || '',
-    },
-  }),
+  db,
   collections: [Pages, Posts, Media, Categories, Users, Projects],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],

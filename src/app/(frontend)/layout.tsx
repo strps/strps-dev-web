@@ -42,7 +42,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           />
 
           <Header />
-          <main className="container mx-auto min-h-screen">{children}</main>
+          <main className="mx-auto min-h-screen">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

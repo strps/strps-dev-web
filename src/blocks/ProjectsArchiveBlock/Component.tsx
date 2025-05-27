@@ -1,11 +1,10 @@
 import type { Project } from '@/payload-types'
-
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import RichText from '@/components/RichText'
-
 import { ProjectArchive } from './ProjectArchive'
+import { Section } from '@/components/Section/Section'
 
 export const ProjectsArchiveBlock: React.FC<{
   id?: string
@@ -76,14 +75,18 @@ export const ProjectsArchiveBlock: React.FC<{
   }
 
   return (
-    <div className="my-16" id={`block-${id}`}>
+    <Section id={id} container={true} backgroundContainer={false} className="py-16">
       {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
       {introContent && (
-        <div className="container mb-16">
-          <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
+        <div className="mb-16">
+          <RichText
+            className="ms-0 max-w-[48rem] mx-auto"
+            data={introContent}
+            enableGutter={false}
+          />
         </div>
       )}
       <ProjectArchive collection={collection} />
-    </div>
+    </Section>
   )
 }

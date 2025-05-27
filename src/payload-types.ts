@@ -148,86 +148,13 @@ export interface UserAuthOperations {
 export interface Page {
   id: number;
   title: string;
-  hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
-    richText?: {
-      root: {
-        type: string;
-        children: {
-          type: string;
-          version: number;
-          [k: string]: unknown;
-        }[];
-        direction: ('ltr' | 'rtl') | null;
-        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-        indent: number;
-        version: number;
-      };
-      [k: string]: unknown;
-    } | null;
-    links?:
-      | {
-          link: {
-            type?: ('reference' | 'custom') | null;
-            newTab?: boolean | null;
-            reference?:
-              | ({
-                  relationTo: 'pages';
-                  value: number | Page;
-                } | null)
-              | ({
-                  relationTo: 'posts';
-                  value: number | Post;
-                } | null);
-            url?: string | null;
-            label: string;
-            /**
-             * Choose how the link should be rendered.
-             */
-            appearance?: ('default' | 'outline') | null;
-          };
-          id?: string | null;
-        }[]
-      | null;
-    media?: (number | null) | Media;
-  };
   layout: (
     | CallToActionBlock
     | ContentBlock
     | MediaBlock
     | ArchiveBlock
     | FormBlock
-    | {
-        title?: string | null;
-        text?: string | null;
-        links?:
-          | {
-              link: {
-                type?: ('reference' | 'custom') | null;
-                newTab?: boolean | null;
-                reference?:
-                  | ({
-                      relationTo: 'pages';
-                      value: number | Page;
-                    } | null)
-                  | ({
-                      relationTo: 'posts';
-                      value: number | Post;
-                    } | null);
-                url?: string | null;
-                label: string;
-                /**
-                 * Choose how the link should be rendered.
-                 */
-                appearance?: ('default' | 'outline') | null;
-              };
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'strpsHero';
-      }
+    | StrpsHeroBlock
     | {
         title?: string | null;
         content?: {
@@ -265,12 +192,14 @@ export interface Page {
           appearance?: ('default' | 'outline') | null;
         };
         image: number | Media;
+        section: SectionConfig;
         id?: string | null;
         blockName?: string | null;
         blockType: 'strpsAbout';
       }
     | {
         title?: string | null;
+        section: SectionConfig;
         content?: {
           root: {
             type: string;
@@ -291,21 +220,7 @@ export interface Page {
         blockName?: string | null;
         blockType: 'strpsAboutAdjacent';
       }
-    | {
-        title?: string | null;
-        storyBlocks?:
-          | {
-              heading: string;
-              content: string;
-              icon?: ('code' | 'palette' | 'monitor' | 'circuitBoard' | 'briefcase' | 'none') | null;
-              alt?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'strpsAboutStoryBlocks';
-      }
+    | StrpsAboutStoryBlocks
     | StrpsSkillsBlock
     | {
         title?: string | null;
@@ -315,11 +230,13 @@ export interface Page {
          * @maxItems 2
          */
         coordinates?: [number, number] | null;
+        section: SectionConfig;
         id?: string | null;
         blockName?: string | null;
         blockType: 'strpsContact';
       }
     | ProjectsArchiveBlock
+    | StrpsAboutUsBlock
     | StrpsFormBlock
   )[];
   meta?: {
@@ -336,6 +253,54 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CallToActionBlock".
+ */
+export interface CallToActionBlock {
+  richText?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cta';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -517,54 +482,6 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CallToActionBlock".
- */
-export interface CallToActionBlock {
-  richText?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  links?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'cta';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
@@ -660,6 +577,7 @@ export interface ArchiveBlock {
           }
       )[]
     | null;
+  section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
@@ -701,6 +619,18 @@ export interface Project {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionConfig".
+ */
+export interface SectionConfig {
+  container?: boolean | null;
+  className?: string | null;
+  backgroundContainer?: boolean | null;
+  theme: 'auto' | 'light' | 'dark';
+  background: 'none' | 'svgCircles' | 'image';
+  backgroundImage?: (number | null) | Media;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -908,6 +838,62 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsHeroBlock".
+ */
+export interface StrpsHeroBlock {
+  title?: string | null;
+  text?: string | null;
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsAboutStoryBlocks".
+ */
+export interface StrpsAboutStoryBlocks {
+  section: SectionConfig;
+  title?: string | null;
+  storyBlocks?:
+    | {
+        heading: string;
+        content: string;
+        lucideIcon?: ('none' | 'code' | 'circuit-board' | 'palette' | 'monitor' | 'briefcase') | null;
+        alt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsAboutStoryBlocks';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "StrpsSkillsBlock".
  */
 export interface StrpsSkillsBlock {
@@ -925,6 +911,7 @@ export interface StrpsSkillsBlock {
         id?: string | null;
       }[]
     | null;
+  section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
   blockType: 'strpsSkills';
@@ -965,9 +952,75 @@ export interface ProjectsArchiveBlock {
           }
       )[]
     | null;
+  section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
   blockType: 'projectsArchive';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsAboutUsBlock".
+ */
+export interface StrpsAboutUsBlock {
+  section: SectionConfig;
+  heading: string;
+  mission?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  vision?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  values?:
+    | {
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  timeline?:
+    | {
+        date: string;
+        event: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  leadership?:
+    | {
+        name: string;
+        title?: string | null;
+        bio?: string | null;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsAboutUs';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1227,28 +1280,6 @@ export interface PayloadMigration {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  hero?:
-    | T
-    | {
-        type?: T;
-        richText?: T;
-        links?:
-          | T
-          | {
-              link?:
-                | T
-                | {
-                    type?: T;
-                    newTab?: T;
-                    reference?: T;
-                    url?: T;
-                    label?: T;
-                    appearance?: T;
-                  };
-              id?: T;
-            };
-        media?: T;
-      };
   layout?:
     | T
     | {
@@ -1257,29 +1288,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
-        strpsHero?:
-          | T
-          | {
-              title?: T;
-              text?: T;
-              links?:
-                | T
-                | {
-                    link?:
-                      | T
-                      | {
-                          type?: T;
-                          newTab?: T;
-                          reference?: T;
-                          url?: T;
-                          label?: T;
-                          appearance?: T;
-                        };
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
+        strpsHero?: T | StrpsHeroBlockSelect<T>;
         strpsAbout?:
           | T
           | {
@@ -1296,6 +1305,7 @@ export interface PagesSelect<T extends boolean = true> {
                     appearance?: T;
                   };
               image?: T;
+              section?: T | SectionConfigSelect<T>;
               id?: T;
               blockName?: T;
             };
@@ -1303,27 +1313,13 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               title?: T;
+              section?: T | SectionConfigSelect<T>;
               content?: T;
               media?: T;
               id?: T;
               blockName?: T;
             };
-        strpsAboutStoryBlocks?:
-          | T
-          | {
-              title?: T;
-              storyBlocks?:
-                | T
-                | {
-                    heading?: T;
-                    content?: T;
-                    icon?: T;
-                    alt?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
+        strpsAboutStoryBlocks?: T | StrpsAboutStoryBlocksSelect<T>;
         strpsSkills?: T | StrpsSkillsBlockSelect<T>;
         strpsContact?:
           | T
@@ -1331,10 +1327,12 @@ export interface PagesSelect<T extends boolean = true> {
               title?: T;
               text?: T;
               coordinates?: T;
+              section?: T | SectionConfigSelect<T>;
               id?: T;
               blockName?: T;
             };
         projectsArchive?: T | ProjectsArchiveBlockSelect<T>;
+        strpsAboutUs?: T | StrpsAboutUsBlockSelect<T>;
         strpsFormBlock?: T | StrpsFormBlockSelect<T>;
       };
   meta?:
@@ -1422,8 +1420,21 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   categories?: T;
   limit?: T;
   selectedDocs?: T;
+  section?: T | SectionConfigSelect<T>;
   id?: T;
   blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionConfig_select".
+ */
+export interface SectionConfigSelect<T extends boolean = true> {
+  container?: T;
+  className?: T;
+  backgroundContainer?: T;
+  theme?: T;
+  background?: T;
+  backgroundImage?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1433,6 +1444,51 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsHeroBlock_select".
+ */
+export interface StrpsHeroBlockSelect<T extends boolean = true> {
+  title?: T;
+  text?: T;
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsAboutStoryBlocks_select".
+ */
+export interface StrpsAboutStoryBlocksSelect<T extends boolean = true> {
+  section?: T | SectionConfigSelect<T>;
+  title?: T;
+  storyBlocks?:
+    | T
+    | {
+        heading?: T;
+        content?: T;
+        lucideIcon?: T;
+        alt?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1455,6 +1511,7 @@ export interface StrpsSkillsBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  section?: T | SectionConfigSelect<T>;
   id?: T;
   blockName?: T;
 }
@@ -1469,6 +1526,43 @@ export interface ProjectsArchiveBlockSelect<T extends boolean = true> {
   relationTo?: T;
   limit?: T;
   selectedDocs?: T;
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsAboutUsBlock_select".
+ */
+export interface StrpsAboutUsBlockSelect<T extends boolean = true> {
+  section?: T | SectionConfigSelect<T>;
+  heading?: T;
+  mission?: T;
+  vision?: T;
+  values?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  timeline?:
+    | T
+    | {
+        date?: T;
+        event?: T;
+        description?: T;
+        id?: T;
+      };
+  leadership?:
+    | T
+    | {
+        name?: T;
+        title?: T;
+        bio?: T;
+        image?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

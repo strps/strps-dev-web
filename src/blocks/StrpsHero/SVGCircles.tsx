@@ -24,9 +24,8 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
   minRadius = 20,
   maxRadius = 80,
   strokeWidth = 5,
-  strokeColor = '#303030',
   strokeDasharray = '75',
-  style: customStyle,
+  style,
 }) => {
   // Generate initial rotation angles for circles
   const circleRotations = useMemo(
@@ -43,19 +42,12 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
     [numCircles],
   )
 
-  const defaultStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    zIndex: -1,
-  }
-
-  const combinedStyle = { ...defaultStyle, ...customStyle }
-
   return (
     <svg
-      style={combinedStyle}
+      style={style}
       className={cn(className)}
       viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
+      preserveAspectRatio="xMidYMid slice"
     >
       {circleRotations.map((rotation, i) => {
         const radius = minRadius + ((maxRadius - minRadius) * i) / (numCircles - 1)

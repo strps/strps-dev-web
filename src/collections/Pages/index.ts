@@ -7,7 +7,6 @@ import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
-import { hero } from '@/heros/config'
 import { slugField } from '@/fields/slug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -26,6 +25,7 @@ import { StrpsSkills } from '@/blocks/StrpsSkills/config'
 import { StrpsContact } from '@/blocks/StrpsContact/config'
 import { ProjectsArchive } from '@/blocks/ProjectsArchiveBlock/config'
 import { StrpsFormBlock } from '@/blocks/StrpsForm/config'
+import { StrpsAboutUs } from '@/blocks/StrpsAboutUs/config'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -73,10 +73,6 @@ export const Pages: CollectionConfig<'pages'> = {
       type: 'tabs',
       tabs: [
         {
-          fields: [hero],
-          label: 'Hero',
-        },
-        {
           fields: [
             {
               name: 'layout',
@@ -94,6 +90,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 StrpsSkills,
                 StrpsContact,
                 ProjectsArchive,
+                StrpsAboutUs,
                 StrpsFormBlock,
               ],
               required: true,

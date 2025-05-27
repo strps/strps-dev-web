@@ -6,6 +6,8 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import { Block } from 'payload'
+import { SectionConfig } from '@/components/Section/config'
+import { lucideIcon } from '@/fields/lucideIcon'
 
 export const StrpsAbout: Block = {
   slug: 'strpsAbout',
@@ -24,7 +26,6 @@ export const StrpsAbout: Block = {
       type: 'richText',
       label: 'Content',
     },
-
     link({}),
     {
       name: 'image',
@@ -32,6 +33,7 @@ export const StrpsAbout: Block = {
       relationTo: 'media',
       required: true,
     },
+    SectionConfig,
   ],
 }
 
@@ -47,6 +49,7 @@ export const StrpsAboutAdjacent: Block = {
       type: 'text',
       label: 'Title',
     },
+    SectionConfig,
     {
       name: 'content',
       type: 'richText',
@@ -73,11 +76,13 @@ export const StrpsAboutAdjacent: Block = {
 
 export const StrpsAboutStoryBlocks: Block = {
   slug: 'strpsAboutStoryBlocks',
+  interfaceName: 'StrpsAboutStoryBlocks',
   labels: {
     singular: 'Strps About Story Blocks',
     plural: 'Strps Abouts Story Blocks',
   },
   fields: [
+    SectionConfig,
     {
       name: 'title',
       type: 'text',
@@ -100,38 +105,7 @@ export const StrpsAboutStoryBlocks: Block = {
           label: 'Content',
           required: true,
         },
-        {
-          name: 'icon',
-          type: 'select',
-          label: 'Icon',
-          options: [
-            {
-              label: 'Code',
-              value: 'code',
-            },
-            {
-              label: 'Palette',
-              value: 'palette',
-            },
-            {
-              label: 'Monitor',
-              value: 'monitor',
-            },
-            {
-              label: 'Circuit Board',
-              value: 'circuitBoard',
-            },
-            {
-              label: 'Briefcase',
-              value: 'briefcase',
-            },
-            {
-              label: 'None',
-              value: 'none',
-            },
-          ],
-          defaultValue: 'none',
-        },
+        lucideIcon,
         {
           name: 'alt',
           type: 'text',

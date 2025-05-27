@@ -1,4 +1,5 @@
 import { Block } from 'payload'
+import { SectionConfig } from '@/components/Section/config'
 
 export const StrpsSkills: Block = {
   slug: 'strpsSkills',
@@ -13,7 +14,6 @@ export const StrpsSkills: Block = {
       type: 'text',
       label: 'Title',
     },
-
     {
       name: 'skillGroup',
       type: 'array',
@@ -24,7 +24,6 @@ export const StrpsSkills: Block = {
           type: 'text',
           label: 'Text',
         },
-
         {
           name: 'skills',
           type: 'array',
@@ -46,5 +45,6 @@ export const StrpsSkills: Block = {
         },
       ],
     },
+    SectionConfig,
   ],
 }
