@@ -1,0 +1,971 @@
+import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postgres'
+
+export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+  await db.execute(sql`
+   CREATE TYPE "public"."section_theme" AS ENUM('auto', 'light', 'dark');
+  CREATE TYPE "public"."section_background" AS ENUM('none', 'svgCircles', 'image');
+  CREATE TYPE "public"."lucideIcon" AS ENUM('none', 'code', 'circuit-board', 'palette', 'monitor', 'briefcase');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_stats_color" AS ENUM('primary', 'secondary', 'accent', 'success', 'warning', 'error');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_layout" AS ENUM('grid', 'side-by-side', 'carousel');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_columns" AS ENUM('2', '3', '4');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_animation_easing" AS ENUM('easeOut', 'easeIn', 'easeInOut', 'linear');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_style_variant" AS ENUM('card', 'minimal', 'bordered', 'gradient');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_style_text_align" AS ENUM('left', 'center', 'right');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_style_value_size" AS ENUM('sm', 'md', 'lg', 'xl');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_cta_style" AS ENUM('primary', 'secondary', 'outline', 'text');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_container_max_width" AS ENUM('sm', 'md', 'lg', 'xl', 'full', 'none');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_container_padding_top" AS ENUM('none', 'sm', 'md', 'lg', 'xl');
+  CREATE TYPE "public"."enum_pages_blocks_strps_stats_container_padding_bottom" AS ENUM('none', 'sm', 'md', 'lg', 'xl');
+  CREATE TYPE "public"."enum_pages_blocks_strps_services_services_links_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."7a93b46189cc15191e9af63d419f7611LinkAppearances" AS ENUM('default', 'outline');
+  CREATE TYPE "public"."enum_pages_blocks_strps_services_layout" AS ENUM('grid', 'list', 'cards');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_stats_color" AS ENUM('primary', 'secondary', 'accent', 'success', 'warning', 'error');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_layout" AS ENUM('grid', 'side-by-side', 'carousel');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_columns" AS ENUM('2', '3', '4');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_animation_easing" AS ENUM('easeOut', 'easeIn', 'easeInOut', 'linear');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_style_variant" AS ENUM('card', 'minimal', 'bordered', 'gradient');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_style_text_align" AS ENUM('left', 'center', 'right');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_style_value_size" AS ENUM('sm', 'md', 'lg', 'xl');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_cta_style" AS ENUM('primary', 'secondary', 'outline', 'text');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_container_max_width" AS ENUM('sm', 'md', 'lg', 'xl', 'full', 'none');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_container_padding_top" AS ENUM('none', 'sm', 'md', 'lg', 'xl');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_stats_container_padding_bottom" AS ENUM('none', 'sm', 'md', 'lg', 'xl');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_services_services_links_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."1ed9e7520a26d30abfb9ef735bbee441LinkAppearances" AS ENUM('default', 'outline');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_services_layout" AS ENUM('grid', 'list', 'cards');
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_about_us_values" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"description" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_about_us_timeline" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"date" timestamp(3) with time zone,
+  	"event" varchar,
+  	"description" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_about_us_leadership" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"name" varchar,
+  	"title" varchar,
+  	"bio" varchar,
+  	"image_id" integer
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_about_us" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"section_container" boolean,
+  	"section_class_name" varchar,
+  	"section_background_container" boolean,
+  	"section_theme" "section_theme" DEFAULT 'auto',
+  	"section_background" "section_background" DEFAULT 'none',
+  	"section_background_image_id" integer,
+  	"heading" varchar,
+  	"mission" jsonb,
+  	"vision" jsonb,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_stats_stats" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"value" varchar,
+  	"label" varchar,
+  	"prefix" varchar,
+  	"suffix" varchar,
+  	"icon" varchar,
+  	"color" "enum_pages_blocks_strps_stats_stats_color" DEFAULT 'primary'
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_stats" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"heading" varchar,
+  	"description" varchar,
+  	"layout" "enum_pages_blocks_strps_stats_layout" DEFAULT 'grid',
+  	"columns" "enum_pages_blocks_strps_stats_columns" DEFAULT '4',
+  	"animation_enable" boolean DEFAULT true,
+  	"animation_duration" numeric DEFAULT 2000,
+  	"animation_easing" "enum_pages_blocks_strps_stats_animation_easing" DEFAULT 'easeOut',
+  	"style_variant" "enum_pages_blocks_strps_stats_style_variant" DEFAULT 'card',
+  	"style_text_align" "enum_pages_blocks_strps_stats_style_text_align" DEFAULT 'center',
+  	"style_value_size" "enum_pages_blocks_strps_stats_style_value_size" DEFAULT 'xl',
+  	"cta_enable" boolean DEFAULT false,
+  	"cta_text" varchar DEFAULT 'Learn more',
+  	"cta_link" varchar,
+  	"cta_style" "enum_pages_blocks_strps_stats_cta_style" DEFAULT 'primary',
+  	"container_max_width" "enum_pages_blocks_strps_stats_container_max_width" DEFAULT 'xl',
+  	"container_padding_top" "enum_pages_blocks_strps_stats_container_padding_top" DEFAULT 'xl',
+  	"container_padding_bottom" "enum_pages_blocks_strps_stats_container_padding_bottom" DEFAULT 'xl',
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_services_services_links" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"link_type" "enum_pages_blocks_strps_services_services_links_link_type" DEFAULT 'reference',
+  	"link_new_tab" boolean,
+  	"link_url" varchar,
+  	"link_label" varchar,
+  	"link_appearance" "7a93b46189cc15191e9af63d419f7611LinkAppearances" DEFAULT 'default'
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_services_services" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" varchar NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"description" varchar,
+  	"icon" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "pages_blocks_strps_services" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"heading" varchar,
+  	"description" varchar,
+  	"layout" "enum_pages_blocks_strps_services_layout" DEFAULT 'grid',
+  	"show_featured" boolean DEFAULT false,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_about_us_values" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"description" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_about_us_timeline" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"date" timestamp(3) with time zone,
+  	"event" varchar,
+  	"description" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_about_us_leadership" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"name" varchar,
+  	"title" varchar,
+  	"bio" varchar,
+  	"image_id" integer,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_about_us" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"section_container" boolean,
+  	"section_class_name" varchar,
+  	"section_background_container" boolean,
+  	"section_theme" "section_theme" DEFAULT 'auto',
+  	"section_background" "section_background" DEFAULT 'none',
+  	"section_background_image_id" integer,
+  	"heading" varchar,
+  	"mission" jsonb,
+  	"vision" jsonb,
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_stats_stats" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"value" varchar,
+  	"label" varchar,
+  	"prefix" varchar,
+  	"suffix" varchar,
+  	"icon" varchar,
+  	"color" "enum__pages_v_blocks_strps_stats_stats_color" DEFAULT 'primary',
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_stats" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"heading" varchar,
+  	"description" varchar,
+  	"layout" "enum__pages_v_blocks_strps_stats_layout" DEFAULT 'grid',
+  	"columns" "enum__pages_v_blocks_strps_stats_columns" DEFAULT '4',
+  	"animation_enable" boolean DEFAULT true,
+  	"animation_duration" numeric DEFAULT 2000,
+  	"animation_easing" "enum__pages_v_blocks_strps_stats_animation_easing" DEFAULT 'easeOut',
+  	"style_variant" "enum__pages_v_blocks_strps_stats_style_variant" DEFAULT 'card',
+  	"style_text_align" "enum__pages_v_blocks_strps_stats_style_text_align" DEFAULT 'center',
+  	"style_value_size" "enum__pages_v_blocks_strps_stats_style_value_size" DEFAULT 'xl',
+  	"cta_enable" boolean DEFAULT false,
+  	"cta_text" varchar DEFAULT 'Learn more',
+  	"cta_link" varchar,
+  	"cta_style" "enum__pages_v_blocks_strps_stats_cta_style" DEFAULT 'primary',
+  	"container_max_width" "enum__pages_v_blocks_strps_stats_container_max_width" DEFAULT 'xl',
+  	"container_padding_top" "enum__pages_v_blocks_strps_stats_container_padding_top" DEFAULT 'xl',
+  	"container_padding_bottom" "enum__pages_v_blocks_strps_stats_container_padding_bottom" DEFAULT 'xl',
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_services_services_links" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"link_type" "enum__pages_v_blocks_strps_services_services_links_link_type" DEFAULT 'reference',
+  	"link_new_tab" boolean,
+  	"link_url" varchar,
+  	"link_label" varchar,
+  	"link_appearance" "1ed9e7520a26d30abfb9ef735bbee441LinkAppearances" DEFAULT 'default',
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_services_services" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"title" varchar,
+  	"description" varchar,
+  	"icon" varchar,
+  	"_uuid" varchar
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_blocks_strps_services" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"_path" text NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"heading" varchar,
+  	"description" varchar,
+  	"layout" "enum__pages_v_blocks_strps_services_layout" DEFAULT 'grid',
+  	"show_featured" boolean DEFAULT false,
+  	"_uuid" varchar,
+  	"block_name" varchar
+  );
+  
+  ALTER TABLE "pages_hero_links" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_version_hero_links" DISABLE ROW LEVEL SECURITY;
+  DROP TABLE "pages_hero_links" CASCADE;
+  DROP TABLE "_pages_v_version_hero_links" CASCADE;
+  ALTER TABLE "pages" DROP CONSTRAINT "pages_hero_media_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v" DROP CONSTRAINT "_pages_v_version_hero_media_id_media_id_fk";
+  
+  DROP INDEX IF EXISTS "pages_hero_hero_media_idx";
+  DROP INDEX IF EXISTS "_pages_v_version_hero_version_hero_media_idx";
+  ALTER TABLE "pages_blocks_archive" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_archive" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_archive" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_archive" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_archive" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_archive" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "pages_blocks_strps_hero" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_strps_hero" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_strps_hero" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_strps_hero" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_strps_hero" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_strps_hero" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "pages_blocks_strps_about" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_strps_about" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_strps_about" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_strps_about" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_strps_about" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_strps_about" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "pages_blocks_strps_about_adjacent" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_strps_about_adjacent" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_strps_about_adjacent" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_strps_about_adjacent" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_strps_about_adjacent" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_strps_about_adjacent" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "pages_blocks_strps_about_story_blocks_story_blocks" ADD COLUMN "lucide_icon" "lucideIcon";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "pages_blocks_strps_skills" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_strps_skills" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_strps_skills" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_strps_skills" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_strps_skills" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_strps_skills" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "pages_blocks_strps_contact" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_strps_contact" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_strps_contact" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_strps_contact" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_strps_contact" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_strps_contact" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "pages_blocks_projects_archive" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "pages_blocks_projects_archive" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "pages_blocks_projects_archive" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "pages_blocks_projects_archive" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "pages_blocks_projects_archive" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "pages_blocks_projects_archive" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_archive" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_archive" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_archive" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_archive" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_archive" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_archive" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_strps_hero" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_hero" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_strps_hero" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_hero" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_strps_hero" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_strps_hero" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_strps_about" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_about" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_strps_about" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_about" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_strps_about" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_strps_about" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks_story_blocks" ADD COLUMN "lucide_icon" "lucideIcon";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_strps_skills" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_skills" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_strps_skills" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_skills" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_strps_skills" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_strps_skills" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_strps_contact" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_contact" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_strps_contact" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_strps_contact" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_strps_contact" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_strps_contact" ADD COLUMN "section_background_image_id" integer;
+  ALTER TABLE "_pages_v_blocks_projects_archive" ADD COLUMN "section_container" boolean;
+  ALTER TABLE "_pages_v_blocks_projects_archive" ADD COLUMN "section_class_name" varchar;
+  ALTER TABLE "_pages_v_blocks_projects_archive" ADD COLUMN "section_background_container" boolean;
+  ALTER TABLE "_pages_v_blocks_projects_archive" ADD COLUMN "section_theme" "section_theme" DEFAULT 'auto';
+  ALTER TABLE "_pages_v_blocks_projects_archive" ADD COLUMN "section_background" "section_background" DEFAULT 'none';
+  ALTER TABLE "_pages_v_blocks_projects_archive" ADD COLUMN "section_background_image_id" integer;
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_us_values" ADD CONSTRAINT "pages_blocks_strps_about_us_values_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_strps_about_us"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_us_timeline" ADD CONSTRAINT "pages_blocks_strps_about_us_timeline_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_strps_about_us"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_us_leadership" ADD CONSTRAINT "pages_blocks_strps_about_us_leadership_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_us_leadership" ADD CONSTRAINT "pages_blocks_strps_about_us_leadership_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_strps_about_us"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_us" ADD CONSTRAINT "pages_blocks_strps_about_us_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_us" ADD CONSTRAINT "pages_blocks_strps_about_us_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_stats_stats" ADD CONSTRAINT "pages_blocks_strps_stats_stats_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_strps_stats"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_stats" ADD CONSTRAINT "pages_blocks_strps_stats_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_services_services_links" ADD CONSTRAINT "pages_blocks_strps_services_services_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_strps_services_services"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_services_services" ADD CONSTRAINT "pages_blocks_strps_services_services_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages_blocks_strps_services"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_services" ADD CONSTRAINT "pages_blocks_strps_services_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_us_values" ADD CONSTRAINT "_pages_v_blocks_strps_about_us_values_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_strps_about_us"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_us_timeline" ADD CONSTRAINT "_pages_v_blocks_strps_about_us_timeline_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_strps_about_us"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_us_leadership" ADD CONSTRAINT "_pages_v_blocks_strps_about_us_leadership_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_us_leadership" ADD CONSTRAINT "_pages_v_blocks_strps_about_us_leadership_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_strps_about_us"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_us" ADD CONSTRAINT "_pages_v_blocks_strps_about_us_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_us" ADD CONSTRAINT "_pages_v_blocks_strps_about_us_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_stats_stats" ADD CONSTRAINT "_pages_v_blocks_strps_stats_stats_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_strps_stats"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_stats" ADD CONSTRAINT "_pages_v_blocks_strps_stats_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_services_services_links" ADD CONSTRAINT "_pages_v_blocks_strps_services_services_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_strps_services_services"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_services_services" ADD CONSTRAINT "_pages_v_blocks_strps_services_services_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v_blocks_strps_services"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_services" ADD CONSTRAINT "_pages_v_blocks_strps_services_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_values_order_idx" ON "pages_blocks_strps_about_us_values" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_values_parent_id_idx" ON "pages_blocks_strps_about_us_values" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_timeline_order_idx" ON "pages_blocks_strps_about_us_timeline" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_timeline_parent_id_idx" ON "pages_blocks_strps_about_us_timeline" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_leadership_order_idx" ON "pages_blocks_strps_about_us_leadership" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_leadership_parent_id_idx" ON "pages_blocks_strps_about_us_leadership" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_leadership_image_idx" ON "pages_blocks_strps_about_us_leadership" USING btree ("image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_order_idx" ON "pages_blocks_strps_about_us" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_parent_id_idx" ON "pages_blocks_strps_about_us" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_path_idx" ON "pages_blocks_strps_about_us" USING btree ("_path");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_us_section_section_background_image_idx" ON "pages_blocks_strps_about_us" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_stats_stats_order_idx" ON "pages_blocks_strps_stats_stats" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_stats_stats_parent_id_idx" ON "pages_blocks_strps_stats_stats" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_stats_order_idx" ON "pages_blocks_strps_stats" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_stats_parent_id_idx" ON "pages_blocks_strps_stats" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_stats_path_idx" ON "pages_blocks_strps_stats" USING btree ("_path");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_services_services_links_order_idx" ON "pages_blocks_strps_services_services_links" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_services_services_links_parent_id_idx" ON "pages_blocks_strps_services_services_links" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_services_services_order_idx" ON "pages_blocks_strps_services_services" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_services_services_parent_id_idx" ON "pages_blocks_strps_services_services" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_services_order_idx" ON "pages_blocks_strps_services" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_services_parent_id_idx" ON "pages_blocks_strps_services" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_services_path_idx" ON "pages_blocks_strps_services" USING btree ("_path");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_values_order_idx" ON "_pages_v_blocks_strps_about_us_values" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_values_parent_id_idx" ON "_pages_v_blocks_strps_about_us_values" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_timeline_order_idx" ON "_pages_v_blocks_strps_about_us_timeline" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_timeline_parent_id_idx" ON "_pages_v_blocks_strps_about_us_timeline" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_leadership_order_idx" ON "_pages_v_blocks_strps_about_us_leadership" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_leadership_parent_id_idx" ON "_pages_v_blocks_strps_about_us_leadership" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_leadership_image_idx" ON "_pages_v_blocks_strps_about_us_leadership" USING btree ("image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_order_idx" ON "_pages_v_blocks_strps_about_us" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_parent_id_idx" ON "_pages_v_blocks_strps_about_us" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_path_idx" ON "_pages_v_blocks_strps_about_us" USING btree ("_path");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_us_section_section_background_image_idx" ON "_pages_v_blocks_strps_about_us" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_stats_stats_order_idx" ON "_pages_v_blocks_strps_stats_stats" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_stats_stats_parent_id_idx" ON "_pages_v_blocks_strps_stats_stats" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_stats_order_idx" ON "_pages_v_blocks_strps_stats" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_stats_parent_id_idx" ON "_pages_v_blocks_strps_stats" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_stats_path_idx" ON "_pages_v_blocks_strps_stats" USING btree ("_path");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_services_services_links_order_idx" ON "_pages_v_blocks_strps_services_services_links" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_services_services_links_parent_id_idx" ON "_pages_v_blocks_strps_services_services_links" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_services_services_order_idx" ON "_pages_v_blocks_strps_services_services" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_services_services_parent_id_idx" ON "_pages_v_blocks_strps_services_services" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_services_order_idx" ON "_pages_v_blocks_strps_services" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_services_parent_id_idx" ON "_pages_v_blocks_strps_services" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_services_path_idx" ON "_pages_v_blocks_strps_services" USING btree ("_path");
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_archive" ADD CONSTRAINT "pages_blocks_archive_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_hero" ADD CONSTRAINT "pages_blocks_strps_hero_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about" ADD CONSTRAINT "pages_blocks_strps_about_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_adjacent" ADD CONSTRAINT "pages_blocks_strps_about_adjacent_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_about_story_blocks" ADD CONSTRAINT "pages_blocks_strps_about_story_blocks_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_skills" ADD CONSTRAINT "pages_blocks_strps_skills_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_strps_contact" ADD CONSTRAINT "pages_blocks_strps_contact_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "pages_blocks_projects_archive" ADD CONSTRAINT "pages_blocks_projects_archive_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_archive" ADD CONSTRAINT "_pages_v_blocks_archive_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_hero" ADD CONSTRAINT "_pages_v_blocks_strps_hero_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about" ADD CONSTRAINT "_pages_v_blocks_strps_about_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_adjacent" ADD CONSTRAINT "_pages_v_blocks_strps_about_adjacent_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" ADD CONSTRAINT "_pages_v_blocks_strps_about_story_blocks_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_skills" ADD CONSTRAINT "_pages_v_blocks_strps_skills_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_strps_contact" ADD CONSTRAINT "_pages_v_blocks_strps_contact_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_blocks_projects_archive" ADD CONSTRAINT "_pages_v_blocks_projects_archive_section_background_image_id_media_id_fk" FOREIGN KEY ("section_background_image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  CREATE INDEX IF NOT EXISTS "pages_blocks_archive_section_section_background_image_idx" ON "pages_blocks_archive" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_hero_section_section_background_image_idx" ON "pages_blocks_strps_hero" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_section_section_background_image_idx" ON "pages_blocks_strps_about" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_adjacent_section_section_background_image_idx" ON "pages_blocks_strps_about_adjacent" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_about_story_blocks_section_section_background_image_idx" ON "pages_blocks_strps_about_story_blocks" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_skills_section_section_background_image_idx" ON "pages_blocks_strps_skills" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_strps_contact_section_section_background_image_idx" ON "pages_blocks_strps_contact" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "pages_blocks_projects_archive_section_section_background_image_idx" ON "pages_blocks_projects_archive" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_archive_section_section_background_image_idx" ON "_pages_v_blocks_archive" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_hero_section_section_background_image_idx" ON "_pages_v_blocks_strps_hero" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_section_section_background_image_idx" ON "_pages_v_blocks_strps_about" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_adjacent_section_section_background_image_idx" ON "_pages_v_blocks_strps_about_adjacent" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_about_story_blocks_section_section_background_image_idx" ON "_pages_v_blocks_strps_about_story_blocks" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_skills_section_section_background_image_idx" ON "_pages_v_blocks_strps_skills" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_strps_contact_section_section_background_image_idx" ON "_pages_v_blocks_strps_contact" USING btree ("section_background_image_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_blocks_projects_archive_section_section_background_image_idx" ON "_pages_v_blocks_projects_archive" USING btree ("section_background_image_id");
+  ALTER TABLE "pages_blocks_strps_about_story_blocks_story_blocks" DROP COLUMN IF EXISTS "icon";
+  ALTER TABLE "pages" DROP COLUMN IF EXISTS "hero_type";
+  ALTER TABLE "pages" DROP COLUMN IF EXISTS "hero_rich_text";
+  ALTER TABLE "pages" DROP COLUMN IF EXISTS "hero_media_id";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks_story_blocks" DROP COLUMN IF EXISTS "icon";
+  ALTER TABLE "_pages_v" DROP COLUMN IF EXISTS "version_hero_type";
+  ALTER TABLE "_pages_v" DROP COLUMN IF EXISTS "version_hero_rich_text";
+  ALTER TABLE "_pages_v" DROP COLUMN IF EXISTS "version_hero_media_id";
+  DROP TYPE "public"."enum_pages_hero_links_link_type";
+  DROP TYPE "public"."enum_pages_hero_links_link_appearance";
+  DROP TYPE "public"."enum_pages_blocks_strps_about_story_blocks_story_blocks_icon";
+  DROP TYPE "public"."enum_pages_hero_type";
+  DROP TYPE "public"."enum__pages_v_version_hero_links_link_type";
+  DROP TYPE "public"."enum__pages_v_version_hero_links_link_appearance";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_about_story_blocks_story_blocks_icon";
+  DROP TYPE "public"."enum__pages_v_version_hero_type";`)
+}
+
+export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+  await db.execute(sql`
+   CREATE TYPE "public"."enum_pages_hero_links_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."enum_pages_hero_links_link_appearance" AS ENUM('default', 'outline');
+  CREATE TYPE "public"."enum_pages_blocks_strps_about_story_blocks_story_blocks_icon" AS ENUM('code', 'palette', 'monitor', 'circuitBoard', 'briefcase', 'none');
+  CREATE TYPE "public"."enum_pages_hero_type" AS ENUM('none', 'highImpact', 'mediumImpact', 'lowImpact');
+  CREATE TYPE "public"."enum__pages_v_version_hero_links_link_type" AS ENUM('reference', 'custom');
+  CREATE TYPE "public"."enum__pages_v_version_hero_links_link_appearance" AS ENUM('default', 'outline');
+  CREATE TYPE "public"."enum__pages_v_blocks_strps_about_story_blocks_story_blocks_icon" AS ENUM('code', 'palette', 'monitor', 'circuitBoard', 'briefcase', 'none');
+  CREATE TYPE "public"."enum__pages_v_version_hero_type" AS ENUM('none', 'highImpact', 'mediumImpact', 'lowImpact');
+  CREATE TABLE IF NOT EXISTS "pages_hero_links" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"link_type" "enum_pages_hero_links_link_type" DEFAULT 'reference',
+  	"link_new_tab" boolean,
+  	"link_url" varchar,
+  	"link_label" varchar,
+  	"link_appearance" "enum_pages_hero_links_link_appearance" DEFAULT 'default'
+  );
+  
+  CREATE TABLE IF NOT EXISTS "_pages_v_version_hero_links" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"link_type" "enum__pages_v_version_hero_links_link_type" DEFAULT 'reference',
+  	"link_new_tab" boolean,
+  	"link_url" varchar,
+  	"link_label" varchar,
+  	"link_appearance" "enum__pages_v_version_hero_links_link_appearance" DEFAULT 'default',
+  	"_uuid" varchar
+  );
+  
+  ALTER TABLE "pages_blocks_strps_about_us_values" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_about_us_timeline" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_about_us_leadership" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_about_us" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_stats_stats" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_stats" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_services_services_links" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_services_services" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "pages_blocks_strps_services" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_about_us_values" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_about_us_timeline" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_about_us_leadership" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_about_us" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_stats_stats" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_stats" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_services_services_links" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_services_services" DISABLE ROW LEVEL SECURITY;
+  ALTER TABLE "_pages_v_blocks_strps_services" DISABLE ROW LEVEL SECURITY;
+  DROP TABLE "pages_blocks_strps_about_us_values" CASCADE;
+  DROP TABLE "pages_blocks_strps_about_us_timeline" CASCADE;
+  DROP TABLE "pages_blocks_strps_about_us_leadership" CASCADE;
+  DROP TABLE "pages_blocks_strps_about_us" CASCADE;
+  DROP TABLE "pages_blocks_strps_stats_stats" CASCADE;
+  DROP TABLE "pages_blocks_strps_stats" CASCADE;
+  DROP TABLE "pages_blocks_strps_services_services_links" CASCADE;
+  DROP TABLE "pages_blocks_strps_services_services" CASCADE;
+  DROP TABLE "pages_blocks_strps_services" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_about_us_values" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_about_us_timeline" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_about_us_leadership" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_about_us" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_stats_stats" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_stats" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_services_services_links" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_services_services" CASCADE;
+  DROP TABLE "_pages_v_blocks_strps_services" CASCADE;
+  ALTER TABLE "pages_blocks_archive" DROP CONSTRAINT "pages_blocks_archive_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "pages_blocks_strps_hero" DROP CONSTRAINT "pages_blocks_strps_hero_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "pages_blocks_strps_about" DROP CONSTRAINT "pages_blocks_strps_about_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "pages_blocks_strps_about_adjacent" DROP CONSTRAINT "pages_blocks_strps_about_adjacent_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" DROP CONSTRAINT "pages_blocks_strps_about_story_blocks_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "pages_blocks_strps_skills" DROP CONSTRAINT "pages_blocks_strps_skills_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "pages_blocks_strps_contact" DROP CONSTRAINT "pages_blocks_strps_contact_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "pages_blocks_projects_archive" DROP CONSTRAINT "pages_blocks_projects_archive_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_archive" DROP CONSTRAINT "_pages_v_blocks_archive_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_strps_hero" DROP CONSTRAINT "_pages_v_blocks_strps_hero_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_strps_about" DROP CONSTRAINT "_pages_v_blocks_strps_about_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" DROP CONSTRAINT "_pages_v_blocks_strps_about_adjacent_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" DROP CONSTRAINT "_pages_v_blocks_strps_about_story_blocks_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_strps_skills" DROP CONSTRAINT "_pages_v_blocks_strps_skills_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_strps_contact" DROP CONSTRAINT "_pages_v_blocks_strps_contact_section_background_image_id_media_id_fk";
+  
+  ALTER TABLE "_pages_v_blocks_projects_archive" DROP CONSTRAINT "_pages_v_blocks_projects_archive_section_background_image_id_media_id_fk";
+  
+  DROP INDEX IF EXISTS "pages_blocks_archive_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "pages_blocks_strps_hero_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "pages_blocks_strps_about_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "pages_blocks_strps_about_adjacent_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "pages_blocks_strps_about_story_blocks_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "pages_blocks_strps_skills_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "pages_blocks_strps_contact_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "pages_blocks_projects_archive_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_archive_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_strps_hero_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_strps_about_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_strps_about_adjacent_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_strps_about_story_blocks_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_strps_skills_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_strps_contact_section_section_background_image_idx";
+  DROP INDEX IF EXISTS "_pages_v_blocks_projects_archive_section_section_background_image_idx";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks_story_blocks" ADD COLUMN "icon" "enum_pages_blocks_strps_about_story_blocks_story_blocks_icon" DEFAULT 'none';
+  ALTER TABLE "pages" ADD COLUMN "hero_type" "enum_pages_hero_type" DEFAULT 'lowImpact';
+  ALTER TABLE "pages" ADD COLUMN "hero_rich_text" jsonb;
+  ALTER TABLE "pages" ADD COLUMN "hero_media_id" integer;
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks_story_blocks" ADD COLUMN "icon" "enum__pages_v_blocks_strps_about_story_blocks_story_blocks_icon" DEFAULT 'none';
+  ALTER TABLE "_pages_v" ADD COLUMN "version_hero_type" "enum__pages_v_version_hero_type" DEFAULT 'lowImpact';
+  ALTER TABLE "_pages_v" ADD COLUMN "version_hero_rich_text" jsonb;
+  ALTER TABLE "_pages_v" ADD COLUMN "version_hero_media_id" integer;
+  DO $$ BEGIN
+   ALTER TABLE "pages_hero_links" ADD CONSTRAINT "pages_hero_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."pages"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v_version_hero_links" ADD CONSTRAINT "_pages_v_version_hero_links_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."_pages_v"("id") ON DELETE cascade ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  CREATE INDEX IF NOT EXISTS "pages_hero_links_order_idx" ON "pages_hero_links" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "pages_hero_links_parent_id_idx" ON "pages_hero_links" USING btree ("_parent_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_version_hero_links_order_idx" ON "_pages_v_version_hero_links" USING btree ("_order");
+  CREATE INDEX IF NOT EXISTS "_pages_v_version_hero_links_parent_id_idx" ON "_pages_v_version_hero_links" USING btree ("_parent_id");
+  DO $$ BEGIN
+   ALTER TABLE "pages" ADD CONSTRAINT "pages_hero_media_id_media_id_fk" FOREIGN KEY ("hero_media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  DO $$ BEGIN
+   ALTER TABLE "_pages_v" ADD CONSTRAINT "_pages_v_version_hero_media_id_media_id_fk" FOREIGN KEY ("version_hero_media_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  EXCEPTION
+   WHEN duplicate_object THEN null;
+  END $$;
+  
+  CREATE INDEX IF NOT EXISTS "pages_hero_hero_media_idx" ON "pages" USING btree ("hero_media_id");
+  CREATE INDEX IF NOT EXISTS "_pages_v_version_hero_version_hero_media_idx" ON "_pages_v" USING btree ("version_hero_media_id");
+  ALTER TABLE "pages_blocks_archive" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_archive" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_archive" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_archive" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_archive" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_archive" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "pages_blocks_strps_hero" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_strps_hero" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_strps_hero" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_strps_hero" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_strps_hero" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_strps_hero" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "pages_blocks_strps_about" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_strps_about" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_strps_about" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_strps_about" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_strps_about" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_strps_about" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "pages_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks_story_blocks" DROP COLUMN IF EXISTS "lucide_icon";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "pages_blocks_strps_skills" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_strps_skills" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_strps_skills" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_strps_skills" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_strps_skills" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_strps_skills" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "pages_blocks_strps_contact" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_strps_contact" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_strps_contact" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_strps_contact" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_strps_contact" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_strps_contact" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "pages_blocks_projects_archive" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "pages_blocks_projects_archive" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "pages_blocks_projects_archive" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "pages_blocks_projects_archive" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "pages_blocks_projects_archive" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "pages_blocks_projects_archive" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_archive" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_archive" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_archive" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_archive" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_archive" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_archive" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_strps_hero" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_strps_hero" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_strps_hero" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_strps_hero" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_strps_hero" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_strps_hero" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_strps_about" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_strps_about" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_strps_about" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_strps_about" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_strps_about" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_strps_about" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_strps_about_adjacent" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks_story_blocks" DROP COLUMN IF EXISTS "lucide_icon";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_strps_about_story_blocks" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_strps_skills" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_strps_skills" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_strps_skills" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_strps_skills" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_strps_skills" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_strps_skills" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_strps_contact" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_strps_contact" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_strps_contact" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_strps_contact" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_strps_contact" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_strps_contact" DROP COLUMN IF EXISTS "section_background_image_id";
+  ALTER TABLE "_pages_v_blocks_projects_archive" DROP COLUMN IF EXISTS "section_container";
+  ALTER TABLE "_pages_v_blocks_projects_archive" DROP COLUMN IF EXISTS "section_class_name";
+  ALTER TABLE "_pages_v_blocks_projects_archive" DROP COLUMN IF EXISTS "section_background_container";
+  ALTER TABLE "_pages_v_blocks_projects_archive" DROP COLUMN IF EXISTS "section_theme";
+  ALTER TABLE "_pages_v_blocks_projects_archive" DROP COLUMN IF EXISTS "section_background";
+  ALTER TABLE "_pages_v_blocks_projects_archive" DROP COLUMN IF EXISTS "section_background_image_id";
+  DROP TYPE "public"."section_theme";
+  DROP TYPE "public"."section_background";
+  DROP TYPE "public"."lucideIcon";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_stats_color";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_layout";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_columns";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_animation_easing";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_style_variant";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_style_text_align";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_style_value_size";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_cta_style";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_container_max_width";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_container_padding_top";
+  DROP TYPE "public"."enum_pages_blocks_strps_stats_container_padding_bottom";
+  DROP TYPE "public"."enum_pages_blocks_strps_services_services_links_link_type";
+  DROP TYPE "public"."7a93b46189cc15191e9af63d419f7611LinkAppearances";
+  DROP TYPE "public"."enum_pages_blocks_strps_services_layout";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_stats_color";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_layout";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_columns";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_animation_easing";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_style_variant";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_style_text_align";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_style_value_size";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_cta_style";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_container_max_width";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_container_padding_top";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_stats_container_padding_bottom";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_services_services_links_link_type";
+  DROP TYPE "public"."1ed9e7520a26d30abfb9ef735bbee441LinkAppearances";
+  DROP TYPE "public"."enum__pages_v_blocks_strps_services_layout";`)
+}

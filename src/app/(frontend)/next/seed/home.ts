@@ -96,8 +96,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         ],
       },
 
-      // Skills
-
+      // Skills Block
       {
         blockType: 'strpsSkills',
         title: 'Skills and expertise',
@@ -411,6 +410,137 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
             description: 'Expanded our services to international markets.',
           },
         ],
+        section: {
+          theme: 'light',
+          background: 'none',
+          container: true,
+        },
+      },
+      // Stats Block
+      {
+        blockType: 'strpsStats',
+        heading: 'Our Impact in Numbers',
+        description: 'Delivering excellence and driving success for our clients',
+        layout: 'grid',
+        columns: '4',
+        stats: [
+          {
+            value: '100+',
+            label: 'Happy Clients',
+            prefix: '',
+            suffix: '+',
+            icon: 'users',
+            color: 'primary',
+          },
+          {
+            value: '250',
+            label: 'Projects Completed',
+            prefix: '',
+            suffix: '+',
+            icon: 'check-circle',
+            color: 'secondary',
+          },
+          {
+            value: '10',
+            label: 'Years Experience',
+            prefix: '',
+            suffix: '+',
+            icon: 'award',
+            color: 'accent',
+          },
+          {
+            value: '99',
+            label: 'Success Rate',
+            prefix: '',
+            suffix: '%',
+            icon: 'thumbs-up',
+            color: 'success',
+          },
+        ],
+        animation: {
+          enable: true,
+          duration: 2000,
+          easing: 'easeOut',
+        },
+        style: {
+          variant: 'card',
+          textAlign: 'center',
+          valueSize: 'xl',
+        },
+        cta: {
+          enable: true,
+          text: 'Learn more about our work',
+          link: '/about',
+          style: 'primary',
+        },
+        container: {
+          maxWidth: 'xl',
+          padding: {
+            top: 'xl',
+            bottom: 'xl',
+          },
+        },
+        section: {
+          theme: 'light',
+          background: 'none',
+          container: true,
+        },
+      },
+      // Services Block
+      {
+        blockType: 'strpsServices',
+        heading: 'Our Services',
+        description: 'Comprehensive digital solutions for your business needs',
+        services: [
+          {
+            title: 'Web Development',
+            description:
+              'We create custom websites that are both functional and visually appealing.',
+            icon: 'globe',
+            link: {
+              type: 'custom',
+              label: 'Learn more',
+              url: '#',
+            },
+            features: [
+              { feature: 'Responsive Design' },
+              { feature: 'Custom Development' },
+              { feature: 'Performance Optimization' },
+            ],
+          },
+          {
+            title: 'App Development',
+            description: 'We build custom apps that are both functional and visually appealing.',
+            icon: 'smartphone',
+            link: {
+              type: 'custom',
+              label: 'Learn more',
+              url: '#',
+            },
+            features: [
+              { feature: 'iOS & Android' },
+              { feature: 'Native & Cross-Platform' },
+              { feature: 'App Store Optimization' },
+            ],
+          },
+          {
+            title: 'Digital Marketing',
+            description:
+              'We create custom marketing campaigns that are both functional and visually appealing.',
+            icon: 'bar-chart-2',
+            link: {
+              type: 'custom',
+              label: 'Learn more',
+              url: '#',
+            },
+            features: [
+              { feature: 'SEO & SEM' },
+              { feature: 'Social Media Marketing' },
+              { feature: 'Analytics & Reporting' },
+            ],
+          },
+        ],
+        layout: 'grid',
         section: {
           theme: 'light',
           background: 'none',

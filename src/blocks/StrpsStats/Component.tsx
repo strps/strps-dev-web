@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Block } from 'payload/types'
+'use client'
+import React, { useState, useEffect } from 'react'
+import { Block } from 'payload'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useInView } from 'react-intersection-observer'
+import { motion, useAnimation, Variants } from 'motion/react'
+import { useInView } from 'motion/react'
 
 type Stat = {
   value: string
@@ -13,54 +15,38 @@ type Stat = {
   color?: string
 }
 
-type Props = {
-  block: Block & {
-    heading?: string
-    description?: string
-    layout?: 'grid' | 'side-by-side' | 'carousel'
-    columns?: string
-    stats: Stat[]
-    animation?: {
-      enable?: boolean
-      duration?: number
-      easing?: string
-    }
-    style?: {
-      variant?: 'card' | 'minimal' | 'bordered' | 'gradient'
-      textAlign?: 'left' | 'center' | 'right'
-      valueSize?: 'sm' | 'md' | 'lg' | 'xl'
-    }
-    cta?: {
-      enable?: boolean
-      text?: string
-      link?: string
-      style?: 'primary' | 'secondary' | 'outline' | 'text'
-    }
-    container?: {
-      maxWidth?: string
-      padding?: {
-        top?: string
-        bottom?: string
-      }
-    }
+type Props = Block & {
+  heading?: string
+  description?: string
+  layout?: 'grid' | 'side-by-side' | 'carousel'
+  columns?: string
+  stats: Stat[]
+  animation?: {
+    enable?: boolean
+    duration?: number
+    delay?: number
+    staggerChildren?: number
+    type?: 'spring' | 'tween' | 'inertia' | 'just'
+    stiffness?: number
+    damping?: number
   }
-}
-
-const easeOutQuad = (t: number): number => t * (2 - t)
-const easeInQuad = (t: number): number => t * t
-const easeInOutQuad = (t: number): number => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t)
-
-const getEasingFunction = (easing: string = 'easeOut'): ((t: number) => number) => {
-  switch (easing) {
-    case 'easeIn':
-      return easeInQuad
-    case 'easeOut':
-      return easeOutQuad
-    case 'easeInOut':
-      return easeInOutQuad
-    case 'linear':
-    default:
-      return (t) => t
+  style?: {
+    variant?: 'card' | 'minimal' | 'bordered' | 'gradient'
+    textAlign?: 'left' | 'center' | 'right'
+    valueSize?: 'sm' | 'md' | 'lg' | 'xl'
+  }
+  cta?: {
+    enable?: boolean
+    text?: string
+    link?: string
+    style?: 'primary' | 'secondary' | 'outline' | 'text'
+  }
+  container?: {
+    maxWidth?: string
+    padding?: {
+      top?: string
+      bottom?: string
+    }
   }
 }
 
@@ -68,91 +54,101 @@ const AnimatedCounter: React.FC<{
   value: string
   prefix?: string
   suffix?: string
-  duration: number
-  easing: (t: number) => number
+  duration?: number
   className?: string
-}> = ({ value, prefix = '', suffix = '', duration, easing, className = '' }) => {
-  const [displayValue, setDisplayValue] = useState('0')
-  const prevValueRef = useRef(0)
-  const animationRef = useRef<number>()
-  const startTimeRef = useRef<number>()
+}> = ({ value, prefix = '', suffix = '', duration = 2, className = '' }) => {
+  const [displayValue, setDisplayValue] = useState(0)
+  const numValue = parseFloat(value.replace(/[^0-9.-]+/g, '')) || 0
+  const hasDecimal = value.includes('.')
 
   useEffect(() => {
-    const numValue = parseFloat(value.replace(/[^0-9.-]+/g, ''))
-    const prevValue = prevValueRef.current || 0
-    prevValueRef.current = numValue
+    setDisplayValue(0)
+    const controls = setInterval(() => {
+      setDisplayValue((prev) => {
+        const increment = numValue / (duration * 30) // 30fps * duration
+        const nextValue = prev + increment
+        if (nextValue >= numValue) {
+          clearInterval(controls)
+          return numValue
+        }
+        return nextValue
+      })
+    }, 1000 / 30)
 
-    const startValue = isNaN(prevValue) ? 0 : prevValue
-    const endValue = isNaN(numValue) ? 0 : numValue
-    const valueDiff = endValue - startValue
+    return () => clearInterval(controls)
+  }, [value, duration, numValue])
 
-    if (valueDiff === 0) {
-      setDisplayValue(`${prefix}${value}${suffix}`)
-      return
-    }
+  const formatNumber = (num: number) => {
+    if (hasDecimal) return num.toFixed(1)
+    return Math.round(num).toLocaleString()
+  }
 
-    const startAnimation = (timestamp: number) => {
-      if (!startTimeRef.current) startTimeRef.current = timestamp
-      const elapsed = timestamp - startTimeRef.current
-      const progress = Math.min(elapsed / duration, 1)
-      const easedProgress = easing(progress)
-
-      const currentValue = startValue + valueDiff * easedProgress
-
-      // Format the number with commas
-      const formattedValue = Math.round(currentValue).toLocaleString()
-
-      // Preserve any non-numeric characters from the original value
-      const formattedDisplay = value.replace(/\d+/g, formattedValue)
-
-      setDisplayValue(`${prefix}${formattedDisplay}${suffix}`)
-
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(startAnimation)
-      } else {
-        startTimeRef.current = undefined
-      }
-    }
-
-    animationRef.current = requestAnimationFrame(startAnimation)
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
-    }
-  }, [value, prefix, suffix, duration, easing])
-
-  return <span className={className}>{displayValue}</span>
+  return (
+    <motion.span className={className}>
+      {prefix}
+      {formatNumber(displayValue)}
+      {suffix}
+    </motion.span>
+  )
 }
 
-const StrpsStats: React.FC<Props> = ({
-  block: {
-    heading,
-    description,
-    layout = 'grid',
-    columns = '4',
-    stats = [],
-    animation = {},
-    style = {},
-    cta = {},
-    container = {},
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
   },
+}
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+      damping: 10,
+    },
+  },
+}
+
+export const StrpsStats: React.FC<Props> = ({
+  heading,
+  description,
+  layout = 'grid',
+  columns = '4',
+  stats = [],
+  animation = {},
+  style = {},
+  cta = {},
+  container = {},
 }) => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true,
-  })
+  const controls = useAnimation()
+  const ref = React.useRef(null)
+  const isInView = useInView(ref, { once: true, amount: 0.1 })
 
   const {
     enable: enableAnimation = true,
-    duration: animationDuration = 2000,
-    easing: easingType = 'easeOut',
+    duration: animationDuration = 2,
+    delay = 0,
+    staggerChildren = 0.1,
+    type = 'spring',
+    stiffness = 100,
+    damping = 10,
   } = animation
 
   const { variant = 'card', textAlign = 'center', valueSize = 'xl' } = style
-
   const { maxWidth = 'xl', padding = { top: 'xl', bottom: 'xl' } } = container
+
+  useEffect(() => {
+    if (isInView) {
+      controls.start('visible')
+    }
+  }, [controls, isInView])
 
   const getMaxWidthClass = () => {
     switch (maxWidth) {
@@ -191,7 +187,6 @@ const StrpsStats: React.FC<Props> = ({
 
   const getGridCols = () => {
     if (layout === 'side-by-side') return 'grid-cols-1'
-
     switch (columns) {
       case '2':
         return 'grid-cols-1 md:grid-cols-2'
@@ -205,7 +200,6 @@ const StrpsStats: React.FC<Props> = ({
 
   const getVariantClasses = (color: string = 'primary') => {
     const baseClasses = 'h-full'
-
     const colorClasses = {
       primary: 'bg-indigo-600 text-white',
       secondary: 'bg-gray-800 text-white',
@@ -216,14 +210,12 @@ const StrpsStats: React.FC<Props> = ({
       light: 'bg-gray-100 text-gray-900',
       dark: 'bg-gray-900 text-white',
     }
-
     const variantClasses = {
       card: `rounded-lg shadow-md p-6 ${colorClasses[color as keyof typeof colorClasses] || colorClasses.primary}`,
       minimal: `p-4 ${colorClasses[color as keyof typeof colorClasses] || colorClasses.primary}`,
       bordered: `border-2 rounded-lg p-6 border-${color}-500 ${colorClasses[color as keyof typeof colorClasses] || colorClasses.primary}`,
       gradient: `bg-gradient-to-r from-${color}-500 to-${color}-700 text-white rounded-lg p-6`,
     }
-
     return `${baseClasses} ${variantClasses[variant as keyof typeof variantClasses] || variantClasses.card}`
   }
 
@@ -255,7 +247,6 @@ const StrpsStats: React.FC<Props> = ({
 
   const getCtaClasses = () => {
     const baseClasses = 'inline-flex items-center px-6 py-3 rounded-md text-base font-medium'
-
     switch (cta.style) {
       case 'secondary':
         return `${baseClasses} bg-indigo-100 text-indigo-700 hover:bg-indigo-200`
@@ -274,41 +265,55 @@ const StrpsStats: React.FC<Props> = ({
   }
 
   return (
-    <div
+    <motion.div
       ref={ref}
       className={`relative ${getPaddingClass('top')} ${getPaddingClass('bottom')} bg-white`}
+      initial="hidden"
+      animate={isInView ? 'visible' : 'hidden'}
+      variants={containerVariants}
     >
       <div className={`mx-auto px-4 sm:px-6 lg:px-8 ${getMaxWidthClass()}`}>
         {(heading || description) && (
-          <div className={`mb-12 ${getTextAlignClass()}`}>
+          <motion.div className={`mb-12 ${getTextAlignClass()}`} variants={itemVariants}>
             {heading && (
-              <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">{heading}</h2>
+              <motion.h2
+                className="text-3xl font-extrabold text-gray-900 sm:text-4xl"
+                variants={itemVariants}
+              >
+                {heading}
+              </motion.h2>
             )}
             {description && (
-              <p className="mt-4 text-xl text-gray-500 max-w-3xl mx-auto">{description}</p>
+              <motion.p
+                className="mt-4 text-xl text-gray-500 max-w-3xl mx-auto"
+                variants={itemVariants}
+              >
+                {description}
+              </motion.p>
             )}
-          </div>
+          </motion.div>
         )}
 
         {layout === 'side-by-side' ? (
-          <div className="space-y-12">
+          <motion.div className="space-y-12" variants={containerVariants}>
             {stats.map((stat, index) => (
-              <div
+              <motion.div
                 key={index}
                 className={`${getVariantClasses(stat.color)} ${getTextAlignClass()}`}
+                variants={itemVariants}
+                custom={index}
               >
                 <div className="flex flex-col md:flex-row items-center justify-between">
                   <div className="flex-1">
                     <p className="text-2xl font-medium">{stat.label}</p>
                   </div>
                   <div className="mt-4 md:mt-0">
-                    {inView && enableAnimation ? (
+                    {enableAnimation ? (
                       <AnimatedCounter
                         value={stat.value}
                         prefix={stat.prefix}
                         suffix={stat.suffix}
                         duration={animationDuration}
-                        easing={getEasingFunction(easingType)}
                         className={`font-bold ${getValueSizeClass()}`}
                       />
                     ) : (
@@ -320,16 +325,25 @@ const StrpsStats: React.FC<Props> = ({
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <div className={`grid gap-6 ${getGridCols()}`}>
+          <motion.div className={`grid gap-6 ${getGridCols()}`} variants={containerVariants}>
             {stats.map((stat, index) => (
-              <div key={index} className={getVariantClasses(stat.color)}>
+              <motion.div
+                key={index}
+                className={getVariantClasses(stat.color)}
+                variants={itemVariants}
+                custom={index}
+              >
                 <div className={getTextAlignClass()}>
                   {stat.icon?.url && (
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black bg-opacity-10 mb-4">
+                    <motion.div
+                      className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-black bg-opacity-10 mb-4"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
                       <Image
                         src={stat.icon.url}
                         alt={stat.icon.alt || ''}
@@ -337,15 +351,14 @@ const StrpsStats: React.FC<Props> = ({
                         height={32}
                         className="w-8 h-8"
                       />
-                    </div>
+                    </motion.div>
                   )}
-                  {inView && enableAnimation ? (
+                  {enableAnimation ? (
                     <AnimatedCounter
                       value={stat.value}
                       prefix={stat.prefix}
                       suffix={stat.suffix}
                       duration={animationDuration}
-                      easing={getEasingFunction(easingType)}
                       className={`block font-bold ${getValueSizeClass()}`}
                     />
                   ) : (
@@ -355,36 +368,37 @@ const StrpsStats: React.FC<Props> = ({
                       {stat.suffix}
                     </p>
                   )}
-                  <p className="mt-2 text-lg font-medium">{stat.label}</p>
+                  <motion.p className="mt-2 text-lg font-medium" whileHover={{ x: 5 }}>
+                    {stat.label}
+                  </motion.p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {cta?.enable && (
-          <div className={`mt-12 ${getTextAlignClass()}`}>
+          <motion.div className={`mt-12 ${getTextAlignClass()}`} variants={itemVariants}>
             <Link href={cta.link || '#'} className={getCtaClasses()}>
               {cta.text || 'Learn More'}
-              <svg
+              <motion.svg
                 className="ml-2 -mr-1 w-5 h-5"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
                 aria-hidden="true"
+                whileHover={{ x: 5 }}
               >
                 <path
                   fillRule="evenodd"
                   d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
                   clipRule="evenodd"
                 />
-              </svg>
+              </motion.svg>
             </Link>
-          </div>
+          </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
-
-export default StrpsStats

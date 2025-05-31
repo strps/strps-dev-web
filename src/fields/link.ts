@@ -1,6 +1,7 @@
 import type { Field, GroupField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
+import crypto from 'crypto'
 
 export type LinkAppearances = 'default' | 'outline'
 
@@ -19,9 +20,15 @@ type LinkType = (options?: {
   appearances?: LinkAppearances[] | false
   disableLabel?: boolean
   overrides?: Partial<GroupField>
+  hashEnumName?: boolean
 }) => Field
 
-export const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = {}) => {
+export const link: LinkType = ({
+  appearances,
+  disableLabel = false,
+  overrides = {},
+  hashEnumName,
+} = {}) => {
   const linkResult: GroupField = {
     name: 'link',
     type: 'group',
@@ -124,15 +131,36 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       appearanceOptionsToUse = appearances.map((appearance) => appearanceOptions[appearance])
     }
 
-    linkResult.fields.push({
-      name: 'appearance',
-      type: 'select',
-      admin: {
-        description: 'Choose how the link should be rendered.',
-      },
-      defaultValue: 'default',
-      options: appearanceOptionsToUse,
-    })
+    if (hashEnumName) {
+      //Enum type name is based on the table name and hashed if true, offering a shorter way to name the enum types, and avoid name retriction (Error Exceeded max identifier length for table or enum name of 63 characters. ref: https://github.com/payloadcms/payload/discussions/8544).
+      linkResult.fields.push({
+        name: 'appearance',
+        enumName: ({ tableName }) => {
+          return (
+            crypto
+              .createHash('md5')
+              .update(tableName || '')
+              .digest('hex') + 'LinkAppearances'
+          )
+        },
+        type: 'select',
+        admin: {
+          description: 'Choose how the link should be rendered.',
+        },
+        defaultValue: 'default',
+        options: appearanceOptionsToUse,
+      })
+    } else {
+      linkResult.fields.push({
+        name: 'appearance',
+        type: 'select',
+        admin: {
+          description: 'Choose how the link should be rendered.',
+        },
+        defaultValue: 'default',
+        options: appearanceOptionsToUse,
+      })
+    }
   }
 
   return deepMerge(linkResult, overrides)

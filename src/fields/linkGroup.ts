@@ -8,15 +8,17 @@ import { link } from './link'
 type LinkGroupType = (options?: {
   appearances?: LinkAppearances[] | false
   overrides?: Partial<ArrayField>
+  hashEnumName?: boolean
 }) => Field
 
-export const linkGroup: LinkGroupType = ({ appearances, overrides = {} } = {}) => {
+export const linkGroup: LinkGroupType = ({ appearances, overrides = {}, hashEnumName } = {}) => {
   const generatedLinkGroup: Field = {
     name: 'links',
     type: 'array',
     fields: [
       link({
         appearances,
+        hashEnumName: hashEnumName,
       }),
     ],
     admin: {

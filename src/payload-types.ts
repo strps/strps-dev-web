@@ -238,6 +238,93 @@ export interface Page {
     | ProjectsArchiveBlock
     | StrpsAboutUsBlock
     | StrpsFormBlock
+    | {
+        heading?: string | null;
+        description?: string | null;
+        layout?: ('grid' | 'side-by-side' | 'carousel') | null;
+        columns?: ('2' | '3' | '4') | null;
+        stats?:
+          | {
+              value: string;
+              label: string;
+              prefix?: string | null;
+              suffix?: string | null;
+              /**
+               * Enter the name of a Lucide icon (e.g., "users", "award")
+               */
+              icon?: string | null;
+              color?: ('primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error') | null;
+              id?: string | null;
+            }[]
+          | null;
+        animation?: {
+          enable?: boolean | null;
+          duration?: number | null;
+          easing?: ('easeOut' | 'easeIn' | 'easeInOut' | 'linear') | null;
+        };
+        style?: {
+          variant?: ('card' | 'minimal' | 'bordered' | 'gradient') | null;
+          textAlign?: ('left' | 'center' | 'right') | null;
+          valueSize?: ('sm' | 'md' | 'lg' | 'xl') | null;
+        };
+        cta?: {
+          enable?: boolean | null;
+          text?: string | null;
+          link?: string | null;
+          style?: ('primary' | 'secondary' | 'outline' | 'text') | null;
+        };
+        container?: {
+          maxWidth?: ('sm' | 'md' | 'lg' | 'xl' | 'full' | 'none') | null;
+          padding?: {
+            top?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
+            bottom?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
+          };
+        };
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'strpsStats';
+      }
+    | {
+        heading: string;
+        description?: string | null;
+        services?:
+          | {
+              title: string;
+              description?: string | null;
+              icon?: string | null;
+              links?:
+                | {
+                    link: {
+                      type?: ('reference' | 'custom') | null;
+                      newTab?: boolean | null;
+                      reference?:
+                        | ({
+                            relationTo: 'pages';
+                            value: number | Page;
+                          } | null)
+                        | ({
+                            relationTo: 'posts';
+                            value: number | Post;
+                          } | null);
+                      url?: string | null;
+                      label: string;
+                      /**
+                       * Choose how the link should be rendered.
+                       */
+                      appearance?: ('default' | 'outline') | null;
+                    };
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        layout?: ('grid' | 'list' | 'cards') | null;
+        showFeatured?: boolean | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'strpsServices';
+      }
   )[];
   meta?: {
     title?: string | null;
@@ -1334,6 +1421,93 @@ export interface PagesSelect<T extends boolean = true> {
         projectsArchive?: T | ProjectsArchiveBlockSelect<T>;
         strpsAboutUs?: T | StrpsAboutUsBlockSelect<T>;
         strpsFormBlock?: T | StrpsFormBlockSelect<T>;
+        strpsStats?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              layout?: T;
+              columns?: T;
+              stats?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    prefix?: T;
+                    suffix?: T;
+                    icon?: T;
+                    color?: T;
+                    id?: T;
+                  };
+              animation?:
+                | T
+                | {
+                    enable?: T;
+                    duration?: T;
+                    easing?: T;
+                  };
+              style?:
+                | T
+                | {
+                    variant?: T;
+                    textAlign?: T;
+                    valueSize?: T;
+                  };
+              cta?:
+                | T
+                | {
+                    enable?: T;
+                    text?: T;
+                    link?: T;
+                    style?: T;
+                  };
+              container?:
+                | T
+                | {
+                    maxWidth?: T;
+                    padding?:
+                      | T
+                      | {
+                          top?: T;
+                          bottom?: T;
+                        };
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        strpsServices?:
+          | T
+          | {
+              heading?: T;
+              description?: T;
+              services?:
+                | T
+                | {
+                    title?: T;
+                    description?: T;
+                    icon?: T;
+                    links?:
+                      | T
+                      | {
+                          link?:
+                            | T
+                            | {
+                                type?: T;
+                                newTab?: T;
+                                reference?: T;
+                                url?: T;
+                                label?: T;
+                                appearance?: T;
+                              };
+                          id?: T;
+                        };
+                    id?: T;
+                  };
+              layout?: T;
+              showFeatured?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   meta?:
     | T

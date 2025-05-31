@@ -10,10 +10,11 @@ import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { StrpsHero } from '@/blocks/StrpsHero/Component'
 import { AboutImageAdjacent, AboutStoryBlocks, StrpsAbout } from '@/blocks/StrpsAbout/Component'
-import { StrpsSkills } from './StrpsSkills/component'
+import { StrpsSkills } from './StrpsSkills/Component'
 import { StrpsContact } from './StrpsContact/component'
 import { StrpsFormBlock } from './StrpsForm/Component'
 import { StrpsAboutUs } from './StrpsAboutUs/Component'
+import { StrpsStats } from './StrpsStats/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -30,6 +31,7 @@ const blockComponents = {
   strpsContact: StrpsContact,
   strpsFormBlock: StrpsFormBlock,
   strpsAboutUs: StrpsAboutUs,
+  strpsStats: StrpsStats,
 }
 
 export const RenderBlocks: React.FC<{

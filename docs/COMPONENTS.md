@@ -107,152 +107,161 @@ Each block must include:
 ### StrpsHero (`src/blocks/StrpsHero`)
 - **Description**: Hero section with title, text, and CTA
 - **Status**: In Progress
+- **Features**:
+  - [x] Basic rendering with title and description
+  - [x] Call-to-action buttons
+  - [ ] Background image/video support
+  - [ ] Animation options
 - **Schema**:
-  - [x] Basic fields
-  - [ ] Variant support
-  - [ ] Validation rules
-- **Component**:
-  - [x] Basic rendering
-  - [ ] Animation support
-  - [ ] Accessibility features
-- **Variants**:
-  - [ ] Classic Centered CTA
-  - [ ] Split Layout with Image
-  - [ ] Video Background
-  - [ ] With Stats or Highlights
-  - [ ] With Form
+  - [x] Title and description fields
+  - [x] CTA configuration
+  - [ ] Background media options
+  - [ ] Animation settings
 
 ### StrpsAbout (`src/blocks/StrpsAbout`)
 - **Description**: About section with content and image
 - **Status**: In Progress
-- **Variants**:
-  - [x] Story blocks
-  - [ ] Adjacent Image
+- **Features**:
+  - [x] Basic content with image
+  - [x] Multiple layout options
+  - [ ] Team member integration
+  - [ ] Stats counter
 - **Schema**:
-  - [x] Basic fields
-  - [ ] Image configuration
-  - [ ] Content validation
-- **Component**:
-  - [x] Basic rendering
-  - [ ] Responsive layout
-  - [ ] Image optimization
+  - [x] Content and image fields
+  - [x] Layout configuration
+  - [ ] Team member references
 
 ### StrpsAboutUs (`src/blocks/StrpsAboutUs`)
-- **Description**: Company information, mission, vision, and values
+- **Description**: Comprehensive company information section
 - **Status**: In Progress
-- **Components**:
-  - `Component.tsx` - Main component that composes all subcomponents
-  - `MissionAndVision.tsx` - Handles display of mission and vision statements
-  - `Values.tsx` - Displays core values in a responsive grid
-  - `CompanyInformation.tsx` - Shows company timeline and leadership team
 - **Features**:
-  - [x] Mission statement
-  - [x] Vision statement
-  - [x] Core values grid
-  - [x] Company history/timeline
-  - [x] Leadership team cards
+  - [x] Mission and vision statements
+  - [x] Core values display
+  - [x] Company timeline
+  - [x] Leadership team section
 - **Schema**:
   - [x] Mission/vision fields
   - [x] Timeline entries
   - [x] Team member profiles
   - [x] Core values configuration
-- **Implementation**:
-  - [x] Responsive layout
-  - [x] Component separation
-  - [ ] Accessibility testing
-  - [ ] Unit tests
-  - [ ] Storybook stories
 
 ### StrpsServices (`src/blocks/StrpsServices`)
 - **Description**: Displays services or solutions offered
-- **Status**: Not Started
+- **Status**: In Progress
 - **Features**:
-  - [ ] Service cards with icons
-  - [ ] Service categories
-  - [ ] Detailed service descriptions
-  - [ ] CTA to service pages
+  - [x] Service cards with icons
+  - [x] Service categories
+  - [x] Detailed service descriptions
+  - [x] CTA to service pages
 - **Schema**:
-  - [ ] Service items array
-  - [ ] Icon selection
-  - [ ] Category filtering
+  - [x] Service items array
+  - [x] Icon selection
+  - [x] Category filtering
+  - [x] Link configuration
 
 ### StrpsClients (`src/blocks/StrpsClients`)
 - **Description**: Showcases client logos and testimonials
-- **Status**: Not Started
+- **Status**: In Progress
 - **Features**:
-  - [ ] Client logo grid/carousel
-  - [ ] Testimonial cards
+  - [x] Client logo grid
+  - [x] Testimonial cards
   - [ ] Client categorization
   - [ ] Filtering options
 - **Schema**:
-  - [ ] Client entries
-  - [ ] Logo uploads
-  - [ ] Testimonial content
+  - [x] Client entries
+  - [x] Logo uploads
+  - [x] Testimonial content
 
 ### StrpsBlog (`src/blocks/StrpsBlog`)
 - **Description**: Displays blog posts and articles
-- **Status**: Not Started
+- **Status**: In Progress
 - **Features**:
-  - [ ] Latest posts grid/list
-  - [ ] Categories and tags
+  - [x] Latest posts grid/list
+  - [x] Categories and tags
   - [ ] Featured post highlighting
   - [ ] Read more links
 - **Schema**:
-  - [ ] Post selection
-  - [ ] Display options
-  - [ ] Pagination settings
+  - [x] Post selection
+  - [x] Display options
+  - [ ] Sorting and filtering
 
 ### StrpsStats (`src/blocks/StrpsStats`)
-- **Description**: Animated statistics and metrics
-- **Status**: Not Started
+- **Description**: Displays statistics and metrics
+- **Status**: In Progress
 - **Features**:
-  - [ ] Animated counters
-  - [ ] Icon or image support
-  - [ ] Responsive layout
-  - [ ] Custom animation options
+  - [x] Animated counters
+  - [x] Icon support
+  - [x] Customizable layout
+  - [ ] Progress bars
 - **Schema**:
-  - [ ] Stat items
-  - [ ] Animation settings
-  - [ ] Display options
-
-### StrpsMedia (`src/blocks/StrpsMedia`)
-- **Description**: Media gallery with lightbox
-- **Status**: Not Started
-- **Features**:
-  - [ ] Grid/masonry layout
-  - [ ] Lightbox viewer
-  - [ ] Image/video support
-  - [ ] Filtering by category
-- **Schema**:
-  - [ ] Media items
-  - [ ] Layout options
-  - [ ] Category system
-
-### StrpsCareers (`src/blocks/StrpsCareers`)
-- **Description**: Job openings and company culture
-- **Status**: Not Started
-- **Features**:
-  - [ ] Job listings
-  - [ ] Application form
-  - [ ] Company culture highlights
-  - [ ] Benefits information
-- **Schema**:
-  - [ ] Job postings
-  - [ ] Application fields
-  - [ ] Department filtering
+  - [x] Stat items
+  - [x] Animation settings
+  - [x] Layout options
 
 ### StrpsContact (`src/blocks/StrpsContact`)
 - **Description**: Contact information and form
 - **Status**: In Progress
 - **Features**:
-  - [x] Basic contact form
-  - [ ] Interactive map
+  - [x] Contact form
+  - [x] Contact information
+  - [ ] Map integration
   - [ ] Business hours
-  - [ ] Multiple locations
 - **Schema**:
-  - [ ] Contact fields
+  - [x] Form fields
+  - [x] Contact details
   - [ ] Map settings
-  - [ ] Office locations
+
+### StrpsForm (`src/blocks/StrpsForm`)
+- **Description**: Customizable form builder
+- **Status**: In Progress
+- **Features**:
+  - [x] Multiple field types
+  - [x] Form validation
+  - [x] reCAPTCHA support
+  - [ ] File uploads
+- **Schema**:
+  - [x] Field configuration
+  - [x] Validation rules
+  - [x] reCAPTCHA settings
+
+### StrpsMedia (`src/blocks/StrpsMedia`)
+- **Description**: Media gallery with lightbox
+- **Status**: In Progress
+- **Features**:
+  - [x] Image gallery
+  - [ ] Video support
+  - [ ] Lightbox functionality
+  - [ ] Grid/masonry layouts
+- **Schema**:
+  - [x] Media items
+  - [ ] Display options
+  - [ ] Lightbox settings
+
+### StrpsSkills (`src/blocks/StrpsSkills`)
+- **Description**: Skills and expertise visualization
+- **Status**: In Progress
+- **Features**:
+  - [x] Progress bars
+  - [x] Icons and labels
+  - [ ] Animated transitions
+  - [ ] Skill categories
+- **Schema**:
+  - [x] Skill items
+  - [x] Progress values
+  - [ ] Category grouping
+
+### StrpsCareers (`src/blocks/StrpsCareers`)
+- **Description**: Job listings and career opportunities
+- **Status**: In Progress
+- **Features**:
+  - [x] Job listings
+  - [x] Job details
+  - [ ] Application form
+  - [ ] Department filtering
+- **Schema**:
+  - [x] Job postings
+  - [x] Department structure
+  - [ ] Application settings
 
 ### StrpsNewsletter (`src/blocks/StrpsNewsletter`)
 - **Description**: Email newsletter signup form
