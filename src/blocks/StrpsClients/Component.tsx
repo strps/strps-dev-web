@@ -1,177 +1,170 @@
-import React, { useRef, useEffect, useState } from 'react'
-import { Block } from 'payload/types'
+'use client'
+import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { cva } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
+import type { Media } from '@/payload-types'
 
-type Testimonial = {
-  content: string
-  author: string
-  position?: string
-  company?: string
-  authorImage?: any
-}
-
-type Client = {
+// Define the client logo type based on payload-types.ts
+type ClientLogo = {
+  id?: string | null
   name: string
-  logo: any
-  url?: string
-  testimonial?: Testimonial
-}
-
-type Props = {
-  block: Block & {
-    heading?: string
-    description?: string
-    displayType?: 'grid' | 'carousel' | 'testimonials' | 'combined'
-    clients?: Client[]
-    showDivider?: boolean
-    maxLogosPerRow?: string
-    logoBackground?: 'none' | 'light' | 'gray' | 'rounded'
-    testimonialLayout?: 'grid' | 'slider' | 'stacked'
+  logo: number | Media
+  url?: string | null
+  testimonial?: {
+    content?: string | null
+    author?: string | null
+    position?: string | null
+    company?: string | null
+    authorImage?: (number | null) | Media
   }
 }
 
-const StrpsClients: React.FC<Props> = ({
-  block: {
-    heading,
-    description,
-    displayType = 'grid',
-    clients = [],
-    showDivider = true,
-    maxLogosPerRow = '5',
-    logoBackground = 'none',
-    testimonialLayout = 'grid',
-  },
-}) => {
-  const carouselRef = useRef<HTMLDivElement>(null)
-  const [isMounted, setIsMounted] = useState(false)
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isPaused, setIsPaused] = useState(false)
-
-  // Handle carousel auto-scroll
-  useEffect(() => {
-    if (displayType !== 'carousel' || !isMounted || isPaused) return
-
-    const interval = setInterval(() => {
-      if (carouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current
-        const maxScroll = scrollWidth - clientWidth
-        const nextScroll = scrollLeft + clientWidth
-
-        if (nextScroll >= maxScroll) {
-          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' })
-        } else {
-          carouselRef.current.scrollTo({ left: nextScroll, behavior: 'smooth' })
-        }
-      }
-    }, 3000)
-
-    return () => clearInterval(interval)
-  }, [displayType, isMounted, isPaused])
-
-  // Set mounted state after initial render
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  // Handle slide change for testimonial slider
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index)
-  }
-
-  // Get logo grid columns class based on selection
-  const getGridCols = () => {
-    const colsMap: Record<string, string> = {
+// Define variants using class-variance-authority
+const clientsVariants = cva('', {
+  variants: {
+    displayType: {
+      grid: 'grid gap-4',
+      carousel: 'flex overflow-x-auto snap-x snap-mandatory scrollbar-hide',
+      testimonials: 'space-y-8',
+      combined: 'grid gap-8',
+    },
+    maxLogosPerRow: {
       '2': 'grid-cols-2 sm:grid-cols-3 md:grid-cols-2',
       '3': 'grid-cols-2 sm:grid-cols-3',
       '4': 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4',
       '5': 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5',
       '6': 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6',
-    }
-    return colsMap[maxLogosPerRow] || 'grid-cols-2 sm:grid-cols-3 md:grid-cols-5'
-  }
-
-  // Get logo background class
-  const getLogoBgClass = () => {
-    const bgMap = {
+    },
+    logoBackground: {
       none: '',
-      light: 'bg-white p-4',
-      gray: 'bg-gray-50 p-4',
-      rounded: 'bg-white p-4 rounded-lg shadow-sm',
-    }
-    return bgMap[logoBackground] || ''
-  }
+      light: 'bg-muted/50',
+      dark: 'bg-muted',
+      rounded: 'bg-muted/50 rounded-full',
+    },
+    testimonialLayout: {
+      grid: 'grid gap-6 md:grid-cols-2 lg:grid-cols-3',
+      slider: 'relative',
+      stacked: 'space-y-8',
+    },
+  },
+  defaultVariants: {
+    displayType: 'grid',
+    maxLogosPerRow: '4',
+    logoBackground: 'none',
+    testimonialLayout: 'grid',
+  },
+})
+
+export type StrpsClientsBlock = {
+  heading?: string | null
+  description?: string | null
+  displayType?: 'grid' | 'carousel' | 'testimonials' | 'combined' | null
+  clients?: ClientLogo[] | null
+  showDivider?: boolean | null
+  maxLogosPerRow?: '2' | '3' | '4' | '5' | '6' | null
+  logoBackground?: 'none' | 'light' | 'dark' | 'rounded' | null
+  testimonialLayout?: 'grid' | 'slider' | 'stacked' | null
+  id?: string | null
+  blockName?: string | null
+  blockType: 'strpsClients'
+}
+
+export const StrpsClients: React.FC<StrpsClientsBlock> = ({
+  heading,
+  description,
+  displayType = 'grid',
+  clients = [],
+  showDivider = false,
+  maxLogosPerRow = '4',
+  logoBackground = 'none',
+  testimonialLayout = 'grid',
+}) => {
+  // Get logo wrapper classes based on background variant
+  const getLogoWrapperClasses = () =>
+    cn(
+      'relative aspect-square flex items-center justify-center overflow-hidden',
+      {
+        'p-4': logoBackground !== 'none',
+        'rounded-lg': logoBackground === 'light' || logoBackground === 'dark',
+        'rounded-full': logoBackground === 'rounded',
+      },
+      clientsVariants({ logoBackground }),
+    )
 
   // Render logo item
-  const renderLogo = (client: Client, index: number) => (
-    <div
-      key={index}
-      className={`flex items-center justify-center h-24 ${getLogoBgClass()}`}
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      {client.url ? (
-        <a
-          href={client.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block relative w-full h-full"
-          title={client.name}
-        >
-          <Image
-            src={client.logo.url}
-            alt={client.name}
-            fill
-            className="object-contain p-2"
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          />
-        </a>
-      ) : (
-        <div className="relative w-full h-full">
-          <Image
-            src={client.logo.url}
-            alt={client.name}
-            fill
-            className="object-contain p-2"
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          />
-        </div>
-      )}
-    </div>
-  )
+  const renderLogo = (client: ClientLogo, index: number) => {
+    if (!client?.logo) return null
 
-  // Render testimonial item
-  const renderTestimonial = (client: Client, index: number) => {
-    if (!client.testimonial) return null
-
-    const { content, author, position, company, authorImage } = client.testimonial
+    const logoId = typeof client.logo === 'number' ? client.logo : client.logo.id
+    const logoUrl = typeof client.logo === 'number' ? `/api/media/${logoId}` : client.logo.url
 
     return (
-      <div
-        key={index}
-        className={`bg-white p-6 rounded-lg shadow-sm border border-gray-100 ${
-          testimonialLayout === 'slider' ? 'w-full flex-shrink-0' : ''
-        }`}
-      >
-        <div className="mb-4 text-indigo-600">
-          <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 32 32">
-            <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.016 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.36-2.304-5.6-5.088-5.6-1.024 0-1.856.832-1.856 1.856 0 1.152.96 1.792 1.856 1.792.64 0 1.28-.192 1.856-.384.32 3.2-1.6 6.4-5.12 6.4-1.92 0-3.2-1.6-3.2-4.352 0-5.248 4.224-10.176 9.6-13.44L9.352 4zm16 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.016 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.36-2.304-5.6-5.088-5.6-1.024 0-1.856.832-1.856 1.856 0 1.152.96 1.792 1.856 1.792.64 0 1.28-.192 1.856-.384.32 3.2-1.6 6.4-5.12 6.4-1.92 0-3.2-1.6-3.2-4.352 0-5.248 4.224-10.176 9.6-13.44L25.352 4z" />
-          </svg>
-        </div>
-        <p className="text-gray-600 mb-6">"{content}"</p>
-        <div className="flex items-center">
-          {authorImage && (
-            <div className="relative h-12 w-12 rounded-full overflow-hidden mr-4">
-              <Image src={authorImage.url} alt={author} fill className="object-cover" />
+      <div key={client.id || index} className={getLogoWrapperClasses()}>
+        {client.url ? (
+          <a
+            href={client.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block relative w-full h-full"
+            title={client.name}
+          >
+            <Image
+              src={logoUrl || ''}
+              alt={client.name}
+              fill
+              className="object-contain p-2"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            />
+          </a>
+        ) : (
+          <div className="relative w-full h-full">
+            <Image
+              src={logoUrl || ''}
+              alt={client.name}
+              fill
+              className="object-contain p-2"
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // Render testimonial item
+  const renderTestimonial = (client: ClientLogo, index: number) => {
+    if (!client.testimonial) return null
+
+    return (
+      <div key={client.id || index} className="bg-card p-6 rounded-lg">
+        {client.testimonial.content && (
+          <p className="text-muted-foreground mb-4">&quot;{client.testimonial.content}&quot;</p>
+        )}
+        <div className="flex items-center gap-3">
+          {client.testimonial.authorImage && (
+            <div className="relative w-10 h-10 rounded-full overflow-hidden">
+              <Image
+                src={
+                  typeof client.testimonial.authorImage === 'number'
+                    ? `/api/media/${client.testimonial.authorImage}`
+                    : client.testimonial.authorImage.url || ''
+                }
+                alt={client.testimonial.author || ''}
+                fill
+                className="object-cover"
+              />
             </div>
           )}
           <div>
-            <p className="font-medium text-gray-900">{author}</p>
-            {(position || company) && (
-              <p className="text-sm text-gray-500">
-                {position}
-                {position && company ? ', ' : ''}
-                {company && <span>{company}</span>}
+            {client.testimonial.author && (
+              <p className="font-medium">{client.testimonial.author}</p>
+            )}
+            {(client.testimonial.position || client.testimonial.company) && (
+              <p className="text-sm text-muted-foreground">
+                {[client.testimonial.position, client.testimonial.company]
+                  .filter(Boolean)
+                  .join(', ')}
               </p>
             )}
           </div>
@@ -180,125 +173,45 @@ const StrpsClients: React.FC<Props> = ({
     )
   }
 
-  // Render content based on display type
-  const renderContent = () => {
-    switch (displayType) {
-      case 'carousel':
-        return (
-          <div
-            ref={carouselRef}
-            className="flex overflow-x-auto scrollbar-hide py-4"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-          >
-            {clients.map((client, index) => (
-              <div key={index} className="flex-shrink-0 px-4 w-64">
-                {renderLogo(client, index)}
-              </div>
-            ))}
-          </div>
-        )
-
-      case 'testimonials':
-        if (testimonialLayout === 'slider') {
-          return (
-            <div className="relative">
-              <div className="overflow-hidden">
-                <div
-                  className="flex transition-transform duration-300 ease-in-out"
-                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-                >
-                  {clients.map((client, index) => (
-                    <div key={index} className="w-full flex-shrink-0 px-4">
-                      {renderTestimonial(client, index)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {clients.length > 1 && (
-                <div className="flex justify-center mt-8 space-x-2">
-                  {clients.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => goToSlide(index)}
-                      className={`w-3 h-3 rounded-full ${
-                        currentSlide === index ? 'bg-indigo-600' : 'bg-gray-300'
-                      }`}
-                      aria-label={`Go to slide ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        }
-
-        return (
-          <div
-            className={`grid gap-6 ${
-              testimonialLayout === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'max-w-3xl mx-auto'
-            }`}
-          >
-            {clients.map((client, index) => (
-              <div key={index}>{renderTestimonial(client, index)}</div>
-            ))}
-          </div>
-        )
-
-      case 'combined':
-        return (
-          <div className="space-y-12">
-            <div className={`grid ${getGridCols()} gap-6`}>
-              {clients.map((client, index) => (
-                <div key={`logo-${index}`}>{renderLogo(client, index)}</div>
-              ))}
-            </div>
-            <div className="mt-12">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">What Our Clients Say</h3>
-              <div className="grid md:grid-cols-2 gap-8">
-                {clients
-                  .slice(0, 2)
-                  .map(
-                    (client, index) =>
-                      client.testimonial && (
-                        <div key={`testimonial-${index}`}>{renderTestimonial(client, index)}</div>
-                      ),
-                  )}
-              </div>
-            </div>
-          </div>
-        )
-
-      case 'grid':
-      default:
-        return (
-          <div className={`grid ${getGridCols()} gap-6`}>
-            {clients.map((client, index) => (
-              <div key={index}>{renderLogo(client, index)}</div>
-            ))}
-          </div>
-        )
-    }
+  if (!clients || clients.length === 0) {
+    return null
   }
 
   return (
-    <div className="bg-white py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12 md:py-16 lg:py-24">
+      <div className="container">
         {(heading || description) && (
-          <div className="text-center mb-12">
-            {heading && (
-              <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">{heading}</h2>
-            )}
-            {description && (
-              <p className="mt-4 text-xl text-gray-500 max-w-3xl mx-auto">{description}</p>
-            )}
+          <div className="mb-8 text-center">
+            {heading && <h2 className="text-3xl font-bold mb-2">{heading}</h2>}
+            {description && <p className="text-muted-foreground">{description}</p>}
           </div>
         )}
 
-        <div className={showDivider ? 'divide-y divide-gray-200' : ''}>{renderContent()}</div>
+        {displayType === 'testimonials' ? (
+          <div className={clientsVariants({ testimonialLayout })}>
+            {clients.map((client, index) => renderTestimonial(client, index))}
+          </div>
+        ) : displayType === 'combined' ? (
+          <div className="space-y-12">
+            <div className={clientsVariants({ displayType: 'grid', maxLogosPerRow })}>
+              {clients
+                .filter((client) => !client.testimonial)
+                .map((client, index) => renderLogo(client, index))}
+            </div>
+            <div className={clientsVariants({ testimonialLayout })}>
+              {clients
+                .filter((client) => client.testimonial)
+                .map((client, index) => renderTestimonial(client, index))}
+            </div>
+          </div>
+        ) : (
+          <div className={clientsVariants({ displayType, maxLogosPerRow })}>
+            {clients.map((client, index) => renderLogo(client, index))}
+          </div>
+        )}
+
+        {showDivider && <div className="border-t border-border mt-16 pt-8" />}
       </div>
-    </div>
+    </section>
   )
 }
-
-export default StrpsClients

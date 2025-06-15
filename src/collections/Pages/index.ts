@@ -27,7 +27,9 @@ import { ProjectsArchive } from '@/blocks/ProjectsArchiveBlock/config'
 import { StrpsFormBlock } from '@/blocks/StrpsForm/config'
 import { StrpsAboutUs } from '@/blocks/StrpsAboutUs/config'
 import { StrpsStats } from '@/blocks/StrpsStats/config'
-import StrpsServices from '@/blocks/StrpsServices/config'
+import { StrpsServices } from '@/blocks/StrpsServices/config'
+import { StrpsClients } from '@/blocks/StrpsClients/config'
+import { StrpsCareers } from '@/blocks/StrpsCareers/config'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -96,6 +98,8 @@ export const Pages: CollectionConfig<'pages'> = {
                 StrpsFormBlock,
                 StrpsStats,
                 StrpsServices,
+                StrpsClients,
+                StrpsCareers,
               ],
               required: true,
               admin: {

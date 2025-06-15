@@ -14,8 +14,6 @@ import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { ThemeProvider } from '@/providers/Theme/theme-provider'
 
-import { RecaptchaProvider } from '@/providers/recaptcha-provider'
-
 const chivo = Chivo({ subsets: ['latin'] })
 const lora = Lora({ subsets: ['latin'] })
 

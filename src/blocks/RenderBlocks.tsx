@@ -15,6 +15,9 @@ import { StrpsContact } from './StrpsContact/component'
 import { StrpsFormBlock } from './StrpsForm/Component'
 import { StrpsAboutUs } from './StrpsAboutUs/Component'
 import { StrpsStats } from './StrpsStats/Component'
+import { StrpsServices } from './StrpsServices/Component'
+import { StrpsClients } from './StrpsClients/Component'
+import { StrpsCareers } from './StrpsCareers/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -32,6 +35,9 @@ const blockComponents = {
   strpsFormBlock: StrpsFormBlock,
   strpsAboutUs: StrpsAboutUs,
   strpsStats: StrpsStats,
+  strpsServices: StrpsServices,
+  strpsClients: StrpsClients,
+  strpsCareers: StrpsCareers,
 }
 
 export const RenderBlocks: React.FC<{

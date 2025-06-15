@@ -68,17 +68,20 @@ export const AboutStoryBlocks = ({ id, title, storyBlocks, section }: StrpsAbout
     <Section
       id={id}
       {...section}
-      className="h-svh flex flex-col items-center justify-center relative text-primary"
+      className="flex flex-col items-center justify-center relative text-primary"
     >
       {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
       <div className="flex flex-col items-center">
         {storyBlocks?.map((block, index) => {
-          const IconComponent = <DynamicIcon name={block.lucideIcon} className="w-8 h-8 mr-2" />
+          const IconComponent =
+            block.lucideIcon && block.lucideIcon !== 'none' ? (
+              <DynamicIcon name={block.lucideIcon} className="w-8 h-8 mr-2" />
+            ) : null
 
           return (
             <div key={index} className="p-6">
-              <div className=" mb-2 flex flex-row items-center">
-                {IconComponent && IconComponent}
+              <div className="flex flex-row items-center">
+                {IconComponent}
                 <h3 className="text-xl font-semibold tracking-tight">{block.heading}</h3>
               </div>
               <p className="mt-2 text-md leading-relaxed">{block.content}</p>

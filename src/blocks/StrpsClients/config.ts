@@ -1,7 +1,8 @@
-import { Block } from 'payload/types'
+import { Block } from 'payload'
 
 export const StrpsClients: Block = {
-  slug: 'strps-clients',
+  slug: 'strpsClients',
+  interfaceName: 'StrpsClientsBlock',
   labels: {
     singular: 'Clients',
     plural: 'Clients Blocks',

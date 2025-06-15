@@ -2,6 +2,7 @@ import { Block } from 'payload'
 
 export const StrpsStats: Block = {
   slug: 'strpsStats',
+  interfaceName: 'StrpsStatsBlock',
   labels: {
     singular: 'Statistics',
     plural: 'Statistics Blocks',

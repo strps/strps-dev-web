@@ -5046,7 +5046,7 @@ type DatabaseSchema = {
   relations_footer: typeof relations_footer
 }
 
-declare module '@payloadcms/db-vercel-postgres/types' {
+declare module '@payloadcms/db-vercel-postgres' {
   export interface GeneratedDatabaseSchema {
     schema: DatabaseSchema
   }

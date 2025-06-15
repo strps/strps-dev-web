@@ -1,7 +1,8 @@
-import { Block } from 'payload/types'
+import { Block } from 'payload'
 
 export const StrpsCareers: Block = {
-  slug: 'strps-careers',
+  slug: 'strpsCareers',
+  interfaceName: 'StrpsCareersBlock',
   labels: {
     singular: 'Careers',
     plural: 'Careers Blocks',

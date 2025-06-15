@@ -64,6 +64,7 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
             strokeWidth={`${strokeWidth}px`}
             pathLength="100"
             strokeDasharray={strokeDasharray}
+            suppressHydrationWarning
           />
         )
       })}

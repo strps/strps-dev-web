@@ -1,8 +1,10 @@
-import React from 'react'
+'use client'
+import React, { useEffect, useState } from 'react'
 import { cn } from '@/utilities/ui'
 import { SectionBackground } from './SectionBackground'
 
 import { SectionConfig } from '@/payload-types'
+import { useTheme } from 'next-themes'
 
 interface SectionProps extends SectionConfig {
   id?: string | null
@@ -38,22 +40,48 @@ export const Section: React.FC<SectionProps> = ({
   backgroundImage,
   className,
   children,
+  theme,
 }) => {
-  const hasBackgroundContainer = backgroundContainer === true
+  const { resolvedTheme } = useTheme()
+  const [sectionTheme, setSectionTheme] = useState('')
+
+  useEffect(() => {
+    setSectionTheme(themeOptions[theme])
+  }, [theme])
+
+  let InvertedTheme = ''
+
+  if (typeof window !== 'undefined') {
+    InvertedTheme = resolvedTheme === 'light' ? 'dark' : 'light'
+  }
+
+  const themeOptions = {
+    auto: '',
+    light: 'light',
+    dark: 'dark',
+    inverted: InvertedTheme,
+  }
+
   //check if backgroundImage is a Media object
   const hasBackgroundImage =
     backgroundImage && typeof backgroundImage === 'object' ? backgroundImage : undefined
 
   return (
-    <section id={id ? `block-${id}` : undefined} className={cn('relative', className)}>
+    <section
+      id={id ? `block-${id}` : undefined}
+      className={cn(sectionTheme, 'relative bg-background text-foreground', className)}
+      suppressHydrationWarning
+    >
       <div className={cn(container ? 'container mx-auto' : '', 'relative z-10 p-8')}>
         {children}
       </div>
       <SectionBackground
         background={background}
-        container={hasBackgroundContainer}
+        container={backgroundContainer}
         backgroundImage={hasBackgroundImage}
       />
     </section>
   )
 }
+
+export default Section

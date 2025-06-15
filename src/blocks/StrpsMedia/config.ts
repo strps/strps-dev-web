@@ -1,4 +1,4 @@
-import { Block } from 'payload/types'
+import { Block } from 'payload'
 
 export const StrpsMedia: Block = {
   slug: 'strps-media',
@@ -244,7 +244,6 @@ export const StrpsMedia: Block = {
           defaultValue: 5000,
           min: 1000,
           max: 10000,
-          step: 500,
           admin: {
             condition: (_, siblingData) => siblingData.autoplay === true,
           },

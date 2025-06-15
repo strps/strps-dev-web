@@ -1,154 +1,152 @@
 import React from 'react'
-import { Block } from 'payload/types'
-import Link from 'next/link'
+import { StrpsServicesBlock } from '@/payload-types'
+import { cn } from '@/utilities/ui'
+import { DynamicIcon, dynamicIconImports } from 'lucide-react/dynamic'
+import { CMSLink } from '@/components/Link'
 
-type Service = {
-  title: string
-  description?: string
-  icon?: string
-  link?: {
-    type: 'internal' | 'external'
-    label: string
-    page?: any
-    url?: string
-  }
-  features?: Array<{ feature: string }>
-}
+type Service = NonNullable<StrpsServicesBlock['services']>[number]
+type LucideIconName = keyof typeof dynamicIconImports
 
-type Props = {
-  block: Block & {
-    heading?: string
-    description?: string
-    services?: Service[]
-    layout?: 'grid' | 'list' | 'cards'
-    showFeatured?: boolean
-  }
-}
-
-const StrpsServices: React.FC<Props> = ({
-  block: { heading, description, services = [], layout = 'grid', showFeatured = false },
+export const StrpsServices: React.FC<StrpsServicesBlock> = ({
+  heading,
+  description,
+  services: servicesProp,
+  layout = 'grid',
+  showFeatured = false,
 }) => {
+  const services = servicesProp || []
+
   // If showFeatured is true, the first service will be treated as featured
   const featuredService = showFeatured && services.length > 0 ? services[0] : null
   const otherServices = showFeatured ? services.slice(1) : services
 
   const renderService = (service: Service, index: number, isFeatured: boolean = false) => {
-    const { title, description, icon, link, features = [] } = service
+    const { title, description, icon, link } = service
+
+    // Helper function to safely get the URL from a link object
+    const getLinkUrl = (link: any) => {
+      if (link.type !== 'reference' || !link.reference) return link.url || ''
+      if (typeof link.reference.value === 'number') return ''
+      return `/${link.reference.value.slug}`
+    }
+
+    // Check if the icon is a valid Lucide icon
+    const isValidIconName = icon && icon in dynamicIconImports
+    const iconComponent = isValidIconName ? <DynamicIcon name={icon as LucideIconName} /> : null
 
     const serviceContent = (
       <div
-        className={`h-full ${isFeatured ? 'p-8' : 'p-6'} ${!isFeatured ? 'bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300' : ''}`}
-      >
-        {icon && (
-          <div className="flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white mb-4">
-            {/* In a real implementation, you would render the actual Lucide icon */}
-            <span className="text-xl">{icon}</span>
-          </div>
+        className={cn(
+          'h-full',
+          isFeatured ? 'p-8' : 'p-6',
+          !isFeatured &&
+            'bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border',
         )}
-        <h3 className={`${isFeatured ? 'text-2xl' : 'text-lg'} font-medium text-gray-900 mb-2`}>
+      >
+        {iconComponent}
+        <h3
+          className={cn(
+            'font-medium mb-2',
+            isFeatured ? 'text-2xl text-primary-foreground' : 'text-lg text-foreground',
+          )}
+        >
           {title}
         </h3>
         {description && (
-          <p className={`${isFeatured ? 'text-lg' : 'text-base'} text-gray-500 mb-4`}>
+          <p
+            className={cn(
+              'mb-4',
+              isFeatured ? 'text-lg text-muted-foreground' : 'text-base text-muted-foreground',
+            )}
+          >
             {description}
           </p>
         )}
-
-        {features.length > 0 && (
-          <ul className="mt-4 space-y-2">
-            {features.map((feature, i) => (
-              <li key={i} className="flex items-start">
-                <svg
-                  className="h-5 w-5 text-green-500 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-                <span className="text-gray-600">{feature.feature}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-
         {link && (
-          <div className="mt-6">
-            {link.type === 'internal' && link.page ? (
-              <Link
-                href={`/${link.page.slug}`}
-                className="text-indigo-600 hover:text-indigo-800 font-medium"
-              >
-                {link.label} →
-              </Link>
-            ) : link.url ? (
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-600 hover:text-indigo-800 font-medium"
-              >
-                {link.label} →
-              </a>
-            ) : null}
-          </div>
+          <span
+            className={cn(
+              'inline-flex items-center text-sm font-medium',
+              isFeatured ? 'text-primary-foreground' : 'text-primary',
+            )}
+          >
+            {link.label}
+            <svg
+              className="ml-1 w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
+          </span>
         )}
       </div>
     )
+
+    if (link) {
+      return (
+        <CMSLink
+          key={index}
+          type={link.type || 'custom'}
+          url={getLinkUrl(link)}
+          newTab={link.newTab}
+          className={cn('block h-full', {
+            'bg-primary text-primary-foreground rounded-lg': isFeatured,
+          })}
+        >
+          {serviceContent}
+        </CMSLink>
+      )
+    }
 
     return (
       <div
         key={index}
-        className={`${isFeatured ? 'lg:col-span-2 bg-gradient-to-r from-indigo-700 to-indigo-600 text-white rounded-lg shadow-xl' : 'bg-white'}`}
+        className={cn('h-full', {
+          'bg-primary text-primary-foreground rounded-lg': isFeatured,
+        })}
       >
-        {isFeatured ? (
-          <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
-            <div className="p-8">
-              <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-                {heading || 'Our Services'}
-              </h2>
-              <p className="mt-4 text-lg text-indigo-100">
-                {description || 'Explore our comprehensive range of professional services'}
-              </p>
-            </div>
-            <div className="bg-white p-8 rounded-lg m-4">{serviceContent}</div>
-          </div>
-        ) : (
-          serviceContent
-        )}
+        {serviceContent}
       </div>
     )
   }
 
-  // Determine grid columns based on layout
-  const gridCols = {
-    grid: 'md:grid-cols-2 lg:grid-cols-3',
-    list: 'md:grid-cols-1',
-    cards: 'md:grid-cols-2 lg:grid-cols-3',
-  }[layout]
-
   return (
-    <div className="bg-gray-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {!showFeatured && heading && (
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">{heading}</h2>
-            {description && <p className="mt-4 text-xl text-gray-500">{description}</p>}
-          </div>
-        )}
+    <section className="py-16">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          {heading && <h2 className="text-3xl font-bold mb-4">{heading}</h2>}
+          {description && (
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{description}</p>
+          )}
+        </div>
 
-        <div className={`grid gap-8 ${gridCols} ${showFeatured ? 'lg:grid-cols-1' : ''}`}>
-          {featuredService && renderService(featuredService, 0, true)}
-          {otherServices.map((service, index) => renderService(service, index + 1, false))}
+        <div className="space-y-12">
+          {featuredService && (
+            <div className="bg-primary text-primary-foreground rounded-lg overflow-hidden">
+              {renderService(featuredService, 0, true)}
+            </div>
+          )}
+
+          <div
+            className={cn('grid gap-6', {
+              'md:grid-cols-2 lg:grid-cols-3': layout === 'grid',
+              'space-y-6': layout === 'list',
+              'md:grid-cols-2': layout === 'cards',
+            })}
+          >
+            {otherServices.map((service, index) => (
+              <React.Fragment key={index}>{renderService(service, index + 1)}</React.Fragment>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }
-
-export default StrpsServices

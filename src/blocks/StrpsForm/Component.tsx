@@ -201,6 +201,8 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
       id={id}
       container={true}
       backgroundContainer={false}
+      theme="auto"
+      background="none"
       className="flex items-center justify-center py-16"
     >
       <div className="w-full max-w-4xl mx-auto">

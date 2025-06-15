@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     projects: Project;
+    tags: Tag;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -89,6 +90,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -238,93 +240,10 @@ export interface Page {
     | ProjectsArchiveBlock
     | StrpsAboutUsBlock
     | StrpsFormBlock
-    | {
-        heading?: string | null;
-        description?: string | null;
-        layout?: ('grid' | 'side-by-side' | 'carousel') | null;
-        columns?: ('2' | '3' | '4') | null;
-        stats?:
-          | {
-              value: string;
-              label: string;
-              prefix?: string | null;
-              suffix?: string | null;
-              /**
-               * Enter the name of a Lucide icon (e.g., "users", "award")
-               */
-              icon?: string | null;
-              color?: ('primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error') | null;
-              id?: string | null;
-            }[]
-          | null;
-        animation?: {
-          enable?: boolean | null;
-          duration?: number | null;
-          easing?: ('easeOut' | 'easeIn' | 'easeInOut' | 'linear') | null;
-        };
-        style?: {
-          variant?: ('card' | 'minimal' | 'bordered' | 'gradient') | null;
-          textAlign?: ('left' | 'center' | 'right') | null;
-          valueSize?: ('sm' | 'md' | 'lg' | 'xl') | null;
-        };
-        cta?: {
-          enable?: boolean | null;
-          text?: string | null;
-          link?: string | null;
-          style?: ('primary' | 'secondary' | 'outline' | 'text') | null;
-        };
-        container?: {
-          maxWidth?: ('sm' | 'md' | 'lg' | 'xl' | 'full' | 'none') | null;
-          padding?: {
-            top?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
-            bottom?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
-          };
-        };
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'strpsStats';
-      }
-    | {
-        heading: string;
-        description?: string | null;
-        services?:
-          | {
-              title: string;
-              description?: string | null;
-              icon?: string | null;
-              links?:
-                | {
-                    link: {
-                      type?: ('reference' | 'custom') | null;
-                      newTab?: boolean | null;
-                      reference?:
-                        | ({
-                            relationTo: 'pages';
-                            value: number | Page;
-                          } | null)
-                        | ({
-                            relationTo: 'posts';
-                            value: number | Post;
-                          } | null);
-                      url?: string | null;
-                      label: string;
-                      /**
-                       * Choose how the link should be rendered.
-                       */
-                      appearance?: ('default' | 'outline') | null;
-                    };
-                    id?: string | null;
-                  }[]
-                | null;
-              id?: string | null;
-            }[]
-          | null;
-        layout?: ('grid' | 'list' | 'cards') | null;
-        showFeatured?: boolean | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'strpsServices';
-      }
+    | StrpsStatsBlock
+    | StrpsServicesBlock
+    | StrpsClientsBlock
+    | StrpsCareersBlock
   )[];
   meta?: {
     title?: string | null;
@@ -715,7 +634,7 @@ export interface SectionConfig {
   container?: boolean | null;
   className?: string | null;
   backgroundContainer?: boolean | null;
-  theme: 'auto' | 'light' | 'dark';
+  theme: 'auto' | 'light' | 'dark' | 'inverted';
   background: 'none' | 'svgCircles' | 'image';
   backgroundImage?: (number | null) | Media;
 }
@@ -1139,6 +1058,228 @@ export interface StrpsFormBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsStatsBlock".
+ */
+export interface StrpsStatsBlock {
+  heading?: string | null;
+  description?: string | null;
+  layout?: ('grid' | 'side-by-side' | 'carousel') | null;
+  columns?: ('2' | '3' | '4') | null;
+  stats?:
+    | {
+        value: string;
+        label: string;
+        prefix?: string | null;
+        suffix?: string | null;
+        /**
+         * Enter the name of a Lucide icon (e.g., "users", "award")
+         */
+        icon?: string | null;
+        color?: ('primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error') | null;
+        id?: string | null;
+      }[]
+    | null;
+  animation?: {
+    enable?: boolean | null;
+    duration?: number | null;
+    easing?: ('easeOut' | 'easeIn' | 'easeInOut' | 'linear') | null;
+  };
+  style?: {
+    variant?: ('card' | 'minimal' | 'bordered' | 'gradient') | null;
+    textAlign?: ('left' | 'center' | 'right') | null;
+    valueSize?: ('sm' | 'md' | 'lg' | 'xl') | null;
+  };
+  cta?: {
+    enable?: boolean | null;
+    text?: string | null;
+    link?: string | null;
+    style?: ('primary' | 'secondary' | 'outline' | 'text') | null;
+  };
+  container?: {
+    maxWidth?: ('sm' | 'md' | 'lg' | 'xl' | 'full' | 'none') | null;
+    padding?: {
+      top?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
+      bottom?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
+    };
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsStats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsServicesBlock".
+ */
+export interface StrpsServicesBlock {
+  heading: string;
+  description?: string | null;
+  services?:
+    | {
+        title: string;
+        description?: string | null;
+        icon?: string | null;
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  layout?: ('grid' | 'list' | 'cards') | null;
+  showFeatured?: boolean | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsServices';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsClientsBlock".
+ */
+export interface StrpsClientsBlock {
+  heading?: string | null;
+  description?: string | null;
+  displayType?: ('grid' | 'carousel' | 'testimonials' | 'combined') | null;
+  clients?:
+    | {
+        name: string;
+        logo: number | Media;
+        url?: string | null;
+        testimonial?: {
+          content?: string | null;
+          author?: string | null;
+          position?: string | null;
+          company?: string | null;
+          authorImage?: (number | null) | Media;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  showDivider?: boolean | null;
+  maxLogosPerRow?: ('2' | '3' | '4' | '5' | '6') | null;
+  logoBackground?: ('none' | 'light' | 'gray' | 'rounded') | null;
+  testimonialLayout?: ('grid' | 'slider' | 'stacked') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsClients';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsCareersBlock".
+ */
+export interface StrpsCareersBlock {
+  heading?: string | null;
+  description?: string | null;
+  layout?: ('grid' | 'list') | null;
+  columns?: ('1' | '2' | '3') | null;
+  showFilters?: boolean | null;
+  filters?:
+    | {
+        type: 'department' | 'location' | 'jobType' | 'experience';
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  defaultFilters?: {
+    department?: string | null;
+    location?: string | null;
+    jobType?: ('' | 'full-time' | 'part-time' | 'contract' | 'internship' | 'temporary') | null;
+  };
+  showSearch?: boolean | null;
+  searchPlaceholder?: string | null;
+  showCategories?: boolean | null;
+  categories?:
+    | {
+        name: string;
+        slug: string;
+        description?: string | null;
+        icon?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  showFeatured?: boolean | null;
+  featuredTitle?: string | null;
+  showBenefits?: boolean | null;
+  benefits?:
+    | {
+        title: string;
+        description?: string | null;
+        icon?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  showApplicationForm?: boolean | null;
+  applicationForm?: {
+    title?: string | null;
+    description?: string | null;
+    submitButtonText?: string | null;
+    successMessage?: string | null;
+    fields?:
+      | {
+          type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'file' | 'hidden';
+          name: string;
+          label: string;
+          placeholder?: string | null;
+          required?: boolean | null;
+          options?:
+            | {
+                label: string;
+                value: string;
+                id?: string | null;
+              }[]
+            | null;
+          accept?: string | null;
+          maxFileSize?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  showContact?: boolean | null;
+  contactInfo?: {
+    email?: string | null;
+    phone?: string | null;
+    address?: string | null;
+  };
+  showSocial?: boolean | null;
+  socialLinks?:
+    | {
+        platform: 'linkedin' | 'twitter' | 'facebook' | 'instagram' | 'github' | 'other';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'strpsCareers';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1304,6 +1445,10 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1421,93 +1566,10 @@ export interface PagesSelect<T extends boolean = true> {
         projectsArchive?: T | ProjectsArchiveBlockSelect<T>;
         strpsAboutUs?: T | StrpsAboutUsBlockSelect<T>;
         strpsFormBlock?: T | StrpsFormBlockSelect<T>;
-        strpsStats?:
-          | T
-          | {
-              heading?: T;
-              description?: T;
-              layout?: T;
-              columns?: T;
-              stats?:
-                | T
-                | {
-                    value?: T;
-                    label?: T;
-                    prefix?: T;
-                    suffix?: T;
-                    icon?: T;
-                    color?: T;
-                    id?: T;
-                  };
-              animation?:
-                | T
-                | {
-                    enable?: T;
-                    duration?: T;
-                    easing?: T;
-                  };
-              style?:
-                | T
-                | {
-                    variant?: T;
-                    textAlign?: T;
-                    valueSize?: T;
-                  };
-              cta?:
-                | T
-                | {
-                    enable?: T;
-                    text?: T;
-                    link?: T;
-                    style?: T;
-                  };
-              container?:
-                | T
-                | {
-                    maxWidth?: T;
-                    padding?:
-                      | T
-                      | {
-                          top?: T;
-                          bottom?: T;
-                        };
-                  };
-              id?: T;
-              blockName?: T;
-            };
-        strpsServices?:
-          | T
-          | {
-              heading?: T;
-              description?: T;
-              services?:
-                | T
-                | {
-                    title?: T;
-                    description?: T;
-                    icon?: T;
-                    links?:
-                      | T
-                      | {
-                          link?:
-                            | T
-                            | {
-                                type?: T;
-                                newTab?: T;
-                                reference?: T;
-                                url?: T;
-                                label?: T;
-                                appearance?: T;
-                              };
-                          id?: T;
-                        };
-                    id?: T;
-                  };
-              layout?: T;
-              showFeatured?: T;
-              id?: T;
-              blockName?: T;
-            };
+        strpsStats?: T | StrpsStatsBlockSelect<T>;
+        strpsServices?: T | StrpsServicesBlockSelect<T>;
+        strpsClients?: T | StrpsClientsBlockSelect<T>;
+        strpsCareers?: T | StrpsCareersBlockSelect<T>;
       };
   meta?:
     | T
@@ -1755,6 +1817,218 @@ export interface StrpsFormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsStatsBlock_select".
+ */
+export interface StrpsStatsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  description?: T;
+  layout?: T;
+  columns?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        prefix?: T;
+        suffix?: T;
+        icon?: T;
+        color?: T;
+        id?: T;
+      };
+  animation?:
+    | T
+    | {
+        enable?: T;
+        duration?: T;
+        easing?: T;
+      };
+  style?:
+    | T
+    | {
+        variant?: T;
+        textAlign?: T;
+        valueSize?: T;
+      };
+  cta?:
+    | T
+    | {
+        enable?: T;
+        text?: T;
+        link?: T;
+        style?: T;
+      };
+  container?:
+    | T
+    | {
+        maxWidth?: T;
+        padding?:
+          | T
+          | {
+              top?: T;
+              bottom?: T;
+            };
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsServicesBlock_select".
+ */
+export interface StrpsServicesBlockSelect<T extends boolean = true> {
+  heading?: T;
+  description?: T;
+  services?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        icon?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  layout?: T;
+  showFeatured?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsClientsBlock_select".
+ */
+export interface StrpsClientsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  description?: T;
+  displayType?: T;
+  clients?:
+    | T
+    | {
+        name?: T;
+        logo?: T;
+        url?: T;
+        testimonial?:
+          | T
+          | {
+              content?: T;
+              author?: T;
+              position?: T;
+              company?: T;
+              authorImage?: T;
+            };
+        id?: T;
+      };
+  showDivider?: T;
+  maxLogosPerRow?: T;
+  logoBackground?: T;
+  testimonialLayout?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StrpsCareersBlock_select".
+ */
+export interface StrpsCareersBlockSelect<T extends boolean = true> {
+  heading?: T;
+  description?: T;
+  layout?: T;
+  columns?: T;
+  showFilters?: T;
+  filters?:
+    | T
+    | {
+        type?: T;
+        label?: T;
+        id?: T;
+      };
+  defaultFilters?:
+    | T
+    | {
+        department?: T;
+        location?: T;
+        jobType?: T;
+      };
+  showSearch?: T;
+  searchPlaceholder?: T;
+  showCategories?: T;
+  categories?:
+    | T
+    | {
+        name?: T;
+        slug?: T;
+        description?: T;
+        icon?: T;
+        id?: T;
+      };
+  showFeatured?: T;
+  featuredTitle?: T;
+  showBenefits?: T;
+  benefits?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        icon?: T;
+        id?: T;
+      };
+  showApplicationForm?: T;
+  applicationForm?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        submitButtonText?: T;
+        successMessage?: T;
+        fields?:
+          | T
+          | {
+              type?: T;
+              name?: T;
+              label?: T;
+              placeholder?: T;
+              required?: T;
+              options?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              accept?: T;
+              maxFileSize?: T;
+              id?: T;
+            };
+      };
+  showContact?: T;
+  contactInfo?:
+    | T
+    | {
+        email?: T;
+        phone?: T;
+        address?: T;
+      };
+  showSocial?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -1934,6 +2208,17 @@ export interface ProjectsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

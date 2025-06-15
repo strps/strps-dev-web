@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import SVGCircles from '@/blocks/StrpsHero/SVGCircles'
+import SVGCircles from './SVGCircles'
 import { cn } from '@/utilities/ui'
 import { Media } from '@/payload-types'
 import { Media as CMSMedia } from '@/components/Media'
@@ -9,7 +9,7 @@ type BackgroundType = 'SVGCircles' | 'svgCircles' | Media | ReactElement | strin
 interface SectionBackgroundProps {
   background?: BackgroundType
   className?: string
-  container?: boolean
+  container: boolean | null | undefined
   backgroundImage?: Media
 }
 
@@ -26,7 +26,7 @@ export const SectionBackground = ({
     return (
       <SVGCircles
         className={cn(
-          'absolute -translate-1/2 top-1/2 left-1/2 w-full h-full stroke-[var(--svg-circle-color)] -z-10',
+          'absolute -translate-1/2 top-1/2 left-1/2 w-full h-full stroke-[var(--svg-circle-color)]',
           container ? 'container mx-auto' : '',
           className,
         )}

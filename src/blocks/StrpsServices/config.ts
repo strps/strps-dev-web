@@ -1,10 +1,9 @@
 import { link } from '@/fields/link'
-import { linkGroup } from '@/fields/linkGroup'
 import { Block } from 'payload'
-import crypto from 'crypto'
 
 export const StrpsServices: Block = {
   slug: 'strpsServices',
+  interfaceName: 'StrpsServicesBlock',
   labels: {
     singular: 'Services',
     plural: 'Services Blocks',
@@ -41,7 +40,7 @@ export const StrpsServices: Block = {
           type: 'text',
           label: 'Icon Name (from Lucide Icons)',
         },
-        linkGroup({
+        link({
           appearances: ['default', 'outline'],
           hashEnumName: true,
         }),

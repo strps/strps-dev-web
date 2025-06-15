@@ -5,20 +5,11 @@ import React from 'react'
 import RichText from '@/components/RichText'
 import { ProjectArchive } from './ProjectArchive'
 import { Section } from '@/components/Section/Section'
+import { ProjectsArchiveBlock as ProjectsArchiveBlockProps } from '@/payload-types'
 
-export const ProjectsArchiveBlock: React.FC<{
-  id?: string
-  categories?: any[]
-  introContent?: any
-  limit?: number
-  populateBy?: 'collection' | 'selection'
-  selectedDocs?: { value: Project }[]
-  relationTo?: 'projects'
-  title?: string
-}> = async (props) => {
+export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (props) => {
   const {
     id,
-    categories,
     introContent,
     limit: limitFromProps,
     populateBy,
@@ -34,11 +25,6 @@ export const ProjectsArchiveBlock: React.FC<{
   if (populateBy === 'collection' && relationTo) {
     const payload = await getPayload({ config: configPromise })
 
-    const flattenedCategories = categories?.map((category) => {
-      if (typeof category === 'object') return category.id
-      else return category
-    })
-
     const fetchedPosts = await payload.find({
       collection: relationTo,
       depth: 1,
@@ -52,15 +38,6 @@ export const ProjectsArchiveBlock: React.FC<{
         updatedAt: true,
         createdAt: true,
       },
-      ...(flattenedCategories && flattenedCategories.length > 0
-        ? {
-            where: {
-              categories: {
-                in: flattenedCategories,
-              },
-            },
-          }
-        : {}),
     })
 
     collection = fetchedPosts.docs
@@ -75,7 +52,14 @@ export const ProjectsArchiveBlock: React.FC<{
   }
 
   return (
-    <Section id={id} container={true} backgroundContainer={false} className="py-16">
+    <Section
+      id={id}
+      container={true}
+      backgroundContainer={false}
+      className="py-16"
+      theme="auto"
+      background="none"
+    >
       {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
       {introContent && (
         <div className="mb-16">

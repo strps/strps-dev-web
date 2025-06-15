@@ -24,7 +24,14 @@ export const StrpsContact = ({
   }
 
   return (
-    <Section id={id} container={true} backgroundContainer={false} className="my-16">
+    <Section
+      id={id}
+      container={true}
+      backgroundContainer={false}
+      theme="auto"
+      background="none"
+      className="my-16"
+    >
       <div className="max-w-xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>
         <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
