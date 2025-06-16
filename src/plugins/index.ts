@@ -124,12 +124,12 @@ export const plugins: Plugin[] = [
                 if (!isTokenValid) {
                   throw new Error('Recaptcha token is invalids')
                 }
-                console.log('Recaptcha token is valid')
+                console.error('Recaptcha token is valid')
                 return args
               }
             }
 
-            //if recaptcha is not enabled, continue as normal
+            //if recaptcha is not enabled, continue as normal TODO: we cannot create a for if the recaptcha is configured properly (example: the env variables are not set, like the site key or secret key) we should not allow to create a form if the recaptcha is not configured properly, it will give a false impresion to the user.
             return args
           },
         ],

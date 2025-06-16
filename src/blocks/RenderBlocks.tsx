@@ -6,7 +6,6 @@ import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { ProjectsArchiveBlock } from '@/blocks/ProjectsArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
-import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { StrpsHero } from '@/blocks/StrpsHero/Component'
 import { AboutImageAdjacent, AboutStoryBlocks, StrpsAbout } from '@/blocks/StrpsAbout/Component'
@@ -24,7 +23,6 @@ const blockComponents = {
   projectsArchive: ProjectsArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
-  formBlock: FormBlock,
   mediaBlock: MediaBlock,
   strpsHero: StrpsHero,
   strpsSkills: StrpsSkills,

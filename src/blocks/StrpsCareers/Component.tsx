@@ -101,8 +101,6 @@ export const StrpsCareers: React.FC<StrpsCareersBlock> = ({
   // Add form submission handler
   const onSubmit = async (data: FormValues) => {
     try {
-      // Handle form submission here
-      console.log('Form submitted:', data)
       // Reset form and close modal
       reset()
       setShowApplicationModal(false)

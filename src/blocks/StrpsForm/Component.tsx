@@ -14,15 +14,15 @@ import { Section } from '@/components/Section/Section'
 
 export type FormBlockType = {
   blockName?: string
-  blockType?: 'formBlock'
-  enableIntro: boolean
-  form: FormType
+  blockType: 'strpsFormBlock'
+  form: FormType & {
+    enableRecaptcha?: boolean
+  }
   introContent?: SerializedEditorState
   id?: string
   introTitle?: string
   introText?: string
   introType?: 'richText' | 'titleAndText' | 'none'
-  enableRecaptcha?: boolean
 }
 
 export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
@@ -36,12 +36,12 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
       redirect,
       submitButtonLabel,
       title,
+      enableRecaptcha = false,
     } = {},
     introContent,
     introTitle,
     introText,
     introType = 'none',
-    enableRecaptcha = false,
   } = props
 
   const formMethods = useForm({
