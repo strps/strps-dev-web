@@ -10,6 +10,7 @@ import { post1 } from './post-1'
 import { post2 } from './post-2'
 import { post3 } from './post-3'
 import { project1 } from './project-1'
+import { project2 } from './project-2'
 
 const collections: CollectionSlug[] = [
   'categories',
@@ -206,11 +207,24 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding projects...`)
 
+  // Create STRPS Website project
   await payload.create({
     collection: 'projects',
     data: project1({
       heroImage: imageHomeDoc,
       author: demoAuthor,
+    }),
+  })
+
+  // Create Trakbit project
+  await payload.create({
+    collection: 'projects',
+    data: project2({
+      heroImage: imageHomeDoc,
+      author: demoAuthor,
+      screenshot1: image1Doc,
+      screenshot2: image2Doc,
+      screenshot3: image3Doc,
     }),
   })
 

@@ -27,8 +27,12 @@ export default async function Page() {
       content: true,
       updatedAt: true,
       createdAt: true,
+      heroImage: true,
     },
   })
+
+  console.log(projects.docs[0]?.title)
+  console.log(projects.docs[0]?.heroImage)
 
   return (
     <>
@@ -37,12 +41,20 @@ export default async function Page() {
           interval={7000}
           slides={projects.docs.map((project) => {
             return (
-              <div key={project.id} className="w-full h-[600px] absolute">
-                <div className="absolute flex flex-col justify-center items-center w-full h-full bg-black/50 z-10">
-                  <h2 className="text-white z-10">{project.title}</h2>
-                  <h3 className="text-white z-10">{project.meta?.description}</h3>
+              <div key={project.id} className="relative w-full h-[600px] overflow-hidden">
+                <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/50 z-10">
+                  <h2 className="text-white z-10 text-4xl font-bold mb-4">{project.title}</h2>
+                  <h3 className="text-white z-10 text-xl max-w-2xl text-center px-4">
+                    {project.meta?.description}
+                  </h3>
                 </div>
-                <Media resource={project.meta?.image} alt={project.title} fill className="z-0" />
+                <Media
+                  resource={project.heroImage}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
             )
           })}
