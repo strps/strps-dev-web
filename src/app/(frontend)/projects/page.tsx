@@ -1,7 +1,6 @@
 import type { Metadata } from 'next/types'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -31,17 +30,15 @@ export default async function Page() {
     },
   })
 
-  console.log(projects.docs[0]?.title)
-  console.log(projects.docs[0]?.heroImage)
-
   return (
     <>
-      <div className="mb-16">
+      <div className="mb-16 container mx-auto">
         <Slideshow
           interval={7000}
+          className="h-[800px]"
           slides={projects.docs.map((project) => {
             return (
-              <div key={project.id} className="relative w-full h-[600px] overflow-hidden">
+              <div key={project.id} className="relative w-full h-full overflow-hidden">
                 <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/50 z-10">
                   <h2 className="text-white z-10 text-4xl font-bold mb-4">{project.title}</h2>
                   <h3 className="text-white z-10 text-xl max-w-2xl text-center px-4">
@@ -59,26 +56,25 @@ export default async function Page() {
             )
           })}
         />
+      </div>
+
+      <div className="container mx-auto">
         <div className="prose dark:prose-invert max-w-none">
           <h1 className="text-4xl font-bold">Projects</h1>
         </div>
-      </div>
 
-      <div className="mb-8">
-        <PageRange
-          collection="projects"
-          currentPage={projects.page}
-          limit={12}
-          totalDocs={projects.totalDocs}
+        <CollectionArchive
+          className="py-16"
+          collection={projects.docs}
+          collectionName="projects"
+          variant="list"
         />
-      </div>
 
-      <CollectionArchive collection={projects.docs} collectionName="projects" />
-
-      <div className="container">
-        {projects.totalPages > 1 && projects.page && (
-          <Pagination page={projects.page} totalPages={projects.totalPages} />
-        )}
+        <div className="container">
+          {projects.totalPages > 1 && projects.page && (
+            <Pagination page={projects.page} totalPages={projects.totalPages} />
+          )}
+        </div>
       </div>
     </>
   )

@@ -150,6 +150,12 @@ export interface UserAuthOperations {
 export interface Page {
   id: number;
   title: string;
+  appearance?: {
+    /**
+     * Select the theme for the header on this page
+     */
+    headerTheme?: ('auto' | 'light' | 'dark') | null;
+  };
   layout: (
     | CallToActionBlock
     | ContentBlock
@@ -360,7 +366,7 @@ export interface Post {
  */
 export interface Media {
   id: number;
-  alt?: string | null;
+  alt: string;
   caption?: {
     root: {
       type: string;
@@ -633,7 +639,7 @@ export interface SectionConfig {
   container?: boolean | null;
   className?: string | null;
   backgroundContainer?: boolean | null;
-  theme: 'auto' | 'light' | 'dark' | 'inverted';
+  theme: 'auto' | 'light' | 'dark';
   background: 'none' | 'svgCircles' | 'image';
   backgroundImage?: (number | null) | Media;
 }
@@ -1485,6 +1491,11 @@ export interface PayloadMigration {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  appearance?:
+    | T
+    | {
+        headerTheme?: T;
+      };
   layout?:
     | T
     | {

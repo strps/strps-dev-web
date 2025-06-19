@@ -16,7 +16,7 @@ export const PostHero: React.FC<{
 
   return (
     <div className="relative -mt-[10.4rem] flex items-end">
-      <div className="container z-10 px-4 relative lg:grid lg:grid-cols-[1fr_48rem_1fr] text-white pb-8">
+      <div className="container mx-auto z-10 px-4 relative px-20 text-foreground pb-8">
         <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
           <div className="uppercase text-sm mb-6">
             {categories?.map((category, index) => {
@@ -28,10 +28,10 @@ export const PostHero: React.FC<{
                 const isLast = index === categories.length - 1
 
                 return (
-                  <React.Fragment key={index}>
+                  <>
                     {titleToUse}
-                    {!isLast && <React.Fragment>, &nbsp;</React.Fragment>}
-                  </React.Fragment>
+                    {!isLast && <>, &nbsp;</>}
+                  </>
                 )
               }
               return null
@@ -62,7 +62,7 @@ export const PostHero: React.FC<{
           </div>
         </div>
       </div>
-      <div className="min-h-[80vh] select-none">
+      <div className="min-h-[800px] select-none">
         {heroImage && typeof heroImage !== 'string' && (
           <Media fill priority imgClassName="-z-10 object-cover" resource={heroImage} />
         )}

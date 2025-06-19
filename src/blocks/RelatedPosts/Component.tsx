@@ -24,7 +24,7 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
         {docs?.map((doc, index) => {
           if (typeof doc === 'string') return null
 
-          return <ArchiveCard key={index} doc={doc} relationTo="posts" />
+          return <ArchiveCard key={index} doc={doc} relationTo="posts" variant="grid" />
         })}
       </div>
     </div>

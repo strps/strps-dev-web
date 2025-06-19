@@ -359,6 +359,146 @@ Each block must include:
   - [ ] Project description
   - [ ] Project image
 
+## Slideshow Component
+
+A responsive, accessible slideshow component with auto-play, manual navigation, and full keyboard support.
+
+### Features
+
+- Smooth fade transitions between slides
+- Auto-play with configurable interval
+- Pause on hover or keyboard interaction
+- Full keyboard navigation:
+  - **Left/Right Arrows**: Navigate between slides
+  - **Home/End**: Jump to first/last slide
+  - **Space**: Toggle auto-play
+- Touch-friendly navigation
+- Accessible controls with ARIA labels and roles
+- Responsive design
+- Screen reader support with live announcements
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `slides` | `React.ReactNode[]` | `[]` | Array of slide content (React nodes) |
+| `interval` | `number` | `5000` | Auto-play interval in milliseconds |
+
+### Accessibility
+
+The slideshow includes comprehensive accessibility features:
+
+- **Keyboard Navigation**:
+  - `←` / `→` arrows to navigate between slides
+  - `Home` / `End` to jump to first/last slide
+  - `Space` to toggle auto-play
+- **ARIA Attributes**:
+  - `role="region"` and `aria-roledescription="carousel"`
+  - `aria-live` for dynamic content updates
+  - `aria-label` for screen reader announcements
+  - `aria-atomic` for proper content updates
+- **Focus Management**:
+  - Component is focusable with `tabIndex={0}`
+  - Visual focus indicators for keyboard users
+  - Pauses auto-play during keyboard interaction
+- **Screen Reader Support**:
+  - Announces slide changes (e.g., "Slide 2 of 5")
+  - Provides context about the carousel controls
+  - Indicates current slide position
+
+### Usage
+
+```tsx
+import { Slideshow } from '@/components/Slideshow/Slideshow';
+
+const MyComponent = () => {
+  const slides = [
+    <div key="1" className="h-full w-full">
+      <img 
+        src="/slide1.jpg" 
+        alt="First slide description"
+        className="w-full h-full object-cover"
+      />
+    </div>,
+    <div key="2" className="h-full w-full">
+      <img 
+        src="/slide2.jpg" 
+        alt="Second slide description"
+        className="w-full h-full object-cover"
+      />
+    </div>,
+  ];
+
+  return (
+    <div className="container mx-auto">
+      <h2>Featured Projects</h2>
+      <Slideshow 
+        slides={slides} 
+        interval={7000}
+      />
+    </div>
+  );
+};
+```
+
+### Styling
+
+The component uses Tailwind CSS for styling. You can customize the following:
+
+- Slide height is set to `600px` by default
+- Navigation buttons and indicators use the theme's color variables
+- Transitions use smooth easing functions
+- Focus styles are included for keyboard navigation
+
+### Best Practices
+
+1. **Slide Content**: 
+   - Ensure each slide has a consistent height
+   - Include descriptive `alt` text for images
+   - Optimize images for web performance
+   - Keep text contrast ratios accessible (minimum 4.5:1)
+
+2. **Performance**:
+   - Use `React.memo` for complex slide components
+   - Consider using `next/image` for optimized image loading
+   - Limit the number of slides for better performance
+
+3. **Accessibility**:
+   - Test with keyboard navigation
+   - Verify with screen readers (VoiceOver, NVDA, JAWS)
+   - Ensure sufficient color contrast
+   - Provide text alternatives for all visual content
+
+### Troubleshooting
+
+- **Slides not transitioning**:
+  - Ensure the `key` prop is unique for each slide
+  - Check for console errors
+  
+- **Auto-play not working**:
+  - Verify the `interval` prop is set correctly
+  - Check if auto-play is paused (press Space to toggle)
+  
+- **Keyboard navigation issues**:
+  - Ensure the component has focus (click on it first)
+  - Check for JavaScript errors in the console
+  
+- **Layout shifts**:
+  - Make sure all slides have consistent dimensions
+  - Use `object-cover` for images to maintain aspect ratio
+
+### Browser Support
+
+The slideshow works in all modern browsers including:
+- Chrome (latest 2 versions)
+- Firefox (latest 2 versions)
+- Safari (latest 2 versions)
+- Edge (latest 2 versions)
+
+For older browsers, consider adding appropriate polyfills for:
+- Intersection Observer API
+- CSS transitions/animations
+
 ## UI Components
 
 ### Cards (`src/components/Cards`)

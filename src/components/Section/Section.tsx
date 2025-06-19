@@ -42,25 +42,18 @@ export const Section: React.FC<SectionProps> = ({
   children,
   theme,
 }) => {
-  const { resolvedTheme } = useTheme()
   const [sectionTheme, setSectionTheme] = useState('')
-
-  useEffect(() => {
-    setSectionTheme(themeOptions[theme])
-  }, [theme])
-
-  let InvertedTheme = ''
-
-  if (typeof window !== 'undefined') {
-    InvertedTheme = resolvedTheme === 'light' ? 'dark' : 'light'
-  }
 
   const themeOptions = {
     auto: '',
     light: 'light',
     dark: 'dark',
-    inverted: InvertedTheme,
+    inverted: '',
   }
+
+  useEffect(() => {
+    setSectionTheme(themeOptions[theme])
+  }, [theme])
 
   //check if backgroundImage is a Media object
   const hasBackgroundImage =

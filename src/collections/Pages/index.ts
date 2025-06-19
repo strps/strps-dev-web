@@ -76,6 +76,35 @@ export const Pages: CollectionConfig<'pages'> = {
       type: 'tabs',
       tabs: [
         {
+          name: 'appearance',
+          label: 'Appearance',
+          fields: [
+            {
+              name: 'headerTheme',
+              type: 'select',
+              label: 'Header Theme',
+              defaultValue: 'auto',
+              options: [
+                {
+                  label: 'Auto (System Preference)',
+                  value: 'auto',
+                },
+                {
+                  label: 'Light',
+                  value: 'light',
+                },
+                {
+                  label: 'Dark',
+                  value: 'dark',
+                },
+              ],
+              admin: {
+                description: 'Select the theme for the header on this page',
+              },
+            },
+          ],
+        },
+        {
           fields: [
             {
               name: 'layout',

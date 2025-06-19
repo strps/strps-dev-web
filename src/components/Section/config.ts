@@ -33,7 +33,6 @@ export const SectionConfig: Field = {
         { label: 'Auto', value: 'auto' },
         { label: 'Light', value: 'light' },
         { label: 'Dark', value: 'dark' },
-        { label: 'Inverted', value: 'inverted' },
       ],
     },
     {
