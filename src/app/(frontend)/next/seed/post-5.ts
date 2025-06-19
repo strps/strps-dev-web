@@ -133,11 +133,12 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             ],
           },
           {
-            type: 'ul',
+            type: 'list',
+            listType: 'bullet',
             version: 1,
             children: [
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -148,7 +149,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -159,7 +160,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -170,7 +171,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -181,7 +182,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -228,23 +229,24 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             tag: 'h3',
           },
           {
-            type: 'ul',
+            type: 'list',
+            listType: 'bullet',
             version: 1,
             children: [
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: 'Arduino Uno (already on hand)' }],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   { type: 'text', version: 1, text: 'Stepper motors (NEMA 17) — ordered online' },
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -255,14 +257,14 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   { type: 'text', version: 1, text: 'CNC Shield — for easy plug-and-play wiring' },
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -281,11 +283,12 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             tag: 'h3',
           },
           {
-            type: 'ul',
+            type: 'list',
+            listType: 'bullet',
             version: 1,
             children: [
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -296,7 +299,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -307,7 +310,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -318,7 +321,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
@@ -337,26 +340,27 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             tag: 'h3',
           },
           {
-            type: 'ul',
+            type: 'list',
+            listType: 'bullet',
             version: 1,
             children: [
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: '3D printer (FDM, PLA filament)' }],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: 'Basic soldering equipment' }],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: 'Multimeter' }],
               },
               {
-                type: 'li',
+                type: 'listItem',
                 version: 1,
                 children: [
                   {
