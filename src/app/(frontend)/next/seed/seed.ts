@@ -9,6 +9,8 @@ import { imageHero1 } from './image-hero-1'
 import { post1 } from './post-1'
 import { post2 } from './post-2'
 import { post3 } from './post-3'
+import { post4 } from './post-4'
+import { post5 } from './post-5'
 import { project1 } from './project-1'
 import { project2 } from './project-2'
 
@@ -259,26 +261,58 @@ export const seed = async ({
     data: post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
   })
 
+  const post4Doc = await payload.create({
+    collection: 'posts',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: post4({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
+  })
+
+  const post5Doc = await payload.create({
+    collection: 'posts',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: post5({ heroImage: image2Doc, blockImage: image1Doc, author: demoAuthor }),
+  })
+
   // update each post with related posts
   await payload.update({
     id: post1Doc.id,
     collection: 'posts',
     data: {
-      relatedPosts: [post2Doc.id, post3Doc.id],
+      relatedPosts: [post2Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
     },
   })
   await payload.update({
     id: post2Doc.id,
     collection: 'posts',
     data: {
-      relatedPosts: [post1Doc.id, post3Doc.id],
+      relatedPosts: [post1Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
     },
   })
   await payload.update({
     id: post3Doc.id,
     collection: 'posts',
     data: {
-      relatedPosts: [post1Doc.id, post2Doc.id],
+      relatedPosts: [post1Doc.id, post2Doc.id, post4Doc.id, post5Doc.id],
+    },
+  })
+  await payload.update({
+    id: post4Doc.id,
+    collection: 'posts',
+    data: {
+      relatedPosts: [post1Doc.id, post2Doc.id, post3Doc.id, post5Doc.id],
+    },
+  })
+  await payload.update({
+    id: post5Doc.id,
+    collection: 'posts',
+    data: {
+      relatedPosts: [post1Doc.id, post2Doc.id, post3Doc.id, post4Doc.id],
     },
   })
 
