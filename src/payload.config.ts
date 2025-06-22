@@ -13,14 +13,16 @@ import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
 import { Projects } from './collections/Projects'
-import { Footer } from './components/Footer/config'
-import { Header } from './components/Header/config'
+import { Footer } from './globals/footer/config'
+import { Header } from './globals/header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { Tags } from './collections/Tags'
 
 import { resendAdapter } from '@payloadcms/email-resend'
+import { BlogPage } from './globals/blog/blog-page'
+import { ProjectsPage } from './globals/projects/projects-page'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -79,7 +81,7 @@ export default buildConfig({
   db,
   collections: [Pages, Posts, Media, Categories, Users, Projects, Tags],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, BlogPage, ProjectsPage],
   plugins: [
     ...plugins,
     vercelBlobStorage({

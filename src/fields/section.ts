@@ -1,3 +1,4 @@
+import { theme } from '@/fields/theme'
 import { Field } from 'payload'
 
 /**
@@ -23,18 +24,7 @@ export const SectionConfig: Field = {
       name: 'backgroundContainer',
       type: 'checkbox',
     },
-    {
-      name: 'theme',
-      type: 'select',
-      enumName: 'section_theme',
-      required: true,
-      defaultValue: 'auto',
-      options: [
-        { label: 'Auto', value: 'auto' },
-        { label: 'Light', value: 'light' },
-        { label: 'Dark', value: 'dark' },
-      ],
-    },
+    theme('auto'),
     {
       name: 'background',
       type: 'select',

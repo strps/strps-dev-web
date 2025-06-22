@@ -1,4 +1,4 @@
-import { SectionConfig } from '@/components/Section/config'
+import { SectionConfig } from '@/fields/section'
 import { linkGroup } from '@/fields/linkGroup'
 import { Block } from 'payload'
 

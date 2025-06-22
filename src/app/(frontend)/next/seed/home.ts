@@ -1,16 +1,19 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
-import type { Media } from '@/payload-types'
+import type { Form, Media } from '@/payload-types'
+import { theme } from '@/fields/theme'
 
 type HomeArgs = {
   heroImage: Media
   metaImage: Media
   aboutImage: Media
+  contactForm: Form
 }
 
 export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
   heroImage,
   metaImage,
   aboutImage,
+  contactForm,
 }) => {
   return {
     slug: 'home',
@@ -289,24 +292,33 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         ],
       },
 
-      // About Block
+      // Contact Form Block
       {
-        blockType: 'strpsAbout',
-        title: 'About Us',
-        content: {
+        blockType: 'strpsFormBlock',
+        enableIntro: true,
+        form: contactForm,
+        introContent: {
           root: {
             type: 'root',
             children: [
               {
-                type: 'paragraph',
-                version: 1,
+                type: 'heading',
                 children: [
                   {
                     type: 'text',
-                    text: 'We are a team of passionate individuals dedicated to creating exceptional digital experiences. Our mission is to help businesses thrive in the digital world.',
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Example contact form:',
                     version: 1,
                   },
                 ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                tag: 'h3',
+                version: 1,
               },
             ],
             direction: 'ltr',
@@ -315,234 +327,8 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
             version: 1,
           },
         },
-        link: {
-          type: 'custom',
-          label: 'Read our story',
-          url: '/about',
-        },
-        image: aboutImage.id,
         section: {
-          theme: 'light',
-          background: 'none',
-          container: true,
-        },
-      },
-      // About Us Block
-      {
-        blockType: 'strpsAboutUs',
-        heading: 'Our Story',
-        mission: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                version: 1,
-                children: [
-                  {
-                    type: 'text',
-                    text: 'Our mission is to deliver innovative solutions that drive business growth and create lasting value for our clients.',
-                    version: 1,
-                  },
-                ],
-              },
-            ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            version: 1,
-          },
-        },
-        vision: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                version: 1,
-                children: [
-                  {
-                    type: 'text',
-                    text: 'To be the leading provider of digital solutions, recognized for our creativity, technical excellence, and commitment to client success.',
-                    version: 1,
-                  },
-                ],
-              },
-            ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            version: 1,
-          },
-        },
-        values: [
-          {
-            title: 'Excellence',
-            description: 'We strive for the highest standards in everything we do.',
-          },
-          {
-            title: 'Innovation',
-            description: 'We embrace change and the opportunities it brings.',
-          },
-          {
-            title: 'Integrity',
-            description: 'We do what we say and say what we mean.',
-          },
-          {
-            title: 'Collaboration',
-            description: 'We believe in the power of working together.',
-          },
-        ],
-        timeline: [
-          {
-            date: '2023-01-12T21:47:41.374Z',
-            event: 'Company Founded',
-            description: 'Started our journey with a small team of passionate individuals.',
-          },
-          {
-            date: '2023-01-12T21:47:41.374Z',
-            event: 'Team Expansion',
-            description: 'Grew our team to 50+ talented professionals.',
-          },
-          {
-            date: '2024-01-12T21:47:41.374Z',
-            event: 'Global Reach',
-            description: 'Expanded our services to international markets.',
-          },
-        ],
-        section: {
-          theme: 'light',
-          background: 'none',
-          container: true,
-        },
-      },
-      // Stats Block
-      {
-        blockType: 'strpsStats',
-        heading: 'Our Impact in Numbers',
-        description: 'Delivering excellence and driving success for our clients',
-        layout: 'grid',
-        columns: '4',
-        stats: [
-          {
-            value: '100+',
-            label: 'Happy Clients',
-            prefix: '',
-            suffix: '+',
-            icon: 'users',
-            color: 'primary',
-          },
-          {
-            value: '250',
-            label: 'Projects Completed',
-            prefix: '',
-            suffix: '+',
-            icon: 'check-circle',
-            color: 'secondary',
-          },
-          {
-            value: '10',
-            label: 'Years Experience',
-            prefix: '',
-            suffix: '+',
-            icon: 'award',
-            color: 'accent',
-          },
-          {
-            value: '99',
-            label: 'Success Rate',
-            prefix: '',
-            suffix: '%',
-            icon: 'thumbs-up',
-            color: 'success',
-          },
-        ],
-        animation: {
-          enable: true,
-          duration: 2000,
-          easing: 'easeOut',
-        },
-        style: {
-          variant: 'card',
-          textAlign: 'center',
-          valueSize: 'xl',
-        },
-        cta: {
-          enable: true,
-          text: 'Learn more about our work',
-          link: '/about',
-          style: 'primary',
-        },
-        container: {
-          maxWidth: 'xl',
-          padding: {
-            top: 'xl',
-            bottom: 'xl',
-          },
-        },
-        section: {
-          theme: 'light',
-          background: 'none',
-          container: true,
-        },
-      },
-      // Services Block
-      {
-        blockType: 'strpsServices',
-        heading: 'Our Services',
-        description: 'Comprehensive digital solutions for your business needs',
-        services: [
-          {
-            title: 'Web Development',
-            description:
-              'We create custom websites that are both functional and visually appealing.',
-            icon: 'globe',
-            link: {
-              type: 'custom',
-              label: 'Learn more',
-              url: '#',
-            },
-            features: [
-              { feature: 'Responsive Design' },
-              { feature: 'Custom Development' },
-              { feature: 'Performance Optimization' },
-            ],
-          },
-          {
-            title: 'App Development',
-            description: 'We build custom apps that are both functional and visually appealing.',
-            icon: 'smartphone',
-            link: {
-              type: 'custom',
-              label: 'Learn more',
-              url: '#',
-            },
-            features: [
-              { feature: 'iOS & Android' },
-              { feature: 'Native & Cross-Platform' },
-              { feature: 'App Store Optimization' },
-            ],
-          },
-          {
-            title: 'Digital Marketing',
-            description:
-              'We create custom marketing campaigns that are both functional and visually appealing.',
-            icon: 'bar-chart-2',
-            link: {
-              type: 'custom',
-              label: 'Learn more',
-              url: '#',
-            },
-            features: [
-              { feature: 'SEO & SEM' },
-              { feature: 'Social Media Marketing' },
-              { feature: 'Analytics & Reporting' },
-            ],
-          },
-        ],
-        layout: 'grid',
-        section: {
-          theme: 'light',
+          theme: 'auto',
           background: 'none',
           container: true,
         },
@@ -552,6 +338,13 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       title: 'Home',
       description: 'Welcome to our website',
       image: metaImage.id,
+    },
+    appearance: {
+      headerOverrides: {
+        background: false,
+        theme: 'auto',
+        overlay: true,
+      },
     },
   }
 }

@@ -29,6 +29,7 @@ import { StrpsStats } from '@/blocks/StrpsStats/config'
 import { StrpsServices } from '@/blocks/StrpsServices/config'
 import { StrpsClients } from '@/blocks/StrpsClients/config'
 import { StrpsCareers } from '@/blocks/StrpsCareers/config'
+import { headerOverrides } from '@/fields/header-overrrides'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
@@ -78,31 +79,7 @@ export const Pages: CollectionConfig<'pages'> = {
         {
           name: 'appearance',
           label: 'Appearance',
-          fields: [
-            {
-              name: 'headerTheme',
-              type: 'select',
-              label: 'Header Theme',
-              defaultValue: 'auto',
-              options: [
-                {
-                  label: 'Auto (System Preference)',
-                  value: 'auto',
-                },
-                {
-                  label: 'Light',
-                  value: 'light',
-                },
-                {
-                  label: 'Dark',
-                  value: 'dark',
-                },
-              ],
-              admin: {
-                description: 'Select the theme for the header on this page',
-              },
-            },
-          ],
+          fields: [headerOverrides('auto')],
         },
         {
           fields: [

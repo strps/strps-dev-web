@@ -49,6 +49,11 @@ export const contact: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pag
             version: 1,
           },
         },
+        section: {
+          theme: 'auto',
+          background: 'none',
+          container: true,
+        },
       },
     ],
     title: 'Contact',

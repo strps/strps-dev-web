@@ -41,11 +41,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Introduction' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h2',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -57,6 +63,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -68,6 +77,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -80,11 +92,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Background & Motivation' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h2',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -96,6 +114,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -107,6 +128,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -119,11 +143,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Design Goals & Constraints' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h2',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -138,7 +168,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             version: 1,
             children: [
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -149,7 +179,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -160,7 +190,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -171,7 +201,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -182,7 +212,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -197,6 +227,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -209,11 +242,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Materials & Tools' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h2',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -226,6 +265,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Electronics' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
@@ -234,19 +276,19 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             version: 1,
             children: [
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: 'Arduino Uno (already on hand)' }],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   { type: 'text', version: 1, text: 'Stepper motors (NEMA 17) — ordered online' },
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -257,14 +299,14 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   { type: 'text', version: 1, text: 'CNC Shield — for easy plug-and-play wiring' },
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -280,6 +322,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Structure & Motion Components' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
@@ -288,7 +333,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             version: 1,
             children: [
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -299,7 +344,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -310,7 +355,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -321,7 +366,7 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
                 ],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -337,6 +382,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Tools' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
@@ -345,22 +393,22 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             version: 1,
             children: [
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: '3D printer (FDM, PLA filament)' }],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: 'Basic soldering equipment' }],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [{ type: 'text', version: 1, text: 'Multimeter' }],
               },
               {
-                type: 'listItem',
+                type: 'listitem',
                 version: 1,
                 children: [
                   {
@@ -375,6 +423,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -387,11 +438,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Design & Build Process' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h2',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -403,6 +460,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -414,6 +474,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -425,6 +488,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -437,11 +503,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Challenges & Lessons Learned (So Far)' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h2',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -454,11 +526,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: '1. Iteration is Everything' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -471,11 +549,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: '2. Work With What You Have' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -488,11 +572,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: '3. Planning Emerges Naturally' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -505,11 +595,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: '4. Tool Constraints Guide Creativity' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -522,11 +618,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: "5. Don't Wait for Perfect" }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h3',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -539,11 +641,17 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
             type: 'heading',
             version: 1,
             children: [{ type: 'text', version: 1, text: 'Next Steps' }],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             tag: 'h2',
           },
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -752,6 +860,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',
@@ -763,6 +874,9 @@ export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> 
           {
             type: 'paragraph',
             version: 1,
+            direction: 'ltr',
+            format: '',
+            indent: 0,
             children: [
               {
                 type: 'text',

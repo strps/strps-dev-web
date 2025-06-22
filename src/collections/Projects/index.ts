@@ -25,6 +25,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { headerOverrides } from '@/fields/header-overrrides'
 
 export const Projects: CollectionConfig<'projects'> = {
   slug: 'projects',
@@ -131,6 +132,11 @@ export const Projects: CollectionConfig<'projects'> = {
               descriptionPath: 'meta.description',
             }),
           ],
+        },
+
+        {
+          name: 'appearance',
+          fields: [headerOverrides('dark')],
         },
       ],
     },

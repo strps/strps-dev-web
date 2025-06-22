@@ -18,39 +18,25 @@ const defaultVariant = 'classic'
 const defaultContainer = true
 const defaultBackground = false
 
-const headerVariants = cva('z-20 absolute top-0 left-0 right-0', {
+const headerVariants = cva('z-20 top-0 left-0 right-0', {
   variants: {
     variant: {
       classic: 'flex flex-row justify-between items-center bg-background',
       modern: 'flex flex-row justify-between items-center bg-transparent mx-auto p-5',
-      plain: 'flex flex-row justify-between items-center bg-background',
-      stackLeft: 'flex flex-row justify-between items-center bg-background',
-      stackRight: 'flex flex-row justify-between items-center bg-background',
-      stackCenter:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      magazine: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      creativeLeft:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      creativeRight:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      creativeAlwaysOpen:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      empty: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      simple: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      overlay: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      belowSlider:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      belowSliderWithSplit:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      split: 'flex flex-row justify-between items-center bg-background border-b border-border',
     },
     background: {
-      true: 'bg-background',
+      true: 'bg-card border-b border-border',
       false: 'bg-transparent',
     },
     container: {
       true: '',
       false: '',
+    },
+    theme: {
+      auto: '',
+      light: 'light',
+      dark: 'dark',
+      inverted: 'inverted',
     },
   },
   compoundVariants: [
@@ -70,6 +56,7 @@ const headerVariants = cva('z-20 absolute top-0 left-0 right-0', {
     variant: defaultVariant,
     background: defaultBackground,
     container: defaultContainer,
+    theme: 'auto',
   },
 })
 
@@ -149,29 +136,22 @@ const containerVariants = cva('mx-auto flex flex-row justify-between items-cente
       true: 'container',
       false: 'w-full',
     },
-    background: {
-      true: 'bg-background',
-      false: '',
-    },
   },
   compoundVariants: [
     {
       variant: 'modern',
-      background: true,
       className: 'bg-background border m-5 mx-auto ',
     },
   ],
   defaultVariants: {
     container: defaultContainer,
     variant: defaultVariant,
-    background: defaultBackground,
   },
 })
 
 type HeaderClientProps = {
   data: Header
   container?: boolean
-  background?: boolean
 } & VariantProps<typeof headerVariants>
 
 /**
@@ -180,19 +160,22 @@ type HeaderClientProps = {
  * @param data - The header data
  * @param variant - The variant of the header
  * @param container - Whether to use a container or not
- * @param background - Whether to use a background or not
  */
 export const HeaderClient: React.FC<HeaderClientProps> = ({
   data,
-  variant,
+  variant, //TODO: all properties needs come form data given by payload
   container,
-  background,
 }) => {
   /* Storing the value in a useState to avoid hydration errors */
 
   return (
-    <header className={cn(headerVariants({ variant, background, container }))}>
-      <div className={cn(containerVariants({ variant, container, background }))}>
+    <header
+      className={cn(
+        data.overlay && 'absolute',
+        headerVariants({ variant, background: data.background, container, theme: data.theme }),
+      )}
+    >
+      <div className={cn(containerVariants({ variant, container }))}>
         <Link href="/" aria-label="Go to homepage">
           <Logo className={cn(logoVariants({ variant }), 'h-auto')} />
           {/* h-auto in order to override the height of the svg */}

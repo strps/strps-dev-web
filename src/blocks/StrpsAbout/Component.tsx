@@ -79,7 +79,7 @@ export const AboutStoryBlocks = ({ id, title, storyBlocks, section }: StrpsAbout
             ) : null
 
           return (
-            <div key={index} className="p-6">
+            <div key={index} className="p-6 w-full">
               <div className="flex flex-row items-center">
                 {IconComponent}
                 <h3 className="text-xl font-semibold tracking-tight">{block.heading}</h3>

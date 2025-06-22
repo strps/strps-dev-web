@@ -6,8 +6,8 @@ import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import PageClient from './page.client'
 import { notFound } from 'next/navigation'
+import { Header } from '@/components/Header/Component'
 
 export const revalidate = 600
 
@@ -42,32 +42,40 @@ export default async function Page({ params: paramsPromise }: Args) {
     },
   })
 
+  const postsPage = await payload.findGlobal({
+    slug: 'blog-page',
+  })
+
+  const headerOverrides = postsPage?.headerOverrides
+
   return (
-    <div className="pt-24 pb-24">
-      <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+    <>
+      <Header headerOverrides={headerOverrides} />
+      <main className="pt-24 pb-24">
+        <div className="container mb-16">
+          <div className="prose dark:prose-invert max-w-none">
+            <h1>Posts</h1>
+          </div>
         </div>
-      </div>
 
-      <div className="container mb-8">
-        <PageRange
-          collection="posts"
-          currentPage={posts.page}
-          limit={12}
-          totalDocs={posts.totalDocs}
-        />
-      </div>
+        <div className="container mb-8">
+          <PageRange
+            collection="posts"
+            currentPage={posts.page}
+            limit={12}
+            totalDocs={posts.totalDocs}
+          />
+        </div>
 
-      <CollectionArchive collection={posts.docs} collectionName="posts" />
+        <CollectionArchive collection={posts.docs} collectionName="posts" />
 
-      <div className="container">
-        {posts?.page && posts?.totalPages > 1 && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
-      </div>
-    </div>
+        <div className="container">
+          {posts?.page && posts?.totalPages > 1 && (
+            <Pagination page={posts.page} totalPages={posts.totalPages} />
+          )}
+        </div>
+      </main>
+    </>
   )
 }
 

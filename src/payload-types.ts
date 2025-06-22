@@ -105,10 +105,14 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    'blog-page': BlogPage;
+    'projects-page': ProjectsPage;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    'blog-page': BlogPageSelect<false> | BlogPageSelect<true>;
+    'projects-page': ProjectsPageSelect<false> | ProjectsPageSelect<true>;
   };
   locale: 'en' | 'es';
   user: User & {
@@ -151,10 +155,11 @@ export interface Page {
   id: number;
   title: string;
   appearance?: {
-    /**
-     * Select the theme for the header on this page
-     */
-    headerTheme?: ('auto' | 'light' | 'dark') | null;
+    headerOverrides?: {
+      theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+      background?: boolean | null;
+      overlay?: boolean | null;
+    };
   };
   layout: (
     | CallToActionBlock
@@ -345,6 +350,13 @@ export interface Post {
      */
     image?: (number | null) | Media;
     description?: string | null;
+  };
+  appearance?: {
+    headerOverrides?: {
+      theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+      background?: boolean | null;
+      overlay?: boolean | null;
+    };
   };
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
@@ -624,6 +636,13 @@ export interface Project {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  appearance?: {
+    headerOverrides?: {
+      theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+      background?: boolean | null;
+      overlay?: boolean | null;
+    };
+  };
   publishedAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -639,7 +658,7 @@ export interface SectionConfig {
   container?: boolean | null;
   className?: string | null;
   backgroundContainer?: boolean | null;
-  theme: 'auto' | 'light' | 'dark';
+  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
   background: 'none' | 'svgCircles' | 'image';
   backgroundImage?: (number | null) | Media;
 }
@@ -834,6 +853,7 @@ export interface StrpsAboutUsBlock {
  * via the `definition` "StrpsFormBlock".
  */
 export interface StrpsFormBlock {
+  section: SectionConfig;
   form: number | Form;
   introType?: ('richText' | 'titleAndText' | 'none') | null;
   introContent?: {
@@ -1494,7 +1514,13 @@ export interface PagesSelect<T extends boolean = true> {
   appearance?:
     | T
     | {
-        headerTheme?: T;
+        headerOverrides?:
+          | T
+          | {
+              theme?: T;
+              background?: T;
+              overlay?: T;
+            };
       };
   layout?:
     | T
@@ -1779,6 +1805,7 @@ export interface StrpsAboutUsBlockSelect<T extends boolean = true> {
  * via the `definition` "StrpsFormBlock_select".
  */
 export interface StrpsFormBlockSelect<T extends boolean = true> {
+  section?: T | SectionConfigSelect<T>;
   form?: T;
   introType?: T;
   introContent?: T;
@@ -2016,6 +2043,17 @@ export interface PostsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  appearance?:
+    | T
+    | {
+        headerOverrides?:
+          | T
+          | {
+              theme?: T;
+              background?: T;
+              overlay?: T;
+            };
+      };
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -2173,6 +2211,17 @@ export interface ProjectsSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+      };
+  appearance?:
+    | T
+    | {
+        headerOverrides?:
+          | T
+          | {
+              theme?: T;
+              background?: T;
+              overlay?: T;
+            };
       };
   publishedAt?: T;
   slug?: T;
@@ -2447,6 +2496,9 @@ export interface Header {
         id?: string | null;
       }[]
     | null;
+  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+  background?: boolean | null;
+  overlay?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2481,6 +2533,36 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-page".
+ */
+export interface BlogPage {
+  id: number;
+  headerOverrides?: {
+    theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+    background?: boolean | null;
+    overlay?: boolean | null;
+  };
+  'feature-posts'?: (number | Post)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-page".
+ */
+export interface ProjectsPage {
+  id: number;
+  headerOverrides?: {
+    theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+    background?: boolean | null;
+    overlay?: boolean | null;
+  };
+  'feature-projects'?: (number | Project)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2498,6 +2580,9 @@ export interface HeaderSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  theme?: T;
+  background?: T;
+  overlay?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2521,6 +2606,40 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-page_select".
+ */
+export interface BlogPageSelect<T extends boolean = true> {
+  headerOverrides?:
+    | T
+    | {
+        theme?: T;
+        background?: T;
+        overlay?: T;
+      };
+  'feature-posts'?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-page_select".
+ */
+export interface ProjectsPageSelect<T extends boolean = true> {
+  headerOverrides?:
+    | T
+    | {
+        theme?: T;
+        background?: T;
+        overlay?: T;
+      };
+  'feature-projects'?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

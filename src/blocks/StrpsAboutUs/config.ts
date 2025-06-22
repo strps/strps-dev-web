@@ -1,4 +1,4 @@
-import { SectionConfig } from '@/components/Section/config'
+import { SectionConfig } from '@/fields/section'
 import { Block } from 'payload'
 
 export const StrpsAboutUs: Block = {

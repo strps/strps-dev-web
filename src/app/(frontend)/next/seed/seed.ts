@@ -6,9 +6,6 @@ import { home } from './home'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
 import { imageHero1 } from './image-hero-1'
-import { post1 } from './post-1'
-import { post2 } from './post-2'
-import { post3 } from './post-3'
 import { post4 } from './post-4'
 import { post5 } from './post-5'
 import { project1 } from './project-1'
@@ -232,35 +229,6 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding posts...`)
 
-  // Do not create posts with `Promise.all` because we want the posts to be created in order
-  // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  const post1Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: post1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
-  })
-
-  const post2Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: post2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
-  })
-
-  const post3Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
-  })
-
   const post4Doc = await payload.create({
     collection: 'posts',
     depth: 0,
@@ -280,39 +248,39 @@ export const seed = async ({
   })
 
   // update each post with related posts
-  await payload.update({
-    id: post1Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post2Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
-    },
-  })
-  await payload.update({
-    id: post2Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
-    },
-  })
-  await payload.update({
-    id: post3Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post2Doc.id, post4Doc.id, post5Doc.id],
-    },
-  })
+  // await payload.update({
+  //   id: post1Doc.id,
+  //   collection: 'posts',
+  //   data: {
+  //     relatedPosts: [post2Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
+  //   },
+  // })
+  // await payload.update({
+  //   id: post2Doc.id,
+  //   collection: 'posts',
+  //   data: {
+  //     relatedPosts: [post1Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
+  //   },
+  // })
+  // await payload.update({
+  //   id: post3Doc.id,
+  //   collection: 'posts',
+  //   data: {
+  //     relatedPosts: [post1Doc.id, post2Doc.id, post4Doc.id, post5Doc.id],
+  //   },
+  // })
   await payload.update({
     id: post4Doc.id,
     collection: 'posts',
     data: {
-      relatedPosts: [post1Doc.id, post2Doc.id, post3Doc.id, post5Doc.id],
+      relatedPosts: [],
     },
   })
   await payload.update({
     id: post5Doc.id,
     collection: 'posts',
     data: {
-      relatedPosts: [post1Doc.id, post2Doc.id, post3Doc.id, post4Doc.id],
+      relatedPosts: [],
     },
   })
 
@@ -334,6 +302,7 @@ export const seed = async ({
         heroImage: imageHomeDoc,
         metaImage: image2Doc,
         aboutImage: image3Doc,
+        contactForm: contactForm,
       }),
     }),
     payload.create({
@@ -353,7 +322,14 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
-              label: 'Posts',
+              label: 'Projects',
+              url: '/projects',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Blog',
               url: '/posts',
             },
           },
@@ -377,27 +353,46 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
-              label: 'Admin',
-              url: '/admin',
+              label: 'Projects',
+              url: '/projects',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
+              label: 'Blog',
+              url: '/posts',
             },
           },
           {
             link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
+              type: 'reference',
+              label: 'Contact',
+              reference: {
+                relationTo: 'pages',
+                value: contactPage.id,
+              },
             },
           },
         ],
+      },
+    }),
+    payload.updateGlobal({
+      slug: 'projects-page',
+      data: {
+        headerOverrides: {
+          background: true,
+          overlay: false,
+        },
+      },
+    }),
+    payload.updateGlobal({
+      slug: 'blog-page',
+      data: {
+        headerOverrides: {
+          background: true,
+          overlay: false,
+        },
       },
     }),
   ])

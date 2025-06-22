@@ -1,7 +1,7 @@
 import React from 'react'
-import { HighImpactHero } from '@/heros/HighImpact'
-import { LowImpactHero } from '@/heros/LowImpact'
-import { MediumImpactHero } from '@/heros/MediumImpact'
+import { HighImpactHero } from '@/components/heros/HighImpact'
+import { LowImpactHero } from '@/components/heros/LowImpact'
+import { MediumImpactHero } from '@/components/heros/MediumImpact'
 
 const heroes = {
   highImpact: HighImpactHero,

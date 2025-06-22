@@ -42,19 +42,6 @@ export const Section: React.FC<SectionProps> = ({
   children,
   theme,
 }) => {
-  const [sectionTheme, setSectionTheme] = useState('')
-
-  const themeOptions = {
-    auto: '',
-    light: 'light',
-    dark: 'dark',
-    inverted: '',
-  }
-
-  useEffect(() => {
-    setSectionTheme(themeOptions[theme])
-  }, [theme])
-
   //check if backgroundImage is a Media object
   const hasBackgroundImage =
     backgroundImage && typeof backgroundImage === 'object' ? backgroundImage : undefined
@@ -62,7 +49,11 @@ export const Section: React.FC<SectionProps> = ({
   return (
     <section
       id={id ? `block-${id}` : undefined}
-      className={cn(sectionTheme, 'relative bg-background text-foreground', className)}
+      className={cn(
+        theme === 'auto' ? '' : theme,
+        'relative bg-background text-foreground',
+        className,
+      )}
       suppressHydrationWarning
     >
       <div className={cn(container ? 'container mx-auto' : '', 'relative z-10 p-8')}>
