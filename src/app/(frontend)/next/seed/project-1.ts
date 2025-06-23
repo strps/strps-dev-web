@@ -3,11 +3,14 @@ import { RequiredDataFromCollectionSlug } from 'payload'
 
 export type ProjectArgs = {
   heroImage: Media
+  metaImage: Media
   author: User
 }
 
 export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'projects'> = ({
   heroImage,
+  metaImage,
+
   author,
 }) => {
   return {
@@ -630,6 +633,7 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
       },
     },
     meta: {
+      image: metaImage.id,
       title: 'STRPS Website - Modern CMS-Powered Website',
       description:
         'A modern, performance-optimized web application built with Next.js and PayloadCMS, featuring a responsive UI, block-based content architecture, and secure form handling.',

@@ -23,7 +23,7 @@ export const Select: React.FC<
 > = ({ name, control, errors, label, options, required, width }) => {
   return (
     <Width width={width}>
-      <Label htmlFor={name}>
+      <Label htmlFor={name} className="mb-2">
         {label}
         {required && (
           <span className="required">

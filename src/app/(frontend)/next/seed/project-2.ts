@@ -4,6 +4,7 @@ import { RequiredDataFromCollectionSlug } from 'payload'
 export type ProjectArgs = {
   heroImage: Media
   author: User
+  metaImage: Media
   screenshot1: Media
   screenshot2: Media
   screenshot3: Media
@@ -12,6 +13,7 @@ export type ProjectArgs = {
 export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'projects'> = ({
   heroImage,
   author,
+  metaImage,
   screenshot1,
   screenshot2,
   screenshot3,
@@ -510,6 +512,7 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
       },
     },
     meta: {
+      image: metaImage.id,
       title: 'Trakbit - Gamified Habit Tracking',
       description:
         'A web application that makes habit formation engaging and fun through gamification, built with React, Flux, Python, and Flask.',

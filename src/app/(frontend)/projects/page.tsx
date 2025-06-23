@@ -64,10 +64,8 @@ export default async function Page() {
           />
         </div>
 
-        <div className="container mx-auto">
-          <div className="prose dark:prose-invert max-w-none">
-            <h1 className="text-4xl font-bold">Projects</h1>
-          </div>
+        <div className="container mx-auto flex flex-col items-center">
+          <h1 className="text-4xl font-bold">Projects</h1>
 
           <CollectionArchive
             className="py-16"

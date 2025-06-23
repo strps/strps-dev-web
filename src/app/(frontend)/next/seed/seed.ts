@@ -6,10 +6,13 @@ import { home } from './home'
 import { image1 } from './image-1'
 import { image2 } from './image-2'
 import { imageHero1 } from './image-hero-1'
+import { strpsMetaImage } from './strps_meta_image'
+import { trackbitMetaImage } from './trackbit_meta_image'
 import { post4 } from './post-4'
 import { post5 } from './post-5'
 import { project1 } from './project-1'
 import { project2 } from './project-2'
+import { fetchFileFromDisk, loadImageBuffer } from '@/utilities/loadImageBuffer'
 
 const collections: CollectionSlug[] = [
   'categories',
@@ -81,128 +84,142 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding media...`)
 
-  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
-    ),
-  ])
+  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer, strps1Buffer, trackbit1Buffer] =
+    await Promise.all([
+      fetchFileByURL(
+        'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
+      ),
+      fetchFileByURL(
+        'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
+      ),
+      fetchFileByURL(
+        'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
+      ),
+      fetchFileByURL(
+        'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
+      ),
+      fetchFileFromDisk('/src/app/(frontend)/next/seed/strps_meta_image.webp'),
+      fetchFileFromDisk('/src/app/(frontend)/next/seed/trackbit_meta_image.webp'),
+    ])
 
-  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
-    payload.create({
-      collection: 'users',
-      data: {
-        name: 'Demo Author',
-        email: 'demo-author@example.com',
-        password: 'password',
-      },
-    }),
-    payload.create({
-      collection: 'media',
-      data: image1,
-      file: image1Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: image2,
-      file: image2Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: image2,
-      file: image3Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: imageHero1,
-      file: hero1Buffer,
-    }),
+  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc, strps1Doc, trackbit1Doc] =
+    await Promise.all([
+      payload.create({
+        collection: 'users',
+        data: {
+          name: 'Demo Author',
+          email: 'demo-author@example.com',
+          password: 'password',
+        },
+      }),
+      payload.create({
+        collection: 'media',
+        data: image1,
+        file: image1Buffer,
+      }),
+      payload.create({
+        collection: 'media',
+        data: image2,
+        file: image2Buffer,
+      }),
+      payload.create({
+        collection: 'media',
+        data: image2,
+        file: image3Buffer,
+      }),
+      payload.create({
+        collection: 'media',
+        data: imageHero1,
+        file: hero1Buffer,
+      }),
+      payload.create({
+        collection: 'media',
+        data: strpsMetaImage,
+        file: strps1Buffer,
+      }),
+      payload.create({
+        collection: 'media',
+        data: trackbitMetaImage,
+        file: trackbit1Buffer,
+      }),
+      //Categories
+      payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Technology',
+          breadcrumbs: [
+            {
+              label: 'Technology',
+              url: '/technology',
+            },
+          ],
+        },
+      }),
 
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Technology',
-        breadcrumbs: [
-          {
-            label: 'Technology',
-            url: '/technology',
-          },
-        ],
-      },
-    }),
+      payload.create({
+        collection: 'categories',
+        data: {
+          title: 'News',
+          breadcrumbs: [
+            {
+              label: 'News',
+              url: '/news',
+            },
+          ],
+        },
+      }),
 
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'News',
-        breadcrumbs: [
-          {
-            label: 'News',
-            url: '/news',
-          },
-        ],
-      },
-    }),
+      payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Finance',
+          breadcrumbs: [
+            {
+              label: 'Finance',
+              url: '/finance',
+            },
+          ],
+        },
+      }),
+      payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Design',
+          breadcrumbs: [
+            {
+              label: 'Design',
+              url: '/design',
+            },
+          ],
+        },
+      }),
 
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Finance',
-        breadcrumbs: [
-          {
-            label: 'Finance',
-            url: '/finance',
-          },
-        ],
-      },
-    }),
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Design',
-        breadcrumbs: [
-          {
-            label: 'Design',
-            url: '/design',
-          },
-        ],
-      },
-    }),
+      payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Software',
+          breadcrumbs: [
+            {
+              label: 'Software',
+              url: '/software',
+            },
+          ],
+        },
+      }),
 
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Software',
-        breadcrumbs: [
-          {
-            label: 'Software',
-            url: '/software',
-          },
-        ],
-      },
-    }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Engineering',
-        breadcrumbs: [
-          {
-            label: 'Engineering',
-            url: '/engineering',
-          },
-        ],
-      },
-    }),
-  ])
+      payload.create({
+        collection: 'categories',
+        data: {
+          title: 'Engineering',
+          breadcrumbs: [
+            {
+              label: 'Engineering',
+              url: '/engineering',
+            },
+          ],
+        },
+      }),
+    ])
 
   payload.logger.info(`— Seeding projects...`)
 
@@ -211,6 +228,7 @@ export const seed = async ({
     collection: 'projects',
     data: project1({
       heroImage: imageHomeDoc,
+      metaImage: strps1Doc,
       author: demoAuthor,
     }),
   })
@@ -221,6 +239,7 @@ export const seed = async ({
     data: project2({
       heroImage: imageHomeDoc,
       author: demoAuthor,
+      metaImage: trackbit1Doc,
       screenshot1: image1Doc,
       screenshot2: image2Doc,
       screenshot3: image3Doc,
@@ -247,28 +266,6 @@ export const seed = async ({
     data: post5({ heroImage: image2Doc, blockImage: image1Doc, author: demoAuthor }),
   })
 
-  // update each post with related posts
-  // await payload.update({
-  //   id: post1Doc.id,
-  //   collection: 'posts',
-  //   data: {
-  //     relatedPosts: [post2Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
-  //   },
-  // })
-  // await payload.update({
-  //   id: post2Doc.id,
-  //   collection: 'posts',
-  //   data: {
-  //     relatedPosts: [post1Doc.id, post3Doc.id, post4Doc.id, post5Doc.id],
-  //   },
-  // })
-  // await payload.update({
-  //   id: post3Doc.id,
-  //   collection: 'posts',
-  //   data: {
-  //     relatedPosts: [post1Doc.id, post2Doc.id, post4Doc.id, post5Doc.id],
-  //   },
-  // })
   await payload.update({
     id: post4Doc.id,
     collection: 'posts',

@@ -103,14 +103,16 @@ export interface Config {
     defaultIDType: number;
   };
   globals: {
-    header: Header;
+    copyright: Copyright;
     footer: Footer;
+    header: Header;
     'blog-page': BlogPage;
     'projects-page': ProjectsPage;
   };
   globalsSelect: {
-    header: HeaderSelect<false> | HeaderSelect<true>;
+    copyright: CopyrightSelect<false> | CopyrightSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    header: HeaderSelect<false> | HeaderSelect<true>;
     'blog-page': BlogPageSelect<false> | BlogPageSelect<true>;
     'projects-page': ProjectsPageSelect<false> | ProjectsPageSelect<true>;
   };
@@ -656,7 +658,7 @@ export interface Project {
  */
 export interface SectionConfig {
   container?: boolean | null;
-  className?: string | null;
+  section_id?: string | null;
   backgroundContainer?: boolean | null;
   theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
   background: 'none' | 'svgCircles' | 'image';
@@ -1675,7 +1677,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  */
 export interface SectionConfigSelect<T extends boolean = true> {
   container?: T;
-  className?: T;
+  section_id?: T;
   backgroundContainer?: T;
   theme?: T;
   background?: T;
@@ -2472,33 +2474,11 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header".
+ * via the `definition` "copyright".
  */
-export interface Header {
+export interface Copyright {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
-  background?: boolean | null;
-  overlay?: boolean | null;
+  copyrightText: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2528,6 +2508,38 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  navItems?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+  background?: boolean | null;
+  overlay?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2563,26 +2575,10 @@ export interface ProjectsPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header_select".
+ * via the `definition` "copyright_select".
  */
-export interface HeaderSelect<T extends boolean = true> {
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
-  theme?: T;
-  background?: T;
-  overlay?: T;
+export interface CopyrightSelect<T extends boolean = true> {
+  copyrightText?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2606,6 +2602,32 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  navItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  theme?: T;
+  background?: T;
+  overlay?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

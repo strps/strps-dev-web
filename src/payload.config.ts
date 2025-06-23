@@ -19,7 +19,7 @@ import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 import { Tags } from './collections/Tags'
-
+import { globals } from './globals/index'
 import { resendAdapter } from '@payloadcms/email-resend'
 import { BlogPage } from './globals/blog/blog-page'
 import { ProjectsPage } from './globals/projects/projects-page'
@@ -81,7 +81,7 @@ export default buildConfig({
   db,
   collections: [Pages, Posts, Media, Categories, Users, Projects, Tags],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, BlogPage, ProjectsPage],
+  globals,
   plugins: [
     ...plugins,
     vercelBlobStorage({

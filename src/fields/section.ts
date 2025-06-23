@@ -17,7 +17,7 @@ export const SectionConfig: Field = {
       type: 'checkbox',
     },
     {
-      name: 'className',
+      name: 'section_id',
       type: 'text',
     },
     {

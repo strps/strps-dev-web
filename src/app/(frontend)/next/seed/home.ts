@@ -107,6 +107,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
           theme: 'auto',
           background: 'none',
           container: true,
+          section_id: 'skills',
         },
         skillGroup: [
           {
@@ -297,36 +298,8 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         blockType: 'strpsFormBlock',
         enableIntro: true,
         form: contactForm,
-        introContent: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'heading',
-                children: [
-                  {
-                    type: 'text',
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: 'Example contact form:',
-                    version: 1,
-                  },
-                ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                tag: 'h3',
-                version: 1,
-              },
-            ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            version: 1,
-          },
-        },
+        introType: 'titleAndText',
+        introTitle: "Let's get in touch",
         section: {
           theme: 'auto',
           background: 'none',

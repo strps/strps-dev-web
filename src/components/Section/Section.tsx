@@ -1,14 +1,13 @@
-'use client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { cn } from '@/utilities/ui'
 import { SectionBackground } from './SectionBackground'
 
 import { SectionConfig } from '@/payload-types'
-import { useTheme } from 'next-themes'
 
 interface SectionProps extends SectionConfig {
   id?: string | null
   children: React.ReactNode
+  className?: string
 }
 
 /**
@@ -41,6 +40,7 @@ export const Section: React.FC<SectionProps> = ({
   className,
   children,
   theme,
+  section_id,
 }) => {
   //check if backgroundImage is a Media object
   const hasBackgroundImage =
@@ -48,7 +48,7 @@ export const Section: React.FC<SectionProps> = ({
 
   return (
     <section
-      id={id ? `block-${id}` : undefined}
+      id={section_id ? section_id : id ? `block-${id}` : undefined}
       className={cn(
         theme === 'auto' ? '' : theme,
         'relative bg-background text-foreground',
