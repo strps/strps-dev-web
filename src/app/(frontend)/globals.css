@@ -21,6 +21,7 @@
   --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.92 0.004 286.32);
+  --card-border: #ffffff;
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -59,6 +60,7 @@
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
+  --card-border: #444444;
   --input: #262828;
   --ring: oklch(0.552 0.016 285.938);
   --chart-1: oklch(0.488 0.243 264.376);
@@ -74,7 +76,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
-  --shadow-card: 15px 15px 30px #00000067,0px 0px 10px 3px  #00000031, -15px -15px 30px #ffffff0e;
+  --shadow-card: 15px 15px 30px #00000067,0px 0px 10px 3px  #00000031, -15px -15px 30px #ffffff05;
   --shadow-input: 4px 4px 14px #00000028 inset, -7px -7px 14px #ffffff0c inset, 0px 0px 6px 4px #00000028 inset;
 }
 
@@ -83,7 +85,7 @@
 
 
 @theme inline {
-
+  --color-card-border: var(--card-border);
   --shadow-card: var(--shadow-card);
   --shadow-input: var(--shadow-input);
   --font-sans: Chivo, "Chivo Fallack", sans-serif;

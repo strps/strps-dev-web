@@ -1,12 +1,176 @@
-import type { RequiredDataFromCollectionSlug } from 'payload'
+import type { RequiredDataFromCollectionSlug, Payload, PayloadRequest } from 'payload'
 import type { Form, Media } from '@/payload-types'
-import { theme } from '@/fields/theme'
+import { fetchFileFromDisk } from '@/utilities/loadImageBuffer'
 
 type HomeArgs = {
   heroImage: Media
   metaImage: Media
   aboutImage: Media
   contactForm: Form
+}
+
+type SeedHomePageArgs = {
+  payload: Payload
+  req: PayloadRequest
+  contactForm: Form
+}
+
+const image1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
+  alt: 'Example Image 1',
+  caption: {
+    root: {
+      type: 'root',
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      version: 1,
+      children: [
+        {
+          type: 'paragraph',
+          version: 1,
+          children: [
+            {
+              type: 'text',
+              detail: 0,
+              mode: 'normal',
+              style: '',
+              text: 'Example Image 1 Caption',
+            },
+          ],
+        },
+      ],
+    },
+  },
+}
+
+const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
+  alt: 'Example Image 2',
+  caption: {
+    root: {
+      type: 'root',
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      version: 1,
+      children: [
+        {
+          type: 'paragraph',
+          version: 1,
+          children: [
+            {
+              type: 'text',
+              detail: 0,
+              format: 0,
+              mode: 'normal',
+              style: '',
+              text: 'Example Image 2 Caption',
+            },
+          ],
+        },
+      ],
+    },
+  },
+}
+
+const imageHero1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
+  alt: 'Hero Image 1',
+  caption: {
+    root: {
+      type: 'root',
+      direction: 'ltr',
+      format: '',
+      indent: 0,
+      version: 1,
+      children: [
+        {
+          type: 'paragraph',
+          version: 1,
+          children: [
+            {
+              type: 'text',
+              detail: 0,
+              format: 0,
+              mode: 'normal',
+              style: '',
+              text: 'Hero Image 1 Caption',
+            },
+          ],
+        },
+      ],
+    },
+  },
+}
+
+const contactFormData = {
+  title: 'Contact Form',
+  description: 'Contact form description',
+  fields: [
+    {
+      label: 'Name',
+      type: 'text',
+    },
+    {
+      label: 'Email',
+      type: 'email',
+    },
+    {
+      label: 'Message',
+      type: 'textarea',
+    },
+  ],
+}
+
+export const seedHomePage = async ({ payload, req, contactForm }: SeedHomePageArgs) => {
+  payload.logger.info(`— Seeding home page media...`)
+
+  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
+  ])
+
+  const [image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
+    payload.create({
+      collection: 'media',
+      data: image1,
+      file: image1Buffer,
+    }),
+    payload.create({
+      collection: 'media',
+      data: image2,
+      file: image2Buffer,
+    }),
+    payload.create({
+      collection: 'media',
+      data: image2, // Using image2 data for the third image as well
+      file: image3Buffer,
+    }),
+    payload.create({
+      collection: 'media',
+      data: imageHero1,
+      file: hero1Buffer,
+    }),
+  ])
+
+  const homePage = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: home({
+      heroImage: imageHomeDoc,
+      metaImage: image2Doc,
+      aboutImage: image3Doc,
+      contactForm: contactForm as Form,
+    }),
+  })
+
+  return {
+    image1Doc,
+    image2Doc,
+    image3Doc,
+    imageHomeDoc,
+    homePage,
+  }
 }
 
 export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
@@ -114,27 +278,19 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
             text: 'Frontend:',
             skills: [
               {
-                text: 'HTML',
+                text: 'HTML5',
                 percentage: 90,
               },
               {
-                text: 'CSS',
+                text: 'CSS3',
                 percentage: 85,
-              },
-              {
-                text: 'JavaScript',
-                percentage: 80,
-              },
-              {
-                text: 'TypeScript',
-                percentage: 75,
               },
               {
                 text: 'React',
                 percentage: 70,
               },
               {
-                text: 'Next.js',
+                text: 'Responsive Design',
                 percentage: 65,
               },
               {
@@ -142,12 +298,12 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                 percentage: 60,
               },
               {
-                text: 'Shadcn UI',
-                percentage: 55,
+                text: 'Bootstrap',
+                percentage: 60,
               },
               {
-                text: 'Framer Motion',
-                percentage: 50,
+                text: 'UI/UX Principles',
+                percentage: 55,
               },
               {
                 text: 'Framer Motion',
@@ -195,7 +351,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                 percentage: 50,
               },
               {
-                text: 'Prisma',
+                text: 'Drizzle',
                 percentage: 50,
               },
             ],
@@ -212,36 +368,37 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                 percentage: 85,
               },
               {
-                text: 'GitLab',
-                percentage: 80,
+                text: 'VSCode',
+                percentage: 60,
+              },
+
+              {
+                text: 'Chrome DevTools',
+                percentage: 60,
               },
               {
-                text: 'Jira',
-                percentage: 75,
+                text: 'Testing (Jest)',
+                percentage: 60,
               },
               {
-                text: 'Trello',
-                percentage: 70,
+                text: 'Linux',
+                percentage: 60,
+              },
+              {
+                text: 'Windows',
+                percentage: 60,
+              },
+              {
+                text: 'MacOS',
+                percentage: 60,
+              },
+              {
+                text: 'Command Line/Terminal',
+                percentage: 60,
               },
               {
                 text: 'Figma',
                 percentage: 65,
-              },
-              {
-                text: 'Canva',
-                percentage: 60,
-              },
-              {
-                text: 'Adobe XD',
-                percentage: 55,
-              },
-              {
-                text: 'Adobe XD',
-                percentage: 50,
-              },
-              {
-                text: 'Adobe XD',
-                percentage: 50,
               },
             ],
           },
@@ -249,19 +406,19 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
             text: 'Programming Languages:',
             skills: [
               {
-                text: 'HTML',
+                text: 'JavaScript | TypeScript',
                 percentage: 90,
               },
               {
-                text: 'CSS',
+                text: 'Python',
                 percentage: 85,
               },
               {
-                text: 'JavaScript',
+                text: 'Java',
                 percentage: 80,
               },
               {
-                text: 'TypeScript',
+                text: 'C#',
                 percentage: 75,
               },
               {
@@ -269,28 +426,26 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
                 percentage: 70,
               },
               {
-                text: 'Next.js',
+                text: 'VHDL',
                 percentage: 65,
-              },
-              {
-                text: 'Tailwind CSS',
-                percentage: 60,
-              },
-              {
-                text: 'Shadcn UI',
-                percentage: 55,
-              },
-              {
-                text: 'Framer Motion',
-                percentage: 50,
-              },
-              {
-                text: 'Framer Motion',
-                percentage: 50,
               },
             ],
           },
         ],
+      },
+
+      //Projects Block
+      {
+        blockType: 'projectsArchive',
+        title: 'My Work',
+        populateBy: 'collection',
+        relationTo: 'projects',
+        section: {
+          theme: 'auto',
+          background: 'none',
+          container: true,
+          section_id: 'projects',
+        },
       },
 
       // Contact Form Block

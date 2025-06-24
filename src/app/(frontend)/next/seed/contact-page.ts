@@ -1,8 +1,30 @@
 import type { Form } from '@/payload-types'
-import { RequiredDataFromCollectionSlug } from 'payload'
+import type { RequiredDataFromCollectionSlug, Payload } from 'payload'
 
 type ContactArgs = {
   contactForm: Form
+}
+
+type SeedContactPageArgs = {
+  payload: Payload
+  contactForm: Form
+}
+
+export const seedContactPage = async ({ payload, contactForm }: SeedContactPageArgs) => {
+  payload.logger.info(`— Seeding contact page...`)
+
+  const contactPage = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: contact({
+      contactForm: contactForm as Form,
+    }),
+  })
+
+  return {
+    contactForm,
+    contactPage,
+  }
 }
 
 export const contact: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pages'> = ({

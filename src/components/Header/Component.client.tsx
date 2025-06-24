@@ -18,7 +18,7 @@ const defaultVariant = 'classic'
 const defaultContainer = true
 const defaultBackground = false
 
-const headerVariants = cva('z-20 top-0 left-0 right-0', {
+const headerVariants = cva('top-0 left-0 right-0 z-50', {
   variants: {
     variant: {
       classic: 'flex flex-row justify-between items-center bg-background',
@@ -66,19 +66,6 @@ const logoVariants = cva('', {
       classic: 'fill-primary w-44',
       modern: 'fill-white w-44',
       plain: 'fill-primary w-44',
-      stackLeft: 'fill-primary w-44',
-      stackRight: 'fill-primary w-44',
-      stackCenter: 'fill-primary w-44',
-      magazine: 'fill-primary w-44',
-      creativeLeft: 'fill-primary w-44',
-      creativeRight: 'fill-primary w-44',
-      creativeAlwaysOpen: 'fill-primary w-44',
-      empty: 'fill-primary w-44',
-      simple: 'fill-primary w-44',
-      overlay: 'fill-primary w-44',
-      belowSlider: 'fill-primary w-44',
-      belowSliderWithSplit: 'fill-primary w-44',
-      split: 'fill-primary w-44',
     },
   },
   defaultVariants: {
@@ -99,16 +86,20 @@ const linksVariants = cva('', {
   },
 })
 
-const containerVariants = cva('mx-auto flex flex-row justify-between items-center', {
+const containerVariants = cva('mx-auto flex flex-row justify-between items-center z-50', {
   variants: {
     variant: {
-      classic: ' px-20 py-10',
+      classic: 'px-10 py-5 md:px-20 md:py-10',
       modern: 'px-20 py-8',
       plain: 'px-20 py-8',
     },
     container: {
       true: 'container',
       false: 'w-full',
+    },
+    background: {
+      true: 'bg-card border-b border-border',
+      false: 'bg-transparent',
     },
   },
   compoundVariants: [
@@ -118,6 +109,7 @@ const containerVariants = cva('mx-auto flex flex-row justify-between items-cente
     },
   ],
   defaultVariants: {
+    background: defaultBackground,
     container: defaultContainer,
     variant: defaultVariant,
   },
@@ -145,13 +137,13 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({
   return (
     <header
       className={cn(
-        data.overlay && 'absolute',
+        data.overlay ? 'absolute' : 'relative',
         headerVariants({ variant, background: data.background, container, theme: data.theme }),
       )}
     >
-      <div className={cn(containerVariants({ variant, container }))}>
-        <Link href="/" aria-label="Go to homepage">
-          <Logo className={cn(logoVariants({ variant }), 'h-auto')} />
+      <div className={cn(containerVariants({ variant, container }), 'z-50')}>
+        <Link href="/" aria-label="Go to homepage" className="z-50">
+          <Logo className={cn(logoVariants({ variant }), 'h-auto z-50')} />
           {/* h-auto in order to override the height of the svg */}
         </Link>
         <HeaderNav data={data} variant={variant} />
@@ -185,12 +177,13 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, variant = 'classic' 
           )
         })}
       </ul>
-      <div className="relative md:hidden z-50">
+      <div className="md:hidden z-50">
         <Hamburger
           rounded
           toggled={open}
           toggle={setOpen}
           aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+          color="var(--foreground)"
         />
       </div>
       <AnimatePresence>
@@ -200,7 +193,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, variant = 'classic' 
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
-              className="absolute top-full left-0 w-full z-50 bg-background border rounded-md shadow-md py-4 flex flex-col overflow-hidden"
+              className="absolute top-full left-0 w-full z-40 bg-background border rounded-md shadow-md py-4 flex flex-col overflow-hidden"
             >
               <ul className="flex flex-col gap-4 px-4">
                 {navItems.map(({ link }, i) => {
@@ -216,7 +209,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, variant = 'classic' 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm"
               onClick={handleClick}
               aria-hidden="true"
             ></motion.div>

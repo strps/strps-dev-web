@@ -19,8 +19,8 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
   screenshot3,
 }) => {
   return {
-    title: 'Trakbit',
-    slug: 'trakbit',
+    title: 'Trackbit',
+    slug: 'trackbit',
     _status: 'published',
     heroImage: heroImage.id,
     content: {
@@ -44,7 +44,7 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: 'Trakbit: Gamified Habit Tracking',
+                text: 'Trackbit: Gamified Habit Tracking',
                 version: 1,
               },
             ],
@@ -63,7 +63,7 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: 'Trakbit is a web application designed to make habit formation engaging and fun. By gamifying the tracking process, Trakbit empowers users to monitor their daily progress and build positive routines.',
+                text: 'Trackbit is a web application designed to make habit formation engaging and fun. By gamifying the tracking process, Trackbit empowers users to monitor their daily progress and build positive routines.',
                 version: 1,
               },
             ],
@@ -513,7 +513,7 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
     },
     meta: {
       image: metaImage.id,
-      title: 'Trakbit - Gamified Habit Tracking',
+      title: 'Trackbit - Gamified Habit Tracking',
       description:
         'A web application that makes habit formation engaging and fun through gamification, built with React, Flux, Python, and Flask.',
     },

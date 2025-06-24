@@ -56,7 +56,7 @@ export const Section: React.FC<SectionProps> = ({
       )}
       suppressHydrationWarning
     >
-      <div className={cn(container ? 'container mx-auto' : '', 'relative z-10 p-8')}>
+      <div className={cn(container ? 'container mx-auto' : '', 'relative z-10 md:p-8')}>
         {children}
       </div>
       <SectionBackground
