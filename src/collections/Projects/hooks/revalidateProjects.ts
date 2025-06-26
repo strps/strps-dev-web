@@ -17,6 +17,7 @@ export const revalidateProject: CollectionAfterChangeHook<Post> = ({
 
       revalidatePath(path)
       revalidateTag('projects-sitemap')
+      revalidatePath('/projects')
     }
 
     // If the project was previously published, we need to revalidate the old path
@@ -27,6 +28,7 @@ export const revalidateProject: CollectionAfterChangeHook<Post> = ({
 
       revalidatePath(oldPath)
       revalidateTag('projects-sitemap')
+      revalidatePath('/projects')
     }
   }
   return doc
@@ -38,6 +40,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({ doc, req: { 
 
     revalidatePath(path)
     revalidateTag('projects-sitemap')
+    revalidatePath('/projects')
   }
 
   return doc
