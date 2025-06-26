@@ -2,12 +2,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root, .light {
+:root, .light, .dark .inverted {
   --radius: 0.3rem;
-  --background: oklch(1 0 0);
+  --background: #e0e0e0;
   --foreground: oklch(0.141 0.005 285.823);
-  --svg-circle-color: oklch(0.9315 0 0);
-  --card: oklch(1 0 0);
+  --svg-circle-color: #0000000e;
+  --card: #e0e0e0;
   --card-foreground: oklch(0.141 0.005 285.823);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.141 0.005 285.823);
@@ -20,7 +20,8 @@
   --accent: oklch(0.967 0.001 286.375);
   --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
+  --border: #fefefe;
+  --card-border: #ffffff;
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -36,10 +37,13 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
-  --shadow-card: 20px 20px 60px #bebebe, -5px -5px 20px 5px #ffffff;
+  --shadow-card: 15px 15px 30px #00000041,0px 0px 10px 3px  #0000001c, -15px -15px 30px #ffffffb9;
+  --shadow-input: 4px 4px 14px #00000010 inset, -7px -7px 14px #ffffff96 inset, 0px 0px 6px 4px #0000001f inset;
+  --footer-background: #dbdbdb;
+  --shadow-footer: 0px 0px 10px 3px  #0000001c, -15px -15px 30px #ffffffb9;
 }
 
-.dark {
+.dark, .light .inverted {
   /* --background: oklch(0.141 0.005 285.823); */
   --background: #161717;
   --foreground: oklch(0.985 0 0);
@@ -58,7 +62,8 @@
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --card-border: #444444;
+  --input: #262828;
   --ring: oklch(0.552 0.016 285.938);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -73,7 +78,10 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
-  --shadow-card: 20px 20px 60px #0f1010, -5px -5px 20px 5px #2e303055;
+  --shadow-card: 15px 15px 30px #00000067,0px 0px 10px 3px  #00000031, -15px -15px 30px #ffffff05;
+  --shadow-input: 4px 4px 14px #00000028 inset, -7px -7px 14px #ffffff0c inset, 0px 0px 6px 4px #00000028 inset;
+  --footer-background: #161717;
+  --shadow-footer: 0px 0px 10px 3px  #00000031, -15px 0px 30px #ffffff05;
 }
 
 
@@ -81,8 +89,9 @@
 
 
 @theme inline {
-
+  --color-card-border: var(--card-border);
   --shadow-card: var(--shadow-card);
+  --shadow-input: var(--shadow-input);
   --font-sans: Chivo, "Chivo Fallack", sans-serif;
   --font-serif: Lora, "Lora Fallack", serif;
   --radius-sm: calc(var(--radius) - 4px);
@@ -120,6 +129,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-footer: var(--footer-background);
+  --shadow-footer: var(--shadow-footer);
 }
 
 @layer base {

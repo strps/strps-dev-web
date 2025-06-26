@@ -45,7 +45,7 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
   return (
     <svg
       style={style}
-      className={cn(className)}
+      className={cn('overflow-visible', className)}
       viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
       preserveAspectRatio="xMidYMid slice"
     >

@@ -67,13 +67,13 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    media: Media;
     pages: Page;
     posts: Post;
-    media: Media;
-    categories: Category;
     users: User;
     projects: Project;
-    tags: Tag;
+    projectTags: ProjectTag;
+    blogTags: BlogTag;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -84,13 +84,13 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
-    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
-    tags: TagsSelect<false> | TagsSelect<true>;
+    projectTags: ProjectTagsSelect<false> | ProjectTagsSelect<true>;
+    blogTags: BlogTagsSelect<false> | BlogTagsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -103,12 +103,18 @@ export interface Config {
     defaultIDType: number;
   };
   globals: {
-    header: Header;
+    copyright: Copyright;
     footer: Footer;
+    header: Header;
+    'blog-page': BlogPage;
+    'projects-page': ProjectsPage;
   };
   globalsSelect: {
-    header: HeaderSelect<false> | HeaderSelect<true>;
+    copyright: CopyrightSelect<false> | CopyrightSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    'blog-page': BlogPageSelect<false> | BlogPageSelect<true>;
+    'projects-page': ProjectsPageSelect<false> | ProjectsPageSelect<true>;
   };
   locale: 'en' | 'es';
   user: User & {
@@ -145,16 +151,109 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt: string;
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    xlarge?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
   id: number;
   title: string;
   appearance?: {
-    /**
-     * Select the theme for the header on this page
-     */
-    headerTheme?: ('auto' | 'light' | 'dark') | null;
+    headerOverrides?: {
+      theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+      background?: boolean | null;
+      overlay?: boolean | null;
+    };
   };
   layout: (
     | CallToActionBlock
@@ -337,7 +436,7 @@ export interface Post {
     [k: string]: unknown;
   };
   relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
+  tags?: (number | BlogTag)[] | null;
   meta?: {
     title?: string | null;
     /**
@@ -345,6 +444,13 @@ export interface Post {
      */
     image?: (number | null) | Media;
     description?: string | null;
+  };
+  appearance?: {
+    headerOverrides?: {
+      theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+      background?: boolean | null;
+      overlay?: boolean | null;
+    };
   };
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
@@ -362,109 +468,17 @@ export interface Post {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "blogTags".
  */
-export interface Media {
+export interface BlogTag {
   id: number;
-  alt: string;
-  caption?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    xlarge?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    og?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: number;
-  title: string;
+  tag: string;
   slug?: string | null;
   slugLock?: boolean | null;
-  parent?: (number | null) | Category;
+  parent?: (number | null) | BlogTag;
   breadcrumbs?:
     | {
-        doc?: (number | null) | Category;
+        doc?: (number | null) | BlogTag;
         url?: string | null;
         label?: string | null;
         id?: string | null;
@@ -574,7 +588,7 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: ('posts' | 'projects') | null;
-  categories?: (number | Category)[] | null;
+  tags?: (number | BlogTag)[] | null;
   limit?: number | null;
   selectedDocs?:
     | (
@@ -624,6 +638,13 @@ export interface Project {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  appearance?: {
+    headerOverrides?: {
+      theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+      background?: boolean | null;
+      overlay?: boolean | null;
+    };
+  };
   publishedAt?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -637,9 +658,9 @@ export interface Project {
  */
 export interface SectionConfig {
   container?: boolean | null;
-  className?: string | null;
+  section_id?: string | null;
   backgroundContainer?: boolean | null;
-  theme: 'auto' | 'light' | 'dark';
+  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
   background: 'none' | 'svgCircles' | 'image';
   backgroundImage?: (number | null) | Media;
 }
@@ -834,6 +855,7 @@ export interface StrpsAboutUsBlock {
  * via the `definition` "StrpsFormBlock".
  */
 export interface StrpsFormBlock {
+  section: SectionConfig;
   form: number | Form;
   introType?: ('richText' | 'titleAndText' | 'none') | null;
   introContent?: {
@@ -1247,13 +1269,22 @@ export interface StrpsCareersBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags".
+ * via the `definition` "projectTags".
  */
-export interface Tag {
+export interface ProjectTag {
   id: number;
   title: string;
   slug?: string | null;
   slugLock?: boolean | null;
+  parent?: (number | null) | ProjectTag;
+  breadcrumbs?:
+    | {
+        doc?: (number | null) | ProjectTag;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1400,20 +1431,16 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null)
     | ({
         relationTo: 'posts';
         value: number | Post;
-      } | null)
-    | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
-        relationTo: 'categories';
-        value: number | Category;
       } | null)
     | ({
         relationTo: 'users';
@@ -1424,8 +1451,12 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
-        relationTo: 'tags';
-        value: number | Tag;
+        relationTo: 'projectTags';
+        value: number | ProjectTag;
+      } | null)
+    | ({
+        relationTo: 'blogTags';
+        value: number | BlogTag;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1487,6 +1518,99 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  caption?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        square?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        xlarge?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
@@ -1494,7 +1618,13 @@ export interface PagesSelect<T extends boolean = true> {
   appearance?:
     | T
     | {
-        headerTheme?: T;
+        headerOverrides?:
+          | T
+          | {
+              theme?: T;
+              background?: T;
+              overlay?: T;
+            };
       };
   layout?:
     | T
@@ -1636,7 +1766,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   populateBy?: T;
   relationTo?: T;
-  categories?: T;
+  tags?: T;
   limit?: T;
   selectedDocs?: T;
   section?: T | SectionConfigSelect<T>;
@@ -1649,7 +1779,7 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
  */
 export interface SectionConfigSelect<T extends boolean = true> {
   container?: T;
-  className?: T;
+  section_id?: T;
   backgroundContainer?: T;
   theme?: T;
   background?: T;
@@ -1779,6 +1909,7 @@ export interface StrpsAboutUsBlockSelect<T extends boolean = true> {
  * via the `definition` "StrpsFormBlock_select".
  */
 export interface StrpsFormBlockSelect<T extends boolean = true> {
+  section?: T | SectionConfigSelect<T>;
   form?: T;
   introType?: T;
   introContent?: T;
@@ -2008,13 +2139,24 @@ export interface PostsSelect<T extends boolean = true> {
   heroImage?: T;
   content?: T;
   relatedPosts?: T;
-  categories?: T;
+  tags?: T;
   meta?:
     | T
     | {
         title?: T;
         image?: T;
         description?: T;
+      };
+  appearance?:
+    | T
+    | {
+        headerOverrides?:
+          | T
+          | {
+              theme?: T;
+              background?: T;
+              overlay?: T;
+            };
       };
   publishedAt?: T;
   authors?: T;
@@ -2029,119 +2171,6 @@ export interface PostsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  caption?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
-    | T
-    | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        square?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        small?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        medium?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        large?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        xlarge?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        og?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
- */
-export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  slugLock?: T;
-  parent?: T;
-  breadcrumbs?:
-    | T
-    | {
-        doc?: T;
-        url?: T;
-        label?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2174,6 +2203,17 @@ export interface ProjectsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  appearance?:
+    | T
+    | {
+        headerOverrides?:
+          | T
+          | {
+              theme?: T;
+              background?: T;
+              overlay?: T;
+            };
+      };
   publishedAt?: T;
   slug?: T;
   slugLock?: T;
@@ -2183,12 +2223,41 @@ export interface ProjectsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags_select".
+ * via the `definition` "projectTags_select".
  */
-export interface TagsSelect<T extends boolean = true> {
+export interface ProjectTagsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   slugLock?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogTags_select".
+ */
+export interface BlogTagsSelect<T extends boolean = true> {
+  tag?: T;
+  slug?: T;
+  slugLock?: T;
+  parent?: T;
+  breadcrumbs?:
+    | T
+    | {
+        doc?: T;
+        url?: T;
+        label?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2423,30 +2492,13 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header".
+ * via the `definition` "copyright".
  */
-export interface Header {
+export interface Copyright {
   id: number;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
+  name: string;
+  startDate: string;
+  link?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2481,23 +2533,74 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header_select".
+ * via the `definition` "header".
  */
-export interface HeaderSelect<T extends boolean = true> {
+export interface Header {
+  id: number;
   navItems?:
-    | T
     | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+  background?: boolean | null;
+  overlay?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-page".
+ */
+export interface BlogPage {
+  id: number;
+  headerOverrides?: {
+    theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+    background?: boolean | null;
+    overlay?: boolean | null;
+  };
+  'feature-posts'?: (number | Post)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-page".
+ */
+export interface ProjectsPage {
+  id: number;
+  headerOverrides?: {
+    theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+    background?: boolean | null;
+    overlay?: boolean | null;
+  };
+  'feature-projects'?: (number | Project)[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "copyright_select".
+ */
+export interface CopyrightSelect<T extends boolean = true> {
+  name?: T;
+  startDate?: T;
+  link?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2521,6 +2624,66 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  navItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  theme?: T;
+  background?: T;
+  overlay?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog-page_select".
+ */
+export interface BlogPageSelect<T extends boolean = true> {
+  headerOverrides?:
+    | T
+    | {
+        theme?: T;
+        background?: T;
+        overlay?: T;
+      };
+  'feature-posts'?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects-page_select".
+ */
+export interface ProjectsPageSelect<T extends boolean = true> {
+  headerOverrides?:
+    | T
+    | {
+        theme?: T;
+        background?: T;
+        overlay?: T;
+      };
+  'feature-projects'?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

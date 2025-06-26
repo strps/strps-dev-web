@@ -14,7 +14,7 @@ export const ArchiveBlock: React.FC<
 > = async (props) => {
   const {
     id,
-    categories,
+    tags,
     introContent,
     limit: limitFromProps,
     populateBy,
@@ -30,9 +30,9 @@ export const ArchiveBlock: React.FC<
   if (populateBy === 'collection' && relationTo) {
     const payload = await getPayload({ config: configPromise })
 
-    const flattenedCategories = categories?.map((category) => {
-      if (typeof category === 'object') return category.id
-      else return category
+    const flattenedTags = tags?.map((tag) => {
+      if (typeof tag === 'object') return tag.id
+      else return tag
     })
 
     const fetchedPosts = await payload.find({
@@ -42,17 +42,17 @@ export const ArchiveBlock: React.FC<
       select: {
         title: true,
         slug: true,
-        categories: true,
+        tags: true,
         meta: true,
         content: true,
         updatedAt: true,
         createdAt: true,
       },
-      ...(flattenedCategories && flattenedCategories.length > 0
+      ...(flattenedTags && flattenedTags.length > 0
         ? {
             where: {
-              categories: {
-                in: flattenedCategories,
+              tags: {
+                in: flattenedTags,
               },
             },
           }

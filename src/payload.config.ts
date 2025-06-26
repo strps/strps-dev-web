@@ -1,26 +1,17 @@
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { postgresAdapter } from '@payloadcms/db-postgres'
-
 import sharp from 'sharp' // sharp-import
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
-
-import { Categories } from './collections/Categories'
-import { Media } from './collections/Media'
-import { Pages } from './collections/Pages'
-import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
-import { Projects } from './collections/Projects'
-import { Footer } from './components/Footer/config'
-import { Header } from './components/Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
-import { Tags } from './collections/Tags'
-
+import { globals } from './globals/index'
 import { resendAdapter } from '@payloadcms/email-resend'
+import collections from './collections'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -77,9 +68,9 @@ export default buildConfig({
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db,
-  collections: [Pages, Posts, Media, Categories, Users, Projects, Tags],
+  collections: collections,
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals,
   plugins: [
     ...plugins,
     vercelBlobStorage({

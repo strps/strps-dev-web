@@ -1,5 +1,5 @@
 import { Block } from 'payload'
-import { SectionConfig } from '@/components/Section/config'
+import { SectionConfig } from '@/fields/section'
 
 export const StrpsSkills: Block = {
   slug: 'strpsSkills',

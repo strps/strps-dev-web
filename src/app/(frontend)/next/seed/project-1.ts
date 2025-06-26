@@ -3,11 +3,14 @@ import { RequiredDataFromCollectionSlug } from 'payload'
 
 export type ProjectArgs = {
   heroImage: Media
+  metaImage: Media
   author: User
 }
 
 export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'projects'> = ({
   heroImage,
+  metaImage,
+
   author,
 }) => {
   return {
@@ -18,9 +21,17 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
     content: {
       root: {
         type: 'root',
+        direction: 'ltr',
+        format: 'left',
+        indent: 0,
+        version: 1,
         children: [
           {
             type: 'heading',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             children: [
               {
                 type: 'text',
@@ -32,14 +43,14 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h1',
-            version: 1,
           },
           {
             type: 'paragraph',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             children: [
               {
                 type: 'text',
@@ -51,13 +62,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -69,18 +80,22 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -92,13 +107,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -110,13 +125,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -128,13 +143,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -146,13 +161,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -164,13 +179,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -182,19 +197,15 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -206,18 +217,22 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -229,13 +244,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -247,13 +262,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -265,13 +280,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -283,13 +298,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -301,19 +316,15 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -325,18 +336,22 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -348,13 +363,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -366,13 +381,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -384,13 +399,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -402,13 +417,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -420,13 +435,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -438,19 +453,15 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -462,18 +473,22 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -485,13 +500,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -503,13 +518,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -521,13 +536,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -539,19 +554,15 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -563,13 +574,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -581,13 +592,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -599,13 +610,13 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -617,19 +628,12 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            version: 1,
           },
         ],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        version: 1,
       },
     },
     meta: {
+      image: metaImage.id,
       title: 'STRPS Website - Modern CMS-Powered Website',
       description:
         'A modern, performance-optimized web application built with Next.js and PayloadCMS, featuring a responsive UI, block-based content architecture, and secure form handling.',

@@ -4,6 +4,7 @@ import { RequiredDataFromCollectionSlug } from 'payload'
 export type ProjectArgs = {
   heroImage: Media
   author: User
+  metaImage: Media
   screenshot1: Media
   screenshot2: Media
   screenshot3: Media
@@ -12,21 +13,30 @@ export type ProjectArgs = {
 export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'projects'> = ({
   heroImage,
   author,
+  metaImage,
   screenshot1,
   screenshot2,
   screenshot3,
 }) => {
   return {
-    title: 'Trakbit',
-    slug: 'trakbit',
+    title: 'Trackbit',
+    slug: 'trackbit',
     _status: 'published',
     heroImage: heroImage.id,
     content: {
       root: {
         type: 'root',
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        version: 1,
         children: [
           {
             type: 'heading',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             children: [
               {
                 type: 'text',
@@ -34,18 +44,18 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: 'Trakbit: Gamified Habit Tracking',
+                text: 'Trackbit: Gamified Habit Tracking',
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h1',
-            version: 1,
           },
           {
             type: 'paragraph',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             children: [
               {
                 type: 'text',
@@ -53,17 +63,17 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 format: 0,
                 mode: 'normal',
                 style: '',
-                text: 'Trakbit is a web application designed to make habit formation engaging and fun. By gamifying the tracking process, Trakbit empowers users to monitor their daily progress and build positive routines.',
+                text: 'Trackbit is a web application designed to make habit formation engaging and fun. By gamifying the tracking process, Trackbit empowers users to monitor their daily progress and build positive routines.',
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -75,18 +85,22 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -98,13 +112,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -116,13 +130,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -134,13 +148,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -152,19 +166,15 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -176,18 +186,22 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -199,13 +213,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -217,13 +231,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -235,19 +249,15 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -259,18 +269,22 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -282,13 +296,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -300,13 +314,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -318,13 +332,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -336,19 +350,15 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'heading',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'heading',
             children: [
               {
                 type: 'text',
@@ -360,18 +370,22 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
             tag: 'h2',
-            version: 1,
           },
           {
             type: 'list',
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
             listType: 'bullet',
             children: [
               {
                 type: 'listitem',
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                version: 1,
                 children: [
                   {
                     type: 'text',
@@ -383,13 +397,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -401,13 +415,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
+              },
+              {
+                type: 'listitem',
                 direction: 'ltr',
                 format: '',
                 indent: 0,
                 version: 1,
-              },
-              {
-                type: 'listitem',
                 children: [
                   {
                     type: 'text',
@@ -419,19 +433,15 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                     version: 1,
                   },
                 ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -443,13 +453,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -461,13 +471,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -479,13 +489,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
+          },
+          {
+            type: 'paragraph',
             direction: 'ltr',
             format: '',
             indent: 0,
             version: 1,
-          },
-          {
-            type: 'paragraph',
             children: [
               {
                 type: 'text',
@@ -497,20 +507,13 @@ export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
                 version: 1,
               },
             ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            version: 1,
           },
         ],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        version: 1,
       },
     },
     meta: {
-      title: 'Trakbit - Gamified Habit Tracking',
+      image: metaImage.id,
+      title: 'Trackbit - Gamified Habit Tracking',
       description:
         'A web application that makes habit formation engaging and fun through gamification, built with React, Flux, Python, and Flask.',
     },

@@ -1,8 +1,30 @@
 import type { Form } from '@/payload-types'
-import { RequiredDataFromCollectionSlug } from 'payload'
+import type { RequiredDataFromCollectionSlug, Payload } from 'payload'
 
 type ContactArgs = {
   contactForm: Form
+}
+
+type SeedContactPageArgs = {
+  payload: Payload
+  contactForm: Form
+}
+
+export const seedContactPage = async ({ payload, contactForm }: SeedContactPageArgs) => {
+  payload.logger.info(`— Seeding contact page...`)
+
+  const contactPage = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: contact({
+      contactForm: contactForm as Form,
+    }),
+  })
+
+  return {
+    contactForm,
+    contactPage,
+  }
 }
 
 export const contact: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
@@ -32,7 +54,7 @@ export const contact: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pag
                     format: 0,
                     mode: 'normal',
                     style: '',
-                    text: 'Example contact form:',
+                    text: "Let's get in touch!",
                     version: 1,
                   },
                 ],
@@ -48,6 +70,11 @@ export const contact: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pag
             indent: 0,
             version: 1,
           },
+        },
+        section: {
+          theme: 'auto',
+          background: 'none',
+          container: true,
         },
       },
     ],

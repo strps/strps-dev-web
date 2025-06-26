@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion, Variants } from 'motion/react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/components/lib/utils'
 
 interface SlideshowHeroProps {
   slides: React.ReactNode[]
@@ -148,7 +148,7 @@ const Slideshow: React.FC<SlideshowHeroProps> = ({ slides, interval = 5000, clas
               key={index}
               onClick={() => goToSlide(index)}
               className={`h-2.5 w-2.5 cursor-pointer rounded-full ${
-                index === currentIndex ? 'bg-foreground' : 'bg-muted-foreground/50'
+                index === currentIndex ? 'bg-foreground' : 'bg-muted-foreground'
               }`}
               variants={{
                 initial: { opacity: 0.7, scale: 1 },

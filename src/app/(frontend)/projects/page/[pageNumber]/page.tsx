@@ -6,8 +6,8 @@ import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import PageClient from './page.client'
 import { notFound } from 'next/navigation'
+import { Header } from '@/components/Header/Component'
 
 export const revalidate = 600
 
@@ -41,32 +41,40 @@ export default async function Page({ params: paramsPromise }: Args) {
     },
   })
 
+  const projectsPage = await payload.findGlobal({
+    slug: 'projects-page',
+  })
+
+  const headerOverrides = projectsPage?.headerOverrides
+
   return (
-    <div className="pt-24 pb-24">
-      <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none">
-          <h1>Projects</h1>
+    <>
+      <Header headerOverrides={headerOverrides} />
+      <main className="">
+        <div className="container mb-16">
+          <div className="prose dark:prose-invert max-w-none">
+            <h1>Projects</h1>
+          </div>
         </div>
-      </div>
 
-      <div className="container mb-8">
-        <PageRange
-          collection="projects"
-          currentPage={projects.page}
-          limit={12}
-          totalDocs={projects.totalDocs}
-        />
-      </div>
+        <div className="container mb-8">
+          <PageRange
+            collection="projects"
+            currentPage={projects.page}
+            limit={12}
+            totalDocs={projects.totalDocs}
+          />
+        </div>
 
-      <CollectionArchive collection={projects.docs} collectionName="projects" />
+        <CollectionArchive collection={projects.docs} collectionName="projects" />
 
-      <div className="container">
-        {projects?.page && projects?.totalPages > 1 && (
-          <Pagination page={projects.page} totalPages={projects.totalPages} />
-        )}
-      </div>
-    </div>
+        <div className="container">
+          {projects?.page && projects?.totalPages > 1 && (
+            <Pagination page={projects.page} totalPages={projects.totalPages} />
+          )}
+        </div>
+      </main>
+    </>
   )
 }
 

@@ -2,31 +2,49 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
 
+import { CMSLink } from '@/components/Link'
+import { ModeToggle } from '@/providers/Theme/theme-selector'
+import { Logo } from '@/components/Logo/Logo'
+import { Copyright } from './Copyright'
 import type { Footer } from '@/payload-types'
 
-import { CMSLink } from '@/components/Link'
-import { Logo } from '@/components/Logo/Logo'
-import { ModeToggle } from '@/providers/Theme/theme-selector'
+type FooterProps = {
+  data: Footer
+}
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
 
-  const navItems = footerData?.navItems || []
+  return <FooterComponent data={footerData} />
+}
+
+function FooterComponent({ data }: FooterProps) {
+  const navItems = data?.navItems || []
 
   return (
-    <footer className="w-full border-t border-border bg-card">
-      <div className="container mx-auto p-8 flex justify-between flex-wrap">
-        <Link className="flex items-center" href="/">
+    <footer className="w-full border-t border-border bg-footer shadow-footer mt-16">
+      <div className="container mx-auto flex flex-wrap justify-between items-center px-10 py-5 md:px-20 md:py-10 gap-y-4">
+        <Link href="/" className="flex items-center">
           <Logo className="h-8 w-auto fill-primary" />
         </Link>
 
-        <ModeToggle />
-        <nav className="flex flex-col w-full pl-4 mt-8 mx-auto md:flex-row gap-4 ">
-          {navItems.map(({ link }, i) => {
-            return <CMSLink className="" key={i} {...link} />
-          })}
-        </nav>
+        <div className="flex items-center gap-4 ">
+          {navItems.length > 0 && (
+            <nav>
+              <ul className="flex  items-center gap-4">
+                {navItems.map(({ link }, i) => (
+                  <li key={i}>
+                    <CMSLink {...link} className="text-sm hover:underline" />
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+          <ModeToggle />
+        </div>
       </div>
+
+      <Copyright />
     </footer>
   )
 }

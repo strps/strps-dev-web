@@ -5,7 +5,7 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
-import { SectionConfig } from '@/components/Section/config'
+import { SectionConfig } from '@/fields/section'
 
 export const ProjectsArchive: Block = {
   slug: 'projectsArchive',

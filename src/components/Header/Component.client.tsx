@@ -18,39 +18,25 @@ const defaultVariant = 'classic'
 const defaultContainer = true
 const defaultBackground = false
 
-const headerVariants = cva('z-20 absolute top-0 left-0 right-0', {
+const headerVariants = cva('top-0 left-0 right-0 z-50', {
   variants: {
     variant: {
       classic: 'flex flex-row justify-between items-center bg-background',
       modern: 'flex flex-row justify-between items-center bg-transparent mx-auto p-5',
-      plain: 'flex flex-row justify-between items-center bg-background',
-      stackLeft: 'flex flex-row justify-between items-center bg-background',
-      stackRight: 'flex flex-row justify-between items-center bg-background',
-      stackCenter:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      magazine: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      creativeLeft:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      creativeRight:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      creativeAlwaysOpen:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      empty: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      simple: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      overlay: 'flex flex-row justify-between items-center bg-background border-b border-border',
-      belowSlider:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      belowSliderWithSplit:
-        'flex flex-row justify-between items-center bg-background border-b border-border',
-      split: 'flex flex-row justify-between items-center bg-background border-b border-border',
     },
     background: {
-      true: 'bg-background',
+      true: 'bg-card border-b border-border',
       false: 'bg-transparent',
     },
     container: {
       true: '',
       false: '',
+    },
+    theme: {
+      auto: '',
+      light: 'light',
+      dark: 'dark',
+      inverted: 'inverted',
     },
   },
   compoundVariants: [
@@ -70,6 +56,7 @@ const headerVariants = cva('z-20 absolute top-0 left-0 right-0', {
     variant: defaultVariant,
     background: defaultBackground,
     container: defaultContainer,
+    theme: 'auto',
   },
 })
 
@@ -79,19 +66,6 @@ const logoVariants = cva('', {
       classic: 'fill-primary w-44',
       modern: 'fill-white w-44',
       plain: 'fill-primary w-44',
-      stackLeft: 'fill-primary w-44',
-      stackRight: 'fill-primary w-44',
-      stackCenter: 'fill-primary w-44',
-      magazine: 'fill-primary w-44',
-      creativeLeft: 'fill-primary w-44',
-      creativeRight: 'fill-primary w-44',
-      creativeAlwaysOpen: 'fill-primary w-44',
-      empty: 'fill-primary w-44',
-      simple: 'fill-primary w-44',
-      overlay: 'fill-primary w-44',
-      belowSlider: 'fill-primary w-44',
-      belowSliderWithSplit: 'fill-primary w-44',
-      split: 'fill-primary w-44',
     },
   },
   defaultVariants: {
@@ -105,19 +79,6 @@ const linksVariants = cva('', {
       classic: 'flex flex-row gap-6',
       modern: '',
       plain: '',
-      stackLeft: '',
-      stackRight: '',
-      stackCenter: '',
-      magazine: '',
-      creativeLeft: '',
-      creativeRight: '',
-      creativeAlwaysOpen: '',
-      empty: '',
-      simple: '',
-      overlay: '',
-      belowSlider: '',
-      belowSliderWithSplit: '',
-      split: '',
     },
   },
   defaultVariants: {
@@ -125,53 +86,38 @@ const linksVariants = cva('', {
   },
 })
 
-const containerVariants = cva('mx-auto flex flex-row justify-between items-center', {
+const containerVariants = cva('mx-auto flex flex-row justify-between items-center z-50', {
   variants: {
     variant: {
-      classic: ' px-20 py-10',
+      classic: 'px-10 py-5 md:px-20 md:py-10',
       modern: 'px-20 py-8',
       plain: 'px-20 py-8',
-      stackLeft: 'px-20 py-8',
-      stackRight: 'px-20 py-8',
-      stackCenter: 'px-20 py-8',
-      magazine: 'px-20 py-8',
-      creativeLeft: 'px-20 py-8',
-      creativeRight: 'px-20 py-8',
-      creativeAlwaysOpen: 'px-20 py-8',
-      empty: 'px-20 py-8',
-      simple: 'px-20 py-8',
-      overlay: 'px-20 py-8',
-      belowSlider: 'px-20 py-8',
-      belowSliderWithSplit: 'px-20 py-8',
-      split: 'px-20 py-8',
     },
     container: {
       true: 'container',
       false: 'w-full',
     },
     background: {
-      true: 'bg-background',
-      false: '',
+      true: 'bg-card border-b border-border',
+      false: 'bg-transparent',
     },
   },
   compoundVariants: [
     {
       variant: 'modern',
-      background: true,
       className: 'bg-background border m-5 mx-auto ',
     },
   ],
   defaultVariants: {
+    background: defaultBackground,
     container: defaultContainer,
     variant: defaultVariant,
-    background: defaultBackground,
   },
 })
 
 type HeaderClientProps = {
   data: Header
   container?: boolean
-  background?: boolean
 } & VariantProps<typeof headerVariants>
 
 /**
@@ -180,21 +126,23 @@ type HeaderClientProps = {
  * @param data - The header data
  * @param variant - The variant of the header
  * @param container - Whether to use a container or not
- * @param background - Whether to use a background or not
  */
 export const HeaderClient: React.FC<HeaderClientProps> = ({
   data,
-  variant,
+  variant, //TODO: all properties needs come form data given by payload
   container,
-  background,
 }) => {
   /* Storing the value in a useState to avoid hydration errors */
-
   return (
-    <header className={cn(headerVariants({ variant, background, container }))}>
-      <div className={cn(containerVariants({ variant, container, background }))}>
-        <Link href="/" aria-label="Go to homepage">
-          <Logo className={cn(logoVariants({ variant }), 'h-auto')} />
+    <header
+      className={cn(
+        data.overlay ? 'absolute' : 'relative',
+        headerVariants({ variant, background: data.background, container, theme: data.theme }),
+      )}
+    >
+      <div className={cn(containerVariants({ variant, container }), 'z-50')}>
+        <Link href="/" aria-label="Go to homepage" className="z-50">
+          <Logo className={cn(logoVariants({ variant }), 'h-auto z-50')} />
           {/* h-auto in order to override the height of the svg */}
         </Link>
         <HeaderNav data={data} variant={variant} />
@@ -228,12 +176,13 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, variant = 'classic' 
           )
         })}
       </ul>
-      <div className="relative md:hidden z-50">
+      <div className="md:hidden z-50">
         <Hamburger
           rounded
           toggled={open}
           toggle={setOpen}
           aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
+          color="var(--foreground)"
         />
       </div>
       <AnimatePresence>
@@ -243,7 +192,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, variant = 'classic' 
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -20, opacity: 0 }}
-              className="absolute top-full left-0 w-full z-50 bg-background border rounded-md shadow-md py-4 flex flex-col overflow-hidden"
+              className="absolute top-full left-0 w-full z-40 bg-background border rounded-md shadow-md py-4 flex flex-col overflow-hidden"
             >
               <ul className="flex flex-col gap-4 px-4">
                 {navItems.map(({ link }, i) => {
@@ -259,7 +208,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, variant = 'classic' 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm"
               onClick={handleClick}
               aria-hidden="true"
             ></motion.div>

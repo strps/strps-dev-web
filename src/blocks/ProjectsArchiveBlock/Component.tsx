@@ -32,7 +32,7 @@ export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (
       select: {
         title: true,
         slug: true,
-        categories: true,
+        tags: true,
         meta: true,
         content: true,
         updatedAt: true,
@@ -43,11 +43,11 @@ export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (
     collection = fetchedPosts.docs
   } else {
     if (selectedDocs?.length) {
-      const filteredSelectedPosts = selectedDocs.map((post) => {
-        if (typeof post.value === 'object') return post.value
+      const filteredSelectedProjects = selectedDocs.map((project) => {
+        if (typeof project.value === 'object') return project.value
       }) as Project[]
 
-      collection = filteredSelectedPosts
+      collection = filteredSelectedProjects
     }
   }
 

@@ -21,7 +21,7 @@ const cardVariants = cva('flex flex-col overflow-hidden w-full', {
   variants: {
     variant: {
       grid: 'pt-0 h-full',
-      list: 'flex-row p-0 h-56',
+      list: 'flex-row p-0 h-96 max-w-4xl',
     },
   },
   defaultVariants: {
@@ -33,7 +33,7 @@ const imageVariants = cva('relative', {
   variants: {
     variant: {
       grid: 'w-full aspect-video',
-      list: 'h-full w-1/3 flex-shrink-0',
+      list: 'h-full w-1/2 flex-shrink-0',
     },
   },
 })

@@ -26,6 +26,7 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { headerOverrides } from '@/fields/header-overrrides'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -41,7 +42,7 @@ export const Posts: CollectionConfig<'posts'> = {
   defaultPopulate: {
     title: true,
     slug: true,
-    categories: true,
+    tags: true,
     meta: {
       image: true,
       description: true,
@@ -125,13 +126,13 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'posts',
             },
             {
-              name: 'categories',
+              name: 'tags',
               type: 'relationship',
               admin: {
                 position: 'sidebar',
               },
               hasMany: true,
-              relationTo: 'categories',
+              relationTo: 'blogTags',
             },
           ],
           label: 'Meta',
@@ -162,6 +163,10 @@ export const Posts: CollectionConfig<'posts'> = {
               descriptionPath: 'meta.description',
             }),
           ],
+        },
+        {
+          name: 'appearance',
+          fields: [headerOverrides('dark')],
         },
       ],
     },

@@ -1,14 +1,13 @@
-'use client'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { cn } from '@/utilities/ui'
 import { SectionBackground } from './SectionBackground'
 
 import { SectionConfig } from '@/payload-types'
-import { useTheme } from 'next-themes'
 
 interface SectionProps extends SectionConfig {
   id?: string | null
   children: React.ReactNode
+  className?: string
 }
 
 /**
@@ -41,31 +40,23 @@ export const Section: React.FC<SectionProps> = ({
   className,
   children,
   theme,
+  section_id,
 }) => {
-  const [sectionTheme, setSectionTheme] = useState('')
-
-  const themeOptions = {
-    auto: '',
-    light: 'light',
-    dark: 'dark',
-    inverted: '',
-  }
-
-  useEffect(() => {
-    setSectionTheme(themeOptions[theme])
-  }, [theme])
-
   //check if backgroundImage is a Media object
   const hasBackgroundImage =
     backgroundImage && typeof backgroundImage === 'object' ? backgroundImage : undefined
 
   return (
     <section
-      id={id ? `block-${id}` : undefined}
-      className={cn(sectionTheme, 'relative bg-background text-foreground', className)}
+      id={section_id ? section_id : id ? `block-${id}` : undefined}
+      className={cn(
+        theme === 'auto' ? '' : theme,
+        'relative bg-background text-foreground',
+        className,
+      )}
       suppressHydrationWarning
     >
-      <div className={cn(container ? 'container mx-auto' : '', 'relative z-10 p-8')}>
+      <div className={cn(container ? 'container mx-auto' : '', 'relative z-10 md:p-8')}>
         {children}
       </div>
       <SectionBackground

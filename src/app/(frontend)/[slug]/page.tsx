@@ -9,9 +9,11 @@ import React, { cache } from 'react'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { Header } from '@/components/Header/Component'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
+
   const pages = await payload.find({
     collection: 'pages',
     draft: false,
@@ -55,14 +57,21 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const { layout } = page
 
-  return (
-    <article className="">
-      {/* Allows redirects for valid pages too */}
-      <PayloadRedirects disableNotFound url={url} />
+  const headerOverrides = page?.appearance?.headerOverrides
 
-      {draft && <LivePreviewListener />}
-      <RenderBlocks blocks={layout} />
-    </article>
+  return (
+    <>
+      <Header headerOverrides={headerOverrides} />
+      <main className="mx-auto min-h-screen">
+        <article className="">
+          {/* Allows redirects for valid pages too */}
+          <PayloadRedirects disableNotFound url={url} />
+
+          {draft && <LivePreviewListener />}
+          <RenderBlocks blocks={layout} />
+        </article>
+      </main>
+    </>
   )
 }
 

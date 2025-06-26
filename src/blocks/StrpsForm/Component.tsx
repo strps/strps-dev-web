@@ -11,6 +11,7 @@ import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import { Section } from '@/components/Section/Section'
+import { Card } from '@/components/ui/card'
 
 export type FormBlockType = {
   blockName?: string
@@ -203,11 +204,11 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
       backgroundContainer={false}
       theme="auto"
       background="none"
-      className="flex items-center justify-center py-16"
+      className="flex items-center justify-center"
     >
       <div className="w-full max-w-4xl mx-auto">
         {intros[introType]}
-        <div className="p-6 md:p-12 bg-card rounded-xl shadow-sm border border-border">
+        <Card className="p-6 md:p-12">
           <FormProvider {...formMethods}>
             {!isLoading && hasSubmitted && confirmationType === 'message' && (
               <RichText data={confirmationMessage as DefaultTypedEditorState} />
@@ -252,7 +253,7 @@ export const StrpsFormBlock: React.FC<FormBlockType> = (props) => {
               </p>
             )}
           </FormProvider>
-        </div>
+        </Card>
       </div>
     </Section>
   )

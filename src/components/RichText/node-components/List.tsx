@@ -1,11 +1,10 @@
 import { ReactNode } from 'react'
 import { CircleSmall, Square, SquareCheckBig } from 'lucide-react'
-import { SerializedListNode } from '@payloadcms/richtext-lexical'
 import { SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
 
 export interface ListItem extends SerializedLexicalNode {
   checked?: boolean
-  children: any[]
+  children: SerializedLexicalNode[]
   value?: number
 }
 
@@ -14,7 +13,7 @@ export interface ListProps {
     children: SerializedLexicalNode[] // Changed from ListItem[]
     listType: 'check' | 'bullet' | 'number'
   }
-  nodesToJSX: (params: { nodes: any[] }) => ReactNode
+  nodesToJSX: (params: { nodes: SerializedLexicalNode[] }) => ReactNode
 }
 
 export const List = ({ node, nodesToJSX }: ListProps) => {

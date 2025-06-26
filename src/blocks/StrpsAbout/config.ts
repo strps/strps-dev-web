@@ -6,7 +6,7 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import { Block } from 'payload'
-import { SectionConfig } from '@/components/Section/config'
+import { SectionConfig } from '@/fields/section'
 import { lucideIcon } from '@/fields/lucideIcon'
 
 export const StrpsAbout: Block = {

@@ -1,27 +1,27 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
-
 import { contactForm as contactFormData } from './contact-form'
-import { contact as contactPageData } from './contact-page'
-import { home } from './home'
-import { image1 } from './image-1'
-import { image2 } from './image-2'
-import { imageHero1 } from './image-hero-1'
-import { post1 } from './post-1'
-import { post2 } from './post-2'
-import { post3 } from './post-3'
+import { seedContactPage } from './contact-page'
+import { strpsMetaImage } from './strps_meta_image'
+import { trackbitMetaImage } from './trackbit_meta_image'
 import { project1 } from './project-1'
 import { project2 } from './project-2'
+import { fetchFileFromDisk } from '@/utilities/loadImageBuffer'
+import { Form } from '@/payload-types'
+import { post4 } from './post-4'
+import { post5 } from './post-5'
+import { seedHomePage } from './home'
 
 const collections: CollectionSlug[] = [
-  'categories',
+  'blogTags',
   'media',
   'pages',
   'posts',
   'projects',
   'forms',
   'form-submissions',
+  'projectTags',
 ]
-const globals: GlobalSlug[] = ['header', 'footer']
+const globals: Extract<GlobalSlug, 'header' | 'footer'>[] = ['header', 'footer']
 
 // Next.js revalidation errors are normal when seeding the database without a server running
 // i.e. running `yarn seed` locally instead of using the admin UI within an active app
@@ -82,125 +82,90 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding media...`)
 
-  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
-    ),
+  // First create the contact form
+  const contactForm = await payload.create({
+    collection: 'forms',
+    depth: 0,
+    data: contactFormData,
+  })
+
+  // Seed home page and get the created documents
+  const { image1Doc, image2Doc, image3Doc, imageHomeDoc } = await seedHomePage({
+    payload,
+    req,
+    contactForm: contactForm as Form,
+  })
+
+  // Load remaining media
+  const [strps1Buffer, trackbit1Buffer] = await Promise.all([
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/strps_meta_image.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/trackbit_meta_image.webp'),
   ])
 
-  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
+  const [strps1Doc, trackbit1Doc] = await Promise.all([
     payload.create({
-      collection: 'users',
-      data: {
-        name: 'Demo Author',
-        email: 'demo-author@example.com',
-        password: 'password',
-      },
+      collection: 'media',
+      data: strpsMetaImage,
+      file: strps1Buffer,
     }),
     payload.create({
       collection: 'media',
-      data: image1,
-      file: image1Buffer,
+      data: trackbitMetaImage,
+      file: trackbit1Buffer,
     }),
-    payload.create({
-      collection: 'media',
-      data: image2,
-      file: image2Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: image2,
-      file: image3Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: imageHero1,
-      file: hero1Buffer,
-    }),
+  ])
 
+  // Create demo author
+  const demoAuthor = await payload.create({
+    collection: 'users',
+    data: {
+      name: 'Demo Author',
+      email: 'demo-author@example.com',
+      password: 'password',
+    },
+  })
+
+  payload.logger.info(`— Seeding categories...`)
+
+  await Promise.all([
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Technology',
-        breadcrumbs: [
-          {
-            label: 'Technology',
-            url: '/technology',
-          },
-        ],
+        tag: 'Technology',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'News',
-        breadcrumbs: [
-          {
-            label: 'News',
-            url: '/news',
-          },
-        ],
+        tag: 'News',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Finance',
-        breadcrumbs: [
-          {
-            label: 'Finance',
-            url: '/finance',
-          },
-        ],
+        tag: 'Finance',
       },
     }),
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Design',
-        breadcrumbs: [
-          {
-            label: 'Design',
-            url: '/design',
-          },
-        ],
+        tag: 'Design',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Software',
-        breadcrumbs: [
-          {
-            label: 'Software',
-            url: '/software',
-          },
-        ],
+        tag: 'Software',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Engineering',
-        breadcrumbs: [
-          {
-            label: 'Engineering',
-            url: '/engineering',
-          },
-        ],
+        tag: 'Engineering',
       },
     }),
   ])
@@ -212,6 +177,7 @@ export const seed = async ({
     collection: 'projects',
     data: project1({
       heroImage: imageHomeDoc,
+      metaImage: strps1Doc,
       author: demoAuthor,
     }),
   })
@@ -222,6 +188,7 @@ export const seed = async ({
     data: project2({
       heroImage: imageHomeDoc,
       author: demoAuthor,
+      metaImage: trackbit1Doc,
       screenshot1: image1Doc,
       screenshot2: image2Doc,
       screenshot3: image3Doc,
@@ -230,84 +197,46 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding posts...`)
 
-  // Do not create posts with `Promise.all` because we want the posts to be created in order
-  // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  const post1Doc = await payload.create({
+  const post4Doc = await payload.create({
     collection: 'posts',
     depth: 0,
     context: {
       disableRevalidate: true,
     },
-    data: post1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
+    data: post4({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
   })
 
-  const post2Doc = await payload.create({
+  const post5Doc = await payload.create({
     collection: 'posts',
     depth: 0,
     context: {
       disableRevalidate: true,
     },
-    data: post2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
+    data: post5({ heroImage: image2Doc, blockImage: image1Doc, author: demoAuthor }),
   })
 
-  const post3Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
-  })
-
-  // update each post with related posts
   await payload.update({
-    id: post1Doc.id,
+    id: post4Doc.id,
     collection: 'posts',
     data: {
-      relatedPosts: [post2Doc.id, post3Doc.id],
+      relatedPosts: [],
     },
   })
   await payload.update({
-    id: post2Doc.id,
+    id: post5Doc.id,
     collection: 'posts',
     data: {
-      relatedPosts: [post1Doc.id, post3Doc.id],
+      relatedPosts: [],
     },
-  })
-  await payload.update({
-    id: post3Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post2Doc.id],
-    },
-  })
-
-  payload.logger.info(`— Seeding contact form...`)
-
-  const contactForm = await payload.create({
-    collection: 'forms',
-    depth: 0,
-    data: contactFormData,
   })
 
   payload.logger.info(`— Seeding pages...`)
 
-  const [_, contactPage] = await Promise.all([
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      data: home({
-        heroImage: imageHomeDoc,
-        metaImage: image2Doc,
-        aboutImage: image3Doc,
-      }),
-    }),
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      data: contactPageData({ contactForm: contactForm }),
-    }),
-  ])
+  // Seed the contact page with the contact form and get the created page
+  const { contactPage } = await seedContactPage({
+    payload,
+    contactForm: contactForm as Form,
+  })
 
   payload.logger.info(`— Seeding globals...`)
 
@@ -319,8 +248,15 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
-              label: 'Posts',
-              url: '/posts',
+              label: 'Projects',
+              url: '/projects',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Blog',
+              url: '/blog',
             },
           },
           {
@@ -343,27 +279,46 @@ export const seed = async ({
           {
             link: {
               type: 'custom',
-              label: 'Admin',
-              url: '/admin',
+              label: 'Projects',
+              url: '/projects',
             },
           },
           {
             link: {
               type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
+              label: 'Blog',
+              url: '/posts',
             },
           },
           {
             link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
+              type: 'reference',
+              label: 'Contact',
+              reference: {
+                relationTo: 'pages',
+                value: contactPage.id,
+              },
             },
           },
         ],
+      },
+    }),
+    payload.updateGlobal({
+      slug: 'projects-page',
+      data: {
+        headerOverrides: {
+          background: true,
+          overlay: false,
+        },
+      },
+    }),
+    payload.updateGlobal({
+      slug: 'blog-page',
+      data: {
+        headerOverrides: {
+          background: true,
+          overlay: false,
+        },
       },
     }),
   ])

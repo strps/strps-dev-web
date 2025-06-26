@@ -9,9 +9,10 @@ import RichText from '@/components/RichText'
 
 import type { Post } from '@/payload-types'
 
-import { PostHero } from '@/heros/PostHero'
+import { PostHero } from '@/components/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { Header } from '@/components/Header/Component'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -44,34 +45,38 @@ export default async function Post({ params: paramsPromise }: Args) {
   const { slug = '' } = await paramsPromise
   const url = '/projects/' + slug
   const project = await queryPostBySlug({ slug })
+  const headerOverrides = project?.appearance?.headerOverrides
 
   if (!project) return <PayloadRedirects url={url} />
 
   return (
-    <article className="pt-16 pb-16">
-      {/* Allows redirects for valid pages too */}
-      <PayloadRedirects disableNotFound url={url} />
+    <>
+      <Header headerOverrides={headerOverrides} />
+      <article className="pt-16 pb-16">
+        {/* Allows redirects for valid pages too */}
+        <PayloadRedirects disableNotFound url={url} />
 
-      {draft && <LivePreviewListener />}
+        {draft && <LivePreviewListener />}
 
-      <PostHero post={project} />
+        <PostHero post={project} className="dark" />
 
-      <div className="flex flex-col items-center gap-4 pt-8">
-        <div className="container">
-          <RichText
-            className="container px-26 mx-auto"
-            data={project.content}
-            enableGutter={false}
-          />
-          {/* {project.relatedPosts && project.relatedPosts.length > 0 && (
+        <div className="flex flex-col items-center gap-4 pt-8">
+          <div className="container">
+            <RichText
+              className="container px-26 mx-auto"
+              data={project.content}
+              enableGutter={false}
+            />
+            {/* {project.relatedPosts && project.relatedPosts.length > 0 && (
             <RelatedPosts
               className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
               docs={project.relatedPosts.filter((post) => typeof post === 'object')}
             />
           )} */}
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </>
   )
 }
 

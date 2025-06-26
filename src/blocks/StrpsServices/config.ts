@@ -1,5 +1,6 @@
 import { link } from '@/fields/link'
 import { Block } from 'payload'
+import { SectionConfig } from '@/fields/section'
 
 export const StrpsServices: Block = {
   slug: 'strpsServices',

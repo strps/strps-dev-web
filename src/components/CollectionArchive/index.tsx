@@ -7,8 +7,8 @@ import type { Post, Project } from '@/payload-types'
 const collectionVariants = cva('grid', {
   variants: {
     variant: {
-      grid: 'grid-cols-4 gap-4',
-      list: 'grid-cols-1 gap-16',
+      grid: 'grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4',
+      list: 'flex flex-col gap-16 items-center',
     },
   },
   defaultVariants: {
@@ -29,25 +29,19 @@ export const CollectionArchive: React.FC<Props> = (props) => {
   const { collection, collectionName, variant = 'grid', className } = props
 
   return (
-    <div className={cn('container', collectionVariants({ variant }), className)}>
-      {collection?.length > 0 &&
-        collection.map((item, index) => {
-          if (typeof item === 'object' && item !== null) {
-            return (
-              <div
-                className={cn({
-                  'col-span-4': variant === 'grid',
-                  'flex flex-col sm:flex-row gap-4': variant === 'list',
-                })}
-                key={index}
-              >
-                <ArchiveCard doc={item} relationTo={collectionName} variant={variant} />
-              </div>
-            )
-          }
-
-          return null
-        })}
+    <div className={cn('container mx-auto', className)}>
+      {collection?.length > 0 && (
+        <div className={cn(collectionVariants({ variant }))}>
+          {collection.map((item, index) => {
+            if (typeof item === 'object' && item !== null) {
+              return (
+                <ArchiveCard key={index} doc={item} relationTo={collectionName} variant={variant} />
+              )
+            }
+            return null
+          })}
+        </div>
+      )}
     </div>
   )
 }

@@ -2,7 +2,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { cva } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import { cn } from '@/components/lib/utils'
 import type { Media } from '@/payload-types'
 
 // Define the client logo type based on payload-types.ts

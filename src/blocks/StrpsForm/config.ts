@@ -1,4 +1,5 @@
 import type { Block } from 'payload'
+import { SectionConfig } from '@/fields/section'
 
 import {
   FixedToolbarFeature,
@@ -11,6 +12,7 @@ export const StrpsFormBlock: Block = {
   slug: 'strpsFormBlock',
   interfaceName: 'StrpsFormBlock',
   fields: [
+    SectionConfig,
     {
       name: 'form',
       type: 'relationship',
