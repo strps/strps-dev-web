@@ -3,7 +3,8 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { Copyright as CopyrightType } from '@/payload-types'
 
 export const Copyright: React.FC = async () => {
-  const { name, startDate }: CopyrightType = await getCachedGlobal('copyright', 1)()
+  const data = await getCachedGlobal('copyright', 1)()
+  const { name, startDate } = data as CopyrightType
 
   const startYear = new Date(startDate).getFullYear()
   const endYear = new Date().getFullYear()
