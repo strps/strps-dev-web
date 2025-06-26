@@ -66,14 +66,14 @@ export const Archive: Block = {
       ],
     },
     {
-      name: 'categories',
+      name: 'tags',
       type: 'relationship',
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
       },
       hasMany: true,
-      label: 'Categories To Show',
-      relationTo: 'categories',
+      label: 'Tags To Show',
+      relationTo: 'blogTags',
     },
     {
       name: 'limit',

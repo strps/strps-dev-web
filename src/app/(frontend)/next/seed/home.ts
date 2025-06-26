@@ -124,10 +124,10 @@ export const seedHomePage = async ({ payload, req, contactForm }: SeedHomePageAr
   payload.logger.info(`— Seeding home page media...`)
 
   const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
-    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
-    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
-    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp', 'home_1.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp', 'home_2.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp', 'home_3.webp'),
+    fetchFileFromDisk('/src/app/(frontend)/next/seed/example.webp', 'home_hero_1.webp'),
   ])
 
   const [image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
@@ -455,6 +455,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         form: contactForm,
         introType: 'titleAndText',
         introTitle: "Let's get in touch",
+        introText: 'Fill out the form below to get in touch with me.',
         section: {
           theme: 'auto',
           background: 'none',

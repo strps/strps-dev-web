@@ -1,5 +1,4 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
-
 import { contactForm as contactFormData } from './contact-form'
 import { seedContactPage } from './contact-page'
 import { strpsMetaImage } from './strps_meta_image'
@@ -10,17 +9,19 @@ import { fetchFileFromDisk } from '@/utilities/loadImageBuffer'
 import { Form } from '@/payload-types'
 import { post4 } from './post-4'
 import { post5 } from './post-5'
+import { seedHomePage } from './home'
 
 const collections: CollectionSlug[] = [
-  'categories',
+  'blogTags',
   'media',
   'pages',
   'posts',
   'projects',
   'forms',
   'form-submissions',
+  'projectTags',
 ]
-const globals: GlobalSlug[] = ['header', 'footer']
+const globals: Extract<GlobalSlug, 'header' | 'footer'>[] = ['header', 'footer']
 
 // Next.js revalidation errors are normal when seeding the database without a server running
 // i.e. running `yarn seed` locally instead of using the admin UI within an active app
@@ -128,79 +129,43 @@ export const seed = async ({
 
   await Promise.all([
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Technology',
-        breadcrumbs: [
-          {
-            label: 'Technology',
-            url: '/technology',
-          },
-        ],
+        tag: 'Technology',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'News',
-        breadcrumbs: [
-          {
-            label: 'News',
-            url: '/news',
-          },
-        ],
+        tag: 'News',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Finance',
-        breadcrumbs: [
-          {
-            label: 'Finance',
-            url: '/finance',
-          },
-        ],
+        tag: 'Finance',
       },
     }),
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Design',
-        breadcrumbs: [
-          {
-            label: 'Design',
-            url: '/design',
-          },
-        ],
+        tag: 'Design',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Software',
-        breadcrumbs: [
-          {
-            label: 'Software',
-            url: '/software',
-          },
-        ],
+        tag: 'Software',
       },
     }),
 
     payload.create({
-      collection: 'categories',
+      collection: 'blogTags',
       data: {
-        title: 'Engineering',
-        breadcrumbs: [
-          {
-            label: 'Engineering',
-            url: '/engineering',
-          },
-        ],
+        tag: 'Engineering',
       },
     }),
   ])
@@ -291,7 +256,7 @@ export const seed = async ({
             link: {
               type: 'custom',
               label: 'Blog',
-              url: '/posts',
+              url: '/blog',
             },
           },
           {

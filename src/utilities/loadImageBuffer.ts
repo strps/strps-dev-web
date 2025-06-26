@@ -23,10 +23,13 @@ type FileResult = {
  * Loads a local file and returns metadata + buffer.
  * @param relativePath Path relative to the project root (e.g., 'public/images/photo.jpg')
  */
-export async function fetchFileFromDisk(relativePath: string): Promise<FileResult> {
+export async function fetchFileFromDisk(
+  relativePath: string,
+  fileName?: string,
+): Promise<FileResult> {
   const filePath = path.join(process.cwd(), relativePath)
   const data = fs.readFileSync(filePath)
-  const name = path.basename(filePath)
+  const name = fileName || path.basename(filePath)
   const mimetype = mime.lookup(filePath) || 'application/octet-stream'
 
   return {

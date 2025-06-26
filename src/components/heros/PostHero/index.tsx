@@ -5,27 +5,29 @@ import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import { formatAuthors } from '@/utilities/formatAuthors'
+import { cn } from '@/components/lib/utils'
 
 export const PostHero: React.FC<{
   post: Post
-}> = ({ post }) => {
-  const { categories, heroImage, populatedAuthors, publishedAt, title } = post
+  className?: string
+}> = ({ post, className }) => {
+  const { tags, heroImage, populatedAuthors, publishedAt, title } = post
 
   const hasAuthors =
     populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
 
   return (
-    <div className="relative -mt-[10.4rem] flex items-end">
+    <div className={cn('relative -mt-[10.4rem] flex items-end', className)}>
       <div className="container mx-auto z-10 px-4 relative px-20 text-foreground pb-8">
         <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
           <div className="uppercase text-sm mb-6">
-            {categories?.map((category, index) => {
-              if (typeof category === 'object' && category !== null) {
-                const { title: categoryTitle } = category
+            {tags?.map((tag, index) => {
+              if (typeof tag === 'object' && tag !== null) {
+                const { tag: tagTitle } = tag
 
-                const titleToUse = categoryTitle || 'Untitled category'
+                const titleToUse = tagTitle || 'Untitled tag'
 
-                const isLast = index === categories.length - 1
+                const isLast = index === tags.length - 1
 
                 return (
                   <>

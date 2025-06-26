@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateCopyright } from './hooks'
+
 export const Copyright: GlobalConfig = {
   slug: 'copyright',
   access: {
@@ -7,12 +9,25 @@ export const Copyright: GlobalConfig = {
   },
   fields: [
     {
-      name: 'copyrightText',
+      name: 'name',
       type: 'text',
       required: true,
-      defaultValue: 'All Rights Reserved.',
+      defaultValue: '',
+    },
+    {
+      name: 'startDate',
+      type: 'date',
+      required: true,
+      defaultValue: new Date(),
+    },
+    {
+      name: 'link',
+      type: 'text',
     },
   ],
+  hooks: {
+    afterChange: [revalidateCopyright],
+  },
 }
 
 export default Copyright

@@ -13,12 +13,12 @@ export const BlogTags: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    useAsTitle: 'title',
+    useAsTitle: 'tag',
     group: 'Blog',
   },
   fields: [
     {
-      name: 'title',
+      name: 'tag',
       type: 'text',
       required: true,
     },

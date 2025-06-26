@@ -54,7 +54,7 @@ export const contact: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pag
                     format: 0,
                     mode: 'normal',
                     style: '',
-                    text: 'Example contact form:',
+                    text: "Let's get in touch!",
                     version: 1,
                   },
                 ],

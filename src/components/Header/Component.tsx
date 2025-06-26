@@ -13,8 +13,5 @@ export async function Header({ headerOverrides }: HeaderProps) {
   const headerData: Header = await getCachedGlobal('header', 1)()
   const header = deepMerge(headerData, headerOverrides)
 
-  // console.log(headerOverrides)
-  // console.log(headerData)
-  // console.log(header)
   return <HeaderClient data={header} />
 }

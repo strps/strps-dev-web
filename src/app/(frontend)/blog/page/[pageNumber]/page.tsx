@@ -34,7 +34,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     select: {
       title: true,
       slug: true,
-      categories: true,
+      tags: true,
       meta: true,
       content: true,
       updatedAt: true,

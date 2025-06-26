@@ -133,7 +133,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({
   container,
 }) => {
   /* Storing the value in a useState to avoid hydration errors */
-
   return (
     <header
       className={cn(
