@@ -1,6 +1,6 @@
 import type { GlobalAfterChangeHook } from 'payload'
 
-import { revalidateTag } from 'next/cache'
+import { revalidatePath } from 'next/cache'
 
 export const revalidateProjectsPage: GlobalAfterChangeHook = ({
   doc,
@@ -9,7 +9,7 @@ export const revalidateProjectsPage: GlobalAfterChangeHook = ({
   if (!context.disableRevalidate) {
     payload.logger.info(`Revalidating projects page`)
 
-    revalidateTag('global_projects_page')
+    revalidatePath('/projects')
   }
 
   return doc
