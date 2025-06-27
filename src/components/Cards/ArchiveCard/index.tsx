@@ -74,7 +74,7 @@ export const ArchiveCard: React.FC<{
 
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ')
-  const href = `/${relationTo}/${slug}`
+  const href = `/${relationTo === 'posts' ? 'blog' : 'projects'}/${slug}`
 
   const metaImageAlt = (metaImage as { alt: string | undefined })?.alt || ''
 
