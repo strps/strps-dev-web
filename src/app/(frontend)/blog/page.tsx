@@ -48,13 +48,13 @@ export default async function Page() {
       <main>
         <div className="mb-16 mx-auto max-w-[96rem]">
           <Slideshow
-            interval={7000}
+            interval={700000}
             className="h-[800px] dark"
             slides={posts.docs.map((post) => {
               return (
                 <div key={post.id} className="relative w-full h-full overflow-hidden">
                   <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/50 z-10">
-                    <div className="p-16">
+                    <div className="p-4 sm:p-16">
                       <h2 className="text-foreground z-10 text-4xl font-bold mb-4">{post.title}</h2>
                       <h3 className="text-foreground z-10 text-xl max-w-2xl px-4">
                         {post.meta?.description}
