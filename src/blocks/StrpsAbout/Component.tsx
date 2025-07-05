@@ -71,7 +71,7 @@ export const AboutStoryBlocks = ({ id, title, storyBlocks, section }: StrpsAbout
       className="flex flex-col items-center justify-center relative text-primary"
     >
       {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center gap-8">
         {storyBlocks?.map((block, index) => {
           const IconComponent =
             block.lucideIcon && block.lucideIcon !== 'none' ? (
@@ -79,12 +79,12 @@ export const AboutStoryBlocks = ({ id, title, storyBlocks, section }: StrpsAbout
             ) : null
 
           return (
-            <div key={index} className="p-6 w-full">
+            <div key={index} className="w-full">
               <div className="flex flex-row items-center">
                 {IconComponent}
                 <h3 className="text-xl font-semibold tracking-tight">{block.heading}</h3>
               </div>
-              <p className="mt-2 text-md leading-relaxed">{block.content}</p>
+              <p className="pl-4 mt-2 text-md leading-relaxed">{block.content}</p>
             </div>
           )
         })}

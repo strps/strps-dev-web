@@ -30,15 +30,19 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
   // Generate initial rotation angles for circles
   const circleRotations = useMemo(
     () =>
-      Array.from({ length: numCircles }).map(() => ({
-        initial: Math.random() * 360,
-        animate: { rotate: [0, 360] },
-        transition: {
-          duration: Math.random() * 10 + 5, // Random duration between 5-15 seconds
-          repeat: Infinity,
-          ease: 'linear',
-        },
-      })),
+      Array.from({ length: numCircles }).map(() => {
+        const initialRotation = Math.random() * 360
+        const duration = Math.random() * 10 + 10
+        return {
+          initial: initialRotation,
+          animate: { rotate: [initialRotation, initialRotation + 360] },
+          transition: {
+            duration: duration, // Random duration between 5-15 seconds
+            repeat: Infinity,
+            ease: 'linear',
+          },
+        }
+      }),
     [numCircles],
   )
 
@@ -51,6 +55,7 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
     >
       {circleRotations.map((rotation, i) => {
         const radius = minRadius + ((maxRadius - minRadius) * i) / (numCircles - 1)
+        console.log(rotation.initial)
         return (
           <motion.circle
             key={i}

@@ -51,7 +51,7 @@ export const Section: React.FC<SectionProps> = ({
       id={section_id ? section_id : id ? `block-${id}` : undefined}
       className={cn(
         theme === 'auto' ? '' : theme,
-        'relative bg-background text-foreground',
+        'relative bg-background text-foreground p-6 pt-16',
         className,
       )}
       suppressHydrationWarning

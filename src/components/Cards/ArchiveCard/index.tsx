@@ -47,15 +47,6 @@ const contentVariants = cva('flex flex-col', {
   },
 })
 
-const footerVariants = cva('mt-auto pt-4', {
-  variants: {
-    variant: {
-      grid: 'border-t border-border',
-      list: 'border-t-0',
-    },
-  },
-})
-
 type CardVariantProps = VariantProps<typeof cardVariants>
 
 export type CardData = Pick<Post | Project, 'slug' | 'meta' | 'title'>
@@ -107,7 +98,7 @@ export const ArchiveCard: React.FC<{
             </CardDescription>
           )}
         </div>
-        <CardFooter className={cn(footerVariants({ variant }), 'p-0 pt-4 mt-auto')}>
+        <CardFooter className="p-0 pt-8 mt-auto">
           <Link
             href={href}
             className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1"

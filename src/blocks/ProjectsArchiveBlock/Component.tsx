@@ -52,14 +52,7 @@ export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (
   }
 
   return (
-    <Section
-      id={id}
-      container={true}
-      backgroundContainer={false}
-      className="py-16"
-      theme="auto"
-      background="none"
-    >
+    <Section id={id} container={true} backgroundContainer={false} theme="auto" background="none">
       {title && <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">{title}</h2>}
       {introContent && (
         <div className="mb-16">
