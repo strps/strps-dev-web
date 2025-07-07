@@ -66,7 +66,7 @@ export default async function Page() {
                     resource={project.heroImage}
                     alt={project.title}
                     fill
-                    className="object-cover"
+                    imgClassName="object-cover"
                     priority
                   />
                 </div>
