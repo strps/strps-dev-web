@@ -21,7 +21,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(chivo.className, lora.className)} lang="en" suppressHydrationWarning>
+    <html
+      className={`${chivo.className} ${lora.className} bg-muted`}
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />

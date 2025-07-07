@@ -4,8 +4,10 @@ import RichText from '@/components/RichText'
 
 import type { Post } from '@/payload-types'
 
-import { ArchiveCard } from '../../components/Cards/ArchiveCard'
 import { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
+import { ImageCard } from '@/components/Cards/ImageCard/ImageCard'
+import Link from 'next/link'
+import { buttonVariants } from '@/components/ui/button'
 
 export type RelatedPostsProps = {
   className?: string
@@ -24,7 +26,22 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
         {docs?.map((doc, index) => {
           if (typeof doc === 'string') return null
 
-          return <ArchiveCard key={index} doc={doc} relationTo="posts" variant="grid" />
+          return (
+            <ImageCard
+              key={index}
+              image={doc.heroImage}
+              title={doc.title}
+              description={doc.meta?.description}
+              action={
+                <Link
+                  href={`/posts/${doc.slug}`}
+                  className={buttonVariants({ variant: 'default' })}
+                >
+                  Read More...
+                </Link>
+              }
+            />
+          )
         })}
       </div>
     </div>

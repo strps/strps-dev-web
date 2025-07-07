@@ -50,16 +50,15 @@ export default async function Post({ params: paramsPromise }: Args) {
   return (
     <>
       <Header headerOverrides={headerOverrides} />
-      <article className="pt-16 pb-16">
+      <article className="pb-16">
         {/* Allows redirects for valid pages too */}
         <PayloadRedirects disableNotFound url={url} />
 
         {draft && <LivePreviewListener />}
 
-        <PostHero post={post} className="dark" />
-
-        <div className="flex flex-col items-center gap-4 pt-8">
-          <div className="container">
+        <div className="flex flex-col items-center gap-8">
+          <PostHero post={post} className="dark" />
+          <div className="container px-4">
             <RichText className="max-w-[48rem] mx-auto" data={post.content} enableGutter={false} />
             {post.relatedPosts && post.relatedPosts.length > 0 && (
               <div className="my-12">

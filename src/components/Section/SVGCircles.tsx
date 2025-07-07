@@ -55,7 +55,6 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
     >
       {circleRotations.map((rotation, i) => {
         const radius = minRadius + ((maxRadius - minRadius) * i) / (numCircles - 1)
-        console.log(rotation.initial)
         return (
           <motion.circle
             key={i}

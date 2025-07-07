@@ -37,6 +37,7 @@ export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (
         content: true,
         updatedAt: true,
         createdAt: true,
+        heroImage: true,
       },
     })
 

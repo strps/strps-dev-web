@@ -76,13 +76,13 @@ export default async function Page() {
         </div>
 
         <div className="container mx-auto flex flex-col items-center">
-          <h1 className="text-4xl font-bold">Projects</h1>
+          <h1 className="mb-16">Projects</h1>
 
           <CollectionArchive
-            className="py-16"
+            className="px-6"
             collection={projects.docs}
-            collectionName="projects"
             variant="list"
+            urlPath="projects"
           />
 
           <div className="container">

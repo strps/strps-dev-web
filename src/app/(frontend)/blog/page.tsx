@@ -46,22 +46,22 @@ export default async function Page() {
     <>
       <Header headerOverrides={headerOverrides} />
       <main>
-        <div className="mb-16 mx-auto max-w-[96rem]">
+        <div className="mb-16 mx-auto max-w-[96rem] dark text-foreground">
           <Slideshow
-            interval={700000}
-            className="h-[800px] dark"
+            interval={7000}
+            className="h-[800px]"
             slides={posts.docs.map((post) => {
               return (
                 <div key={post.id} className="relative w-full h-full overflow-hidden">
                   <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/50 z-10">
                     <div className="p-4 sm:p-16">
-                      <h2 className="text-foreground z-10 text-4xl font-bold mb-4">{post.title}</h2>
-                      <h3 className="text-foreground z-10 text-xl max-w-2xl px-4">
+                      <h2 className="z-10 text-4xl font-bold mb-4">{post.title}</h2>
+                      <h3 className="z-10 text-xl max-w-2xl px-4 mb-16">
                         {post.meta?.description}
                       </h3>
                       <Link
                         href={`/blog/${post.slug}`}
-                        className={cn(buttonVariants({ variant: 'default' }), 'mt-16 ml-8')}
+                        className={cn(buttonVariants({ variant: 'default' }), 'ml-8')}
                       >
                         Read More...
                       </Link>
@@ -94,7 +94,12 @@ export default async function Page() {
             </div>
           )}
 
-          <CollectionArchive collection={posts.docs} collectionName="posts" variant="list" />
+          <CollectionArchive
+            className="px-6"
+            collection={posts.docs}
+            urlPath="blog"
+            variant="list"
+          />
 
           <div className="container">
             {posts.totalPages > 1 && posts.page && (

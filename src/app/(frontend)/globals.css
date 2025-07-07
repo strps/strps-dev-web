@@ -41,6 +41,9 @@
   --shadow-input: 4px 4px 14px #00000010 inset, -7px -7px 14px #ffffff96 inset, 0px 0px 6px 4px #0000001f inset;
   --footer-background: #dbdbdb;
   --shadow-footer: 0px 0px 10px 3px  #0000001c, -15px -15px 30px #ffffffb9;
+  --shadow-button:  7px 7px 14px #00000041,0px 0px 7px 2px  #0000001c, -7px -7px 14px #ffffffb9;
+  --shadow-button-hover: 10px 10px 20px #00000041,0px 0px 10px 3px  #0000001c, -5px -5px 20px #ffffffb9;
+  --shadow-button-pressed: 5px 5px 10px #00000041,0px 0px 3px 1px  #0000001c, -9px -9px 10px #ffffffb9;
 }
 
 .dark, .light .inverted {
@@ -82,6 +85,9 @@
   --shadow-input: 4px 4px 14px #00000028 inset, -7px -7px 14px #ffffff0c inset, 0px 0px 6px 4px #00000028 inset;
   --footer-background: #161717;
   --shadow-footer: 0px 0px 10px 3px  #00000031, -15px 0px 30px #ffffff05;
+  --shadow-button: 7px 7px 14px #00000067,0px 0px 7px 2px  #00000031, -7px -7px 14px #ffffff05;
+  --shadow-button-hover: 10px 10px 20px #00000067,0px 0px 10px 3px  #00000031, -5px -5px 20px #ffffff05;
+  --shadow-button-pressed: 5px 5px 10px #00000067,0px 0px 3px 1px  #00000031, -9px -9px 10px #ffffff05;
 }
 
 
@@ -131,6 +137,9 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-footer: var(--footer-background);
   --shadow-footer: var(--shadow-footer);
+  --shadow-button: var(--shadow-button);
+  --shadow-button-hover: var(--shadow-button-hover);
+  --shadow-button-pressed: var(--shadow-button-pressed);
 }
 
 @layer base {

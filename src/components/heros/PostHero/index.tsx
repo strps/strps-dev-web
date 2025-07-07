@@ -17,8 +17,10 @@ export const PostHero: React.FC<{
     populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
 
   return (
-    <div className={cn('relative -mt-[10.4rem] flex items-end', className)}>
-      <div className="container mx-auto z-10 px-4 relative px-20 text-foreground pb-8">
+    <div
+      className={cn('container min-h-[500px] sm:min-h-[700px] relative flex items-end', className)}
+    >
+      <div className="mx-auto z-10 px-6 relative sm:px-8 text-foreground pb-8">
         <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">
           <div className="uppercase text-sm mb-6">
             {tags?.map((tag, index) => {
@@ -44,7 +46,7 @@ export const PostHero: React.FC<{
             <h1 className="mb-6 text-3xl md:text-5xl lg:text-6xl">{title}</h1>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-4 md:gap-16">
+          <div className="flex gap-4 md:gap-16">
             {hasAuthors && (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
@@ -64,7 +66,7 @@ export const PostHero: React.FC<{
           </div>
         </div>
       </div>
-      <div className="min-h-[800px] select-none">
+      <div className="select-none">
         {heroImage && typeof heroImage !== 'string' && (
           <Media fill priority imgClassName="-z-10 object-cover" resource={heroImage} />
         )}
