@@ -89,7 +89,12 @@ export const ArchiveBlock: React.FC<
           />
         </div>
       )}
-      {relationTo && <CollectionArchive collection={collection} collectionName={relationTo} />}
+      {relationTo && (
+        <CollectionArchive
+          collection={collection}
+          urlPath={relationTo === 'posts' ? 'blog' : 'projects'}
+        />
+      )}
     </Section>
   )
 }

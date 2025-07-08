@@ -66,7 +66,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           />
         </div>
 
-        <CollectionArchive collection={projects.docs} collectionName="projects" />
+        <CollectionArchive collection={projects.docs} urlPath="projects" variant="grid" />
 
         <div className="container">
           {projects?.page && projects?.totalPages > 1 && (
