@@ -52,16 +52,15 @@ export default async function Post({ params: paramsPromise }: Args) {
   return (
     <>
       <Header headerOverrides={headerOverrides} />
-      <article className="pt-16 pb-16">
+      <article className="pb-16">
         {/* Allows redirects for valid pages too */}
         <PayloadRedirects disableNotFound url={url} />
 
         {draft && <LivePreviewListener />}
 
-        <PostHero post={project} className="dark" />
-
-        <div className="flex flex-col items-center gap-4 pt-8">
-          <div className="container px-4">
+        <div className="flex flex-col items-center gap-4">
+          <PostHero post={project} className="dark" />
+          <div className="container px-4 pt-8">
             <RichText
               className="max-w-[48rem] mx-auto"
               data={project.content}
