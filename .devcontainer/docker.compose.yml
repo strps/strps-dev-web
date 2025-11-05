@@ -1,0 +1,29 @@
+name: website
+
+services:
+
+  website:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    environment:
+      POSTGRES_URL: postgresql://127.0.0.1:5432/your-database-name
+      PAYLOAD_SECRET: YOUR_SECRET_HERE
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3000
+      CRON_SECRET: YOUR_CRON_SECRET_HERE
+      PREVIEW_SECRET: YOUR_SECRET_HERE
+    depends_on:
+      - postgres
+    network-mode: host
+
+  postgres:
+    image: postgres
+    ports:
+      - '54320:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: your-database-name # THIS MUST MATCH YOUR DB NAME IN .env
+      POSTGRES_HOST_AUTH_METHOD: trust
+    env_file:
+      - .env
+    network-mode: host
