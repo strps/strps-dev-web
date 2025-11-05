@@ -12,8 +12,8 @@
     "NODE_ENV": "development",
     "PORT": "8000"
   },
-  "postCreateCommand": "pnpm install",
-  "workspaceFolder": "/workspaces/strps-dev-web"
+  "workspaceFolder": "/workspaces/strps-dev-web",
+  "postCreateCommand": "pnpm install"
   // Features add additional features to your environment. See https://containers.dev/features
   // Beware: features are not supported on all platforms and may have unintended side-effects.
   // "features": {
