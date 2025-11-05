@@ -6,11 +6,7 @@
   "name": "Ona",
   // Use "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
   // instead of the build to use a pre-built image.
-<<<<<<< HEAD
-  "dockerComposeFile": "./docker-compose.devcontainer.yml",
-=======
   "dockerComposeFile": "./docker.compose.devcontainer.yml",
->>>>>>> f4079e9 (updating devconatiner.json to use the docker.compose.yml)
   "service": "app",
   "containerEnv": {
     "NODE_ENV": "development",
