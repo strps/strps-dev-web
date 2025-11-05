@@ -19,8 +19,8 @@ const db =
   process.env.NODE_ENV === 'development'
     ? postgresAdapter({
         pool: {
-          connectionString: "postgresql://0.0.0.0:5432/your-database-name",
-          // connectionString: process.env.POSTGRES_URL || '',
+          // connectionString: 'postgresql://postgres@0.0.0.0:5432/your-database-name',
+          connectionString: process.env.POSTGRES_URL || '',
         },
       })
     : vercelPostgresAdapter({
