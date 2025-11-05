@@ -5,6 +5,11 @@ node_modules
 .env
 .next
 .vercel
+.pnpm-store
+.pnpm-store/*
+.pnpm-store/files
+.vscode
+.windsurf
 
 # Payload default media upload directory
 public/media/

@@ -6,6 +6,8 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
+    ports:
+      - '3000:3000'
     environment:
       POSTGRES_URL: postgresql://127.0.0.1:5432/your-database-name
       PAYLOAD_SECRET: YOUR_SECRET_HERE
@@ -15,6 +17,7 @@ services:
     depends_on:
       - postgres
     network-mode: host
+
 
   postgres:
     image: postgres
