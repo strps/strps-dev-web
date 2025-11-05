@@ -9,7 +9,7 @@ services:
     volumes:
       - ..:/workspaces/strps-dev-web:cached
     environment:
-      POSTGRES_URL: postgresql://postgres:5432/your-database-name
+      POSTGRES_URL: postgresql://postgres@localhost:5432/your-database-name
       PAYLOAD_SECRET: YOUR_SECRET_HERE
       NEXT_PUBLIC_SERVER_URL: http://0.0.0.0:3000
       CRON_SECRET: YOUR_CRON_SECRET_HERE

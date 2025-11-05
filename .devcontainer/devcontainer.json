@@ -10,11 +10,11 @@
   "service": "website",
   "containerEnv": {
     "NODE_ENV": "development",
-    "POSTGRES_URL":"postgresql://postgres:5432/your-database-name",
+    "POSTGRES_URL":"postgresql://0.0.0.0:5432/your-database-name",
     "PAYLOAD_SECRET":"YOUR_SECRET_HERE",
     "NEXT_PUBLIC_SERVER_URL":"http://0.0.0.0:3000",
     "CRON_SECRET":"YOUR_CRON_SECRET_HERE",
-    "PREVIEW_SECRET":"YOUR_SECRET_HERE",
+    "PREVIEW_SECRET":"YOUR_SECRET_HERE"
   },
   "workspaceFolder": "/workspaces/strps-dev-web",
   "postCreateCommand": "pnpm install"
