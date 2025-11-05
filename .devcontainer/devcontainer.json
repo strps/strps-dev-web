@@ -6,13 +6,14 @@
   "name": "Ona",
   // Use "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
   // instead of the build to use a pre-built image.
-  "dockerComposeFile": "./docker.compose.devcontainer.yml",
-  "service": "app",
+  "dockerComposeFile": "./docker.compose.yml",
+  "service": "website",
   "containerEnv": {
     "NODE_ENV": "development",
     "PORT": "8000"
   },
-  "postCreateCommand": "pnpm install"
+  "postCreateCommand": "pnpm install",
+  "workspaceFolder": "/workspaces/strps-dev-web"
   // Features add additional features to your environment. See https://containers.dev/features
   // Beware: features are not supported on all platforms and may have unintended side-effects.
   // "features": {

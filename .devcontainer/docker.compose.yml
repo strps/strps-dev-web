@@ -16,7 +16,7 @@ services:
       PREVIEW_SECRET: YOUR_SECRET_HERE
     depends_on:
       - postgres
-    network-mode: host
+    network_mode: host
 
 
   postgres:
@@ -29,4 +29,4 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     env_file:
       - .env
-    network-mode: host
+    network_mode: host
