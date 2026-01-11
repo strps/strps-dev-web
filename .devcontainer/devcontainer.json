@@ -3,16 +3,16 @@
 //
 // See https://aka.ms/devcontainer.json for more information.
 {
-  "name": "Ona",
+  "name": "Website",
   // Use "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
   // instead of the build to use a pre-built image.
   "dockerComposeFile": "./docker.compose.yml",
   "service": "website",
   "containerEnv": {
     "NODE_ENV": "development",
-    "POSTGRES_URL": "postgresql://postgres@0.0.0.0:5432/your-database-name",
+    "POSTGRES_URL": "postgresql://postgres:postgres@postgres:5432/website-db",
     "PAYLOAD_SECRET": "YOUR_SECRET_HERE",
-    "NEXT_PUBLIC_SERVER_URL": "http://0.0.0.0:3000",
+    "NEXT_PUBLIC_SERVER_URL": "http://localhost:3000",
     "CRON_SECRET": "YOUR_CRON_SECRET_HERE",
     "PREVIEW_SECRET": "YOUR_SECRET_HERE"
   },

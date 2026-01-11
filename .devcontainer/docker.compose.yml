@@ -8,21 +8,22 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - ..:/workspaces/strps-dev-web:cached
-    # environment:
-      # POSTGRES_URL: 'postgresql://postgres@0.0.0.0:5432/your-database-name'
-      # PAYLOAD_SECRET: YOUR_SECRET_HERE
-      # NEXT_PUBLIC_SERVER_URL: http://0.0.0.0:3000
-      # CRON_SECRET: YOUR_CRON_SECRET_HERE
-      # PREVIEW_SECRET: YOUR_SECRET_HERE
     depends_on:
       - postgres
     command: sleep infinity
-    network_mode: host
+    ports:
+      - "3000:3000"
 
   postgres:
     image: postgis/postgis:16-3.4
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_DB: your-database-name
-      POSTGRES_HOST_AUTH_METHOD: trust
-    network_mode: host
+      POSTGRES_DB: website-db
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
