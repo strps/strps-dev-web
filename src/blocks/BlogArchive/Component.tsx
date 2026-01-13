@@ -5,7 +5,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 import RichText from '@/components/RichText'
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { Section } from '@/components/Section/Section'
+import { Section } from '@/components/Section'
 
 export const ArchiveBlock: React.FC<
   ArchiveBlockProps & {
@@ -50,12 +50,12 @@ export const ArchiveBlock: React.FC<
       },
       ...(flattenedTags && flattenedTags.length > 0
         ? {
-            where: {
-              tags: {
-                in: flattenedTags,
-              },
+          where: {
+            tags: {
+              in: flattenedTags,
             },
-          }
+          },
+        }
         : {}),
     })
 

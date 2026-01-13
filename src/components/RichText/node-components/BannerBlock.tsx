@@ -8,5 +8,5 @@ export interface BannerBlockPropsWithNode {
 }
 
 export const BannerBlock = ({ node }: BannerBlockPropsWithNode) => (
-  <BannerBlockComponent className="col-start-2 mb-4" {...node.fields} />
+  <BannerBlockComponent className="col-start-2 my-8" {...node.fields} />
 )

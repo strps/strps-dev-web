@@ -615,6 +615,16 @@ export interface Project {
   id: number;
   title: string;
   heroImage?: (number | null) | Media;
+  links?: {
+    github?: string | null;
+    liveSite?: string | null;
+  };
+  techStack?:
+    | {
+        name?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   content: {
     root: {
       type: string;
@@ -729,6 +739,7 @@ export interface StrpsSkillsBlock {
   skillGroup?:
     | {
         text?: string | null;
+        icon?: string | null;
         skills?:
           | {
               text?: string | null;
@@ -1840,6 +1851,7 @@ export interface StrpsSkillsBlockSelect<T extends boolean = true> {
     | T
     | {
         text?: T;
+        icon?: T;
         skills?:
           | T
           | {
@@ -2195,6 +2207,18 @@ export interface UsersSelect<T extends boolean = true> {
 export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   heroImage?: T;
+  links?:
+    | T
+    | {
+        github?: T;
+        liveSite?: T;
+      };
+  techStack?:
+    | T
+    | {
+        name?: T;
+        id?: T;
+      };
   content?: T;
   meta?:
     | T

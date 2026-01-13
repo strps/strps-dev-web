@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
 import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
-import { Section } from '@/components/Section/Section'
+import { Section } from '@/components/Section'
 import { Card } from '@/components/ui/card'
 
 export type FormBlockType = {

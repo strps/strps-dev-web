@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 import RichText from '@/components/RichText'
 import { ProjectArchive } from './ProjectArchive'
-import { Section } from '@/components/Section/Section'
+import { Section } from '@/components/Section'
 import { ProjectsArchiveBlock as ProjectsArchiveBlockProps } from '@/payload-types'
 
 export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (props) => {
@@ -38,6 +38,7 @@ export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (
         updatedAt: true,
         createdAt: true,
         heroImage: true,
+        links: true,
       },
     })
 

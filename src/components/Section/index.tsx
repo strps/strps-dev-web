@@ -2,12 +2,18 @@ import React from 'react'
 import { cn } from '@/utilities/ui'
 import { SectionBackground } from './SectionBackground'
 
-import { SectionConfig } from '@/payload-types'
+import { Media } from '@/payload-types'
 
-interface SectionProps extends SectionConfig {
+interface SectionProps {
   id?: string | null
-  children: React.ReactNode
+  container?: boolean | null
+  backgroundContainer?: boolean | null
+  backgroundImage?: number | Media | null
+  children?: React.ReactNode
+  background?: 'none' | 'svgCircles' | 'image'
   className?: string
+  theme?: "auto" | "light" | "dark" | "inverted" | null
+  section_id?: string | null | undefined
 }
 
 /**
@@ -35,7 +41,7 @@ export const Section: React.FC<SectionProps> = ({
   id,
   container,
   backgroundContainer,
-  background,
+  background = 'none',
   backgroundImage,
   className,
   children,
@@ -48,7 +54,7 @@ export const Section: React.FC<SectionProps> = ({
 
   return (
     <section
-      id={section_id ? section_id : id ? `block-${id}` : undefined}
+      id={section_id || `block-${id}` || undefined}
       className={cn(
         theme === 'auto' ? '' : theme,
         'relative bg-background text-foreground p-6 pt-16',

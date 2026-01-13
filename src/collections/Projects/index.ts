@@ -78,11 +78,43 @@ export const Projects: CollectionConfig<'projects'> = {
       type: 'tabs',
       tabs: [
         {
+          label: 'Content',
           fields: [
             {
               name: 'heroImage',
               type: 'upload',
               relationTo: 'media',
+            },
+            {
+              type: 'group',
+              name: 'links',
+              label: 'Links',
+
+              fields: [
+                {
+                  name: 'github',
+                  label: 'Github',
+                  type: 'text',
+                }, {
+                  name: 'liveSite',
+                  label: 'Live Site',
+                  type: 'text',
+                },
+              ]
+            },
+            {
+              name: 'techStack',
+              label: 'Tech Stack',
+              type: 'array',
+              minRows: 1,
+              fields: [
+                {
+                  name: 'name',
+                  label: 'name',
+                  type: 'text',
+                },
+
+              ]
             },
             {
               name: 'content',
@@ -103,7 +135,7 @@ export const Projects: CollectionConfig<'projects'> = {
               required: true,
             },
           ],
-          label: 'Content',
+
         },
 
         {
@@ -161,6 +193,8 @@ export const Projects: CollectionConfig<'projects'> = {
       },
     },
     ...slugField(),
+
+
   ],
   hooks: {
     afterChange: [revalidateProject],

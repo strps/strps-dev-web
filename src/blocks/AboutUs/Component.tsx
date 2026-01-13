@@ -1,6 +1,6 @@
 import React from 'react'
 import { StrpsAboutUsBlock } from '@/payload-types'
-import { Section } from '@/components/Section/Section'
+import { Section } from '@/components/Section'
 import { MissionAndVision } from './MissionAndVision'
 import { Values } from './Values'
 import { CompanyInformation } from './CompanyInformation'

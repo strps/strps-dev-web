@@ -2,21 +2,21 @@ import React, { Fragment } from 'react'
 
 import type { Page } from '@/payload-types'
 
-import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
-import { ProjectsArchiveBlock } from '@/blocks/ProjectsArchiveBlock/Component'
+import { ArchiveBlock } from '@/blocks/BlogArchive/Component'
+import { ProjectsArchiveBlock } from '@/blocks/ProjectsArchive/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { StrpsHero } from '@/blocks/StrpsHero/Component'
-import { AboutImageAdjacent, AboutStoryBlocks, StrpsAbout } from '@/blocks/StrpsAbout/Component'
+import { AboutImageAdjacent, AboutStoryBlocks, StrpsAbout } from '@/blocks/AboutMe/Component'
 import { StrpsSkills } from './StrpsSkills/Component'
 import { StrpsContact } from './StrpsContact/component'
 import { StrpsFormBlock } from './StrpsForm/Component'
-import { StrpsAboutUs } from './StrpsAboutUs/Component'
+import { StrpsAboutUs } from './AboutUs/Component'
 import { StrpsStats } from './StrpsStats/Component'
 import { StrpsServices } from './StrpsServices/Component'
 import { StrpsClients } from './StrpsClients/Component'
-import { StrpsCareers } from './StrpsCareers/Component'
+import { StrpsCareers } from './Careers/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,

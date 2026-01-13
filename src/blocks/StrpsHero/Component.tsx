@@ -1,5 +1,5 @@
 import { CMSLink } from '@/components/Link'
-import { Section } from '@/components/Section/Section'
+import { Section } from '@/components/Section'
 import { StrpsHeroBlock } from '@/payload-types'
 
 export const StrpsHero: React.FC<StrpsHeroBlock & { id?: string }> = (props) => {

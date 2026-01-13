@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { CircleSmall, Square, SquareCheckBig } from 'lucide-react'
+import { Square, SquareCheckBig } from 'lucide-react'
 import { SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
 
 export interface ListItem extends SerializedLexicalNode {
@@ -19,36 +19,32 @@ export interface ListProps {
 export const List = ({ node, nodesToJSX }: ListProps) => {
   const listTypes = {
     check: (
-      <ul className="list-none ml-4 my-2">
+      <ul className="my-6 ml-6 list-none [&>li]:mt-2">
         {node.children.map((child: any, i) => (
-          <li key={i} className="flex">
+          <li key={i} className="flex items-start">
             {child.checked ? (
-              <SquareCheckBig className="w-[1.25em] h-[1.25em] mr-[0.5em] shrink-0" />
+              <SquareCheckBig className="w-4 h-4 mr-2 mt-1 shrink-0 text-primary" />
             ) : (
-              <Square className="w-[1.25em] h-[1.25em] mr-[0.5em] shrink-0" />
+              <Square className="w-4 h-4 mr-2 mt-1 shrink-0 text-muted-foreground" />
             )}
-            {nodesToJSX({ nodes: child.children })}
+            <div>{nodesToJSX({ nodes: child.children })}</div>
           </li>
         ))}
       </ul>
     ),
     bullet: (
-      <ul className="list-none ml-4">
+      <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
         {node.children.map((child: any, i) => (
-          <li key={i} className="flex">
-            <CircleSmall className="w-[1.25em] h-[1.25em] mr-[0.5em] shrink-0" />
+          <li key={i}>
             {nodesToJSX({ nodes: child.children })}
           </li>
         ))}
       </ul>
     ),
     number: (
-      <ol className="list-none ml-4">
+      <ol className="my-6 ml-6 list-decimal [&>li]:mt-2">
         {node.children.map((child: any, i) => (
-          <li key={i} className="flex">
-            <span className="block min-w-[1.25em] h-[1.25em] mr-[0.5em] pl-[0.5em] shrink-0">
-              {child.value ?? i + 1}
-            </span>
+          <li key={i}>
             {nodesToJSX({ nodes: child.children })}
           </li>
         ))}

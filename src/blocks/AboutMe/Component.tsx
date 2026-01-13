@@ -4,7 +4,7 @@ import RichText from '@/components/RichText'
 import { CMSLink } from '@/components/Link'
 import type { Page } from '@/payload-types'
 import { cn } from '@/utilities/ui'
-import { Section } from '@/components/Section/Section'
+import { Section } from '@/components/Section'
 import { StrpsAboutStoryBlocks } from '@/payload-types'
 import { DynamicIcon } from 'lucide-react/dynamic'
 

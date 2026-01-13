@@ -8,5 +8,5 @@ export interface CallToActionBlockPropsWithNode {
 }
 
 export const CallToActionBlock = ({ node }: CallToActionBlockPropsWithNode) => (
-  <CallToActionBlockComponent {...node.fields} />
+  <CallToActionBlockComponent className="my-8" {...node.fields} />
 )

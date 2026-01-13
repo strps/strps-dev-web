@@ -7,5 +7,5 @@ export interface CodeBlockPropsWithNode {
 }
 
 export const CodeBlock = ({ node }: CodeBlockPropsWithNode) => (
-  <CodeBlockComponent className="col-start-2" {...node.fields} />
+  <CodeBlockComponent className="col-start-2 my-8" {...node.fields} />
 )

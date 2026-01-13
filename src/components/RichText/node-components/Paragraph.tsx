@@ -9,5 +9,5 @@ export interface ParagraphProps {
 
 export const Paragraph = ({ node, nodesToJSX }: ParagraphProps) => {
   const text = nodesToJSX({ nodes: node.children })
-  return <p className="mb-2 pl-4">{text}</p>
+  return <p className="mb-2 pl-4z">{text}</p>
 }

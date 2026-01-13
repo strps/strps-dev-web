@@ -1,4 +1,4 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postgres'
+import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
@@ -1740,7 +1740,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE IF NOT EXISTS "copyright" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"name" varchar DEFAULT '' NOT NULL,
-  	"start_date" timestamp(3) with time zone DEFAULT '2025-06-26T01:29:46.065Z' NOT NULL,
+  	"start_date" timestamp(3) with time zone DEFAULT '2026-01-13T05:32:08.537Z' NOT NULL,
   	"link" varchar,
   	"updated_at" timestamp(3) with time zone,
   	"created_at" timestamp(3) with time zone

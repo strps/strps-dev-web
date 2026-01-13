@@ -14,6 +14,7 @@ export const StrpsSkills: Block = {
       type: 'text',
       label: 'Title',
     },
+
     {
       name: 'skillGroup',
       type: 'array',
@@ -23,6 +24,11 @@ export const StrpsSkills: Block = {
           name: 'text',
           type: 'text',
           label: 'Text',
+        },
+        {
+          name: 'icon',
+          type: 'text',
+          label: 'Icon',
         },
         {
           name: 'skills',
