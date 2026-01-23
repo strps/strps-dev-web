@@ -38,19 +38,18 @@ export const SkillsCard: React.FC<SkillsCardProps> = ({
         <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
       </div>
 
-      <CardContent className="pt-6 pb-8 px-6">
+      <CardContent className="pt-4 pb-8 px-6">
         {hasSkills ? (
-          <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2.5">
             {skills.map((skill, index) => (
               <li
                 key={index}
                 className={cn(
                   'text-muted-foreground',
-                  'flex items-center gap-2.5 py-1 px-2 rounded-md',
+                  'flex items-center gap-1 px-1 rounded-md',
                   'transition-colors hover:bg-muted/40 hover:text-foreground/90'
                 )}
               >
-                <span className="size-1.5 rounded-full bg-primary/60 flex-shrink-0" />
                 <span>{skill.text}</span>
               </li>
             ))}

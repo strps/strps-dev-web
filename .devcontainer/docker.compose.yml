@@ -15,6 +15,7 @@ services:
       - "3000:3000"
 
   postgres:
+    name: website-postgres
     image: postgis/postgis:16-3.4
     environment:
       POSTGRES_USER: postgres
