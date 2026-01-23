@@ -1,10 +1,8 @@
 import { Media } from '@/components/Media'
-import { buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
   CardAction,
 } from '@/components/ui/card'

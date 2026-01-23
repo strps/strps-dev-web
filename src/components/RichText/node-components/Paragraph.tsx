@@ -1,10 +1,10 @@
+import { SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
+import { SerializedParagraphNode } from 'node_modules/@payloadcms/richtext-lexical/dist/nodeTypes'
 import { ReactNode } from 'react'
 
 export interface ParagraphProps {
-  node: {
-    children: any[]
-  }
-  nodesToJSX: (params: { nodes: any[] }) => ReactNode
+  node: SerializedParagraphNode<SerializedLexicalNode>
+  nodesToJSX: (params: { nodes: SerializedLexicalNode[] }) => ReactNode
 }
 
 export const Paragraph = ({ node, nodesToJSX }: ParagraphProps) => {

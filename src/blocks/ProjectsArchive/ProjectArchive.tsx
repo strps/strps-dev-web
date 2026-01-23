@@ -1,9 +1,5 @@
-import { cn } from '@/utilities/ui'
 import React from 'react'
-import type { Project } from '@/payload-types'
-import { ImageCard } from '@/components/Cards/ImageCard/ImageCard'
-import { buttonVariants } from '@/components/ui/button'
-import Link from 'next/link'
+import type { Media, Project } from '@/payload-types'
 import { ProjectCard } from '@/components/Cards/ProjectCard/ProjectCard'
 
 export type Props = {
@@ -18,7 +14,7 @@ export const ProjectArchive: React.FC<Props> = ({ collection }) => {
       {collection?.map((project, index) => (
         <ProjectCard
           key={index}
-          imageUrl={project.heroImage?.url}
+          imageUrl={(project.heroImage as Media)?.url}
           title={project.title}
           description={project.meta?.description}
           caseStudyUrl={`/projects/${project.slug}`}

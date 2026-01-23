@@ -1,9 +1,19 @@
 import React from 'react'
-import { CMSLink } from '@/components/Link'
+import { CMSLink, CMSLinkType } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
+import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import { Media as MediaProps } from '@/payload-types'
 
-export const MediumImpactHero: React.FC<any> = ({ links, media, richText }) => {
+interface MediumImpactHeroProps {
+  links?: {
+    link: CMSLinkType
+  }[]
+  media?: MediaProps
+  richText?: DefaultTypedEditorState
+}
+
+export const MediumImpactHero: React.FC<MediumImpactHeroProps> = ({ links, media, richText }) => {
   return (
     <div className="">
       <div className="container mb-8">

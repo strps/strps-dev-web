@@ -60,7 +60,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({
           {stat.icon && (
             <div className="mb-4">
               <DynamicIcon
-                name={stat.icon as any}
+                name={stat.icon}
                 className={cn(
                   'h-12 w-12 p-2 rounded-full',
                   stat.color
@@ -71,7 +71,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({
             </div>
           )}
           <div
-            className={cn('font-bold', statVariants({ size: valueSize, color: stat.color as any }))}
+            className={cn('font-bold', statVariants({ size: valueSize, color: stat.color }))}
           >
             {enableAnimation ? (
               <AnimatedCounter

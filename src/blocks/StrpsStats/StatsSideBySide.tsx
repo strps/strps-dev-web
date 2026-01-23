@@ -49,22 +49,22 @@ export const StatsSideBySide: React.FC<StatsSideBySideProps> = ({
               initial={
                 shouldAnimate
                   ? {
-                      opacity: 0,
-                      x: isEven ? -20 : 20,
-                    }
+                    opacity: 0,
+                    x: isEven ? -20 : 20,
+                  }
                   : false
               }
               animate={
                 shouldAnimate
                   ? {
-                      opacity: 1,
-                      x: 0,
-                      transition: {
-                        type: 'spring',
-                        stiffness: 100,
-                        damping: 10,
-                      },
-                    }
+                    opacity: 1,
+                    x: 0,
+                    transition: {
+                      type: 'spring',
+                      stiffness: 100,
+                      damping: 10,
+                    },
+                  }
                   : false
               }
               transition={{
@@ -74,24 +74,24 @@ export const StatsSideBySide: React.FC<StatsSideBySideProps> = ({
               whileHover={
                 shouldAnimate
                   ? {
-                      y: -3,
-                      transition: { duration: 0.2 },
-                    }
+                    y: -3,
+                    transition: { duration: 0.2 },
+                  }
                   : {}
               }
               whileTap={
                 shouldAnimate
                   ? {
-                      scale: 0.98,
-                      transition: { duration: 0.1 },
-                    }
+                    scale: 0.98,
+                    transition: { duration: 0.1 },
+                  }
                   : {}
               }
             >
               {stat.icon && (
                 <div className="mr-6">
                   <DynamicIcon
-                    name={stat.icon as any}
+                    name={stat.icon}
                     className={cn(
                       'h-12 w-12 p-2 rounded-full transition-colors duration-200',
                       stat.color
@@ -105,7 +105,7 @@ export const StatsSideBySide: React.FC<StatsSideBySideProps> = ({
                 <div
                   className={cn(
                     'font-bold',
-                    statVariants({ size: valueSize, color: stat.color as any }),
+                    statVariants({ size: valueSize, color: stat.color }),
                   )}
                 >
                   {enableAnimation ? (

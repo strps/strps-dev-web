@@ -1,4 +1,4 @@
-import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
+import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest } from 'payload'
 import { contactForm as contactFormData } from './contact-form'
 import { seedContactPage } from './contact-page'
 import { strpsMetaImage } from './strps_meta_image'
@@ -326,22 +326,22 @@ export const seed = async ({
   payload.logger.info('Seeded database successfully!')
 }
 
-async function fetchFileByURL(url: string): Promise<File> {
-  const res = await fetch(url, {
-    credentials: 'include',
-    method: 'GET',
-  })
+// async function fetchFileByURL(url: string): Promise<File> {
+//   const res = await fetch(url, {
+//     credentials: 'include',
+//     method: 'GET',
+//   })
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch file from ${url}, status: ${res.status}`)
-  }
+//   if (!res.ok) {
+//     throw new Error(`Failed to fetch file from ${url}, status: ${res.status}`)
+//   }
 
-  const data = await res.arrayBuffer()
+//   const data = await res.arrayBuffer()
 
-  return {
-    name: url.split('/').pop() || `file-${Date.now()}`,
-    data: Buffer.from(data),
-    mimetype: `image/${url.split('.').pop()}`,
-    size: data.byteLength,
-  }
-}
+//   return {
+//     name: url.split('/').pop() || `file-${Date.now()}`,
+//     data: Buffer.from(data),
+//     mimetype: `image/${url.split('.').pop()}`,
+//     size: data.byteLength,
+//   }
+// }

@@ -22,9 +22,9 @@ const containerMotionVariants = {
     transition: reduced
       ? {}
       : {
-          staggerChildren: 0.1,
-          delayChildren: 0.2,
-        },
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
   }),
 }
 
@@ -36,10 +36,10 @@ const itemMotionVariants = (reduced: boolean) => ({
     transition: reduced
       ? {}
       : {
-          type: 'spring',
-          stiffness: 100,
-          damping: 10,
-        },
+        type: 'spring',
+        stiffness: 100,
+        damping: 10,
+      },
   },
 })
 
@@ -142,7 +142,7 @@ export const StrpsStats: React.FC<StrpsStatsBlock> = ({
             <a
               href={cta.link}
               className={cn(
-                ctaVariants({ variant: cta.style as any }),
+                ctaVariants({ variant: cta.style }),
                 'transition-colors duration-200',
               )}
             >

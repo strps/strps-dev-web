@@ -1,11 +1,12 @@
 import { ReactNode } from 'react'
+import { SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
 
 export interface HeadingProps {
-  node: {
+  node: SerializedLexicalNode & {
     tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-    children: any[]
+    children: SerializedLexicalNode[]
   }
-  nodesToJSX: (params: { nodes: any[] }) => ReactNode
+  nodesToJSX: (params: { nodes: SerializedLexicalNode[] }) => ReactNode
 }
 
 export const Heading = ({ node, nodesToJSX }: HeadingProps) => {

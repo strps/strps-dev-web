@@ -1,13 +1,18 @@
 'use client'
 import React from 'react'
-
-import type { Page } from '@/payload-types'
-
-import { CMSLink } from '@/components/Link'
+import { CMSLink, CMSLinkType } from '@/components/Link'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
+import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import { Media as MediaProps } from '@/payload-types'
 
-export const HighImpactHero: React.FC<any> = ({ links, media, richText }) => {
+interface HighImpactHeroProps {
+  links?: CMSLinkType[]
+  media?: MediaProps
+  richText?: DefaultTypedEditorState
+}
+
+export const HighImpactHero: React.FC<HighImpactHeroProps> = ({ links, media, richText }) => {
   return (
     <div
       className="relative -mt-[10.4rem] flex items-center justify-center text-white"
@@ -18,7 +23,7 @@ export const HighImpactHero: React.FC<any> = ({ links, media, richText }) => {
           {richText && <RichText className="mb-6" data={richText} enableGutter={false} />}
           {Array.isArray(links) && links.length > 0 && (
             <ul className="flex md:justify-center gap-4">
-              {links.map(({ link }, i) => {
+              {links.map((link, i) => {
                 return (
                   <li key={i}>
                     <CMSLink {...link} />

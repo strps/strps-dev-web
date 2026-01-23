@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { motion, AnimatePresence, Variants } from 'motion/react'
 import { StrpsCareersBlock } from '@/payload-types'
 
@@ -14,15 +13,15 @@ type JobType = {
   featured?: boolean
 }
 
-type FormValues = {
-  // Add form field types here based on your application form fields
-  name: string
-  email: string
-  phone?: string
-  resume: FileList
-  coverLetter?: string
-  // Add other fields as needed
-}
+// type FormValues = {
+//   // Add form field types here based on your application form fields
+//   name: string
+//   email: string
+//   phone?: string
+//   resume: FileList
+//   coverLetter?: string
+//   // Add other fields as needed
+// }
 
 // Animation variants
 const containerVariants: Variants = {
@@ -86,12 +85,12 @@ export const StrpsCareers: React.FC<StrpsCareersBlock> = ({
   const [selectedJob, setSelectedJob] = useState<JobType | null>(null)
 
   // Add form handling
-  const {
-    // register,
-    // handleSubmit,
-    reset,
-    // formState: { errors },
-  } = useForm<FormValues>()
+  // const {
+  // register,
+  // handleSubmit,
+  // reset,
+  // formState: { errors },
+  // } = useForm<FormValues>()
 
   const handleApply = (job: JobType) => {
     setSelectedJob(job)
@@ -99,22 +98,21 @@ export const StrpsCareers: React.FC<StrpsCareersBlock> = ({
   }
 
   // Add form submission handler
-  const onSubmit = async (data: FormValues) => {
-    try {
-      // Reset form and close modal
-      reset()
-      setShowApplicationModal(false)
-    } catch (error) {
-      console.error('Error submitting application:', error)
-    }
-  }
+  // const onSubmit = async (data: FormValues) => {
+  //   try {
+  //     // Reset form and close modal
+  //     reset()
+  //     setShowApplicationModal(false)
+  //   } catch (error) {
+  //     console.error('Error submitting application:', error)
+  //   }
+  // }
 
   const renderJobCard = (job: JobType, featured = false) => (
     <motion.div
       key={job.id}
-      className={`relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-300 ${
-        featured ? 'ring-2 ring-indigo-500' : ''
-      }`}
+      className={`relative rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-300 ${featured ? 'ring-2 ring-indigo-500' : ''
+        }`}
       variants={itemVariants}
       whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)' }}
       whileTap={{ scale: 0.98 }}

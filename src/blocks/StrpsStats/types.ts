@@ -1,3 +1,4 @@
+import { IconName } from 'lucide-react/dynamic'
 import { StatVariants, CtaVariants } from './variants'
 
 export interface StatItem {
@@ -6,10 +7,7 @@ export interface StatItem {
   prefix?: string | null
   suffix?: string | null
   color?: StatVariants['color']
-  icon?: {
-    url: string
-    alt?: string
-  }
+  icon?: IconName
 }
 
 export interface CtaProps {

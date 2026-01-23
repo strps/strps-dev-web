@@ -1,11 +1,11 @@
 import React from 'react'
 import { StrpsServicesBlock } from '@/payload-types'
 import { cn } from '@/utilities/ui'
-import { DynamicIcon, dynamicIconImports } from 'lucide-react/dynamic'
+import { DynamicIcon, dynamicIconImports, IconName } from 'lucide-react/dynamic'
 import { CMSLink } from '@/components/Link'
 
 type Service = NonNullable<StrpsServicesBlock['services']>[number]
-type LucideIconName = keyof typeof dynamicIconImports
+type LucideIconName = IconName
 
 export const StrpsServices: React.FC<StrpsServicesBlock> = ({
   heading,
@@ -24,7 +24,7 @@ export const StrpsServices: React.FC<StrpsServicesBlock> = ({
     const { title, description, icon, link } = service
 
     // Helper function to safely get the URL from a link object
-    const getLinkUrl = (link: any) => {
+    const getLinkUrl = (link: Service['link']) => {
       if (link.type !== 'reference' || !link.reference) return link.url || ''
       if (typeof link.reference.value === 'number') return ''
       return `/${link.reference.value.slug}`
@@ -40,7 +40,7 @@ export const StrpsServices: React.FC<StrpsServicesBlock> = ({
           'h-full',
           isFeatured ? 'p-8' : 'p-6',
           !isFeatured &&
-            'bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border',
+          'bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 border',
         )}
       >
         {iconComponent}

@@ -4,7 +4,7 @@ import { ArrowUpRight, Badge, Github } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Media } from "@/components/Media"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 
 export interface ProjectTech {
@@ -16,7 +16,7 @@ export interface ProjectTech {
 export interface ProjectCardProps {
     title: string
     description?: string | null
-    imageUrl?: string // fallback to placeholder
+    imageUrl?: string | null// fallback to placeholder
     technologies?: ProjectTech[]
     liveUrl?: string | null
     repoUrl?: string | null

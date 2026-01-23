@@ -27,7 +27,7 @@ import { VideoMedia } from './VideoMedia'
  * @returns {JSX.Element} The rendered media component
  */
 export const Media: React.FC<Props> = (props) => {
-  const { className, htmlElement = 'div', resource, imgClassName } = props
+  const { className, htmlElement = 'div', resource } = props
 
   const isVideo = typeof resource === 'object' && resource?.mimeType?.includes('video')
   const Tag = htmlElement || Fragment
@@ -36,8 +36,8 @@ export const Media: React.FC<Props> = (props) => {
     <Tag
       {...(htmlElement !== null
         ? {
-            className,
-          }
+          className,
+        }
         : {})}
     >
       {isVideo ? <VideoMedia {...props} /> : <ImageMedia {...props} />}

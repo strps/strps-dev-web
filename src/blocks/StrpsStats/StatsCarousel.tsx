@@ -65,7 +65,7 @@ export const StatsCarousel: React.FC<StatsCarouselProps> = ({
               {stat.icon && (
                 <div className="mb-4 flex justify-center">
                   <DynamicIcon
-                    name={stat.icon as any}
+                    name={stat.icon}
                     className={cn(
                       'h-12 w-12 p-2 rounded-full',
                       stat.color
@@ -78,7 +78,7 @@ export const StatsCarousel: React.FC<StatsCarouselProps> = ({
               <div
                 className={cn(
                   'font-bold mb-2',
-                  statVariants({ size: valueSize, color: stat.color as any }),
+                  statVariants({ size: valueSize, color: stat.color }),
                 )}
               >
                 {enableAnimation ? (

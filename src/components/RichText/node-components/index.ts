@@ -25,4 +25,4 @@ export type NodeComponentProps =
   | HeadingProps
   | ListProps
   | ParagraphProps
-  | {} // For HorizontalRule which has no props
+// | {} // For HorizontalRule which has no props

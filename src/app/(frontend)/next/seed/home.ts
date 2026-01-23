@@ -120,7 +120,7 @@ const imageHero1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
 //   ],
 // }
 
-export const seedHomePage = async ({ payload, req, contactForm }: SeedHomePageArgs) => {
+export const seedHomePage = async ({ payload, contactForm }: SeedHomePageArgs) => {
   payload.logger.info(`— Seeding home page media...`)
 
   const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
@@ -176,7 +176,6 @@ export const seedHomePage = async ({ payload, req, contactForm }: SeedHomePageAr
 export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
   heroImage,
   metaImage,
-  aboutImage,
   contactForm,
 }) => {
   return {

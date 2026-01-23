@@ -1,19 +1,14 @@
-
-
-
-
 import React from 'react'
 import { cn } from '@/utilities/ui'
 import { Card, CardContent } from '@/components/ui/card'
-import { LucideIcon } from 'lucide-react'
 import { DynamicIcon, IconName } from 'lucide-react/dynamic'
 
 export interface SkillsCardProps {
   title: string
   iconName?: IconName
-  skills: Array<{ text: string }> // simplified — assume text is always present
+  skills?: Array<{ text?: string | null | undefined }>
   className?: string
-  iconColor?: string // optional: override accent color
+  // iconColor?: string // optional: override accent color
 }
 
 export const SkillsCard: React.FC<SkillsCardProps> = ({
@@ -21,9 +16,10 @@ export const SkillsCard: React.FC<SkillsCardProps> = ({
   iconName = 'at-sign',
   skills,
   className,
-  iconColor = 'text-primary',
+  // iconColor = 'text-primary',
 }) => {
-  const hasSkills = skills?.length > 0
+
+  const hasSkills = !!skills && skills?.length > 0
 
   return (
     <Card
