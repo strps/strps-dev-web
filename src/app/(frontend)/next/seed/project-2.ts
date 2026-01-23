@@ -12,11 +12,11 @@ export type ProjectArgs = {
 
 export const project2: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'projects'> = ({
   heroImage,
-  author,
+  // author,
   metaImage,
-  screenshot1,
-  screenshot2,
-  screenshot3,
+  // screenshot1,
+  // screenshot2,
+  // screenshot3,
 }) => {
   return {
     title: 'Trackbit',

@@ -32,7 +32,7 @@ export const ProjectsArchiveBlock: React.FC<ProjectsArchiveBlockProps> = async (
       select: {
         title: true,
         slug: true,
-        tags: true,
+        // tags: true,
         meta: true,
         content: true,
         updatedAt: true,

@@ -9,7 +9,7 @@ export type PostArgs = {
 
 export const post5: (args: PostArgs) => RequiredDataFromCollectionSlug<'posts'> = ({
   heroImage,
-  blockImage,
+  // blockImage,
   author,
 }) => {
   const now = new Date()

@@ -1,5 +1,4 @@
 import { Block } from 'payload'
-import { SectionConfig } from '@/fields/section'
 
 export const StrpsMedia: Block = {
   slug: 'strps-media',

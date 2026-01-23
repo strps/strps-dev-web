@@ -11,7 +11,7 @@ export const project1: (args: ProjectArgs) => RequiredDataFromCollectionSlug<'pr
   heroImage,
   metaImage,
 
-  author,
+  // author,
 }) => {
   return {
     title: 'STRPS Website',

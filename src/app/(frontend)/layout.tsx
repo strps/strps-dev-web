@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
 
-import { cn } from '@/utilities/ui'
 import { Chivo, Lora } from 'next/font/google'
 import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/components/Footer/Component'
-import { Header } from '@/components/Header/Component'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 

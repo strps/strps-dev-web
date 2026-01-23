@@ -101,24 +101,24 @@ const imageHero1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
   },
 }
 
-const contactFormData = {
-  title: 'Contact Form',
-  description: 'Contact form description',
-  fields: [
-    {
-      label: 'Name',
-      type: 'text',
-    },
-    {
-      label: 'Email',
-      type: 'email',
-    },
-    {
-      label: 'Message',
-      type: 'textarea',
-    },
-  ],
-}
+// const contactFormData = {
+//   title: 'Contact Form',
+//   description: 'Contact form description',
+//   fields: [
+//     {
+//       label: 'Name',
+//       type: 'text',
+//     },
+//     {
+//       label: 'Email',
+//       type: 'email',
+//     },
+//     {
+//       label: 'Message',
+//       type: 'textarea',
+//     },
+//   ],
+// }
 
 export const seedHomePage = async ({ payload, req, contactForm }: SeedHomePageArgs) => {
   payload.logger.info(`— Seeding home page media...`)
