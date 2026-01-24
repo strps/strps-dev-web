@@ -19,22 +19,25 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [react(), dts({ insertTypesEntry: true })],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
     build: {
       lib: {
         entry: path.resolve(__dirname, 'src/index.ts'),
-        name: 'MyUI',
         formats: ['es'],
-        fileName: (format) => `index.${format}.js`,
       },
       rollupOptions: {
-        // Only externalize when building for NPM/Next.js
         external: ['react', 'react-dom', 'tailwindcss'],
         output: {
-          globals: {
-            react: 'React',
-            'react-dom': 'ReactDOM',
-            tailwindcss: 'tailwindcss',
-          },
+          // 1. Keep the folder structure (src/Button.tsx -> dist/src/Button.js)
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+
+          // 2. Use .js extension for ESM
+          entryFileNames: '[name].js',
         },
       },
     },
