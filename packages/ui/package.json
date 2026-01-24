@@ -1,7 +1,10 @@
 {
-  "name": "@website/ui",
+  "name": "@strps-website/ui",
   "private": true,
   "version": "0.0.0",
+  "source": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "type": "module",
   "scripts": {
@@ -40,5 +43,11 @@
   },
   "peerDependencies": {
     "next-themes": "^0.4.6"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./dist/index.js"
+    }
   }
 }

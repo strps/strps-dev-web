@@ -16,6 +16,19 @@
     "CRON_SECRET": "YOUR_CRON_SECRET_HERE",
     "PREVIEW_SECRET": "YOUR_SECRET_HERE"
   },
+  // Customizations for VS Code
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "oven.bun-vscode" // 👈 Official Bun extension
+      ]
+    }
+  },
   "workspaceFolder": "/workspaces/strps-dev-web",
   "postCreateCommand": "pnpm install"
   // Features add additional features to your environment. See https://containers.dev/features

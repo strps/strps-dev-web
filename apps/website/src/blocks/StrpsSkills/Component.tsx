@@ -1,8 +1,9 @@
 import React from 'react'
 import { StrpsSkillsBlock } from '@/payload-types'
-import { SkillsCard } from '@/components/Cards/SkillsCard/SkillsCard'
+import { SkillsCard } from "@strps-website/ui"
 import { Section } from '@/components/Section'
 import { IconName } from 'lucide-react/dynamic'
+
 
 export const StrpsSkills = (props: StrpsSkillsBlock) => {
   const { id, title, skillGroup, section } = props

@@ -1,5 +1,5 @@
 {
-  "name": "my-monorepo",
+  "name": "strps-website",
   "private": true,
   "workspaces": [
     "apps/*",
