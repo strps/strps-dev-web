@@ -1,5 +1,5 @@
 import React from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '../../lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
 

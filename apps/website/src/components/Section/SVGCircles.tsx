@@ -1,5 +1,5 @@
 'use client'
-import React, { useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { cn } from '@/utilities/ui'
 
@@ -27,9 +27,16 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
   strokeDasharray = '75',
   style,
 }) => {
-  // Generate initial rotation angles for circles
-  const circleRotations = useMemo(
-    () =>
+  const [circleRotations, setCircleRotations] = useState<
+    Array<{
+      initial: number
+      animate: { rotate: number[] }
+      transition: { duration: number; repeat: number; ease: string }
+    }>
+  >([])
+
+  useEffect(() => {
+    setCircleRotations(
       Array.from({ length: numCircles }).map(() => {
         const initialRotation = Math.random() * 360
         const duration = Math.random() * 10 + 10
@@ -37,14 +44,14 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
           initial: initialRotation,
           animate: { rotate: [initialRotation, initialRotation + 360] },
           transition: {
-            duration: duration, // Random duration between 5-15 seconds
+            duration,
             repeat: Infinity,
             ease: 'linear',
           },
         }
       }),
-    [numCircles],
-  )
+    )
+  }, [numCircles])
 
   return (
     <svg
