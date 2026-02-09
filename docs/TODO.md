@@ -1,0 +1,1 @@
+[]Remove framer motion from apps/website, just be handle by packages/ui
