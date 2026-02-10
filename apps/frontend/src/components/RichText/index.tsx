@@ -23,10 +23,10 @@ import {
 } from './node-components'
 
 // Import types
-import type { BannerBlock as BannerBlockType } from '@/payload-types'
-import type { CallToActionBlock as CTABlockType } from '@/payload-types'
-import type { MediaBlock as MediaBlockType } from '@/payload-types'
-import type { CodeBlockProps as CodeBlockType } from '@/components/Code/Component'
+import type { BannerBlock as BannerBlockType } from '../../../../payload/src/payload-types'
+import type { CallToActionBlock as CTABlockType } from '../../../../payload/src/payload-types'
+import type { MediaBlock as MediaBlockType } from '../../../../payload/src/payload-types'
+import type { CodeBlockProps as CodeBlockType } from '@/components/code/Component'
 import type { SerializedBlockNode } from '@payloadcms/richtext-lexical'
 
 /**

@@ -1,15 +1,7 @@
 import { Moon, Sun } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { useTheme } from "next-themes"
 
-export function ModeToggle() {
+export function ThemeSwitch() {
   const { setTheme, theme } = useTheme()
 
   const toggleTheme = () => {
@@ -21,7 +13,7 @@ export function ModeToggle() {
       className="p-2 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
       aria-label="Toggle theme"
     >
-      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+      {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
     </button>
   )
 }

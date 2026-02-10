@@ -1,4 +1,13 @@
-export const resumeData = {
+export const siteData = {
+  hero: {
+    status: {
+      isAvailable: true,
+      label: "Available for new opportunities"
+    },
+    description: "Crafting interactive experiences and building efficient, scalable systems for the modern web.",
+    // Updated with a tech-focused Unsplash image
+    backgroundImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop"
+  },
   basics: {
     name: "CESAR JEREZ",
     label: "Full Stack Developer",
@@ -79,19 +88,35 @@ export const resumeData = {
   ],
   projects: [
     {
-      name: "ERPNext Custom Implementation",
+      title: "ERPNext Custom Implementation",
       description: "Initial development of a self-hosted ERPNext system for handling invoicing, inventory, and CRM.",
-      url: "https://github.com/strps/strps-erpnext"
+      repoUrl: "https://github.com/strps/strps-erpnext",
+      technologies: [
+        { name: "ERPNext" },
+        { name: "Python" },
+        { name: "Frappe" },
+      ]
     },
     {
-      name: "STRPS Payload CMS Template",
+      title: "STRPS Payload CMS Template",
       description: "Custom Payload CMS template with CAPTCHA-protected forms and dynamic page blocks powered by Next.js and Drizzle ORM.",
-      url: "https://www.strps.dev/projects/strps-website-template"
+      liveUrl: "https://www.strps.dev/projects/strps-website-template",
+      technologies: [
+        { name: "Payload CMS" },
+        { name: "Next.js" },
+        { name: "Drizzle ORM" },
+        { name: "React" },
+      ]
     },
     {
-      name: "Custom Pen Plotter",
+      title: "Custom Pen Plotter",
       description: "Designed and built a DIY pen plotter using 3D printed parts, stepper motors, and Arduino. Focused on generative art and mechanical precision.",
-      url: "https://www.strps.dev/projects/trackbit-gamified-habit-tracking"
+      liveUrl: "https://www.strps.dev/projects/trackbit-gamified-habit-tracking",
+      technologies: [
+        { name: "Arduino" },
+        { name: "3D Printing" },
+        { name: "Generative Art" },
+      ]
     }
   ],
   skills: [

@@ -1,9 +1,9 @@
-import { BannerBlock as BannerBlockComponent } from '@/blocks/Banner/Component'
-import { BannerBlock as BannerBlockProps } from '@/payload-types'
+import { BannerBlock as BannerBlockComponent, type Props as BannerComponentProps } from '@/components/Banner'
+import { BannerBlock as BannerBlockProps } from '../../../../../payload/src/payload-types'
 
 export interface BannerBlockPropsWithNode {
   node: {
-    fields: BannerBlockProps
+    fields: BannerComponentProps
   }
 }
 

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 import { Users } from './collections/Users'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
-import { getServerSideURL } from './utilities/getURL'
+// import { getServerSideURL } from './utilities/getURL'
 import { globals } from './globals/index'
 import { resendAdapter } from '@payloadcms/email-resend'
 import collections from './collections'
@@ -18,18 +18,27 @@ const dirname = path.dirname(filename)
 const db =
   process.env.NODE_ENV === 'development'
     ? postgresAdapter({
-        pool: {
-          // connectionString: 'postgresql://postgres@0.0.0.0:5432/your-database-name',
-          connectionString: process.env.POSTGRES_URL || '',
-        },
-      })
+      pool: {
+        // connectionString: 'postgresql://postgres@0.0.0.0:5432/your-database-name',
+        connectionString: process.env.POSTGRES_URL || '',
+      },
+    })
     : vercelPostgresAdapter({
-        pool: {
-          connectionString: process.env.POSTGRES_URL || '',
-        },
-      })
+      pool: {
+        connectionString: process.env.POSTGRES_URL || '',
+      },
+    })
 
 export default buildConfig({
+
+  cors: '*',
+  //  {
+  //   origins: [
+  //     process.env.FRONTEND_URL || '',
+  //     process.env.NEXT_PUBLIC_SERVER_URL || ''
+  //   ]
+  // },
+
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
@@ -70,7 +79,6 @@ export default buildConfig({
   editor: defaultLexical,
   db,
   collections: collections,
-  cors: [getServerSideURL()].filter(Boolean),
   globals,
   plugins: [
     ...plugins,
@@ -84,7 +92,7 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    outputFile: path.resolve(dirname, '../../../packages/types/payload-types.ts'),
   },
   jobs: {
     access: {

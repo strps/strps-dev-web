@@ -1,4 +1,4 @@
-import { CodeBlock as CodeBlockComponent, CodeBlockProps } from '@/blocks/Code/Component'
+import { CodeBlock as CodeBlockComponent, CodeBlockProps } from '@/components/code/Component'
 
 export interface CodeBlockPropsWithNode {
   node: {

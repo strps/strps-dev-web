@@ -1,5 +1,5 @@
-import { MediaBlock as MediaBlockComponent } from '@/blocks/MediaBlock/Component'
-import { MediaBlock as MediaBlockProps } from '@/payload-types'
+import { MediaBlock as MediaBlockComponent } from '@/components/cms-media/block'
+import { MediaBlock as MediaBlockProps } from '../../../../../payload/src/payload-types'
 
 export interface MediaBlockPropsWithNode {
   node: {

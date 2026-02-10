@@ -12,7 +12,6 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 // import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
-import { getServerSideURL } from '@/utilities/getURL'
 import { verifyRecaptchaToken } from '@/blocks/StrpsForm/verify-recaptcha'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
@@ -20,7 +19,7 @@ const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-  const url = getServerSideURL()
+  const url = process.env.NEXT_PUBLIC_SERVER_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL || ''
 
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
