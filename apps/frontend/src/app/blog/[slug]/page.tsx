@@ -1,9 +1,9 @@
 import { RelatedPosts } from '@/components/blog/related-posts'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
+import { PayloadRedirects } from '@/components/payload-redirects'
 import { draftMode } from 'next/headers'
 import RichText from '@/components/RichText'
 import { PostHero } from '@/components/blog/hero'
-import { generateMeta } from '@/utilities/generateMeta'
+import { generateMeta } from '@/lib/generateMeta'
 import { LivePreviewListener } from '@/components/live-preview-listener'
 import type { Metadata } from 'next'
 import type { Post } from '../../../../../payload/src/payload-types'
@@ -26,12 +26,10 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   if (!post) return <PayloadRedirects url={url} />
 
-  const headerOverrides = post.appearance?.headerOverrides
-
   return (
     <>
       <article className="pb-16">
-        <PayloadRedirects disableNotFound url={url} />
+        {/* <PayloadRedirects disableNotFound url={url} /> */}
 
         {draft && <LivePreviewListener />}
 

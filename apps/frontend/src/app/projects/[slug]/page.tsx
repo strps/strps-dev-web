@@ -1,37 +1,15 @@
 import type { Metadata } from 'next'
 
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { PayloadRedirects } from '@/components/payload-redirects'
 import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
 import RichText from '@/components/RichText'
-
-import type { Post } from '@/payload-types'
-
-import { PostHero } from '@/components/heros/PostHero'
-import { generateMeta } from '@/utilities/generateMeta'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { Header } from '@/components/Header/Component'
+import { PostHero } from '@/components/blog/hero'
+import { generateMeta } from '@/lib/generateMeta'
+import { LivePreviewListener } from '@/components/live-preview-listener'
+import { getProjectBySlug, generateStaticParams as generateProjectStaticParams } from '../data'
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const projects = await payload.find({
-    collection: 'projects',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  const params = projects.docs.map(({ slug }) => {
-    return { slug }
-  })
-
-  return params
+  return await generateProjectStaticParams()
 }
 
 type Args = {
@@ -40,18 +18,17 @@ type Args = {
   }>
 }
 
-export default async function Post({ params: paramsPromise }: Args) {
+export default async function ProjectPage({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const url = '/projects/' + slug
-  const project = await queryPostBySlug({ slug })
+  const project = await getProjectBySlug({ slug })
   const headerOverrides = project?.appearance?.headerOverrides
 
   if (!project) return <PayloadRedirects url={url} />
 
   return (
     <>
-      <Header headerOverrides={headerOverrides} />
       <article className="pb-16">
         {/* Allows redirects for valid pages too */}
         <PayloadRedirects disableNotFound url={url} />
@@ -75,28 +52,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
-  const project = await queryPostBySlug({ slug })
+  const project = await getProjectBySlug({ slug })
 
   return generateMeta({ doc: project })
 }
-
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
-
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'projects',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-  })
-
-  return result.docs?.[0] || null
-})

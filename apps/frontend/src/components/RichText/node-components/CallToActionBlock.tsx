@@ -1,4 +1,4 @@
-import { CallToActionBlock as CallToActionBlockComponent } from '@/components/CTA'
+import { CallToActionBlock as CallToActionBlockComponent } from '@/components/cta'
 import { CallToActionBlock as CallToActionBlockProps } from '../../../../../payload/src/payload-types'
 
 export interface CallToActionBlockPropsWithNode {

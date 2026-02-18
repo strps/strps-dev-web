@@ -1,12 +1,11 @@
 import type { Metadata } from 'next'
-import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
   description: 'César Jerez - Web Developer',
   images: [
     {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
+      url: `${process.env.NEXT_PUBLIC_PAYLOAD_URL}/website-template-OG.webp`,
     },
   ],
   siteName: 'César Jerez',

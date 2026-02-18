@@ -89,7 +89,6 @@ export function ProjectCard({
                         technologies && technologies.length > 0 &&
                         <div className="flex flex-wrap gap-2 mb-6">
                             {technologies.map((tech, index) => {
-                                console.log(tech.name)
                                 return (
                                     <Badge
                                         key={index}

@@ -17,6 +17,9 @@ export default async function BlogPage({
   const page = Number((await searchParams).page) || 1
   const { posts, pagination } = await getBlogPosts({ page, limit: 12 })
 
+
+  const url = new URL(process.env.NEXT_PUBLIC_PAYLOAD_URL!)
+  url.port = ''
   return (
     <main className="min-h-screen">
       {/* Blog Header */}

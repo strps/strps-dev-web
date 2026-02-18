@@ -1,16 +1,16 @@
 import { gql } from '@apollo/client'
 import { getClient } from '@/lib/apollo-client'
-import type { Post } from '@strps-website/types' // your generated types
+import type { Project } from '@strps-website/types' // your generated types
 import { draftMode } from 'next/headers'
 import { cache } from 'react'
 
-export const GET_POSTS = gql`
-  query GetPosts(
+export const GET_PROJECTS = gql`
+  query GetProjects(
     $page: Int = 1
     $limit: Int = 12
-    $where: Post_where   # ← This was the main issue
+    $where: Project_where
   ) {
-    Posts(
+    Projects(
       page: $page
       limit: $limit
       where: $where
@@ -28,13 +28,6 @@ export const GET_POSTS = gql`
         meta {
           description
         }
-        authors {
-          name
-        }
-        tags {
-          id
-          tag      
-        }
       }
       totalDocs
       totalPages
@@ -44,46 +37,44 @@ export const GET_POSTS = gql`
     }
   }
 `
-type GetPostsParams = {
+type GetProjectsParams = {
   page?: number
   limit?: number
 }
 
-export async function getBlogPosts({ page = 1, limit = 12 }: GetPostsParams = {}) {
+export async function getProjects({ page = 1, limit = 12 }: GetProjectsParams = {}) {
   const client = getClient()
 
   const { data } = await client.query({
-    query: GET_POSTS,
+    query: GET_PROJECTS,
     variables: {
       page,
       limit,
       where: {
         _status: { equals: 'published' },
-        // publishedAt: { less_than_equal: new Date().toISOString() } // optional extra safety
       },
     },
-    // fetchPolicy: 'no-cache' // if you want fresh data every time
   })
 
   return {
-    posts: data.Posts.docs as Post[],           // array of posts
+    projects: data.Projects.docs as Project[],
     pagination: {
-      totalDocs: data.Posts.totalDocs,
-      totalPages: data.Posts.totalPages,
-      currentPage: data.Posts.page,
-      hasNextPage: data.Posts.hasNextPage,
-      hasPrevPage: data.Posts.hasPrevPage,
+      totalDocs: data.Projects.totalDocs,
+      totalPages: data.Projects.totalPages,
+      currentPage: data.Projects.page,
+      hasNextPage: data.Projects.hasNextPage,
+      hasPrevPage: data.Projects.hasPrevPage,
     },
   }
 }
 
 
-export const GET_POST_BY_SLUG = gql`
-  query GetPostBySlug($slug: String!, $draft: Boolean) {
-    Posts(
+export const GET_PROJECT_BY_SLUG = gql`
+  query GetProjectBySlug($slug: String!, $draft: Boolean) {
+    Projects(
       where: { slug: { equals: $slug } }
       limit: 1
-      draft: $draft          # ← This is the proper way
+      draft: $draft
     ) {
       docs {
         id
@@ -93,37 +84,36 @@ export const GET_POST_BY_SLUG = gql`
         publishedAt
         heroImage { url alt width height }
         meta { title description image { url } }
-        authors { name }
-        tags { tag }
-        relatedPosts {
-          id
-          title
-          slug
-          heroImage { url alt }
+        links {
+          github
+          liveSite
+        }
+        techStack {
+          name
         }
         appearance { headerOverrides { background } }
       }
     }
   }
 `
-type GetPostBySlugArgs = {
+type GetProjectBySlugArgs = {
   slug: string
 }
 
-export const getPostBySlug = cache(async ({ slug }: GetPostBySlugArgs) => {
+export const getProjectBySlug = cache(async ({ slug }: GetProjectBySlugArgs) => {
   const { isEnabled: draft } = await draftMode()
   const client = getClient()
 
   const { data } = await client.query({
-    query: GET_POST_BY_SLUG,
+    query: GET_PROJECT_BY_SLUG,
     variables: {
       slug,
-      draft,                    // ← Enables draft preview when in draft mode
+      draft,
     },
     fetchPolicy: draft ? 'no-cache' : 'cache-first',
   })
 
-  return data.Posts.docs[0] as Post | null
+  return data.Projects.docs[0] as Project | null
 })
 
 export async function generateStaticParams() {
@@ -131,8 +121,8 @@ export async function generateStaticParams() {
 
   const { data } = await client.query({
     query: gql`
-      query GetAllPostSlugs {
-        Posts(
+      query GetAllProjectSlugs {
+        Projects(
           where: { _status: { equals: published } }
           limit: 1000
           pagination: false
@@ -145,7 +135,7 @@ export async function generateStaticParams() {
     `,
   })
 
-  return data.Posts.docs.map(({ slug }: { slug: string }) => ({
+  return data.Projects.docs.map(({ slug }: { slug: string }) => ({
     slug,
   }))
 }

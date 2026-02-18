@@ -9,12 +9,13 @@
   "dockerComposeFile": "./docker.compose.yml",
   "service": "website",
   "containerEnv": {
-    "NODE_ENV": "development",
     "POSTGRES_URL": "postgresql://postgres:postgres@postgres:5432/website-db",
+    "FRONTEND_URL": "http://localhost:3000",
     "PAYLOAD_SECRET": "YOUR_SECRET_HERE",
-    "NEXT_PUBLIC_SERVER_URL": "http://localhost:3000",
+    "NEXT_PUBLIC_SERVER_URL": "http://localhost:3001",
     "CRON_SECRET": "YOUR_CRON_SECRET_HERE",
-    "PREVIEW_SECRET": "YOUR_SECRET_HERE"
+    "PREVIEW_SECRET": "YOUR_SECRET_HERE",
+    "REVALIDATE_SECRET": "YOUR_SECRET_HERE"
   },
   "workspaceFolder": "/workspaces/strps-dev-web",
   "postCreateCommand": "pnpm install"

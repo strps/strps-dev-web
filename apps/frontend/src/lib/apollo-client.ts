@@ -5,7 +5,7 @@ const { getClient } = registerApolloClient(() => {
     return new ApolloClient({
         cache: new InMemoryCache(),
         link: new HttpLink({
-            uri: `${process.env.PAYLOAD_API_URL}/api/graphql`,
+            uri: `${process.env.NEXT_PUBLIC_PAYLOAD_URL}/api/graphql`,
             fetchOptions: { cache: 'no-store' }, // or 'force-cache' if you want
         }),
     })

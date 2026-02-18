@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
 
-import type { Media, Page, Post, Config } from '../payload-types'
+import type { Media, Page, Post, Config } from '@strps-website/types'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
-import { getServerSideURL } from './getURL'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
-  const serverUrl = getServerSideURL()
+  const serverUrl = process.env.NEXT_PUBLIC_PAYLOAD_URL
+
+  if (!serverUrl) {
+    console.warn('NEXT_PUBLIC_PAYLOAD_URL is not defined')
+    return undefined
+  }
 
   let url = serverUrl + '/website-template-OG.webp'
 
@@ -34,10 +38,10 @@ export const generateMeta = async (args: {
       description: doc?.meta?.description || '',
       images: ogImage
         ? [
-            {
-              url: ogImage,
-            },
-          ]
+          {
+            url: ogImage,
+          },
+        ]
         : undefined,
       title,
       url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',

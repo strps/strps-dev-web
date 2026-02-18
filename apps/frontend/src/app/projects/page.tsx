@@ -1,103 +1,65 @@
-import type { Metadata } from 'next/types'
+import { getProjects } from './data';
+import { Pagination } from '@/components/pagination';
+import { ProjectCard } from '@/components/cards/ProjectCard'
+import Section from '@/components/section';
+import { Media, Project } from '@strps-website/types';
 
-import { CollectionArchive } from '@/components/CollectionArchive'
-import { Pagination } from '@/components/Pagination'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import React from 'react'
-import Slideshow from '@/components/Slideshow/Slideshow'
-import { Media } from '@/components/cms-media'
-import { Header } from '@/components/Header/Component'
-import Link from 'next/link'
-import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/components/lib/utils'
+export const metadata = {
+  title: 'Projects | Cesar Jerez',
+  description: 'A collection of projects by Cesar Jerez.',
+};
 
-export default async function Page() {
-  const payload = await getPayload({ config: configPromise })
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
 
-  const projects = await payload.find({
-    collection: 'projects',
-    depth: 1,
-    limit: 12,
-    overrideAccess: false,
-    select: {
-      title: true,
-      slug: true,
-      meta: true,
-      content: true,
-      updatedAt: true,
-      createdAt: true,
-      heroImage: true,
-    },
-  })
-
-  const projectsPage = await payload.findGlobal({
-    slug: 'projects-page',
-  })
-
-  const headerOverrides = projectsPage?.headerOverrides
+  const page = Number((await searchParams).page) || 1
+  const { projects, pagination } = await getProjects({ page, limit: 12 })
 
   return (
-    <>
-      <Header headerOverrides={headerOverrides} />
-      <main>
-        <div className="dark mb-16 mx-auto max-w-[96rem]">
-          <Slideshow
-            interval={7000}
-            className="text-foreground h-[800px]"
-            slides={projects.docs.map((project) => {
-              return (
-                <div key={project.id} className="relative w-full h-full overflow-hidden">
-                  <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/50 z-10">
-                    <div className="p-16">
-                      <h2 className="z-10 text-4xl font-bold mb-4">{project.title}</h2>
-                      <h3 className="z-10 text-xl max-w-2xl px-4 mb-16">
-                        {project.meta?.description}
-                      </h3>
-                      <Link
-                        href={`/projects/${project.slug}`}
-                        className={cn(buttonVariants({ variant: 'default' }), 'ml-8')}
-                      >
-                        Read More...
-                      </Link>
-                    </div>
-                  </div>
-                  <Media
-                    resource={project.heroImage}
-                    alt={project.title}
-                    fill
-                    imgClassName="object-cover"
-                    priority
-                  />
-                </div>
-              )
-            })}
-          />
+    <main className="min-h-screen">
+      <Section className="py-20 md:py-32 bg-muted/30">
+        <div className="container mx-auto px-4 text-center max-w-3xl space-y-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+            Projects & <span className="text-primary">Creations</span>
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            A curated selection of my technical work, from web applications to hardware experiments.
+          </p>
         </div>
+      </Section>
 
-        <div className="container mx-auto flex flex-col items-center">
-          <h1 className="mb-16">Projects</h1>
+      <div className="container mx-auto px-4 py-16">
+        <ProjectsList projects={projects} />
+        <Pagination
+          page={page}
+          totalPages={pagination.totalPages}
+        />
+      </div>
+    </main>
+  );
+}
 
-          <CollectionArchive
-            className="px-6"
-            collection={projects.docs}
-            variant="list"
-            urlPath="projects"
+const ProjectsList = ({ projects }: { projects: Array<Project> }) => {
+  return (
+    <div className="container mx-auto px-4 py-16">
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {projects.map((project) => (
+          <ProjectCard
+            key={project.id}
+            title={project.title}
+            description={project.meta?.description}
+            imageUrl={project.meta?.image?.url}
+            technologies={project.techStack}
+            liveUrl={project.links?.liveSite}
+            repoUrl={project.links?.github}
+            caseStudyUrl={`/projects/${project.slug}`}
           />
-
-          <div className="container">
-            {projects.totalPages > 1 && projects.page && (
-              <Pagination page={projects.page} totalPages={projects.totalPages} />
-            )}
-          </div>
-        </div>
-      </main>
-    </>
+        ))}
+      </div>
+    </div>
   )
 }
 
-export function generateMetadata(): Metadata {
-  return {
-    title: `Projects`,
-  }
-}

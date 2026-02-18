@@ -12,8 +12,9 @@ export function ThemeSwitch() {
       onClick={toggleTheme}
       className="p-2 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
       aria-label="Toggle theme"
+      suppressHydrationWarning
     >
-      {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+      {theme === 'dark' ? <Sun size={16} suppressHydrationWarning /> : <Moon size={16} suppressHydrationWarning />}
     </button>
   )
 }
