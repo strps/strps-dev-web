@@ -256,54 +256,12 @@ export interface Page {
     };
   };
   layout: (
-    | CallToActionBlock
-    | ContentBlock
-    | MediaBlock
-    | ArchiveBlock
-    | StrpsHeroBlock
-    | {
-        title?: string | null;
-        content?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        image: number | Media;
-        section: SectionConfig;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'aboutMe';
-      }
-    | StrpsSkillsBlock
-    | {
-        title?: string | null;
-        text?: string | null;
-        /**
-         * @minItems 2
-         * @maxItems 2
-         */
-        coordinates?: [number, number] | null;
-        section: SectionConfig;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'strpsContact';
-      }
-    | ProjectsArchiveBlock
-    | StrpsFormBlock
-    | StrpsStatsBlock
-    | StrpsServicesBlock
-    | StrpsClientsBlock
-    | StrpsCareersBlock
+    | PageHeroBlock
+    | PageAboutBlock
+    | PageSkillsBlock
+    | PageProjectsBlock
+    | PageExperienceBlock
+    | PageContactBlock
   )[];
   meta?: {
     title?: string | null;
@@ -322,24 +280,21 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CallToActionBlock".
+ * via the `definition` "PageHeroBlock".
  */
-export interface CallToActionBlock {
-  richText?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+export interface PageHeroBlock {
+  name: string;
+  label?: string | null;
+  description?: string | null;
+  location?: {
+    city?: string | null;
+    region?: string | null;
+  };
+  status?: {
+    isAvailable?: boolean | null;
+    label?: string | null;
+  };
+  email?: string | null;
   links?:
     | {
         link: {
@@ -364,9 +319,11 @@ export interface CallToActionBlock {
         id?: string | null;
       }[]
     | null;
+  backgroundImage?: (number | null) | Media;
+  section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'cta';
+  blockType: 'pageHero';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -463,105 +420,71 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock".
+ * via the `definition` "SectionConfig".
  */
-export interface ContentBlock {
-  columns?:
+export interface SectionConfig {
+  container?: boolean | null;
+  section_id?: string | null;
+  backgroundContainer?: boolean | null;
+  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
+  background: 'none' | 'svgCircles' | 'image';
+  backgroundImage?: (number | null) | Media;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageAboutBlock".
+ */
+export interface PageAboutBlock {
+  title: string;
+  summary: string;
+  image?: (number | null) | Media;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageAbout';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageSkillsBlock".
+ */
+export interface PageSkillsBlock {
+  title: string;
+  subtitle?: string | null;
+  skillGroups?:
     | {
-        size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
-        richText?: {
-          root: {
-            type: string;
-            children: {
-              type: string;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        } | null;
-        enableLink?: boolean | null;
-        link?: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
+        name: string;
+        /**
+         * Lucide icon name, e.g. Terminal, Server, Cpu, Wrench
+         */
+        icon?: string | null;
+        keywords?:
+          | {
+              keyword: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'content';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock".
- */
-export interface MediaBlock {
-  media: number | Media;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'mediaBlock';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock".
- */
-export interface ArchiveBlock {
-  title?: string | null;
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  populateBy?: ('collection' | 'selection') | null;
-  relationTo?: ('posts' | 'projects') | null;
-  tags?: (number | BlogTag)[] | null;
-  limit?: number | null;
-  selectedDocs?:
-    | (
-        | {
-            relationTo: 'posts';
-            value: number | Post;
-          }
-        | {
-            relationTo: 'projects';
-            value: number | Project;
-          }
-      )[]
     | null;
   section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'archive';
+  blockType: 'pageSkills';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageProjectsBlock".
+ */
+export interface PageProjectsBlock {
+  title: string;
+  populateBy?: ('collection' | 'selection') | null;
+  limit?: number | null;
+  selectedProjects?: (number | Project)[] | null;
+  githubUrl?: string | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageProjects';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -620,23 +543,42 @@ export interface Project {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "SectionConfig".
+ * via the `definition` "PageExperienceBlock".
  */
-export interface SectionConfig {
-  container?: boolean | null;
-  section_id?: string | null;
-  backgroundContainer?: boolean | null;
-  theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
-  background: 'none' | 'svgCircles' | 'image';
-  backgroundImage?: (number | null) | Media;
+export interface PageExperienceBlock {
+  title: string;
+  positions?:
+    | {
+        company: string;
+        position: string;
+        startDate: string;
+        /**
+         * Leave empty for "Present"
+         */
+        endDate?: string | null;
+        summary?: string | null;
+        highlights?:
+          | {
+              highlight: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageExperience';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsHeroBlock".
+ * via the `definition` "PageContactBlock".
  */
-export interface StrpsHeroBlock {
-  title?: string | null;
-  text?: string | null;
+export interface PageContactBlock {
+  title: string;
+  description?: string | null;
+  email?: string | null;
   links?:
     | {
         link: {
@@ -664,102 +606,54 @@ export interface StrpsHeroBlock {
   section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'strpsHero';
+  blockType: 'pageContact';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsSkillsBlock".
+ * via the `definition` "projectTags".
  */
-export interface StrpsSkillsBlock {
-  title?: string | null;
-  skillGroup?:
+export interface ProjectTag {
+  id: number;
+  title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (number | null) | ProjectTag;
+  breadcrumbs?:
     | {
-        text?: string | null;
-        icon?: string | null;
-        skills?:
-          | {
-              text?: string | null;
-              percentage?: number | null;
-              id?: string | null;
-            }[]
-          | null;
+        doc?: (number | null) | ProjectTag;
+        url?: string | null;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
-  section: SectionConfig;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'strpsSkills';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ProjectsArchiveBlock".
+ * via the `definition` "redirects".
  */
-export interface ProjectsArchiveBlock {
-  title?: string | null;
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'projects' | null;
-  limit?: number | null;
-  selectedDocs?:
-    | (
-        | {
-            relationTo: 'posts';
-            value: number | Post;
-          }
-        | {
-            relationTo: 'projects';
-            value: number | Project;
-          }
-      )[]
-    | null;
-  section: SectionConfig;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'projectsArchive';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsFormBlock".
- */
-export interface StrpsFormBlock {
-  section: SectionConfig;
-  form: number | Form;
-  introType?: ('richText' | 'titleAndText' | 'none') | null;
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  introTitle?: string | null;
-  introText?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'strpsFormBlock';
+export interface Redirect {
+  id: number;
+  /**
+   * You will need to rebuild the website when changing this field.
+   */
+  from: string;
+  to?: {
+    type?: ('reference' | 'custom') | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -936,263 +830,6 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsStatsBlock".
- */
-export interface StrpsStatsBlock {
-  heading?: string | null;
-  description?: string | null;
-  layout?: ('grid' | 'side-by-side' | 'carousel') | null;
-  columns?: ('2' | '3' | '4') | null;
-  stats?:
-    | {
-        value: string;
-        label: string;
-        prefix?: string | null;
-        suffix?: string | null;
-        /**
-         * Enter the name of a Lucide icon (e.g., "users", "award")
-         */
-        icon?: string | null;
-        color?: ('primary' | 'secondary' | 'accent' | 'success' | 'warning' | 'error') | null;
-        id?: string | null;
-      }[]
-    | null;
-  animation?: {
-    enable?: boolean | null;
-    duration?: number | null;
-    easing?: ('easeOut' | 'easeIn' | 'easeInOut' | 'linear') | null;
-  };
-  style?: {
-    variant?: ('card' | 'minimal' | 'bordered' | 'gradient') | null;
-    textAlign?: ('left' | 'center' | 'right') | null;
-    valueSize?: ('sm' | 'md' | 'lg' | 'xl') | null;
-  };
-  cta?: {
-    enable?: boolean | null;
-    text?: string | null;
-    link?: string | null;
-    style?: ('primary' | 'secondary' | 'outline' | 'text') | null;
-  };
-  container?: {
-    maxWidth?: ('sm' | 'md' | 'lg' | 'xl' | 'full' | 'none') | null;
-    padding?: {
-      top?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
-      bottom?: ('none' | 'sm' | 'md' | 'lg' | 'xl') | null;
-    };
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'strpsStats';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsServicesBlock".
- */
-export interface StrpsServicesBlock {
-  heading: string;
-  description?: string | null;
-  services?:
-    | {
-        title: string;
-        description?: string | null;
-        icon?: string | null;
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  layout?: ('grid' | 'list' | 'cards') | null;
-  showFeatured?: boolean | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'strpsServices';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsClientsBlock".
- */
-export interface StrpsClientsBlock {
-  heading?: string | null;
-  description?: string | null;
-  displayType?: ('grid' | 'carousel' | 'testimonials' | 'combined') | null;
-  clients?:
-    | {
-        name: string;
-        logo: number | Media;
-        url?: string | null;
-        testimonial?: {
-          content?: string | null;
-          author?: string | null;
-          position?: string | null;
-          company?: string | null;
-          authorImage?: (number | null) | Media;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  showDivider?: boolean | null;
-  maxLogosPerRow?: ('2' | '3' | '4' | '5' | '6') | null;
-  logoBackground?: ('none' | 'light' | 'gray' | 'rounded') | null;
-  testimonialLayout?: ('grid' | 'slider' | 'stacked') | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'strpsClients';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsCareersBlock".
- */
-export interface StrpsCareersBlock {
-  heading?: string | null;
-  description?: string | null;
-  layout?: ('grid' | 'list') | null;
-  columns?: ('1' | '2' | '3') | null;
-  showFilters?: boolean | null;
-  filters?:
-    | {
-        type: 'department' | 'location' | 'jobType' | 'experience';
-        label: string;
-        id?: string | null;
-      }[]
-    | null;
-  defaultFilters?: {
-    department?: string | null;
-    location?: string | null;
-    jobType?: ('' | 'full-time' | 'part-time' | 'contract' | 'internship' | 'temporary') | null;
-  };
-  showSearch?: boolean | null;
-  searchPlaceholder?: string | null;
-  showCategories?: boolean | null;
-  categories?:
-    | {
-        name: string;
-        slug: string;
-        description?: string | null;
-        icon?: (number | null) | Media;
-        id?: string | null;
-      }[]
-    | null;
-  showFeatured?: boolean | null;
-  featuredTitle?: string | null;
-  showBenefits?: boolean | null;
-  benefits?:
-    | {
-        title: string;
-        description?: string | null;
-        icon?: (number | null) | Media;
-        id?: string | null;
-      }[]
-    | null;
-  showApplicationForm?: boolean | null;
-  applicationForm?: {
-    title?: string | null;
-    description?: string | null;
-    submitButtonText?: string | null;
-    successMessage?: string | null;
-    fields?:
-      | {
-          type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'file' | 'hidden';
-          name: string;
-          label: string;
-          placeholder?: string | null;
-          required?: boolean | null;
-          options?:
-            | {
-                label: string;
-                value: string;
-                id?: string | null;
-              }[]
-            | null;
-          accept?: string | null;
-          maxFileSize?: number | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
-  showContact?: boolean | null;
-  contactInfo?: {
-    email?: string | null;
-    phone?: string | null;
-    address?: string | null;
-  };
-  showSocial?: boolean | null;
-  socialLinks?:
-    | {
-        platform: 'linkedin' | 'twitter' | 'facebook' | 'instagram' | 'github' | 'other';
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'strpsCareers';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projectTags".
- */
-export interface ProjectTag {
-  id: number;
-  title: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  parent?: (number | null) | ProjectTag;
-  breadcrumbs?:
-    | {
-        doc?: (number | null) | ProjectTag;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "redirects".
- */
-export interface Redirect {
-  id: number;
-  /**
-   * You will need to rebuild the website when changing this field.
-   */
-  from: string;
-  to?: {
-    type?: ('reference' | 'custom') | null;
-    reference?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
-    url?: string | null;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1511,38 +1148,12 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
-        cta?: T | CallToActionBlockSelect<T>;
-        content?: T | ContentBlockSelect<T>;
-        mediaBlock?: T | MediaBlockSelect<T>;
-        archive?: T | ArchiveBlockSelect<T>;
-        strpsHero?: T | StrpsHeroBlockSelect<T>;
-        aboutMe?:
-          | T
-          | {
-              title?: T;
-              content?: T;
-              image?: T;
-              section?: T | SectionConfigSelect<T>;
-              id?: T;
-              blockName?: T;
-            };
-        strpsSkills?: T | StrpsSkillsBlockSelect<T>;
-        strpsContact?:
-          | T
-          | {
-              title?: T;
-              text?: T;
-              coordinates?: T;
-              section?: T | SectionConfigSelect<T>;
-              id?: T;
-              blockName?: T;
-            };
-        projectsArchive?: T | ProjectsArchiveBlockSelect<T>;
-        strpsFormBlock?: T | StrpsFormBlockSelect<T>;
-        strpsStats?: T | StrpsStatsBlockSelect<T>;
-        strpsServices?: T | StrpsServicesBlockSelect<T>;
-        strpsClients?: T | StrpsClientsBlockSelect<T>;
-        strpsCareers?: T | StrpsCareersBlockSelect<T>;
+        pageHero?: T | PageHeroBlockSelect<T>;
+        pageAbout?: T | PageAboutBlockSelect<T>;
+        pageSkills?: T | PageSkillsBlockSelect<T>;
+        pageProjects?: T | PageProjectsBlockSelect<T>;
+        pageExperience?: T | PageExperienceBlockSelect<T>;
+        pageContact?: T | PageContactBlockSelect<T>;
       };
   meta?:
     | T
@@ -1560,10 +1171,25 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CallToActionBlock_select".
+ * via the `definition` "PageHeroBlock_select".
  */
-export interface CallToActionBlockSelect<T extends boolean = true> {
-  richText?: T;
+export interface PageHeroBlockSelect<T extends boolean = true> {
+  name?: T;
+  label?: T;
+  description?: T;
+  location?:
+    | T
+    | {
+        city?: T;
+        region?: T;
+      };
+  status?:
+    | T
+    | {
+        isAvailable?: T;
+        label?: T;
+      };
+  email?: T;
   links?:
     | T
     | {
@@ -1579,56 +1205,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
             };
         id?: T;
       };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock_select".
- */
-export interface ContentBlockSelect<T extends boolean = true> {
-  columns?:
-    | T
-    | {
-        size?: T;
-        richText?: T;
-        enableLink?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
-        id?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock_select".
- */
-export interface MediaBlockSelect<T extends boolean = true> {
-  media?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ArchiveBlock_select".
- */
-export interface ArchiveBlockSelect<T extends boolean = true> {
-  title?: T;
-  introContent?: T;
-  populateBy?: T;
-  relationTo?: T;
-  tags?: T;
-  limit?: T;
-  selectedDocs?: T;
+  backgroundImage?: T;
   section?: T | SectionConfigSelect<T>;
   id?: T;
   blockName?: T;
@@ -1647,11 +1224,88 @@ export interface SectionConfigSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsHeroBlock_select".
+ * via the `definition` "PageAboutBlock_select".
  */
-export interface StrpsHeroBlockSelect<T extends boolean = true> {
+export interface PageAboutBlockSelect<T extends boolean = true> {
   title?: T;
-  text?: T;
+  summary?: T;
+  image?: T;
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageSkillsBlock_select".
+ */
+export interface PageSkillsBlockSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  skillGroups?:
+    | T
+    | {
+        name?: T;
+        icon?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageProjectsBlock_select".
+ */
+export interface PageProjectsBlockSelect<T extends boolean = true> {
+  title?: T;
+  populateBy?: T;
+  limit?: T;
+  selectedProjects?: T;
+  githubUrl?: T;
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageExperienceBlock_select".
+ */
+export interface PageExperienceBlockSelect<T extends boolean = true> {
+  title?: T;
+  positions?:
+    | T
+    | {
+        company?: T;
+        position?: T;
+        startDate?: T;
+        endDate?: T;
+        summary?: T;
+        highlights?:
+          | T
+          | {
+              highlight?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageContactBlock_select".
+ */
+export interface PageContactBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  email?: T;
   links?:
     | T
     | {
@@ -1668,271 +1322,6 @@ export interface StrpsHeroBlockSelect<T extends boolean = true> {
         id?: T;
       };
   section?: T | SectionConfigSelect<T>;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsSkillsBlock_select".
- */
-export interface StrpsSkillsBlockSelect<T extends boolean = true> {
-  title?: T;
-  skillGroup?:
-    | T
-    | {
-        text?: T;
-        icon?: T;
-        skills?:
-          | T
-          | {
-              text?: T;
-              percentage?: T;
-              id?: T;
-            };
-        id?: T;
-      };
-  section?: T | SectionConfigSelect<T>;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ProjectsArchiveBlock_select".
- */
-export interface ProjectsArchiveBlockSelect<T extends boolean = true> {
-  title?: T;
-  introContent?: T;
-  populateBy?: T;
-  relationTo?: T;
-  limit?: T;
-  selectedDocs?: T;
-  section?: T | SectionConfigSelect<T>;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsFormBlock_select".
- */
-export interface StrpsFormBlockSelect<T extends boolean = true> {
-  section?: T | SectionConfigSelect<T>;
-  form?: T;
-  introType?: T;
-  introContent?: T;
-  introTitle?: T;
-  introText?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsStatsBlock_select".
- */
-export interface StrpsStatsBlockSelect<T extends boolean = true> {
-  heading?: T;
-  description?: T;
-  layout?: T;
-  columns?: T;
-  stats?:
-    | T
-    | {
-        value?: T;
-        label?: T;
-        prefix?: T;
-        suffix?: T;
-        icon?: T;
-        color?: T;
-        id?: T;
-      };
-  animation?:
-    | T
-    | {
-        enable?: T;
-        duration?: T;
-        easing?: T;
-      };
-  style?:
-    | T
-    | {
-        variant?: T;
-        textAlign?: T;
-        valueSize?: T;
-      };
-  cta?:
-    | T
-    | {
-        enable?: T;
-        text?: T;
-        link?: T;
-        style?: T;
-      };
-  container?:
-    | T
-    | {
-        maxWidth?: T;
-        padding?:
-          | T
-          | {
-              top?: T;
-              bottom?: T;
-            };
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsServicesBlock_select".
- */
-export interface StrpsServicesBlockSelect<T extends boolean = true> {
-  heading?: T;
-  description?: T;
-  services?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        icon?: T;
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
-        id?: T;
-      };
-  layout?: T;
-  showFeatured?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsClientsBlock_select".
- */
-export interface StrpsClientsBlockSelect<T extends boolean = true> {
-  heading?: T;
-  description?: T;
-  displayType?: T;
-  clients?:
-    | T
-    | {
-        name?: T;
-        logo?: T;
-        url?: T;
-        testimonial?:
-          | T
-          | {
-              content?: T;
-              author?: T;
-              position?: T;
-              company?: T;
-              authorImage?: T;
-            };
-        id?: T;
-      };
-  showDivider?: T;
-  maxLogosPerRow?: T;
-  logoBackground?: T;
-  testimonialLayout?: T;
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "StrpsCareersBlock_select".
- */
-export interface StrpsCareersBlockSelect<T extends boolean = true> {
-  heading?: T;
-  description?: T;
-  layout?: T;
-  columns?: T;
-  showFilters?: T;
-  filters?:
-    | T
-    | {
-        type?: T;
-        label?: T;
-        id?: T;
-      };
-  defaultFilters?:
-    | T
-    | {
-        department?: T;
-        location?: T;
-        jobType?: T;
-      };
-  showSearch?: T;
-  searchPlaceholder?: T;
-  showCategories?: T;
-  categories?:
-    | T
-    | {
-        name?: T;
-        slug?: T;
-        description?: T;
-        icon?: T;
-        id?: T;
-      };
-  showFeatured?: T;
-  featuredTitle?: T;
-  showBenefits?: T;
-  benefits?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        icon?: T;
-        id?: T;
-      };
-  showApplicationForm?: T;
-  applicationForm?:
-    | T
-    | {
-        title?: T;
-        description?: T;
-        submitButtonText?: T;
-        successMessage?: T;
-        fields?:
-          | T
-          | {
-              type?: T;
-              name?: T;
-              label?: T;
-              placeholder?: T;
-              required?: T;
-              options?:
-                | T
-                | {
-                    label?: T;
-                    value?: T;
-                    id?: T;
-                  };
-              accept?: T;
-              maxFileSize?: T;
-              id?: T;
-            };
-      };
-  showContact?: T;
-  contactInfo?:
-    | T
-    | {
-        email?: T;
-        phone?: T;
-        address?: T;
-      };
-  showSocial?: T;
-  socialLinks?:
-    | T
-    | {
-        platform?: T;
-        url?: T;
-        id?: T;
-      };
   id?: T;
   blockName?: T;
 }
@@ -2567,6 +1956,16 @@ export interface CodeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'code';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock".
+ */
+export interface MediaBlock {
+  media: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

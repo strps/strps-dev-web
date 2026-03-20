@@ -28,6 +28,10 @@ export const GET_PROJECTS = gql`
         meta {
           description
         }
+        links {
+          liveSite
+          github
+        }
       }
       totalDocs
       totalPages
@@ -54,7 +58,7 @@ export async function getProjects({ page = 1, limit = 12 }: GetProjectsParams = 
         _status: { equals: 'published' },
       },
     },
-  })
+  }) as { data: { Projects: { docs: Project[], totalDocs: number, totalPages: number, page: number, hasNextPage: boolean, hasPrevPage: boolean } } }
 
   return {
     projects: data.Projects.docs as Project[],

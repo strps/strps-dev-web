@@ -12,7 +12,7 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 // import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
-import { verifyRecaptchaToken } from '@/blocks/StrpsForm/verify-recaptcha'
+import { verifyRecaptchaToken } from '@/blocks/Form/verify-recaptcha'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | César Jerez` : 'César Jerez'

@@ -1,3 +1,32 @@
+import { getClient } from '@/lib/apollo-client'
+import { gql } from '@apollo/client'
+
+
+export const GET_NAV_ITEMS = gql`
+  query GetNavItems {
+    Header {
+      navItems {
+        link {
+          type
+          newTab
+          url
+          label
+        }
+      }
+    }
+  }
+`
+
+export async function getNavItems() {
+  const client = getClient()
+
+  const { data } = await client.query({
+    query: GET_NAV_ITEMS,
+  }) as { data: { navItems: { name: string, href: string }[] } }
+
+  return data.navItems
+}
+
 export const siteData = {
   hero: {
     status: {
@@ -180,3 +209,4 @@ export const siteData = {
     }
   ]
 };
+

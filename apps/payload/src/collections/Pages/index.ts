@@ -1,10 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Archive } from '../../blocks/BlogArchive/config'
-import { CallToAction } from '../../blocks/CallToAction/config'
-import { Content } from '../../blocks/Content/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { slugField } from '@/fields/slug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -17,16 +13,14 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
-import { StrpsHero } from '@/blocks/StrpsHero/config'
-import { AboutMe } from '@/blocks/AboutMe/config'
-import { StrpsSkills } from '@/blocks/StrpsSkills/config'
-import { StrpsContact } from '@/blocks/Contact/config'
-import { ProjectsArchive } from '@/blocks/ProjectsArchive/config'
-import { StrpsFormBlock } from '@/blocks/StrpsForm/config'
-import { StrpsStats } from '@/blocks/StrpsStats/config'
-import { StrpsServices } from '@/blocks/StrpsServices/config'
-import { StrpsClients } from '@/blocks/Clients/config'
-import { StrpsCareers } from '@/blocks/Careers/config'
+import {
+  PageHero,
+  PageAbout,
+  PageSkills,
+  PageProjects,
+  PageExperience,
+  PageContact,
+} from '@/page-blocks'
 import { headerOverrides } from '@/fields/header-overrrides'
 
 export const Pages: CollectionConfig<'pages'> = {
@@ -85,20 +79,12 @@ export const Pages: CollectionConfig<'pages'> = {
               name: 'layout',
               type: 'blocks',
               blocks: [
-                CallToAction,
-                Content,
-                MediaBlock,
-                Archive,
-                StrpsHero,
-                AboutMe,
-                StrpsSkills,
-                StrpsContact,
-                ProjectsArchive,
-                StrpsFormBlock,
-                StrpsStats,
-                StrpsServices,
-                StrpsClients,
-                StrpsCareers,
+                PageHero,
+                PageAbout,
+                PageSkills,
+                PageProjects,
+                PageExperience,
+                PageContact,
               ],
               required: true,
               admin: {

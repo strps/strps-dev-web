@@ -1,0 +1,6 @@
+export { PageHero } from './PageHero/config'
+export { PageAbout } from './PageAbout/config'
+export { PageSkills } from './PageSkills/config'
+export { PageProjects } from './PageProjects/config'
+export { PageExperience } from './PageExperience/config'
+export { PageContact } from './PageContact/config'

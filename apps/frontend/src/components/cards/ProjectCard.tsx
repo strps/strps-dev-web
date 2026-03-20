@@ -104,6 +104,14 @@ export function ProjectCard({
                             })}
                         </div>
                     }
+
+                    {caseStudyUrl && (
+                        <Button size="sm" variant="ghost" asChild className="text-primary hover:text-primary/90 justify-self-end">
+                            <Link href={caseStudyUrl}>
+                                Read more →
+                            </Link>
+                        </Button>
+                    )}
                 </CardHeader>
 
                 {/* Action buttons */}
@@ -126,13 +134,7 @@ export function ProjectCard({
                         </Button>
                     )}
 
-                    {caseStudyUrl && (
-                        <Button size="sm" variant="ghost" asChild className="text-primary hover:text-primary/90">
-                            <Link href={caseStudyUrl}>
-                                Case Study →
-                            </Link>
-                        </Button>
-                    )}
+
                 </CardFooter>
             </div>
         </Card>
