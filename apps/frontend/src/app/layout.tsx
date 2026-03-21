@@ -1,12 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import Header from '@/components/Header';
-
+import { HeaderNav } from '@/components/HeaderNav';
+import { Code2 } from 'lucide-react';
+import { getCachedHeaderData } from '@/data/data';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/providers/theme-provider';
-import HeaderNav from '@/components/HeaderNav';
-import { getNavItems } from '@/data/data';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,6 +19,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { navItems, theme, background, overlay } = await getCachedHeaderData()();
+
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${inter.className} min-h-screen bg-background font-sans text-foreground antialiased`}>
@@ -29,12 +30,22 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
+          <HeaderNav
+            navItems={navItems}
+            theme={theme}
+            background={background}
+            overlay={overlay}
+            brand={
+              <span className="flex items-center gap-2 font-bold text-xl tracking-tighter">
+                <Code2 className="h-6 w-6" />
+                STRPS.DEV
+              </span>
+            }
+          />
           {children}
           <Footer />
         </ThemeProvider>
       </body>
     </html>
-
   );
 }

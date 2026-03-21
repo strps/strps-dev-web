@@ -176,6 +176,136 @@ export const PAGE_BLOCK_FIELDS = gql`
       background
     }
   }
+
+  fragment PageBlogFields on PageBlogBlock {
+    blockType
+    title
+    selectedPosts {
+      id
+      title
+      slug
+      heroImage {
+        url
+        alt
+      }
+      meta {
+        description
+      }
+      publishedAt
+      tags {
+        tag
+      }
+      populatedAuthors {
+        name
+      }
+    }
+    blogUrl
+    section {
+      container
+      section_id
+      backgroundContainer
+      theme
+      background
+    }
+  }
+
+  fragment FormBlockFields on FormBlock {
+    blockType
+    introType
+    introContent
+    introTitle
+    introText
+    form {
+      id
+      enableRecaptcha
+      title
+      fields {
+        ... on Checkbox {
+          blockType
+          name
+          label
+          width
+          required
+          defaultBool: defaultValue
+        }
+        ... on Country {
+          blockType
+          name
+          label
+          width
+          required
+        }
+        ... on Email {
+          blockType
+          name
+          label
+          width
+          required
+        }
+        ... on Message {
+          blockType
+          message
+        }
+        ... on Number {
+          blockType
+          name
+          label
+          width
+          defaultNum: defaultValue
+          required
+        }
+        ... on Select {
+          blockType
+          name
+          label
+          width
+          defaultStr: defaultValue
+          placeholder
+          options {
+            label
+            value
+          }
+          required
+        }
+        ... on State {
+          blockType
+          name
+          label
+          width
+          required
+        }
+        ... on Text {
+          blockType
+          name
+          label
+          width
+          defaultStr: defaultValue
+          required
+        }
+        ... on Textarea {
+          blockType
+          name
+          label
+          width
+          defaultStr: defaultValue
+          required
+        }
+      }
+      submitButtonLabel
+      confirmationType
+      confirmationMessage
+      redirect {
+        url
+      }
+    }
+    section {
+      container
+      section_id
+      backgroundContainer
+      theme
+      background
+    }
+  }
 `
 
 export const GET_PAGE_BY_SLUG = gql`
@@ -197,6 +327,8 @@ export const GET_PAGE_BY_SLUG = gql`
           ...PageProjectsFields
           ...PageExperienceFields
           ...PageContactFields
+          ...PageBlogFields
+          ...FormBlockFields
         }
         meta {
           title
@@ -229,6 +361,8 @@ export const GET_HOME_PAGE = gql`
           ...PageProjectsFields
           ...PageExperienceFields
           ...PageContactFields
+          ...PageBlogFields
+          ...FormBlockFields
         }
       }
     }

@@ -20,7 +20,9 @@ import {
   PageProjects,
   PageExperience,
   PageContact,
+  PageBlog,
 } from '@/page-blocks'
+import { FormBlock } from '@/blocks/Form/config'
 import { headerOverrides } from '@/fields/header-overrrides'
 
 export const Pages: CollectionConfig<'pages'> = {
@@ -85,6 +87,8 @@ export const Pages: CollectionConfig<'pages'> = {
                 PageProjects,
                 PageExperience,
                 PageContact,
+                PageBlog,
+                FormBlock,
               ],
               required: true,
               admin: {

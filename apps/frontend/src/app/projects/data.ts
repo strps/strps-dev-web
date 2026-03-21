@@ -32,6 +32,9 @@ export const GET_PROJECTS = gql`
           liveSite
           github
         }
+        techStack {
+          name
+        }
       }
       totalDocs
       totalPages
@@ -115,7 +118,7 @@ export const getProjectBySlug = cache(async ({ slug }: GetProjectBySlugArgs) => 
       draft,
     },
     fetchPolicy: draft ? 'no-cache' : 'cache-first',
-  })
+  }) as { data: { Projects: { docs: Project[] } } }
 
   return data.Projects.docs[0] as Project | null
 })
@@ -137,7 +140,7 @@ export async function generateStaticParams() {
         }
       }
     `,
-  })
+  }) as { data: { Projects: { docs: { slug: string }[] } } }
 
   return data.Projects.docs.map(({ slug }: { slug: string }) => ({
     slug,

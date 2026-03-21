@@ -11,8 +11,8 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 // import { searchFields } from '@/search/fieldOverrides'
 // import { beforeSyncWithSearch } from '@/search/beforeSync'
 
-import { Page, Post } from '@/payload-types'
-import { verifyRecaptchaToken } from '@/blocks/Form/verify-recaptcha'
+import { Page, Post } from '@strps-website/types'
+import { verifyRecaptchaToken } from '@/utilities/verify-recaptcha'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | César Jerez` : 'César Jerez'

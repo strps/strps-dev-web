@@ -20,6 +20,7 @@
     "ci": "payload migrate && pnpm build"
   },
   "dependencies": {
+    "@strps-website/types": "workspace:*",
     "@payloadcms/admin-bar": "3.33.0",
     "@payloadcms/db-postgres": "3.33.0",
     "@payloadcms/db-vercel-postgres": "3.33.0",

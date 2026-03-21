@@ -1,5 +1,5 @@
 'use client'
-import { Header } from '@/payload-types'
+import { Header } from '@strps-website/types'
 import { RowLabelProps, useRowLabel } from '@payloadcms/ui'
 
 export const RowLabel: React.FC<RowLabelProps> = () => {

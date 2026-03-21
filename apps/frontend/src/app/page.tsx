@@ -1,23 +1,44 @@
-import { Separator } from "@/components/ui/separator";
-import HeroSection from "@/components/page-sections/hero";
-import SkillsSection from "@/components/page-sections/skills";
-import ProjectsSection from "@/components/page-sections/projects";
-import ExperienceSection from "@/components/page-sections/experience";
-import ContactSection from "@/components/page-sections/contact";
-import AboutSection from "@/components/page-sections/about";
+import { cache } from 'react'
+import { draftMode } from 'next/headers'
+import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+import type { Page } from '@strps-website/types'
+import { getClient } from '@/lib/apollo-client'
+import { GET_PAGE_BY_SLUG } from '@/lib/queries/page-blocks'
+import { generateMeta } from '@/lib/generateMeta'
+import { RenderBlocks } from '@/components/RenderBlocks'
+import { LivePreviewListener } from '@/components/live-preview-listener'
 
-export default function Home() {
+const getHomePage = cache(async () => {
+  const { isEnabled: draft } = await draftMode()
+  const client = getClient()
+
+  const { data } = await client.query<{ Pages: { docs: Page[] } }>({
+    query: GET_PAGE_BY_SLUG,
+    variables: { slug: 'home', draft },
+    fetchPolicy: draft ? 'no-cache' : 'cache-first',
+  })
+
+  return data?.Pages?.docs?.[0] || null
+})
+
+export default async function HomePage() {
+  const { isEnabled: draft } = await draftMode()
+  const page = await getHomePage()
+
+  if (!page) {
+    notFound()
+  }
+
   return (
-    <main className="mx-auto">
-      <HeroSection />
-      <AboutSection />
-      <Separator />
-      <SkillsSection />
-      <Separator className="my-10" />
-      <ProjectsSection />
-      <Separator className="my-10" />
-      <ExperienceSection />
-      <ContactSection />
+    <main>
+      {draft && <LivePreviewListener />}
+      <RenderBlocks blocks={page.layout as any[]} />
     </main>
-  );
+  )
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getHomePage()
+  return generateMeta({ doc: page })
 }

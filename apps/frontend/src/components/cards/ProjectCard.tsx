@@ -22,6 +22,7 @@ export interface ProjectCardProps {
     repoUrl?: string | null
     caseStudyUrl?: string
     // featured?: boolean
+    orientation?: 'vertical' | 'horizontal'
     className?: string
 }
 
@@ -34,26 +35,39 @@ export function ProjectCard({
     repoUrl,
     caseStudyUrl,
     // featured = false,
+    orientation = 'vertical',
     className,
 }: ProjectCardProps) {
     const placeholderImage = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80"
+    const isHorizontal = orientation === 'horizontal'
 
     return (
         <Card
             className={cn(
-                "group max-w-96 p-0 gap-4 relative overflow-hidden rounded-xl transition-all ",
+                "group p-0 gap-4 relative overflow-hidden rounded-xl transition-all",
+                isHorizontal
+                    ? "flex flex-col sm:flex-row sm:max-w-none"
+                    : "max-w-96",
                 // featured && "ring-2 ring-primary/40 ring-offset-2",
                 className
             )}
         >
             {/* Image container */}
-            <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+            <div className={cn(
+                "relative overflow-hidden bg-muted shrink-0",
+                isHorizontal
+                    ? "aspect-[16/9] sm:aspect-auto sm:w-2/5 sm:min-h-full"
+                    : "aspect-[16/9]"
+            )}>
                 <Image
                     src={imageUrl || placeholderImage}
                     alt={`${title} project screenshot`}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes={isHorizontal
+                        ? "(max-width: 640px) 100vw, 40vw"
+                        : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    }
                 // priority={featured}
                 />
                 {/* Overlay gradient */}
@@ -70,10 +84,13 @@ export function ProjectCard({
             </div>
 
             {/* Content */}
-            <div className="flex flex-col justify-between gap-6 flex-grow">
+            <div className={cn(
+                "flex flex-col justify-between gap-6 flex-grow",
+                isHorizontal && "sm:pt-6"
+            )}>
                 <CardHeader className="">
                     {
-                        title && <CardTitle className="text-xl font-bold tracking-tight mb-2 group-hover:text-primary transition-colors">
+                        title && <CardTitle className="text-3xl font-bold tracking-tight mb-2 group-hover:text-primary transition-colors">
                             {title}
                         </CardTitle>
                     }
@@ -87,7 +104,7 @@ export function ProjectCard({
                     {/* Tech stack */}
                     {
                         technologies && technologies.length > 0 &&
-                        <div className="flex flex-wrap gap-2 mb-6">
+                        <div className="flex flex-wrap gap-2 mb-6 mt-4">
                             {technologies.map((tech, index) => {
                                 return (
                                     <Badge

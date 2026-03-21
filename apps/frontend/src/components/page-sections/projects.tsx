@@ -3,12 +3,20 @@ import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Section from '../section';
 import { ProjectCard } from '../cards/ProjectCard';
+import { getProjects } from '@/app/projects/data';
 import type { PageProjectsBlock, Project, Media } from '@strps-website/types';
 
-const ProjectsSection: React.FC<PageProjectsBlock> = ({ title, selectedProjects, githubUrl, section }) => {
-    const projects = (selectedProjects || []).filter(
-        (p): p is Project => typeof p === 'object' && p !== null
-    );
+const ProjectsSection = async ({ title, populateBy, limit, selectedProjects, githubUrl, section }: PageProjectsBlock) => {
+    let projects: Project[] = [];
+
+    if (populateBy === 'collection') {
+        const { projects: fetched } = await getProjects({ limit: limit ?? 6 });
+        projects = fetched;
+    } else {
+        projects = (selectedProjects || []).filter(
+            (p): p is Project => typeof p === 'object' && p !== null
+        );
+    }
 
     return (
         <Section id={section?.section_id || 'projects'} className="space-y-8 py-10">
@@ -23,7 +31,7 @@ const ProjectsSection: React.FC<PageProjectsBlock> = ({ title, selectedProjects,
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 auto-rows-fr gap-6">
                 {projects.map((project) => {
                     const heroImage = typeof project.heroImage === 'object' && project.heroImage
                         ? (project.heroImage as Media)
@@ -39,6 +47,7 @@ const ProjectsSection: React.FC<PageProjectsBlock> = ({ title, selectedProjects,
                             liveUrl={project.links?.liveSite}
                             repoUrl={project.links?.github}
                             caseStudyUrl={project.slug ? `/projects/${project.slug}` : undefined}
+                            orientation='horizontal'
                         />
                     );
                 })}

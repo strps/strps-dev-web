@@ -262,6 +262,8 @@ export interface Page {
     | PageProjectsBlock
     | PageExperienceBlock
     | PageContactBlock
+    | PageBlogBlock
+    | FormBlock
   )[];
   meta?: {
     title?: string | null;
@@ -610,50 +612,47 @@ export interface PageContactBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projectTags".
+ * via the `definition` "PageBlogBlock".
  */
-export interface ProjectTag {
-  id: number;
+export interface PageBlogBlock {
   title: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  parent?: (number | null) | ProjectTag;
-  breadcrumbs?:
-    | {
-        doc?: (number | null) | ProjectTag;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
+  populateBy?: ('collection' | 'selection') | null;
+  limit?: number | null;
+  selectedPosts?: (number | Post)[] | null;
+  blogUrl?: string | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageBlog';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "redirects".
+ * via the `definition` "FormBlock".
  */
-export interface Redirect {
-  id: number;
-  /**
-   * You will need to rebuild the website when changing this field.
-   */
-  from: string;
-  to?: {
-    type?: ('reference' | 'custom') | null;
-    reference?:
-      | ({
-          relationTo: 'pages';
-          value: number | Page;
-        } | null)
-      | ({
-          relationTo: 'posts';
-          value: number | Post;
-        } | null);
-    url?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
+export interface FormBlock {
+  section: SectionConfig;
+  form: number | Form;
+  introType?: ('richText' | 'titleAndText' | 'none') | null;
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  introTitle?: string | null;
+  introText?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'formBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -830,6 +829,53 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projectTags".
+ */
+export interface ProjectTag {
+  id: number;
+  title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (number | null) | ProjectTag;
+  breadcrumbs?:
+    | {
+        doc?: (number | null) | ProjectTag;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  /**
+   * You will need to rebuild the website when changing this field.
+   */
+  from: string;
+  to?: {
+    type?: ('reference' | 'custom') | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1154,6 +1200,8 @@ export interface PagesSelect<T extends boolean = true> {
         pageProjects?: T | PageProjectsBlockSelect<T>;
         pageExperience?: T | PageExperienceBlockSelect<T>;
         pageContact?: T | PageContactBlockSelect<T>;
+        pageBlog?: T | PageBlogBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
       };
   meta?:
     | T
@@ -1322,6 +1370,34 @@ export interface PageContactBlockSelect<T extends boolean = true> {
         id?: T;
       };
   section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageBlogBlock_select".
+ */
+export interface PageBlogBlockSelect<T extends boolean = true> {
+  title?: T;
+  populateBy?: T;
+  limit?: T;
+  selectedPosts?: T;
+  blogUrl?: T;
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FormBlock_select".
+ */
+export interface FormBlockSelect<T extends boolean = true> {
+  section?: T | SectionConfigSelect<T>;
+  form?: T;
+  introType?: T;
+  introContent?: T;
+  introTitle?: T;
+  introText?: T;
   id?: T;
   blockName?: T;
 }

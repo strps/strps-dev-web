@@ -1,9 +1,9 @@
 'use client';
 
-import { Menu, X, Sun, Moon } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import React, { type FC, useState, } from 'react';
+import { Menu, X } from 'lucide-react';
+import React, { type FC, useState } from 'react';
 import Link from 'next/link';
+import { ThemeSwitch } from './ThemeSwitch';
 
 
 
@@ -32,11 +32,6 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
     container = true,
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { setTheme, theme } = useTheme();
-
-    const toggleTheme = () => {
-        setTheme(theme === 'dark' ? 'light' : 'dark');
-    };
 
     return (
         <header
@@ -64,23 +59,12 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
                             {item.name}
                         </a>
                     ))}
-                    <button
-                        onClick={toggleTheme}
-                        className="p-2 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-                        aria-label="Toggle theme"
-                    >
-                        {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
+                    <ThemeSwitch />
                 </div>
 
                 {/* Mobile Menu Button */}
                 <div className="md:hidden flex items-center gap-4">
-                    <button
-                        onClick={toggleTheme}
-                        className="p-2 rounded-full hover:bg-accent text-muted-foreground hover:text-foreground"
-                    >
-                        {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
+                    <ThemeSwitch />
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         className="p-2 text-muted-foreground hover:text-foreground"

@@ -8,8 +8,6 @@ import {
     Clock,
     Search,
     X,
-    ChevronLeft,
-    ChevronRight
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +20,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card";
-import { Post } from "../../../../payload/src/payload-types"
+import { Post } from "@strps-website/types"
 
 interface BlogListProps {
     posts: Post[];
@@ -38,7 +36,7 @@ export function BlogList({ posts }: BlogListProps) {
     // Extract all unique tags from posts
     const allTags = useMemo(() => {
         const tags = new Set<string>();
-        posts.forEach(post => post.tags.forEach(tag => tags.add(tag)));
+        posts.forEach(post => post?.tags?.forEach(tag => tags.add(tag)));
         return Array.from(tags).sort();
     }, [posts]);
 
@@ -202,26 +200,8 @@ export function BlogList({ posts }: BlogListProps) {
 
             {/* --- Pagination --- */}
             {totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-8">
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <div className="flex items-center px-4 font-medium text-sm">
-                        Page {currentPage} of {totalPages}
-                    </div>
-                    <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                    >
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
+                <div className="flex justify-center text-sm text-muted-foreground">
+                    Showing {paginatedPosts.length} of {filteredPosts.length} articles
                 </div>
             )}
         </div>
