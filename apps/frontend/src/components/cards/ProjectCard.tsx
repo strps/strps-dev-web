@@ -68,21 +68,11 @@ export function ProjectCard({
                         ? "(max-width: 640px) 100vw, 40vw"
                         : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     }
-                // priority={featured}
                 />
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                {/* Featured badge */}
-                {/* {featured && (
-                    <div className="absolute left-4 top-4">
-                        <Badge variant='default' className="bg-primary text-primary-foreground font-medium">
-                            Featured Project
-                        </Badge>
-                    </div>
-                )} */}
             </div>
-
             {/* Content */}
             <div className={cn(
                 "flex flex-col justify-between gap-6 flex-grow",
@@ -110,10 +100,7 @@ export function ProjectCard({
                                     <Badge
                                         key={index}
                                         // variant="secondary"
-                                        className={cn(
-                                            "text-xs font-medium",
-                                            tech.color && `bg-${tech.color}-100 text-${tech.color}-800 dark:bg-${tech.color}-950 dark:text-${tech.color}-300`
-                                        )}
+                                        className="text-xs font-medium"
                                     >
                                         {tech.name}
                                     </Badge>
