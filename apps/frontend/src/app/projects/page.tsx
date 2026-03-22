@@ -51,8 +51,8 @@ const ProjectsList = ({ projects }: { projects: Array<Project> }) => {
             key={project.id}
             title={project.title}
             description={project.meta?.description}
-            imageUrl={project.meta?.image?.url}
-            technologies={project.techStack}
+            imageUrl={typeof project.meta?.image === 'object' && project.meta.image ? project.meta.image.url : undefined}
+            technologies={project.techStack?.filter((t): t is { name: string } => !!t.name)}
             liveUrl={project.links?.liveSite}
             repoUrl={project.links?.github}
             caseStudyUrl={`/projects/${project.slug}`}

@@ -1,5 +1,5 @@
 import { SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
-import { SerializedParagraphNode } from 'node_modules/@payloadcms/richtext-lexical/dist/nodeTypes'
+import { SerializedParagraphNode } from '@payloadcms/richtext-lexical'
 import { ReactNode } from 'react'
 
 export interface ParagraphProps {

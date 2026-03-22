@@ -15,7 +15,6 @@ import {
   BannerBlock,
   MediaBlock,
   CodeBlock,
-  CallToActionBlock,
   Heading,
   List,
   Paragraph,
@@ -23,9 +22,8 @@ import {
 } from './node-components'
 
 // Import types
-import type { BannerBlock as BannerBlockType } from '../../../../payload/src/payload-types'
-import type { CallToActionBlock as CTABlockType } from '../../../../payload/src/payload-types'
-import type { MediaBlock as MediaBlockType } from '../../../../payload/src/payload-types'
+import type { BannerBlock as BannerBlockType } from '@strps-website/types'
+import type { MediaBlock as MediaBlockType } from '@strps-website/types'
 import type { CodeBlockProps as CodeBlockType } from '@/components/code/Component'
 import type { SerializedBlockNode } from '@payloadcms/richtext-lexical'
 
@@ -35,7 +33,7 @@ import type { SerializedBlockNode } from '@payloadcms/richtext-lexical'
  */
 type NodeTypes =
   | DefaultNodeTypes
-  | SerializedBlockNode<CTABlockType | MediaBlockType | BannerBlockType | CodeBlockType>
+  | SerializedBlockNode<MediaBlockType | BannerBlockType | CodeBlockType>
 
 /**
  * Converts an internal document link to a URL path.
@@ -63,7 +61,6 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     banner: ({ node }) => <BannerBlock node={node} />,
     mediaBlock: ({ node }) => <MediaBlock node={node} />,
     code: ({ node }) => <CodeBlock node={node} />,
-    cta: ({ node }) => <CallToActionBlock node={node} />,
   },
   heading: Heading,
   list: List,

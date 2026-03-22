@@ -44,6 +44,17 @@ export const GET_PROJECTS = gql`
     }
   }
 `
+type ProjectsResponse = {
+  Projects: {
+    docs: Project[]
+    totalDocs: number
+    totalPages: number
+    page: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
+  }
+}
+
 type GetProjectsParams = {
   page?: number
   limit?: number
@@ -52,7 +63,7 @@ type GetProjectsParams = {
 export async function getProjects({ page = 1, limit = 12 }: GetProjectsParams = {}) {
   const client = getClient()
 
-  const { data } = await client.query({
+  const { data } = await client.query<ProjectsResponse>({
     query: GET_PROJECTS,
     variables: {
       page,
@@ -61,16 +72,16 @@ export async function getProjects({ page = 1, limit = 12 }: GetProjectsParams = 
         _status: { equals: 'published' },
       },
     },
-  }) as { data: { Projects: { docs: Project[], totalDocs: number, totalPages: number, page: number, hasNextPage: boolean, hasPrevPage: boolean } } }
+  })
 
   return {
-    projects: data.Projects.docs as Project[],
+    projects: data!.Projects.docs as Project[],
     pagination: {
-      totalDocs: data.Projects.totalDocs,
-      totalPages: data.Projects.totalPages,
-      currentPage: data.Projects.page,
-      hasNextPage: data.Projects.hasNextPage,
-      hasPrevPage: data.Projects.hasPrevPage,
+      totalDocs: data!.Projects.totalDocs,
+      totalPages: data!.Projects.totalPages,
+      currentPage: data!.Projects.page,
+      hasNextPage: data!.Projects.hasNextPage,
+      hasPrevPage: data!.Projects.hasPrevPage,
     },
   }
 }
@@ -111,22 +122,22 @@ export const getProjectBySlug = cache(async ({ slug }: GetProjectBySlugArgs) => 
   const { isEnabled: draft } = await draftMode()
   const client = getClient()
 
-  const { data } = await client.query({
+  const { data } = await client.query<ProjectsResponse>({
     query: GET_PROJECT_BY_SLUG,
     variables: {
       slug,
       draft,
     },
     fetchPolicy: draft ? 'no-cache' : 'cache-first',
-  }) as { data: { Projects: { docs: Project[] } } }
+  })
 
-  return data.Projects.docs[0] as Project | null
+  return data!.Projects.docs[0] as Project | null
 })
 
 export async function generateStaticParams() {
   const client = getClient()
 
-  const { data } = await client.query({
+  const { data } = await client.query<ProjectsResponse>({
     query: gql`
       query GetAllProjectSlugs {
         Projects(
@@ -140,9 +151,9 @@ export async function generateStaticParams() {
         }
       }
     `,
-  }) as { data: { Projects: { docs: { slug: string }[] } } }
+  })
 
-  return data.Projects.docs.map(({ slug }: { slug: string }) => ({
-    slug,
+  return data!.Projects.docs.map((doc) => ({
+    slug: doc.slug!,
   }))
 }

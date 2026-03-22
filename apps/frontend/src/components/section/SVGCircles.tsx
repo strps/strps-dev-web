@@ -37,7 +37,7 @@ const CirclesRenderer: React.FC<SVGCirclesProps> = ({
         transition: {
           duration,
           repeat: Infinity,
-          ease: 'linear',
+          ease: 'linear' as const,
         },
       }
     })

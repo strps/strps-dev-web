@@ -1,30 +1,37 @@
 import { getServerSideSitemap } from 'next-sitemap'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { gql } from '@apollo/client'
+import { getClient } from '@/lib/apollo-client'
 import { unstable_cache } from 'next/cache'
+import { Page } from '@strps-website/types'
+
+interface PagesSitemapData {
+  Pages: {
+    docs: Array<Pick<Page, 'slug' | 'updatedAt'>>
+  }
+}
+
+const PAGES_SITEMAP_QUERY = gql`
+  query PagesSitemap {
+    Pages(
+      where: { _status: { equals: published } }
+      limit: 1000
+      pagination: false
+    ) {
+      docs {
+        slug
+        updatedAt
+      }
+    }
+  }
+`
 
 const getPagesSitemap = unstable_cache(
   async () => {
-    const payload = await getPayload({ config })
+    const client = getClient()
     const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
 
-    const results = await payload.find({
-      collection: 'pages',
-      overrideAccess: false,
-      draft: false,
-      depth: 0,
-      limit: 1000,
-      pagination: false,
-      where: {
-        _status: {
-          equals: 'published',
-        },
-      },
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-    })
+    const { data } = await client.query<PagesSitemapData>({ query: PAGES_SITEMAP_QUERY })
+    const results = data?.Pages
 
     const dateFallback = new Date().toISOString()
 
@@ -39,15 +46,15 @@ const getPagesSitemap = unstable_cache(
       },
     ]
 
-    const sitemap = results.docs
+    const sitemap = results?.docs
       ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          .map((page) => {
-            return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-            }
-          })
+        .filter((page) => Boolean(page?.slug))
+        .map((page) => {
+          return {
+            loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
+            lastmod: page.updatedAt || dateFallback,
+          }
+        })
       : []
 
     return [...defaultSitemap, ...sitemap]

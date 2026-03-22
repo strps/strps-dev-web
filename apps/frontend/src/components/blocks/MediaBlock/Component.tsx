@@ -1,6 +1,7 @@
 import type { StaticImageData } from 'next/image'
 
 import { cn } from '@/lib/utils'
+import type { ComponentProps } from 'react'
 import React from 'react'
 import RichText from '@/components/RichText'
 
@@ -31,7 +32,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
   } = props
 
   let caption
-  if (media && typeof media === 'object') caption = media.caption
+  if (media && typeof media === 'object') caption = media.caption as ComponentProps<typeof RichText>['data']
 
   return (
     <div

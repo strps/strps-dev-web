@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Page, Post } from '../../../payload/src/payload-types'
+import type { Page, Post } from '@strps-website/types'
 
 export type CMSLinkType = {
   appearance?: 'inline' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' //TODO: Add size and variants types form button variants directly

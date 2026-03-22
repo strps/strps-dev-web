@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import type { ComponentProps } from 'react'
 
 import { PayloadRedirects } from '@/components/payload-redirects'
 import { draftMode } from 'next/headers'
@@ -39,8 +40,8 @@ export default async function ProjectPage({ params: paramsPromise }: Args) {
           <PostHero post={project} className="dark" />
           <div className="container px-4 pt-8">
             <RichText
-              className="max-w-[48rem] mx-auto"
-              data={project.content}
+              className="max-w-3xl mx-auto"
+              data={project.content as ComponentProps<typeof RichText>['data']}
               enableGutter={false}
             />
           </div>

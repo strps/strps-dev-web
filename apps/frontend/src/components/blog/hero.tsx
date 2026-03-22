@@ -1,7 +1,7 @@
 import { formatDateTime } from '@/lib/formatDateTime'
 import React from 'react'
 
-import type { Post } from '../../../../payload/src/payload-types'
+import type { Post } from '@strps-website/types'
 
 import { Media } from '@/components/cms-media'
 import { formatAuthors } from '@/lib/formatAuthors'
@@ -18,7 +18,7 @@ export const PostHero: React.FC<{
 
     return (
         <div
-            className={cn('container min-h-[500px] sm:min-h-[700px] relative flex items-end', className)}
+            className={cn('container min-h-125 sm:min-h-175 relative flex items-end', className)}
         >
             <div className="mx-auto z-10 px-6 relative sm:px-8 text-foreground pb-8">
                 <div className="col-start-1 col-span-1 md:col-start-2 md:col-span-2">

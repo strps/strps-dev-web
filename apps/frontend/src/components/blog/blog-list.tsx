@@ -36,20 +36,23 @@ export function BlogList({ posts }: BlogListProps) {
     // Extract all unique tags from posts
     const allTags = useMemo(() => {
         const tags = new Set<string>();
-        posts.forEach(post => post?.tags?.forEach(tag => tags.add(tag)));
+        posts.forEach(post => post?.tags?.forEach(tag => {
+            if (typeof tag === 'object' && tag.tag) tags.add(tag.tag);
+        }));
         return Array.from(tags).sort();
     }, [posts]);
 
     // Filter posts logic
     const filteredPosts = useMemo(() => {
         return posts.filter((post) => {
+            const description = post.meta?.description ?? '';
             const matchesSearch =
                 post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+                description.toLowerCase().includes(searchQuery.toLowerCase());
 
             const matchesTags =
                 selectedTags.length === 0 ||
-                selectedTags.some(tag => post.tags.includes(tag));
+                selectedTags.some(st => post.tags?.some(tag => typeof tag === 'object' && tag.tag === st));
 
             return matchesSearch && matchesTags;
         });
@@ -135,40 +138,44 @@ export function BlogList({ posts }: BlogListProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                     {paginatedPosts.map((post) => (
                         <Card key={post.slug} className="flex flex-col h-full hover:shadow-lg transition-all duration-300 border-muted group">
-                            <div className="relative w-full aspect-video overflow-hidden rounded-t-xl bg-muted">
-                                <img
-                                    src={post.coverImage}
-                                    alt={post.title}
-                                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-                                />
-                            </div>
+                            {typeof post.heroImage === 'object' && post.heroImage?.url && (
+                                <div className="relative w-full aspect-video overflow-hidden rounded-t-xl bg-muted">
+                                    <img
+                                        src={post.heroImage.url}
+                                        alt={post.heroImage.alt ?? post.title}
+                                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                </div>
+                            )}
 
                             <CardHeader className="space-y-2">
                                 <div className="flex gap-2 flex-wrap">
-                                    {post.tags.slice(0, 3).map(tag => (
-                                        <Badge key={tag} variant="secondary" className="text-xs font-normal">
-                                            {tag}
-                                        </Badge>
-                                    ))}
+                                    {post.tags?.slice(0, 3).map(tag => {
+                                        if (typeof tag !== 'object') return null;
+                                        return (
+                                            <Badge key={tag.id} variant="secondary" className="text-xs font-normal">
+                                                {tag.tag}
+                                            </Badge>
+                                        );
+                                    })}
                                 </div>
                                 <CardTitle className="leading-tight text-xl">
                                     <Link href={`/blog/${post.slug}`} className="group-hover:text-primary transition-colors">
                                         {post.title}
                                     </Link>
                                 </CardTitle>
-                                <div className="flex items-center text-sm text-muted-foreground gap-4 pt-1">
-                                    <span className="flex items-center gap-1">
-                                        <Calendar className="h-3 w-3" /> {post.date}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                        <Clock className="h-3 w-3" /> {post.readTime}
-                                    </span>
-                                </div>
+                                {post.publishedAt && (
+                                    <div className="flex items-center text-sm text-muted-foreground gap-4 pt-1">
+                                        <span className="flex items-center gap-1">
+                                            <Calendar className="h-3 w-3" /> {new Date(post.publishedAt).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                )}
                             </CardHeader>
 
                             <CardContent>
                                 <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
-                                    {post.excerpt}
+                                    {post.meta?.description}
                                 </p>
                             </CardContent>
 

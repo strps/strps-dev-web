@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import React from 'react'
 import RichText from '@/components/RichText'
 
-import type { MediaBlock as MediaBlockProps } from '../../../../payload/src/payload-types'
+import type { MediaBlock as MediaBlockProps } from '@strps-website/types'
 
 import { Media } from './index'
 
@@ -30,7 +30,7 @@ export const MediaBlock: React.FC<Props> = (props) => {
   } = props
 
   let caption
-  if (media && typeof media === 'object') caption = media.caption
+  if (media && typeof media === 'object') caption = media.caption as React.ComponentProps<typeof RichText>['data']
 
   return (
     <div

@@ -44,6 +44,17 @@ export const GET_POSTS = gql`
     }
   }
 `
+type PostsResponse = {
+  Posts: {
+    docs: Post[]
+    totalDocs: number
+    totalPages: number
+    page: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
+  }
+}
+
 type GetPostsParams = {
   page?: number
   limit?: number
@@ -52,7 +63,7 @@ type GetPostsParams = {
 export async function getBlogPosts({ page = 1, limit = 12 }: GetPostsParams = {}) {
   const client = getClient()
 
-  const { data } = await client.query({
+  const { data } = await client.query<PostsResponse>({
     query: GET_POSTS,
     variables: {
       page,
@@ -66,13 +77,13 @@ export async function getBlogPosts({ page = 1, limit = 12 }: GetPostsParams = {}
   })
 
   return {
-    posts: data.Posts.docs as Post[],           // array of posts
+    posts: data!.Posts.docs as Post[],           // array of posts
     pagination: {
-      totalDocs: data.Posts.totalDocs,
-      totalPages: data.Posts.totalPages,
-      currentPage: data.Posts.page,
-      hasNextPage: data.Posts.hasNextPage,
-      hasPrevPage: data.Posts.hasPrevPage,
+      totalDocs: data!.Posts.totalDocs,
+      totalPages: data!.Posts.totalPages,
+      currentPage: data!.Posts.page,
+      hasNextPage: data!.Posts.hasNextPage,
+      hasPrevPage: data!.Posts.hasPrevPage,
     },
   }
 }
@@ -114,7 +125,7 @@ export const getPostBySlug = cache(async ({ slug }: GetPostBySlugArgs) => {
   const { isEnabled: draft } = await draftMode()
   const client = getClient()
 
-  const { data } = await client.query({
+  const { data } = await client.query<PostsResponse>({
     query: GET_POST_BY_SLUG,
     variables: {
       slug,
@@ -123,13 +134,13 @@ export const getPostBySlug = cache(async ({ slug }: GetPostBySlugArgs) => {
     fetchPolicy: draft ? 'no-cache' : 'cache-first',
   })
 
-  return data.Posts.docs[0] as Post | null
+  return data!.Posts.docs[0] as Post | null
 })
 
 export async function generateStaticParams() {
   const client = getClient()
 
-  const { data } = await client.query({
+  const { data } = await client.query<PostsResponse>({
     query: gql`
       query GetAllPostSlugs {
         Posts(
@@ -145,7 +156,7 @@ export async function generateStaticParams() {
     `,
   })
 
-  return data.Posts.docs.map(({ slug }: { slug: string }) => ({
-    slug,
+  return data!.Posts.docs.map((doc) => ({
+    slug: doc.slug!,
   }))
 }

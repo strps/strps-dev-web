@@ -1,10 +1,10 @@
 import { ReactNode } from 'react'
 import { Square, SquareCheckBig } from 'lucide-react'
-import { SerializedListItemNode, SerializedListNode } from 'node_modules/@payloadcms/richtext-lexical/dist/features/lists/plugin'
 import { SerializedLexicalNode } from '@payloadcms/richtext-lexical/lexical'
+import { SerializedListItemNode, SerializedListNode } from '@payloadcms/richtext-lexical'
 
 export interface ListItem extends SerializedListItemNode {
-  checked?: boolean
+  checked: boolean
   children: SerializedLexicalNode[]
   value: number
 }
@@ -20,7 +20,7 @@ export const List = ({ node, nodesToJSX }: ListProps) => {
   const listTypes = {
     check: (
       <ul className="my-6 ml-6 list-none [&>li]:mt-2">
-        {node.children.map((child: any, i) => (
+        {node.children.map((child: any, i: number) => (
           <li key={i} className="flex items-start">
             {child.checked ? (
               <SquareCheckBig className="w-4 h-4 mr-2 mt-1 shrink-0 text-primary" />
@@ -34,7 +34,7 @@ export const List = ({ node, nodesToJSX }: ListProps) => {
     ),
     bullet: (
       <ul className="my-6 ml-6 list-disc [&>li]:mt-2">
-        {node.children.map((child: any, i) => (
+        {node.children.map((child: any, i: number) => (
           <li key={i}>
             {nodesToJSX({ nodes: child.children })}
           </li>
@@ -43,7 +43,7 @@ export const List = ({ node, nodesToJSX }: ListProps) => {
     ),
     number: (
       <ol className="my-6 ml-6 list-decimal [&>li]:mt-2">
-        {node.children.map((child: any, i) => (
+        {node.children.map((child: any, i: number) => (
           <li key={i}>
             {nodesToJSX({ nodes: child.children })}
           </li>
@@ -52,5 +52,5 @@ export const List = ({ node, nodesToJSX }: ListProps) => {
     ),
   }
 
-  return listTypes[node.listType] || null
+  return listTypes[node.listType as keyof typeof listTypes] || null
 }

@@ -6,7 +6,7 @@ import {
   CardTitle,
   CardAction,
 } from '@/components/ui/card'
-import { Media as TMedia } from '../../../../payload/src/payload-types'
+import { Media as TMedia } from '@strps-website/types'
 import { cn } from '@/lib/utils'
 
 type ImageCardProps = {

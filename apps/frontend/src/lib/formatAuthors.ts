@@ -1,4 +1,4 @@
-import { Post } from '../../../payload/src/payload-types'
+import { Post } from '@strps-website/types'
 
 /**
  * Formats an array of populatedAuthors from Posts into a prettified string.

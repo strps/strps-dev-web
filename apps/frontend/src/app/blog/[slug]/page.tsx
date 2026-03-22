@@ -6,7 +6,8 @@ import { PostHero } from '@/components/blog/hero'
 import { generateMeta } from '@/lib/generateMeta'
 import { LivePreviewListener } from '@/components/live-preview-listener'
 import type { Metadata } from 'next'
-import type { Post } from '../../../../../payload/src/payload-types'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import type { Post } from '@strps-website/types'
 import { generateStaticParams, getPostBySlug } from '../data'
 
 export { generateStaticParams }
@@ -36,13 +37,12 @@ export default async function Post({ params: paramsPromise }: Args) {
         <div className="flex flex-col items-center gap-8">
           <PostHero post={post} className="dark" />
           <div className="container px-4">
-            <RichText className="max-w-[48rem] mx-auto" data={post.content} enableGutter={false} />
-
+            <RichText className="max-w-3xl mx-auto" data={post.content as DefaultTypedEditorState} enableGutter={false} />
             {post.relatedPosts && post.relatedPosts.length > 0 && (
               <div className="my-12">
                 <h2>Related Posts</h2>
                 <RelatedPosts
-                  className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
+                  className="mt-12 max-w-208 lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
                   docs={post.relatedPosts.filter((p): p is Post => typeof p === 'object')}
                 />
               </div>
