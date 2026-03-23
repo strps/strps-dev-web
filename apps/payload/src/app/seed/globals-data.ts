@@ -1,8 +1,8 @@
 import type { DataFromGlobalSlug } from 'payload'
 
-type HeaderSeed = DataFromGlobalSlug<'header'>
-type FooterSeed = DataFromGlobalSlug<'footer'>
-type CopyrightSeed = DataFromGlobalSlug<'copyright'>
+type HeaderSeed = Omit<DataFromGlobalSlug<'header'>, 'id'>
+type FooterSeed = Omit<DataFromGlobalSlug<'footer'>, 'id'>
+type CopyrightSeed = Omit<DataFromGlobalSlug<'copyright'>, 'id'>
 
 export const headerData: HeaderSeed = {
     navItems: [

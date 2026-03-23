@@ -2,7 +2,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 
 import { revalidatePath, revalidateTag } from '@/lib/revalidate'
 
-import type { Page } from '../../../payload-types'
+import type { Page } from '@strps-website/types'
 
 export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,
