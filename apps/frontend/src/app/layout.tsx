@@ -6,6 +6,7 @@ import { Code2 } from 'lucide-react';
 import { getCachedHeaderData } from '@/data/data';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { Logo } from '@/components/logo';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -37,8 +38,7 @@ export default async function RootLayout({
             overlay={overlay}
             brand={
               <span className="flex items-center gap-2 font-bold text-xl tracking-tighter">
-                <Code2 className="h-6 w-6" />
-                STRPS.DEV
+                <Logo className='w-48' />
               </span>
             }
           />

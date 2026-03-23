@@ -31,14 +31,17 @@ const db =
 
 export default buildConfig({
 
-  cors: '*',
-  //  {
-  //   origins: [
-  //     process.env.FRONTEND_URL || '',
-  //     process.env.NEXT_PUBLIC_SERVER_URL || ''
-  //   ]
-  // },
-
+  cors: {
+    origins: [
+      process.env.FRONTEND_URL || '',
+      process.env.NEXT_PUBLIC_SERVER_URL || ''
+    ]
+  },
+  upload: {
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 100MB
+    },
+  },
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
@@ -87,6 +90,7 @@ export default buildConfig({
         media: true,
       },
       token: process.env.BLOB_READ_WRITE_TOKEN || '',
+      clientUploads: true,
     }),
   ],
   secret: process.env.PAYLOAD_SECRET,

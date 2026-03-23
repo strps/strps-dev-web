@@ -8,22 +8,15 @@ module.exports = {
   siteUrl: SITE_URL,
   generateRobotsTxt: true,
   exclude: [
-    '/projects-sitemap.xml',
-    '/blog-sitemap.xml',
     '/pages-sitemap.xml',
+    '/posts-sitemap.xml',
+    '/projects-sitemap.xml',
     '/*',
-    '/blog/*, /projects/*',
   ],
   robotsTxtOptions: {
-    policies: [
-      {
-        userAgent: '*',
-        disallow: '/admin/*',
-      },
-    ],
     additionalSitemaps: [
       `${SITE_URL}/pages-sitemap.xml`,
-      `${SITE_URL}/blog-sitemap.xml`,
+      `${SITE_URL}/posts-sitemap.xml`,
       `${SITE_URL}/projects-sitemap.xml`,
     ],
   },

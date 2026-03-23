@@ -14,7 +14,7 @@ export const ProjectTags: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    group: 'Blog',
+    group: 'Projects',
   },
   fields: [
     {
