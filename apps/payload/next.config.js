@@ -6,13 +6,7 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   : undefined || process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        hostname: 'images.unsplash.com'
-      },
+  let remotePatterns = [
       ...[NEXT_PUBLIC_SERVER_URL].map((item) => {
         const url = new URL(item)
 
@@ -21,7 +15,18 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
-    ],
+    ]
+
+if(process.env.NODE_ENV === 'development') {
+  remotePatterns.push(      {
+        hostname: 'images.unsplash.com'
+      })
+}
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns,
   },
   reactStrictMode: true,
   redirects,

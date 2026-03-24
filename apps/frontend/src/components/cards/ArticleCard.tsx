@@ -46,10 +46,10 @@ export function ArticleCard({
             )}
         >
             {/* Image container */}
-            <div className="relative aspect-[16/9] overflow-hidden bg-muted">
+            <div className="relative aspect-video overflow-hidden bg-muted">
                 {imageUrl ? (
                     <Image
-                        src={imageUrl}
+                        src={`${process.env.NEXT_PUBLIC_PAYLOAD_URL}/${imageUrl}`}
                         alt={imageAlt || `${title} article image`}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -60,11 +60,11 @@ export function ArticleCard({
                         <span className="text-sm">No image</span>
                     </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
             </div>
 
             {/* Content */}
-            <div className="flex flex-col justify-between gap-6 flex-grow">
+            <div className="flex flex-col justify-between gap-6 grow">
                 <CardHeader>
                     {/* Date and authors */}
                     {(formattedDate || authors.length > 0) && (

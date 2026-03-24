@@ -1,15 +1,14 @@
 import type { NextConfig } from "next";
 
-
 const payloadUrl = new URL(process.env.NEXT_PUBLIC_PAYLOAD_URL!)
 
-
-const remotePatterns = [{
-  protocol: payloadUrl.protocol.replace(':', '') as 'http' | 'https',
-  hostname: payloadUrl.hostname,
-  port: payloadUrl.port || '',        // keep original port
-  pathname: '/api/media/**',
-}
+const remotePatterns = [
+  {
+    protocol: payloadUrl.protocol.replace(':', '') as 'http' | 'https',
+    hostname: payloadUrl.hostname,
+    port: payloadUrl.port || '',        // keep original port
+    pathname: '/api/media/**',
+  }
 ]
 
 //add unsplash in development for placeholder images
