@@ -1,14 +1,13 @@
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import sharp from 'sharp' // sharp-import
+import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 import { Users } from './collections/Users'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
-// import { getServerSideURL } from './utilities/getURL'
 import { globals } from './globals/index'
 import { resendAdapter } from '@payloadcms/email-resend'
 import collections from './collections'
@@ -19,7 +18,6 @@ const db =
   process.env.NODE_ENV === 'development'
     ? postgresAdapter({
       pool: {
-        // connectionString: 'postgresql://postgres@0.0.0.0:5432/your-database-name',
         connectionString: process.env.POSTGRES_URL || '',
       },
     })
