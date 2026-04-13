@@ -23,7 +23,6 @@ if (process.env.NODE_ENV === 'development') {
 
 const nextConfig: NextConfig = {
   /* config options here */
-
   images: {
     remotePatterns,
     qualities: [75, 85, 90, 95, 100],

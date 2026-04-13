@@ -42,7 +42,7 @@ const ProjectsSection = async ({ title, populateBy, limit, selectedProjects, git
                             key={project.id}
                             title={project.title}
                             description={project.meta?.description}
-                            imageUrl={heroImage?.url}
+                            imageUrl={`${process.env.NEXT_PUBLIC_PAYLOAD_URL}${heroImage?.url}`}
                             technologies={project.techStack?.map((t) => ({ name: t.name || '' })) || []}
                             liveUrl={project.links?.liveSite}
                             repoUrl={project.links?.github}
