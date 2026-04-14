@@ -33,7 +33,7 @@ const ProjectsSection = async ({ title, populateBy, limit, selectedProjects, git
 
             <div className="grid grid-cols-1 auto-rows-fr gap-6">
                 {projects.map((project) => {
-                    const heroImage = typeof project.heroImage === 'object' && project.heroImage
+                    const metaImage = typeof project.meta?.image === 'object' && project.heroImage
                         ? (project.heroImage as Media)
                         : null;
 
@@ -42,7 +42,7 @@ const ProjectsSection = async ({ title, populateBy, limit, selectedProjects, git
                             key={project.id}
                             title={project.title}
                             description={project.meta?.description}
-                            imageUrl={`${process.env.NEXT_PUBLIC_PAYLOAD_URL}${heroImage?.url}`}
+                            imageUrl={metaImage?.url ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${metaImage.url}` : undefined}
                             technologies={project.techStack?.map((t) => ({ name: t.name || '' })) || []}
                             liveUrl={project.links?.liveSite}
                             repoUrl={project.links?.github}

@@ -1,7 +1,7 @@
 {
-  "name": "@strps-website/website",
+  "name": "@strps-website/payload",
   "version": "1.0.0",
-  "description": "Website template for Payload",
+  "description": "Payload Backend for strps-website",
   "license": "MIT",
   "type": "module",
   "scripts": {

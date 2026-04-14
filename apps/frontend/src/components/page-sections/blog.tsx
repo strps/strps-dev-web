@@ -3,12 +3,23 @@ import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Section from '../section'
 import { ArticleCard } from '../cards/ArticleCard'
+import { getBlogPosts } from '@/app/blog/data'
 import type { PageBlogBlock, Post, Media, BlogTag } from '@strps-website/types'
 
-const BlogSection: React.FC<PageBlogBlock> = ({ title, selectedPosts, blogUrl, section }) => {
-    const posts = (selectedPosts || []).filter(
-        (p): p is Post => typeof p === 'object' && p !== null,
-    )
+const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blogLimit?: number }) => {
+    const { title, selectedPosts, blogUrl, section } = props
+    const populateBy = (props as any).blogPopulateBy ?? props.populateBy
+    const limit = (props as any).blogLimit ?? props.limit
+    let posts: Post[] = []
+
+    if (populateBy === 'collection') {
+        const { posts: fetched } = await getBlogPosts({ limit: limit ?? 6 })
+        posts = fetched
+    } else {
+        posts = (selectedPosts || []).filter(
+            (p): p is Post => typeof p === 'object' && p !== null,
+        )
+    }
 
     return (
         <Section id={section?.section_id || 'blog'} className="space-y-8 py-10">

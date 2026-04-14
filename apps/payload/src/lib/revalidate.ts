@@ -1,4 +1,4 @@
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3001'
+const FRONTEND_URL = process.env.FRONTEND_URL
 const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET!
 
 if (!REVALIDATE_SECRET) {

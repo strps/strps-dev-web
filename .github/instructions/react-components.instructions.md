@@ -18,7 +18,14 @@ applyTo: "apps/**/src/components/**"
 - Tailwind CSS 4 utility classes — avoid custom CSS
 - Mobile-first: base styles for mobile, `md:` for tablet, `lg:` for desktop
 - Use `cn()` utility from `@/lib/utils` for conditional classes
-- Dark mode via `dark:` variant
+
+### Colors & Theming
+
+- **Do not** use the `dark:` variant directly in components
+- Colors come from CSS custom properties defined in `apps/frontend/src/app/globals.css`, following shadcn/ui conventions (e.g. `bg-background`, `text-foreground`, `text-muted-foreground`, `bg-card`, etc.)
+- These variables automatically switch between light and dark values — components are theme-aware without any `dark:` class
+- **Adding a new color:** define the CSS variable in both `:root` (light) and `.dark` (dark) blocks in `globals.css`, then expose it under `@theme inline` as `--color-<name>: var(--<name>)` so Tailwind utilities like `bg-<name>` and `text-<name>` become available
+- Custom shadow utilities (`shadow-lv1` through `shadow-lv5`) are defined in `globals.css` and use theme-aware shadow variables — prefer these over arbitrary `shadow-*` values
 
 ## Accessibility
 

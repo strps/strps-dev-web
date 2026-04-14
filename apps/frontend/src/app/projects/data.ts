@@ -26,7 +26,12 @@ export const GET_PROJECTS = gql`
           alt
         }
         meta {
+          title
           description
+          image { 
+            url 
+            alt
+          }
         }
         links {
           liveSite
@@ -101,7 +106,11 @@ export const GET_PROJECT_BY_SLUG = gql`
         content
         publishedAt
         heroImage { url alt width height }
-        meta { title description image { url } }
+        meta { 
+          title 
+          description 
+          image { url } 
+        }
         links {
           github
           liveSite

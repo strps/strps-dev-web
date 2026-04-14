@@ -38,7 +38,7 @@ export default async function RootLayout({
             overlay={overlay}
             brand={
               <span className="flex items-center gap-2 font-bold text-xl tracking-tighter">
-                <Logo className='w-48' />
+                <Logo className='w-48 fill-foreground' />
               </span>
             }
           />

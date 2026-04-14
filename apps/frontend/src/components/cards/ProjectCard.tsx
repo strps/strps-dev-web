@@ -56,8 +56,8 @@ export function ProjectCard({
             <div className={cn(
                 "relative overflow-hidden bg-muted shrink-0",
                 isHorizontal
-                    ? "aspect-[16/9] sm:aspect-auto sm:w-2/5 sm:min-h-full"
-                    : "aspect-[16/9]"
+                    ? "aspect-video sm:aspect-auto sm:w-2/5 sm:min-h-full"
+                    : "aspect-video"
             )}>
                 <Image
                     src={imageUrl || placeholderImage}
@@ -69,13 +69,10 @@ export function ProjectCard({
                         : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     }
                 />
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
             </div>
             {/* Content */}
             <div className={cn(
-                "flex flex-col justify-between gap-6 flex-grow",
+                "flex flex-col justify-between gap-6 grow",
                 isHorizontal && "sm:pt-6"
             )}>
                 <CardHeader className="">

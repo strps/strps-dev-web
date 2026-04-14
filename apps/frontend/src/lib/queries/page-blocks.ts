@@ -180,6 +180,8 @@ export const PAGE_BLOCK_FIELDS = gql`
   fragment PageBlogFields on PageBlogBlock {
     blockType
     title
+    blogPopulateBy: populateBy
+    blogLimit: limit
     selectedPosts {
       id
       title

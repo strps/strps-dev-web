@@ -28,7 +28,7 @@ const HeroSection: React.FC<HeroProps> = ({
             containerClassName='items-center'
             {...(bgImage?.url ? {
                 image: {
-                    src: bgImage.url,
+                    src: `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${bgImage.url}`,
                     alt: bgImage.alt || 'Hero Background',
                     priority: true,
                     quality: 90,
@@ -85,7 +85,6 @@ const HeroSection: React.FC<HeroProps> = ({
                             {...link}
                             appearance={link.appearance ?? undefined}
                             size="lg"
-                            className="bg-background/50 backdrop-blur-sm hover:bg-background/80"
                         />
                     ))}
                 </div>

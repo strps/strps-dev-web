@@ -7,7 +7,7 @@ const remotePatterns = [
     protocol: payloadUrl.protocol.replace(':', '') as 'http' | 'https',
     hostname: payloadUrl.hostname,
     port: payloadUrl.port || '',        // keep original port
-    pathname: '/api/media/**',
+    pathname: '/**',
   }
 ]
 

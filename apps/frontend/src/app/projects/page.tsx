@@ -46,18 +46,21 @@ const ProjectsList = ({ projects }: { projects: Array<Project> }) => {
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            title={project.title}
-            description={project.meta?.description}
-            imageUrl={typeof project.meta?.image === 'object' && project.meta.image ? project.meta.image.url : undefined}
-            technologies={project.techStack?.filter((t): t is { name: string } => !!t.name)}
-            liveUrl={project.links?.liveSite}
-            repoUrl={project.links?.github}
-            caseStudyUrl={`/projects/${project.slug}`}
-          />
-        ))}
+        {projects.map((project) => {
+          return (
+            <ProjectCard
+              key={project.id}
+              title={project.title}
+              description={project.meta?.description}
+              imageUrl={typeof project.meta?.image === 'object' && project.meta.image ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${project.meta.image.url}` : undefined}
+              technologies={project.techStack?.filter((t): t is { name: string } => !!t.name)}
+              liveUrl={project.links?.liveSite}
+              repoUrl={project.links?.github}
+              caseStudyUrl={`/projects/${project.slug}`}
+            />
+          )
+        }
+        )}
       </div>
     </div>
   )

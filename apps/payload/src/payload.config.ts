@@ -29,6 +29,9 @@ const db =
 
 export default buildConfig({
 
+  routes: {
+    admin: '/',
+  },
   cors: {
     origins: [
       process.env.FRONTEND_URL || '',
