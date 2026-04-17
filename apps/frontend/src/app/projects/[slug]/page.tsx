@@ -28,6 +28,8 @@ export default async function ProjectPage({ params: paramsPromise }: Args) {
 
   if (!project) return <PayloadRedirects url={url} />
 
+  console.log(project.heroImage)
+
   return (
     <>
       <article className="pb-16">

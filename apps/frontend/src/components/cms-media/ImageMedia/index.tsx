@@ -51,7 +51,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
     const cacheTag = resource.updatedAt
 
-    src = `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${url}?${cacheTag}`
+    src = `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${url}${cacheTag ? `?${cacheTag}` : ''}`
   }
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
@@ -76,7 +76,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         quality={100}
         loading={loading}
         sizes={sizes}
-        src={`${process.env.NEXT_PUBLIC_PAYLOAD_URL}${src}`}
+        src={src}
         width={!fill ? width : undefined}
       />
     </picture>

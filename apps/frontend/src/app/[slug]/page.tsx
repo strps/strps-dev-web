@@ -41,7 +41,6 @@ export default async function PageRoute({ params: paramsPromise }: Args) {
         return <PayloadRedirects url={url} />
     }
 
-    console.log('Fetched page:', page)
     return (
         <main>
             {draft && <LivePreviewListener />}
