@@ -122,7 +122,13 @@ type GetPostBySlugArgs = {
 }
 
 export const getPostBySlug = cache(async ({ slug }: GetPostBySlugArgs) => {
-  const { isEnabled: draft } = await draftMode()
+  let draft = false
+  try {
+    const { isEnabled } = await draftMode()
+    draft = isEnabled
+  } catch {
+    // draftMode() is unavailable during static generation
+  }
   const client = getClient()
 
   const { data } = await client.query<PostsResponse>({

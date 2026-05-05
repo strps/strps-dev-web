@@ -19,7 +19,13 @@ type Args = {
 }
 
 export default async function Post({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
+  let draft = false
+  try {
+    const { isEnabled } = await draftMode()
+    draft = isEnabled
+  } catch {
+    // draftMode() is unavailable during static generation
+  }
   const { slug = '' } = await paramsPromise
   const url = `/posts/${slug}`
 
