@@ -316,7 +316,7 @@ export interface PageHeroBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'outline') | null;
+          appearance?: ('default' | 'outline' | 'send' | 'github' | 'linkedin') | null;
         };
         id?: string | null;
       }[]

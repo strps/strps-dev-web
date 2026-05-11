@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import Section from '@/components/section';
 import { CMSLink } from '@/components/cms-link';
 import type { PageHeroBlock, Media } from '@strps-website/types';
+import SVGButton from '../SVGButton';
 
 type HeroProps = Omit<PageHeroBlock, 'links'> & {
     heroLinks?: PageHeroBlock['links'];
@@ -75,20 +76,29 @@ const HeroSection: React.FC<HeroProps> = ({
 
                 <div className="flex flex-wrap justify-center gap-4 pt-4">
                     {email && (
-                        <Button asChild size="lg">
-                            <Link href={`mailto:${email}`}>
-                                <Mail className="mr-2 h-4 w-4" /> Contact Me
-                            </Link>
-                        </Button>
+                        <SVGButton variant='send' className=''>
+
+                            <Mail className="mr-2 h-4 w-4" /> <span>Contact Me</span>
+
+                        </SVGButton>
                     )}
-                    {heroLinks?.map(({ link }, i) => (
-                        <CMSLink
-                            key={i}
-                            {...link}
-                            appearance={link.appearance ?? undefined}
-                            size="lg"
-                        />
-                    ))}
+                    {heroLinks?.map(({ link }, i) => {
+                        if (link.appearance === 'send' || link.appearance === 'github' || link.appearance === 'linkedin') {
+                            return (
+                                <SVGButton variant={link.appearance} key={i}>
+                                    {link.label}
+                                </SVGButton>
+                            )
+                        } else {
+
+                            return (<CMSLink
+                                key={i}
+                                {...link}
+                                appearance={link.appearance ?? undefined}
+                                size="lg"
+                            />)
+                        }
+                    })}
                 </div>
             </div>
         </Section>

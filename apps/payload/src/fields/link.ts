@@ -3,9 +3,9 @@ import type { Field, GroupField } from 'payload'
 import deepMerge from '@/utilities/deepMerge'
 import crypto from 'crypto'
 
-export type LinkAppearances = 'default' | 'outline'
+export type LinkAppearances = string
 
-export const appearanceOptions: Record<LinkAppearances, { label: string; value: string }> = {
+export const appearanceOptions: Record<string, { label: string; value: string }> = {
   default: {
     label: 'Default',
     value: 'default',
@@ -17,7 +17,7 @@ export const appearanceOptions: Record<LinkAppearances, { label: string; value: 
 }
 
 type LinkType = (options?: {
-  appearances?: LinkAppearances[] | false
+  appearances?: string[] | false
   disableLabel?: boolean
   overrides?: Partial<GroupField>
   hashEnumName?: boolean
@@ -125,10 +125,15 @@ export const link: LinkType = ({
   }
 
   if (appearances !== false) {
-    let appearanceOptionsToUse = [appearanceOptions.default, appearanceOptions.outline]
+    let appearanceOptionsToUse: { label: string; value: string }[] = [
+      appearanceOptions.default!,
+      appearanceOptions.outline!,
+    ]
 
     if (appearances) {
-      appearanceOptionsToUse = appearances.map((appearance) => appearanceOptions[appearance])
+      appearanceOptionsToUse = appearances.map(
+        (appearance) => appearanceOptions[appearance] ?? { label: appearance, value: appearance },
+      )
     }
 
     if (hashEnumName) {
