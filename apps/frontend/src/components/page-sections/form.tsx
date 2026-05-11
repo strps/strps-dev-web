@@ -179,6 +179,7 @@ const FormSection: React.FC<FormSectionProps> = (props) => {
 
     return (
         <Section
+            {...(section ?? {})}
             id={section?.section_id || 'form'}
             className="flex items-center justify-center py-16 md:py-24"
         >

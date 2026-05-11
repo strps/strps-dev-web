@@ -1,6 +1,20 @@
 import { gql } from '@apollo/client'
 
 export const PAGE_BLOCK_FIELDS = gql`
+  fragment SectionConfigFields on SectionConfig {
+    container
+    section_id
+    backgroundContainer
+    theme
+    background
+    backgroundImage {
+      url
+      alt
+      width
+      height
+    }
+  }
+
   fragment PageHeroFields on PageHeroBlock {
     blockType
     name
@@ -39,15 +53,7 @@ export const PAGE_BLOCK_FIELDS = gql`
       height
     }
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
-      backgroundImage {
-        url
-        alt
-      }
+      ...SectionConfigFields
     }
   }
 
@@ -62,11 +68,7 @@ export const PAGE_BLOCK_FIELDS = gql`
       height
     }
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
+      ...SectionConfigFields
     }
   }
 
@@ -82,11 +84,7 @@ export const PAGE_BLOCK_FIELDS = gql`
       }
     }
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
+      ...SectionConfigFields
     }
   }
 
@@ -116,11 +114,7 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
     githubUrl
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
+      ...SectionConfigFields
     }
   }
 
@@ -138,11 +132,7 @@ export const PAGE_BLOCK_FIELDS = gql`
       }
     }
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
+      ...SectionConfigFields
     }
   }
 
@@ -169,11 +159,7 @@ export const PAGE_BLOCK_FIELDS = gql`
       }
     }
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
+      ...SectionConfigFields
     }
   }
 
@@ -203,11 +189,7 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
     blogUrl
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
+      ...SectionConfigFields
     }
   }
 
@@ -301,11 +283,7 @@ export const PAGE_BLOCK_FIELDS = gql`
       }
     }
     section {
-      container
-      section_id
-      backgroundContainer
-      theme
-      background
+      ...SectionConfigFields
     }
   }
 `
@@ -339,6 +317,7 @@ export const GET_PAGE_BY_SLUG = gql`
             url
           }
         }
+        
       }
     }
   }

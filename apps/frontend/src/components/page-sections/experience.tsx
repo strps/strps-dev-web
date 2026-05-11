@@ -4,6 +4,7 @@ import type { PageExperienceBlock } from '@strps-website/types';
 const ExperienceSection: React.FC<PageExperienceBlock> = ({ title, positions, section }) => {
     return (
         <Section
+            {...(section ?? {})}
             id={section?.section_id || 'experience'}
             className="space-y-8 py-10 max-w-4xl mx-auto"
         >

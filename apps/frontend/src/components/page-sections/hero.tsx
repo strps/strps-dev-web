@@ -19,11 +19,13 @@ const HeroSection: React.FC<HeroProps> = ({
     email,
     heroLinks,
     backgroundImage,
+    section,
 }) => {
     const bgImage = typeof backgroundImage === 'object' && backgroundImage ? backgroundImage as Media : null;
 
     return (
         <Section
+            {...(section ?? {})}
             className="gap-8 py-32 md:py-48 text-center"
             containerClassName='items-center'
             {...(bgImage?.url ? {

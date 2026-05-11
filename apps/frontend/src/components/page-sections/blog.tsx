@@ -22,7 +22,7 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
     }
 
     return (
-        <Section id={section?.section_id || 'blog'} className="space-y-8 py-10">
+        <Section {...(section ?? {})} id={section?.section_id || 'blog'} className="space-y-8 py-10">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
                 {blogUrl && (

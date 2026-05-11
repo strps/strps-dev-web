@@ -12,6 +12,7 @@ type ContactProps = Omit<PageContactBlock, 'links'> & {
 const ContactSection: React.FC<ContactProps> = ({ title, description, email, contactLinks, section }) => {
     return (
         <Section
+            {...(section ?? {})}
             id={section?.section_id || 'contact'}
             className="bg-muted/50 rounded-lg text-center space-y-6"
             containerClassName='py-32'

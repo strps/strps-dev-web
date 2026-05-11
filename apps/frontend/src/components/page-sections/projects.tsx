@@ -19,7 +19,7 @@ const ProjectsSection = async ({ title, populateBy, limit, selectedProjects, git
     }
 
     return (
-        <Section id={section?.section_id || 'projects'} className="space-y-8 py-10">
+        <Section {...(section ?? {})} id={section?.section_id || 'projects'} className="space-y-8 py-10">
             <div className="flex items-center justify-between">
                 <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
                 {githubUrl && (

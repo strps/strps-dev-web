@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-svg: var(--svg-circle-color);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -47,7 +48,7 @@
 }
 
 :root {
-  --svg-circle-color: #0000000e;
+  --svg-circle-color: #000000;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -87,9 +88,9 @@
 }
 
 .dark {
-  --svg-circle-color: oklch(0.2629 0.0016 197.03);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --svg-circle-color: oklch(34.458% 0.00004 271.152);
+  --background: oklch(23.075% 0.00003 271.152);
+  --foreground: oklch(95.514% 0.00011 271.152);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
