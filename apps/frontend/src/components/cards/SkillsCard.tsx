@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+import React, { useId } from 'react'
 import { cn } from '../../lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { DynamicIcon, type IconName } from 'lucide-react/dynamic'
@@ -21,6 +22,7 @@ export const SkillsCard: React.FC<SkillsCardProps> = ({
 
   const hasSkills = !!skills && skills?.length > 0
 
+
   return (
     <Card
       className={cn(
@@ -29,51 +31,21 @@ export const SkillsCard: React.FC<SkillsCardProps> = ({
         className
       )}
     >
-      {/* Accent header */}
-      {/* <div className="relative px-6 pb-5 border-b flex shri  items-center gap-5">
-        <div className="shadow-lv1 abolute -top-2 -left-2 w-16 h-16 shrink-0 rounded-lg bg-secondary border border-border flex items-center justify-center text-primary">
-          {iconName && <DynamicIcon name={iconName} className="h-6 w-6" strokeWidth={2.2} />}
-        </div>
 
-        <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
-      </div> */}
+      <CardHeader
+        title={title}
+        iconName={iconName}
+      />
 
-      <div
-        className="relative px-6 py-5  flex h-24 items-center gap-5 overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-600"
-        style={{
-          backgroundImage: `
-          linear-gradient(349deg,rgba(4, 36, 214, 1) 0%, rgba(41, 66, 227, 1) 35%, rgba(0, 195, 255, 1) 100%), 
-          radial-gradient(circle at top left, rgba(255, 255, 255, 0.3), transparent), 
-          radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.2), transparent)`,
-          // backgroundBlendMode: 'multiply'
-        }}
-      >
-
-        <div
-          className="absolute -right-1 top-2 flex items-center justify-center z-0"
-          style={{ color: 'rgba(41, 66, 227, 0.7)' }}
-        >
-          {iconName && <DynamicIcon
-            name={iconName}
-            className="h-32 w-32"
-            strokeWidth={3}
-          />}
-        </div>
-
-        <div className="flex items-center justify-center text-primary z-10">
-          {iconName && <DynamicIcon name={iconName} className="h-10 w-10" strokeWidth={2.2} />}
-        </div>
-        <h3 className="text-lg font-semibold tracking-tight z-10">{title}</h3>
-      </div>
 
       <CardContent className=" pb-8 px-6">
         {hasSkills ? (
-          <ul className="grid grid-cols-1 gap-2.5">
+          <ul className="flex flex-wrap">
             {skills.map((skill, index) => (
               <li
                 key={index}
                 className={cn(
-                  'text-muted-foreground',
+                  'text-muted-foreground text-lg',
                   'flex items-center gap-1 px-1 rounded-md',
                   'transition-colors hover:bg-muted/40 hover:text-foreground/90'
                 )}
@@ -91,3 +63,123 @@ export const SkillsCard: React.FC<SkillsCardProps> = ({
     </Card>
   )
 }
+
+const CardHeader = ({ title, iconName }: { title: string; iconName?: IconName }) => {
+  console.log(iconName?.toLowerCase())
+
+  const uniqueId = useId()
+  const headerColor = ""
+
+  return (
+    <div className="relative px-3 py-3 border-b">
+
+      <div className='relative flex gap-4 items-center h-13 px-4  text-primary-foreground'>
+        <svg className='absolute pointer-events-none inset-0 h-full w-full overflow-visible z-0'>
+          <defs>
+            <clipPath id={`${uniqueId}_clip_path`}>
+              <rect
+                x="0"
+                y="0"
+                ry="0.5em"
+                width="100%"
+                height="100%"
+              />
+            </clipPath>
+
+            <linearGradient id="shadow_g" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="rgb(255, 255, 255)" />
+              <stop offset="15%" stop-color="rgb(255, 255, 255)" />
+              <stop offset="15%" stop-color="rgb(255, 255, 255)" />
+              <stop offset="85%" stop-color="rgb(200, 200, 200)" />
+              <stop offset="100%" stop-color="rgb(50, 50, 50)" />
+            </linearGradient>
+
+            <filter id={`${uniqueId}_bf`}>
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.9"
+                numOctaves="4"
+                stitchTiles="stitch"
+                result="turbulence" />
+              <feDisplacementMap
+                in2="turbulence"
+                in="SourceGraphic"
+                scale="50"
+                xChannelSelector="R"
+                yChannelSelector="G"
+                result='dismap' />
+              <feGaussianBlur
+                in='dismap'
+                stdDeviation="0.5"
+                result='blur'
+              />
+            </filter>
+
+          </defs>
+          <g
+            filter="
+              drop-shadow( 0px 3px 5px rgba(0, 0, 0, 0.49))
+            "
+          >
+            <g clipPath={`url(#${uniqueId}_clip_path)`}>
+
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                strokeWidth='3'
+                stroke='black'
+                className={'fill-primary'}
+                // fill='white'
+                filter='blur(2px)'
+                ry="8"
+              />
+
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                fill="url(#shadow_g)"
+                ry="8"
+                // style={{ mixBlendMode: "multiply" }}
+                opacity={0.25}
+              />
+
+              <rect
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                fill="url(#shadow_g)"
+                ry="8"
+                filter={`url(#${uniqueId}_bf)`}
+                style={{ mixBlendMode: "multiply" }}
+                opacity={.7}
+              />
+            </g>
+          </g>
+
+        </svg>
+
+        <DynamicIcon
+          name={(iconName?.toLowerCase() ?? 'at-sign') as IconName}
+          className='z-10'
+          filter='drop-shadow( 1px 1px 2px rgba(255,255,255,0.5)) drop-shadow(-1px -1px 2px rgba(0,0,0,0.8))'
+        />
+        <h3
+          className="text-xl font-semibold tracking-tight z-10"
+          style={{
+            textShadow: "1px 1px 2px rgba(255,255,255,0.5), -2px -2px 3px rgba(0,0,0,0.4)"
+          }}
+        >{title}</h3>
+
+      </div>
+    </div>
+  )
+}
+
+
+
+

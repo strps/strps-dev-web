@@ -8,13 +8,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import Section from '../section';
 import type { PageSkillsBlock } from '@strps-website/types';
+import { SkillsCard } from '../cards/SkillsCard';
 
-const getIcon = (name: string) => {
-    if (name.includes("Front-End") || name.includes("Frontend")) return <Terminal className="h-5 w-5" />;
-    if (name.includes("Back-End") || name.includes("Backend")) return <Server className="h-5 w-5" />;
-    if (name.includes("Languages")) return <Cpu className="h-5 w-5" />;
-    return <Wrench className="h-5 w-5" />;
-};
 
 const SkillsSection: React.FC<PageSkillsBlock> = ({ title, subtitle, skillGroups, section }) => {
     return (
@@ -26,19 +21,14 @@ const SkillsSection: React.FC<PageSkillsBlock> = ({ title, subtitle, skillGroups
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {skillGroups?.map((skillGroup) => (
-                    <Card key={skillGroup.id || skillGroup.name}>
-                        <CardHeader className="pb-3">
-                            <CardTitle className="flex items-center gap-2">
-                                {getIcon(skillGroup.name)}
-                                {skillGroup.name}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-wrap gap-2">
-                            {skillGroup.keywords?.map((item) => (
-                                <Badge key={item.id || item.keyword} variant="secondary">{item.keyword}</Badge>
-                            ))}
-                        </CardContent>
-                    </Card>
+                    <SkillsCard
+                        key={skillGroup.id}
+                        title={skillGroup.name}
+                        iconName={skillGroup.icon}
+                        // iconName={getIcon(skillGroup.title) as any}
+                        skills={skillGroup.keywords?.map((skill) => ({ text: skill.keyword })) || []}
+                    />
+
                 ))}
             </div>
         </Section>
