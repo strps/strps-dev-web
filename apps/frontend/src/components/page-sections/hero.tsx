@@ -85,7 +85,7 @@ const HeroSection: React.FC<HeroProps> = ({
                     {heroLinks?.map(({ link }, i) => {
                         if (link.appearance === 'send' || link.appearance === 'github' || link.appearance === 'linkedin') {
                             return (
-                                <SVGButton variant={link.appearance} key={i}>
+                                <SVGButton variant={link.appearance} href={link.url!} key={i}>
                                     {link.label}
                                 </SVGButton>
                             )

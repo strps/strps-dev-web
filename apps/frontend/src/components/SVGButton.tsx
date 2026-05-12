@@ -1,19 +1,21 @@
 'use client'
-import React, { useId, useRef } from 'react'
+import React, { useId } from 'react'
+import Link from 'next/link'
 import { motion, Variants } from 'motion/react'
 import { cn } from '@/lib/utils'
 
+const MotionLink = motion.create(Link)
 
 interface SVGButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'github' | 'linkedin' | 'send'
+    href?: string
 }
 
 export default function SVGButton({
     className,
     children,
-    onMouseEnter,
-    onMouseLeave,
     variant = 'github',
+    href,
     ...props
 }: SVGButtonProps) {
 
@@ -112,22 +114,17 @@ export default function SVGButton({
     }
 
 
-    return (
-        <motion.button
-            className={cn(
-                'relative px-6 py-2 cursor-pointer text-primary-foreground',
-                className
-            )}
-            style={{
-                height: `${heigth}em`,
-            }}
-            initial="initial"
-            whileHover="hover"
-            whileTap="tap"
-            variants={buttonVariants}
+    const sharedProps = {
+        className: cn('relative inline-flex items-center no-underline px-6 py-2 cursor-pointer text-primary-foreground', className),
+        style: { height: `${heigth}em` },
+        initial: "initial" as const,
+        whileHover: "hover" as const,
+        whileTap: "tap" as const,
+        variants: buttonVariants,
+    }
 
-        // {...props}
-        >
+    const inner = (
+        <>
             <svg
                 aria-hidden
                 className="pointer-events-none absolute inset-0 h-full w-full overflow-visible z-0"
@@ -292,6 +289,16 @@ export default function SVGButton({
             >
                 {children}
             </span>
+        </>
+    )
+
+    return href ? (
+        <MotionLink href={href} {...sharedProps}>
+            {inner}
+        </MotionLink>
+    ) : (
+        <motion.button {...sharedProps}>
+            {inner}
         </motion.button>
     )
 }

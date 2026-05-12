@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@source "../app/exp/**/*.{tsx,ts}";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
