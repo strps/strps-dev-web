@@ -5,7 +5,7 @@ import type { PageAboutBlock, Media } from '@strps-website/types';
 const AboutSection: React.FC<PageAboutBlock> = ({ title, summary, image, section }) => {
     const img = typeof image === 'object' && image ? image as Media : null;
     return (
-        <Section {...(section ?? {})} id={section?.section_id || 'about'}>
+        <Section {...(section ?? {})} id={section?.section_id || 'about'} className='min-h-[50em] flex items-center'>
             <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
                 {img?.url && (
                     <div className="shrink-0">

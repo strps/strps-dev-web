@@ -76,13 +76,14 @@ const HeroSection: React.FC<HeroProps> = ({
 
                 <div className="flex flex-wrap justify-center gap-4 pt-4">
                     {email && (
-                        <SVGButton variant='send' className=''>
+                        <SVGButton variant='send' className='' href={`mailto:${email}`}>
 
                             <Mail className="mr-2 h-4 w-4" /> <span>Contact Me</span>
 
                         </SVGButton>
                     )}
                     {heroLinks?.map(({ link }, i) => {
+
                         if (link.appearance === 'send' || link.appearance === 'github' || link.appearance === 'linkedin') {
                             return (
                                 <SVGButton variant={link.appearance} href={link.url!} key={i}>
