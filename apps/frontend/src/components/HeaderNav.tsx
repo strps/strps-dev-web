@@ -38,12 +38,15 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
             className={`
                 top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-border 
                 ${overlay ? 'absolute' : 'relative'} 
-                ${container ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' : ''}
                 ${background ? 'bg-background' : 'bg-transparent'}
                 `
             }
         >
-            <div className="flex justify-between items-center h-16">
+            <div className={`
+                    flex justify-between items-center h-16
+                    ${container ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' : ''}
+                `}
+            >
                 <Link href="/" className="text-xl font-bold tracking-tight text-foreground">
                     {typeof (brand) === 'string' ? <BrandText brandName={brand} /> : brand}
                 </Link>

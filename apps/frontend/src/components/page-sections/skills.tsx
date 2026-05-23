@@ -14,7 +14,11 @@ import { IconName } from 'lucide-react/dynamic';
 
 const SkillsSection: React.FC<PageSkillsBlock> = ({ title, subtitle, skillGroups, section }) => {
     return (
-        <Section {...(section ?? {})} id={section?.section_id || 'skills'} className="space-y-8 py-10">
+        <Section
+            id={section?.section_id || 'skills'}
+            className="space-y-8 py-10 px-10"
+            {...(section ?? {})}
+        >
             <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
                 {subtitle && <p className="text-muted-foreground">{subtitle}</p>}

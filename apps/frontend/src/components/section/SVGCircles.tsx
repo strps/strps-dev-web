@@ -33,6 +33,18 @@ interface ParallaxCircleProps {
   }
 }
 
+function makeRotation() {
+  const initialRotation = Math.random() * 360
+  const duration = Math.random() * 1 + 120
+  const direction = Math.random() < 0.5 ? 1 : -1
+  return {
+    initial: initialRotation,
+    animate: { rotate: [initialRotation, initialRotation + 360 * direction] },
+    transition: { duration, repeat: Infinity, ease: 'linear' as const },
+  }
+}
+type Rotation = ReturnType<typeof makeRotation>
+
 function usePointerFollow(pattern: MotionPattern) {
   const targetX = useMotionValue(0)
   const targetY = useMotionValue(0)
@@ -82,14 +94,14 @@ function ParallaxCircle({ followX, followY, factor, radius, strokeWidth, strokeC
   )
 }
 
-const CirclesRenderer: React.FC<SVGCirclesProps> = ({
-  width,
-  height,
-  numCircles,
-  minRadius,
-  maxRadius,
-  strokeWidth,
-  strokeDasharray,
+const SVGCircles: React.FC<SVGCirclesProps> = ({
+  width = 150,
+  height = 150,
+  numCircles = 9,
+  minRadius = 20,
+  maxRadius = 80,
+  strokeWidth = 100,
+  strokeDasharray = '75',
   strokeColor = 'white',
   motionPattern = 'spring',
   className,
@@ -98,19 +110,17 @@ const CirclesRenderer: React.FC<SVGCirclesProps> = ({
   const svgRef = useRef<SVGSVGElement>(null)
   const { followX, followY, setTarget } = usePointerFollow(motionPattern)
 
-  const circleRotations = useState(() =>
-    Array.from({ length: numCircles! }).map(() => {
-      const initialRotation = Math.random() * 360
-      const duration = Math.random() * 1 + 120
-      const direction = Math.random() < 0.5 ? 1 : -1
+  const [circleRotations, setCircleRotations] = useState<Rotation[]>(() =>
+    Array.from({ length: numCircles }, makeRotation),
+  )
 
-      return {
-        initial: initialRotation,
-        animate: { rotate: [initialRotation, initialRotation + 360 * direction] },
-        transition: { duration, repeat: Infinity, ease: 'linear' as const },
-      }
+  useEffect(() => {
+    setCircleRotations(prev => {
+      if (prev.length === numCircles) return prev
+      if (prev.length > numCircles) return prev.slice(0, numCircles)
+      return [...prev, ...Array.from({ length: numCircles - prev.length }, makeRotation)]
     })
-  )[0]
+  }, [numCircles])
 
   useEffect(() => {
     const pointer = { x: 0, y: 0 }
@@ -119,8 +129,8 @@ const CirclesRenderer: React.FC<SVGCirclesProps> = ({
       const rect = svgRef.current?.getBoundingClientRect()
       if (!rect) return
       setTarget(
-        (clientX - rect.left - rect.width / 2) * (width! / rect.width),
-        (clientY - rect.top - rect.height / 2) * (height! / rect.height),
+        (clientX - rect.left - rect.width / 2) * (width / rect.width),
+        (clientY - rect.top - rect.height / 2) * (height / rect.height),
       )
     }
 
@@ -142,60 +152,37 @@ const CirclesRenderer: React.FC<SVGCirclesProps> = ({
     }
   }, [width, height, setTarget])
 
-  console.log(className)
   return (
     <svg
       ref={svgRef}
       style={style}
       className={className}
-      viewBox={`${-width! / 2} ${-height! / 2} ${width} ${height}`}
+      viewBox={`${-width / 2} ${-height / 2} ${width} ${height}`}
       preserveAspectRatio="xMidYMid slice"
     >
       {circleRotations.map((rotation, i) => {
-        const radius = minRadius! + ((maxRadius! - minRadius!) * i) / (numCircles! - 1)
-        const factor = ((i + 1) / numCircles!) * 0.07
+        const focalLenght = 1000000
+        const d0 = focalLenght / maxRadius
+        const d1 = focalLenght / minRadius
+        const delta_d = d1 - d0
+        const d = d0 + (delta_d / numCircles) * i
+        const r = focalLenght / d
+        const factor = r / maxRadius
         return (
           <ParallaxCircle
             key={i}
             followX={followX}
             followY={followY}
             factor={factor}
-            radius={radius}
-            strokeWidth={strokeWidth! * i * 1.25}
-            strokeDasharray={strokeDasharray!}
-            strokeColor={`rgb(from var(--color-svg) r g b / ${0.5 + (i / numCircles!) * 0.5})`}
+            radius={r}
+            strokeWidth={strokeWidth * factor}
+            strokeDasharray={strokeDasharray}
+            strokeColor={strokeColor}
             rotation={rotation}
           />
         )
       })}
     </svg>
-  )
-}
-
-const SVGCircles: React.FC<SVGCirclesProps> = (props) => {
-  const {
-    numCircles = 9,
-    width = 150,
-    height = 150,
-    minRadius = 20,
-    maxRadius = 80,
-    strokeWidth = 5,
-    strokeDasharray = '75',
-    ...rest
-  } = props
-
-  return (
-    <CirclesRenderer
-      key={numCircles}
-      numCircles={numCircles}
-      width={width}
-      height={height}
-      minRadius={minRadius}
-      maxRadius={maxRadius}
-      strokeWidth={strokeWidth}
-      strokeDasharray={strokeDasharray}
-      {...rest}
-    />
   )
 }
 

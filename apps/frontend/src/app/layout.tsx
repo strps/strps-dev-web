@@ -34,7 +34,7 @@ export default async function RootLayout({
           <HeaderNav
             navItems={navItems}
             theme={theme}
-            background={background}
+            // background={background}
             overlay={overlay}
             brand={
               <span className="flex items-center gap-2 font-bold text-xl tracking-tighter">
