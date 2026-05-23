@@ -14,6 +14,18 @@ export const appearanceOptions: Record<string, { label: string; value: string }>
     label: 'Outline',
     value: 'outline',
   },
+  send: {
+    label: 'Send',
+    value: 'send',
+  },
+  github: {
+    label: 'GitHub',
+    value: 'github',
+  },
+  linkedin: {
+    label: 'LinkedIn',
+    value: 'linkedin',
+  },
 }
 
 type LinkType = (options?: {
