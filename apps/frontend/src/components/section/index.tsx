@@ -83,8 +83,9 @@ export default function Section({
             width={1600}
             height={900}
             numCircles={8}
-            minRadius={120}
             maxRadius={920}
+            focalLength={1000}
+            worldDepth={6667}
             strokeWidth={10}
             strokeDasharray="40 20"
             // strokeColor="green"

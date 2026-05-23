@@ -13,9 +13,10 @@ const MOTION_PATTERNS: MotionPattern[] = ["spring", "ease", "direct"];
 export function SvgCirclesHero() {
     const [numCircles, setNumCircles] = useState(10);
     const [strokeWidth, setStrokeWidth] = useState(6);
-    const [minRadius, setMinRadius] = useState(120);
+    const [focalLength, setFocalLength] = useState(1000);
     const [maxRadius, setMaxRadius] = useState(920);
     const [dashOn, setDashOn] = useState(40);
+    const worldDepth = 6667;
     const [pattern, setPattern] = useState<MotionPattern>("spring");
     const [controlsOpen, setControlsOpen] = useState(true);
 
@@ -26,8 +27,9 @@ export function SvgCirclesHero() {
                 width={1600}
                 height={900}
                 numCircles={numCircles}
-                minRadius={minRadius}
                 maxRadius={maxRadius}
+                focalLength={focalLength}
+                worldDepth={worldDepth}
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${dashOn} ${Math.round(dashOn / 2)}`}
                 motionPattern={pattern}
@@ -66,21 +68,21 @@ export function SvgCirclesHero() {
                                 value={strokeWidth}
                                 onChange={setStrokeWidth}
                                 min={1}
-                                max={14}
+                                max={50}
                                 step={1}
                             />
                             <VerticalSlider
-                                label="Min R"
-                                value={minRadius}
-                                onChange={(v) => setMinRadius(Math.min(v, maxRadius - 20))}
-                                min={20}
-                                max={600}
-                                step={10}
+                                label="Focal"
+                                value={focalLength}
+                                onChange={setFocalLength}
+                                min={200}
+                                max={8000}
+                                step={100}
                             />
                             <VerticalSlider
                                 label="Max R"
                                 value={maxRadius}
-                                onChange={(v) => setMaxRadius(Math.max(v, minRadius + 20))}
+                                onChange={setMaxRadius}
                                 min={300}
                                 max={1400}
                                 step={20}
@@ -106,8 +108,8 @@ export function SvgCirclesHero() {
                                         type="button"
                                         onClick={() => setPattern(p)}
                                         className={`flex-1 rounded-md px-2 py-1 text-xs capitalize transition-colors ${pattern === p
-                                                ? "bg-primary text-primary-foreground"
-                                                : "bg-muted text-muted-foreground hover:text-foreground"
+                                            ? "bg-primary text-primary-foreground"
+                                            : "bg-muted text-muted-foreground hover:text-foreground"
                                             }`}
                                     >
                                         {p}

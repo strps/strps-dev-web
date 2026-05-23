@@ -9,8 +9,9 @@ interface SVGCirclesProps {
   width?: number
   height?: number
   numCircles?: number
-  minRadius?: number
   maxRadius?: number
+  focalLength?: number
+  worldDepth?: number
   strokeWidth?: number
   strokeColor?: string
   strokeDasharray?: string
@@ -50,8 +51,8 @@ function usePointerFollow(pattern: MotionPattern) {
   const targetY = useMotionValue(0)
 
   // spring — always created (hooks can't be conditional)
-  const springX = useSpring(targetX, { stiffness: 20, damping: 5 })
-  const springY = useSpring(targetY, { stiffness: 20, damping: 5 })
+  const springX = useSpring(targetX, { stiffness: 15, damping: 10 })
+  const springY = useSpring(targetY, { stiffness: 15, damping: 10 })
 
   // ease — exponential lerp each frame
   const lerpX = useMotionValue(0)
@@ -98,8 +99,9 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
   width = 150,
   height = 150,
   numCircles = 9,
-  minRadius = 20,
   maxRadius = 80,
+  focalLength = 1000,
+  worldDepth = 5000,
   strokeWidth = 100,
   strokeDasharray = '75',
   strokeColor = 'white',
@@ -135,8 +137,8 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
     }
 
     const onMove = (e: PointerEvent) => {
-      pointer.x = e.clientX
-      pointer.y = e.clientY
+      // pointer.x = e.clientX
+      // pointer.y = e.clientY
       compute(e.clientX, e.clientY)
     }
     const onScroll = () => compute(pointer.x, pointer.y)
@@ -161,21 +163,19 @@ const SVGCircles: React.FC<SVGCirclesProps> = ({
       preserveAspectRatio="xMidYMid slice"
     >
       {circleRotations.map((rotation, i) => {
-        const focalLenght = 1000000
-        const d0 = focalLenght / maxRadius
-        const d1 = focalLenght / minRadius
-        const delta_d = d1 - d0
-        const d = d0 + (delta_d / numCircles) * i
-        const r = focalLenght / d
+        const dNear = focalLength
+        const dFar = focalLength + worldDepth
+        const d = dNear + ((dFar - dNear) / Math.max(numCircles - 1, 1)) * i
+        const r = (focalLength * maxRadius) / d
         const factor = r / maxRadius
         return (
           <ParallaxCircle
             key={i}
             followX={followX}
             followY={followY}
-            factor={factor}
+            factor={factor / 5}
             radius={r}
-            strokeWidth={strokeWidth * factor}
+            strokeWidth={strokeWidth * factor * 10}
             strokeDasharray={strokeDasharray}
             strokeColor={strokeColor}
             rotation={rotation}
