@@ -50,6 +50,18 @@ export const galleryItems: GalleryItem[] = [
     priority: 'high',
   },
   {
+    id: 'reaction-sphere',
+    slug: 'reaction-sphere',
+    title: 'Reaction Sphere',
+    description:
+      'Gray-Scott reaction-diffusion running across the surface of an icosphere. Each vertex reacts and diffuses with its mesh neighbors on the GPU, in 3D you can spin.',
+    category: 'experiment',
+    tags: ['WebGL', 'Three.js', 'Simulation', '3D'],
+    href: '/gallery/reaction-sphere',
+    year: 2026,
+    priority: 'high',
+  },
+  {
     id: 'synth-keys',
     slug: 'synth-keys',
     title: 'Synth Keys',
