@@ -38,6 +38,18 @@ export const galleryItems: GalleryItem[] = [
     priority: 'high',
   },
   {
+    id: 'gray-scott',
+    slug: 'gray-scott',
+    title: 'Gray-Scott',
+    description:
+      'A live reaction-diffusion field running on the GPU. Two virtual chemicals feed, react, and diffuse into coral, maze, and mitosis patterns you can paint into.',
+    category: 'experiment',
+    tags: ['WebGL', 'Simulation', 'Generative', 'Interactive'],
+    href: '/gallery/gray-scott',
+    year: 2025,
+    priority: 'high',
+  },
+  {
     id: 'synth-keys',
     slug: 'synth-keys',
     title: 'Synth Keys',
