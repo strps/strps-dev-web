@@ -11,7 +11,7 @@ export const galleryItems: GalleryItem[] = [
     tags: ['SVG', 'Generative', 'Animation'],
     href: '/gallery/generative-tiles',
     year: 2025,
-    priority: 'high',
+    priority: 'low',
   },
   {
     id: 'led-matrix-clock',
@@ -62,6 +62,18 @@ export const galleryItems: GalleryItem[] = [
     priority: 'high',
   },
   {
+    id: 'image-to-svg',
+    slug: 'image-to-svg',
+    title: 'Image to SVG',
+    description:
+      'Turn any image into vector line art. The first converter renders classic engraving-style hatching and cross-hatching, with more strategies to come.',
+    category: 'experiment',
+    tags: ['SVG', 'Image', 'Halftone', 'Interactive'],
+    href: '/gallery/image-to-svg',
+    year: 2026,
+    priority: 'high',
+  },
+  {
     id: 'synth-keys',
     slug: 'synth-keys',
     title: 'Synth Keys',
@@ -72,90 +84,6 @@ export const galleryItems: GalleryItem[] = [
     href: '/gallery/synth-keys',
     year: 2025,
     priority: 'medium',
-  },
-  {
-    id: 'ascii-studio',
-    slug: 'ascii-studio',
-    title: 'ASCII Studio',
-    description:
-      'A drag-and-drop ASCII art editor with palettes, brushes, and an export pipeline that produces clean monospace renders.',
-    category: 'art',
-    tags: ['Canvas', 'Typography'],
-    href: '/gallery/ascii-studio',
-    year: 2024,
-    priority: 'medium',
-  },
-  {
-    id: 'latency-lab',
-    slug: 'latency-lab',
-    title: 'Latency Lab',
-    description:
-      'A small bench for measuring end-to-end latency across queues, protocols, and serialization formats. Outputs CSV and pretty charts.',
-    category: 'experiment',
-    tags: ['Networking', 'Benchmarks'],
-    href: '/gallery/latency-lab',
-    year: 2024,
-    priority: 'medium',
-  },
-  {
-    id: 'plant-watering-bot',
-    slug: 'plant-watering-bot',
-    title: 'Plant Watering Bot',
-    description:
-      'A capacitive moisture sensor and a peristaltic pump on a tiny board. Keeps my basil alive most weeks.',
-    category: 'experiment',
-    tags: ['Hardware', 'IoT'],
-    href: '/gallery/plant-watering-bot',
-    year: 2023,
-    priority: 'low',
-  },
-  {
-    id: 'color-field-cards',
-    slug: 'color-field-cards',
-    title: 'Color Field Cards',
-    description:
-      'A daily series of generative gradients, printed and pinned to a board next to my desk.',
-    category: 'art',
-    tags: ['Generative', 'Color'],
-    href: '/gallery/color-field-cards',
-    year: 2024,
-    priority: 'low',
-  },
-  {
-    id: 'recipe-box',
-    slug: 'recipe-box',
-    title: 'Recipe Box',
-    description:
-      'A no-fuss recipe manager that I actually use. Markdown-first, with a small parser for ingredient scaling.',
-    category: 'project',
-    tags: ['React', 'Markdown'],
-    href: '/gallery/recipe-box',
-    year: 2023,
-    priority: 'low',
-  },
-  {
-    id: 'type-specimen',
-    slug: 'type-specimen',
-    title: 'Type Specimen',
-    description:
-      'A specimen sheet generator for variable fonts. Pick a font, get a printable PDF.',
-    category: 'art',
-    tags: ['Typography', 'PDF'],
-    href: '/gallery/type-specimen',
-    year: 2025,
-    priority: 'low',
-  },
-  {
-    id: 'pi-cluster-dashboard',
-    slug: 'pi-cluster-dashboard',
-    title: 'Pi Cluster Dashboard',
-    description:
-      'A small dashboard for the four-node Raspberry Pi cluster under my desk. Temperatures, load, and a button to gracefully shut everything down.',
-    category: 'experiment',
-    tags: ['Homelab', 'Dashboard'],
-    href: '/gallery/pi-cluster-dashboard',
-    year: 2024,
-    priority: 'low',
   },
 ];
 

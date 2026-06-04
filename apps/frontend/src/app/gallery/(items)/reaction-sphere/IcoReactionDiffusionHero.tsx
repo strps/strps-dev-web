@@ -6,7 +6,7 @@ import { ArrowLeft, RotateCcw, Rotate3d, Settings2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VerticalSlider } from "@/components/ui/vertical-slider";
-import { IcoReactionDiffusionCanvas } from "./IcoReactionDiffusionCanvas";
+import { IcoReactionDiffusionCanvas } from "./IcoReactionDiffusionCanvasN";
 
 interface Preset {
     name: string;

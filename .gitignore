@@ -21,4 +21,6 @@ public/cascade-studio/**
 public/cascade-studio/
 public/cascade-studio
 
-exp
+# frontend experiment directory
+/apps/frontend/src/app/exp/*
+!/apps/frontend/src/app/exp/(tracked)/
