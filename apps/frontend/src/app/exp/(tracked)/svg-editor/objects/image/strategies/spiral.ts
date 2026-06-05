@@ -67,7 +67,6 @@ function render(input: StrategyInput, params: Record<string, number>): string {
     const MAX_POINTS = 60000;
 
     const stroke = invert ? "#ffffff" : "#111111";
-    const bg = invert ? "#111111" : "#ffffff";
 
     const marks: string[] = [];
 
@@ -129,7 +128,6 @@ function render(input: StrategyInput, params: Record<string, number>): string {
 
     return (
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">` +
-        `<rect width="${W}" height="${H}" fill="${bg}"/>` +
         `<g stroke="${stroke}" stroke-width="${lineWidth}" stroke-linecap="round" stroke-linejoin="round" fill="none">` +
         marks.join("") +
         `</g></svg>`

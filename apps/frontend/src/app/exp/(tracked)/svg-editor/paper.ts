@@ -31,10 +31,39 @@ export function getPaper(id: string): PaperSize {
     return PAPER_SIZES.find((p) => p.id === id) ?? PAPER_SIZES[0];
 }
 
+/** Oriented sheet dimensions + margin for a named paper size. */
+export interface ResolvedPaper {
+    /** Sheet width after orientation (mm for named sizes). */
+    pw: number;
+    /** Sheet height after orientation. */
+    ph: number;
+    /** Uniform margin kept clear around the artwork. */
+    margin: number;
+    /** Dimension unit for the final SVG (`"mm"` for named sizes, `""` for "fit"). */
+    unit: string;
+}
+
+/**
+ * Resolve a paper id + orientation to concrete sheet dimensions and margin.
+ * Mirrors the sizing `applyLayout` does, but takes an explicit `landscape` flag
+ * instead of inferring orientation from the artwork. "Fit" has no intrinsic
+ * size, so it falls back to A4.
+ */
+export function resolvePaper(paperId: string, landscape: boolean): ResolvedPaper {
+    let paper = getPaper(paperId);
+    if (paper.w == null || paper.h == null) paper = getPaper("a4");
+    const short = Math.min(paper.w!, paper.h!);
+    const long = Math.max(paper.w!, paper.h!);
+    const pw = landscape ? long : short;
+    const ph = landscape ? short : long;
+    const margin = Math.min(pw, ph) * MARGIN_FRACTION;
+    return { pw, ph, margin, unit: "mm" };
+}
+
 const round = (n: number) => Math.round(n * 1000) / 1000;
 
 /** A dark mark on light paper, a light mark on dark paper. */
-function contrastColor(bg: string): string {
+export function contrastColor(bg: string): string {
     const hex = bg.replace("#", "");
     const full = hex.length === 3 ? hex.split("").map((c) => c + c).join("") : hex;
     const r = parseInt(full.slice(0, 2), 16);
