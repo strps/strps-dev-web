@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Section from '../section'
 import { ArticleCard } from '../cards/ArticleCard'
-import { getBlogPosts } from '@/app/blog/data'
+import { getBlogPosts } from '@/app/(website)/blog/data'
 import type { PageBlogBlock, Post, Media, BlogTag } from '@strps-website/types'
 
 const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blogLimit?: number }) => {

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GalleryBar } from "./GalleryBar";
 import { GalleryCard } from "./GalleryCard";
-import type { GalleryCategory, GalleryItem, GalleryPriority } from "@/app/gallery/types";
+import type { GalleryCategory, GalleryItem, GalleryPriority } from "@/app/(website)/gallery/types";
 
 export interface GalleryProps {
     items: GalleryItem[];

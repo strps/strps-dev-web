@@ -1,8 +1,9 @@
 'use client';
-import IcoReactionDiffusionCanvas from "@/app/gallery/(items)/reaction-sphere/IcoReactionDiffusionCanvasN";
+// import IcoReactionDiffusionCanvas from "@/app/gallery/(items)/reaction-sphere/IcoReactionDiffusionCanvasN";
 import ControlPanel from "@/app/exp/(tracked)/components/ControlPanel";
 import AdjustableSlider from "@/app/exp/(tracked)/components/AdjustableSlider";
 import { useState } from "react";
+import IcoReactionDiffusionCanvas from "@/app/(website)/gallery/(items)/reaction-sphere/IcoReactionDiffusionCanvasN";
 
 
 interface Preset {

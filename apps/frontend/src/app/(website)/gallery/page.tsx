@@ -1,5 +1,5 @@
 import { Gallery } from "@/components/gallery/Gallery";
-import { getGalleryItems } from "@/app/gallery/data";
+import { getGalleryItems } from "./data";
 
 export const metadata = {
     title: "Gallery | Cesar Jerez",

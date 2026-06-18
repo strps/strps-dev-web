@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { GALLERY_CATEGORIES, type GalleryCategory } from "@/app/gallery/types";
+import { GALLERY_CATEGORIES, GalleryCategory } from "@/app/(website)/gallery/types";
+// import { GALLERY_CATEGORIES, type GalleryCategory } from "@/app/gallery/types";
 
 export interface GalleryBarProps {
     title: string;

@@ -3,8 +3,8 @@ import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Section from '../section';
 import { ProjectCard } from '../cards/ProjectCard';
-import { getProjects } from '@/app/projects/data';
 import type { PageProjectsBlock, Project, Media } from '@strps-website/types';
+import { getProjects } from '@/app/(website)/projects/data';
 
 const ProjectsSection = async ({ title, populateBy, limit, selectedProjects, githubUrl, section }: PageProjectsBlock) => {
     let projects: Project[] = [];
