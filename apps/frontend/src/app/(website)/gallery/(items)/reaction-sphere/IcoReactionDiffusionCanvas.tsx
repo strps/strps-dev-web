@@ -17,7 +17,7 @@ export interface IcoReactionDiffusionCanvasProps extends IcoReactionParams {
     className?: string;
 }
 
-// How many times the base icosahedron is subdivided. 5 -> 10,242 vertices.
+// How many times the base icosahedron is subdivided. 6 -> 40,962 vertices.
 const SUBDIVISIONS = 6;
 // Sim steps per displayed frame — the dynamics need many small steps to look smooth.
 const ITERATIONS_PER_FRAME = 12;
@@ -34,7 +34,7 @@ void main() {
 }`;
 
 // Gray-Scott update, but the Laplacian gathers each vertex's mesh neighbors from
-// a lookup texture instead of a fixed 3x3 grid. Chemical A in .x, B in .y.
+// a structured lookup grid instead of a fixed 3x3 grid or an oversized 1D texture strip.
 const SIM_FRAG = /* glsl */ `
 precision highp float;
 uniform sampler2D uState;
@@ -45,7 +45,6 @@ uniform float uDa;
 uniform float uDb;
 uniform float uDt;
 uniform float uTexSize;
-uniform float uCount;
 in vec2 vUv;
 out vec4 outColor;
 
@@ -54,16 +53,21 @@ void main() {
     float a = s.x;
     float b = s.y;
 
-    // Recover this fragment's vertex index from its pixel coordinate.
-    float vIndex = floor(gl_FragCoord.y) * uTexSize + floor(gl_FragCoord.x);
+    // Recover this fragment's vertex row and column coordinates in the state grid.
+    float vCol = floor(gl_FragCoord.x);
+    float vRow = floor(gl_FragCoord.y);
 
     // Umbrella Laplacian: mean(neighbors) - center. Works for both the 6-neighbor
     // vertices and the 12 original corners that only have 5.
     vec2 sum = vec2(0.0);
     float n = 0.0;
+    
     for (int k = 0; k < ${MAX_NEIGHBORS}; k++) {
-        vec2 luv = vec2((float(k) + 0.5) / float(${MAX_NEIGHBORS}), (vIndex + 0.5) / uCount);
-        vec4 nb = texture(uNeighbors, luv);
+        // Compute precise texture coordinates matching our packed 2D neighbor grid layout.
+        float texX = (vCol * float(${MAX_NEIGHBORS}) + float(k) + 0.5) / (uTexSize * float(${MAX_NEIGHBORS}));
+        float texY = (vRow + 0.5) / uTexSize;
+        
+        vec4 nb = texture(uNeighbors, vec2(texX, texY));
         if (nb.z > 0.5) {
             sum += texture(uState, nb.xy).xy;
             n += 1.0;
@@ -192,12 +196,23 @@ export function IcoReactionDiffusionCanvas({
             stateUv[i * 2 + 1] = (row + 0.5) / texSize;
         }
 
-        // Neighbor lookup texture: 6 x count, RG = neighbor state-UV, B = valid flag.
-        const neighborData = new Float32Array(MAX_NEIGHBORS * count * 4);
+        // Safe 2D Adjacency Structure mapping to hardware limits.
+        // Instead of height = count, we make it a structured 2D matrix matching state coordinates.
+        const neighborWidth = MAX_NEIGHBORS * texSize;
+        const neighborHeight = texSize;
+
+        const neighborData = new Float32Array(neighborWidth * neighborHeight * 4);
         for (let i = 0; i < count; i++) {
             const list = mesh.neighbors[i];
+
+            const vCol = i % texSize;
+            const vRow = Math.floor(i / texSize);
+
             for (let k = 0; k < MAX_NEIGHBORS; k++) {
-                const base = (i * MAX_NEIGHBORS + k) * 4;
+                const pixelX = vCol * MAX_NEIGHBORS + k;
+                const pixelY = vRow;
+                const base = (pixelY * neighborWidth + pixelX) * 4;
+
                 if (k < list.length) {
                     const nIdx = list[k];
                     const col = nIdx % texSize;
@@ -208,10 +223,11 @@ export function IcoReactionDiffusionCanvas({
                 }
             }
         }
+
         const neighborTex = new THREE.DataTexture(
             neighborData,
-            MAX_NEIGHBORS,
-            count,
+            neighborWidth,
+            neighborHeight,
             THREE.RGBAFormat,
             THREE.FloatType
         );
@@ -280,7 +296,6 @@ export function IcoReactionDiffusionCanvas({
                 uDb: { value: paramsRef.current.dB },
                 uDt: { value: 1.0 },
                 uTexSize: { value: texSize },
-                uCount: { value: count },
             },
         });
         const copyMaterial = new THREE.RawShaderMaterial({

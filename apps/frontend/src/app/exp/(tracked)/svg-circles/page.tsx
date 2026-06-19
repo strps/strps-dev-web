@@ -27,12 +27,12 @@ export default function Page() {
                 focalLength={focalLength}
                 worldDepth={worldDepth}
                 strokeWidth={strokeWidth}
-                strokeColor="#e879f9"
+                strokeColor="#ebebeb"
                 strokeDasharray={`${dashOn} ${Math.round(dashOn / 2)}`}
                 motionPattern={pattern}
             />
 
-            <ControlPanel title="SVG Circles">
+            <ControlPanel title="SVG Circles" showButton={false} defaultOpen={false}>
                 <AdjustableSlider label="circles" value={numCircles} min={2} max={24} step={1}
                     format={(v) => v.toFixed(0)}
                     onChange={(v) => setNumCircles(Math.round(v))} />

@@ -6,7 +6,7 @@ import { ArrowLeft, RotateCcw, Rotate3d, Settings2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VerticalSlider } from "@/components/ui/vertical-slider";
-import { IcoReactionDiffusionCanvas } from "./IcoReactionDiffusionCanvasN";
+import { IcoReactionDiffusionCanvas } from "./IcoReactionDiffusionCanvas";
 
 interface Preset {
     name: string;
@@ -40,7 +40,7 @@ export function IcoReactionDiffusionHero() {
     }
 
     return (
-        <section className="relative h-[80vh] min-h-[520px] w-full overflow-hidden bg-background">
+        <section className="relative h-[80vh] min-h-130 w-full overflow-hidden bg-background">
             <IcoReactionDiffusionCanvas
                 className="absolute inset-0 h-full w-full"
                 feed={feed}
@@ -54,7 +54,7 @@ export function IcoReactionDiffusionHero() {
 
             <div className="absolute right-4 top-4 z-20 md:right-6 md:top-6">
                 {controlsOpen ? (
-                    <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-[280px] md:w-[320px]">
+                    <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-70 md:w-[320px]">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-xs uppercase tracking-wider text-muted-foreground">
                                 Controls

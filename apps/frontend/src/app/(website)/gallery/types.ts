@@ -1,3 +1,5 @@
+import type { StaticImageData } from 'next/image';
+
 export type GalleryCategory = 'art' | 'experiment' | 'project';
 
 export type GalleryPriority = 'high' | 'medium' | 'low';
@@ -9,7 +11,7 @@ export interface GalleryItem {
   description: string;
   category: GalleryCategory;
   tags?: string[];
-  imageUrl?: string;
+  imageUrl?: string | StaticImageData;
   href: string;
   year?: number;
   /**

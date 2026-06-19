@@ -1,9 +1,8 @@
 'use client';
-// import IcoReactionDiffusionCanvas from "@/app/gallery/(items)/reaction-sphere/IcoReactionDiffusionCanvasN";
 import ControlPanel from "@/app/exp/(tracked)/components/ControlPanel";
 import AdjustableSlider from "@/app/exp/(tracked)/components/AdjustableSlider";
 import { useState } from "react";
-import IcoReactionDiffusionCanvas from "@/app/(website)/gallery/(items)/reaction-sphere/IcoReactionDiffusionCanvas";
+import { GrayScottCanvas } from "@/app/(website)/gallery/(items)/gray-scott/GrayScottCanvas";
 
 
 interface Preset {
@@ -40,17 +39,16 @@ export default function Page() {
 
     return (
         <div className="relative w-full h-screen flex items-center justify-center overflow-hidden">
-            <IcoReactionDiffusionCanvas
-                className="w-full"
+            <GrayScottCanvas
+                className="w-full h-full"
                 seedKey={seedKey}
                 dA={dA}
                 dB={dB}
                 feed={feed}
                 kill={kill}
-
             />
 
-            <ControlPanel title="Reaction Sphere" defaultOpen={false}>
+            <ControlPanel title="Gray-Scott" defaultOpen={false}>
                 <div className="mb-4 flex flex-wrap gap-1.5">
                     {PRESETS.map((preset) => (
                         <button

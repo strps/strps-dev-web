@@ -8,12 +8,16 @@ interface ControlPanelProps {
     side?: "left" | "right";
     /** Keyboard key that toggles visibility (ignored while typing). Defaults to "h". */
     toggleKey?: string;
+    /** Whether to show the collapsed "show" button while the panel is hidden. Defaults to true. */
+    showButton?: boolean;
+    /** Whether the panel starts open. Defaults to true. */
+    defaultOpen?: boolean;
 }
 
 // Collapsible overlay panel shared by the exp/sc experiments. Manages its own
 // open/closed state and toggles on a key (ignored while typing).
-export default function ControlPanel({ title, children, side = "left", toggleKey = "h" }: ControlPanelProps) {
-    const [open, setOpen] = useState(true);
+export default function ControlPanel({ title, children, side = "left", toggleKey = "h", showButton = true, defaultOpen = true }: ControlPanelProps) {
+    const [open, setOpen] = useState(defaultOpen);
 
     const edge = side === "right" ? "right-4" : "left-4";
 
@@ -32,6 +36,7 @@ export default function ControlPanel({ title, children, side = "left", toggleKey
     }, [toggleKey]);
 
     if (!open) {
+        if (!showButton) return null;
         return (
             <button
                 onClick={() => setOpen(true)}
