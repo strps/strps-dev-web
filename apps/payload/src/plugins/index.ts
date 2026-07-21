@@ -12,7 +12,16 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 // import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@strps-website/types'
-import { verifyRecaptchaToken } from '@/utilities/verify-recaptcha'
+import { isRecaptchaConfigured, verifyRecaptchaToken } from '@/utilities/verify-recaptcha'
+
+// Evaluated once, server-side, when the Payload config is built. It must be a plain
+// string by the time it reaches the admin bundle: an `admin.description` *function*
+// runs on the client, where a server-only env var is not readable. Changing the env
+// var therefore requires a server restart to update this text.
+const recaptchaFieldDescription = isRecaptchaConfigured()
+  ? 'Enable reCAPTCHA for this form.'
+  : '⚠ reCAPTCHA is not configured on this server (RECAPTCHA_SECRET_KEY is missing). ' +
+    'This setting will have no effect and no reCAPTCHA notice will be shown to visitors.'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | César Jerez` : 'César Jerez'
@@ -85,7 +94,7 @@ export const plugins: Plugin[] = [
           defaultValue: false,
           label: 'Enable Recaptcha',
           admin: {
-            description: 'Enable reCAPTCHA for this form.',
+            description: recaptchaFieldDescription,
             position: 'sidebar',
           },
         })
@@ -115,20 +124,43 @@ export const plugins: Plugin[] = [
 
               //if recaptcha is enabled, verify the token
               if (recaptchaEnabled) {
+                // Fail open when the key is absent: that is a deployment mistake, and
+                // breaking every form over it punishes visitors for it. The frontend
+                // hides the reCAPTCHA notice in this case, so nothing claims protection
+                // that isn't running.
+                if (!isRecaptchaConfigured()) {
+                  payload.logger.warn(
+                    `Form ${body?.form} has reCAPTCHA enabled but RECAPTCHA_SECRET_KEY is not set — ` +
+                      `accepting the submission WITHOUT verification. Set the key or untick "Enable Recaptcha".`,
+                  )
+                  return args
+                }
+
                 const recaptchaToken = body?.recaptchaToken
                 if (!recaptchaToken) {
-                  throw new Error('Recaptcha token is missing')
+                  throw new Error('Recaptcha verification failed')
                 }
-                const isTokenValid = await verifyRecaptchaToken(recaptchaToken)
-                if (!isTokenValid) {
-                  throw new Error('Recaptcha token is invalids')
+
+                const result = await verifyRecaptchaToken(recaptchaToken)
+                if (!result.ok) {
+                  // Detail stays server-side: telling a bot why it was rejected, or what
+                  // score it earned, only helps it tune.
+                  payload.logger.warn(
+                    { formID: body?.form, ...result },
+                    'reCAPTCHA verification failed',
+                  )
+                  throw new Error('Recaptcha verification failed')
                 }
-                console.error('Recaptcha token is valid')
+
+                payload.logger.debug(
+                  { formID: body?.form, score: result.score },
+                  'reCAPTCHA verification passed',
+                )
                 return args
               }
             }
 
-            //if recaptcha is not enabled, continue as normal TODO: we cannot create a for if the recaptcha is configured properly (example: the env variables are not set, like the site key or secret key) we should not allow to create a form if the recaptcha is not configured properly, it will give a false impresion to the user.
+            //recaptcha not enabled for this form, continue as normal
             return args
           },
         ],

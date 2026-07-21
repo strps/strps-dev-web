@@ -15,12 +15,16 @@ import {
 } from '@payloadcms/plugin-seo/fields'
 import {
   PageHero,
+  PageServicesHero,
   PageAbout,
   PageSkills,
   PageProjects,
   PageExperience,
   PageContact,
   PageBlog,
+  PageServices,
+  PageProcess,
+  PageFaq,
 } from '@/page-blocks'
 import { FormBlock } from '@/blocks/Form/config'
 import { headerOverrides } from '@/fields/header-overrrides'
@@ -82,10 +86,14 @@ export const Pages: CollectionConfig<'pages'> = {
               type: 'blocks',
               blocks: [
                 PageHero,
+                PageServicesHero,
                 PageAbout,
                 PageSkills,
                 PageProjects,
                 PageExperience,
+                PageServices,
+                PageProcess,
+                PageFaq,
                 PageContact,
                 PageBlog,
                 FormBlock,

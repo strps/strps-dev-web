@@ -8,6 +8,10 @@ import ExperienceSection from '@/components/page-sections/experience'
 import ContactSection from '@/components/page-sections/contact'
 import BlogSection from '@/components/page-sections/blog'
 import FormSection from '@/components/page-sections/form'
+import ServicesSection from '@/components/page-sections/services'
+import ServicesHeroSection from '@/components/page-sections/services-hero'
+import ProcessSection from '@/components/page-sections/process'
+import FaqSection from '@/components/page-sections/faq'
 import type { Page } from '@strps-website/types'
 
 const blockComponents: Record<string, React.FC<any>> = {
@@ -19,6 +23,10 @@ const blockComponents: Record<string, React.FC<any>> = {
     pageContact: ContactSection,
     pageBlog: BlogSection,
     formBlock: FormSection,
+    pageServicesHero: ServicesHeroSection,
+    pageServices: ServicesSection,
+    pageProcess: ProcessSection,
+    pageFaq: FaqSection,
 }
 
 export const RenderBlocks: React.FC<{ blocks: Page['layout'] }> = ({ blocks }) => {

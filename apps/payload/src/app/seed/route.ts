@@ -4,6 +4,8 @@ import { headers as getHeaders } from 'next/headers'
 import { homePageData } from './home-data'
 import { headerData, footerData, copyrightData } from './globals-data'
 import { projectsData } from './projects-data'
+import { servicesFormData } from './forms-data'
+import { getServicesPageData } from './services-data'
 
 export async function POST(): Promise<Response> {
     const payload = await getPayload({ config })
@@ -58,6 +60,39 @@ export async function POST(): Promise<Response> {
             }
         }
         payload.logger.info('— Projects seeded.')
+
+        // Check if services page already exists
+        const existingServicesPage = await payload.find({
+            collection: 'pages',
+            where: { slug: { equals: 'services' } },
+            limit: 1,
+        })
+
+        if (existingServicesPage.docs.length > 0) {
+            payload.logger.info('— Services page already exists, skipping page seed.')
+        } else {
+            let formDoc = (
+                await payload.find({
+                    collection: 'forms',
+                    where: { title: { equals: servicesFormData.title } },
+                    limit: 1,
+                })
+            ).docs[0]
+
+            if (!formDoc) {
+                formDoc = await payload.create({
+                    collection: 'forms',
+                    data: servicesFormData,
+                })
+                payload.logger.info('— Services contact form seeded.')
+            }
+
+            await payload.create({
+                collection: 'pages',
+                data: getServicesPageData(formDoc.id),
+            })
+            payload.logger.info('— Services page seeded.')
+        }
 
         payload.logger.info('— Seed complete.')
 

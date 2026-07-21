@@ -9,6 +9,14 @@ export const headerData: HeaderSeed = {
         {
             link: {
                 type: 'custom',
+                url: '/services',
+                label: 'Services',
+                newTab: false,
+            },
+        },
+        {
+            link: {
+                type: 'custom',
                 url: '/projects',
                 label: 'Projects',
                 newTab: false,

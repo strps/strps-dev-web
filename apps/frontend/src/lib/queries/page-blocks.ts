@@ -57,6 +57,46 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
   }
 
+  fragment PageServicesHeroFields on PageServicesHeroBlock {
+    blockType
+    eyebrow
+    title
+    description
+    status {
+      isAvailable
+      label
+    }
+    servicesHeroLinks: links {
+      link {
+        type
+        newTab
+        url
+        label
+        appearance
+        reference {
+          relationTo
+          value {
+            ... on Page {
+              slug
+            }
+          }
+        }
+      }
+    }
+    highlights {
+      text
+    }
+    backgroundImage {
+      url
+      alt
+      width
+      height
+    }
+    section {
+      ...SectionConfigFields
+    }
+  }
+
   fragment PageAboutFields on PageAboutBlock {
     blockType
     title
@@ -193,6 +233,58 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
   }
 
+  fragment PageServicesFields on PageServicesBlock {
+    blockType
+    title
+    intro
+    services {
+      id
+      name
+      forWho
+      features {
+        feature
+      }
+      timeline
+      pricing
+      goodFitPoints {
+        point
+      }
+      proofLabel
+      proofUrl
+    }
+    section {
+      ...SectionConfigFields
+    }
+  }
+
+  fragment PageProcessFields on PageProcessBlock {
+    blockType
+    title
+    intro
+    steps {
+      id
+      title
+      description
+    }
+    section {
+      ...SectionConfigFields
+    }
+  }
+
+  fragment PageFaqFields on PageFaqBlock {
+    blockType
+    title
+    intro
+    questions {
+      id
+      question
+      answer
+    }
+    section {
+      ...SectionConfigFields
+    }
+  }
+
   fragment FormBlockFields on FormBlock {
     blockType
     introType
@@ -302,10 +394,14 @@ export const GET_PAGE_BY_SLUG = gql`
         slug
         layout {
           ...PageHeroFields
+          ...PageServicesHeroFields
           ...PageAboutFields
           ...PageSkillsFields
           ...PageProjectsFields
           ...PageExperienceFields
+          ...PageServicesFields
+          ...PageProcessFields
+          ...PageFaqFields
           ...PageContactFields
           ...PageBlogFields
           ...FormBlockFields

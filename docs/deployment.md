@@ -24,9 +24,16 @@ DATABASE_URI=postgresql://user:password@host:port/db_name
 RESEND_API_KEY=re_xxxxxxxxxx
 RESEND_DEFAULT_FROM_EMAIL=noreply@yourdomain.com
 
-# reCAPTCHA
+# reCAPTCHA v3 (optional)
+# Site key belongs to the frontend app, secret key to the payload app.
+# If either is missing, forms still work but run without reCAPTCHA, and the
+# "protected by reCAPTCHA" notice is hidden rather than claiming protection
+# that isn't running. The Payload admin flags the misconfiguration on the
+# form's "Enable Recaptcha" checkbox.
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+# Minimum v3 score to accept, 0.0-1.0. Defaults to 0.5.
+RECAPTCHA_MIN_SCORE=0.5
 
 # Optional
 NODE_ENV=production

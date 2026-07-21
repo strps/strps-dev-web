@@ -257,10 +257,14 @@ export interface Page {
   };
   layout: (
     | PageHeroBlock
+    | PageServicesHeroBlock
     | PageAboutBlock
     | PageSkillsBlock
     | PageProjectsBlock
     | PageExperienceBlock
+    | PageServicesBlock
+    | PageProcessBlock
+    | PageFaqBlock
     | PageContactBlock
     | PageBlogBlock
     | FormBlock
@@ -434,6 +438,60 @@ export interface SectionConfig {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesHeroBlock".
+ */
+export interface PageServicesHeroBlock {
+  /**
+   * Small label above the title, e.g. "Freelance web development"
+   */
+  eyebrow?: string | null;
+  title: string;
+  description?: string | null;
+  status?: {
+    isAvailable?: boolean | null;
+    label?: string | null;
+  };
+  links?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline' | 'send' | 'github' | 'linkedin') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Short trust points shown under the CTAs, e.g. "You work directly with the developer"
+   */
+  highlights?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  backgroundImage?: (number | null) | Media;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageServicesHero';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PageAboutBlock".
  */
 export interface PageAboutBlock {
@@ -575,6 +633,88 @@ export interface PageExperienceBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesBlock".
+ */
+export interface PageServicesBlock {
+  title: string;
+  intro?: string | null;
+  services?:
+    | {
+        name: string;
+        forWho?: string | null;
+        features?:
+          | {
+              feature: string;
+              id?: string | null;
+            }[]
+          | null;
+        timeline?: string | null;
+        /**
+         * Free text, e.g. "From $800" or "$45/hr" — placeholder values, edit precisely later.
+         */
+        pricing?: string | null;
+        goodFitPoints?:
+          | {
+              point: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Optional, e.g. "See TrackBit"
+         */
+        proofLabel?: string | null;
+        /**
+         * Optional, e.g. /projects/trackbit
+         */
+        proofUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageServices';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageProcessBlock".
+ */
+export interface PageProcessBlock {
+  title: string;
+  intro?: string | null;
+  steps?:
+    | {
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageProcess';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageFaqBlock".
+ */
+export interface PageFaqBlock {
+  title: string;
+  intro?: string | null;
+  questions?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageFaq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PageContactBlock".
  */
 export interface PageContactBlock {
@@ -661,7 +801,7 @@ export interface FormBlock {
 export interface Form {
   id: number;
   /**
-   * Enable reCAPTCHA for this form.
+   * ⚠ reCAPTCHA is not configured on this server (RECAPTCHA_SECRET_KEY is missing). This setting will have no effect and no reCAPTCHA notice will be shown to visitors.
    */
   enableRecaptcha?: boolean | null;
   title: string;
@@ -1195,10 +1335,14 @@ export interface PagesSelect<T extends boolean = true> {
     | T
     | {
         pageHero?: T | PageHeroBlockSelect<T>;
+        pageServicesHero?: T | PageServicesHeroBlockSelect<T>;
         pageAbout?: T | PageAboutBlockSelect<T>;
         pageSkills?: T | PageSkillsBlockSelect<T>;
         pageProjects?: T | PageProjectsBlockSelect<T>;
         pageExperience?: T | PageExperienceBlockSelect<T>;
+        pageServices?: T | PageServicesBlockSelect<T>;
+        pageProcess?: T | PageProcessBlockSelect<T>;
+        pageFaq?: T | PageFaqBlockSelect<T>;
         pageContact?: T | PageContactBlockSelect<T>;
         pageBlog?: T | PageBlogBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
@@ -1272,6 +1416,46 @@ export interface SectionConfigSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesHeroBlock_select".
+ */
+export interface PageServicesHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  status?:
+    | T
+    | {
+        isAvailable?: T;
+        label?: T;
+      };
+  links?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  highlights?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  backgroundImage?: T;
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PageAboutBlock_select".
  */
 export interface PageAboutBlockSelect<T extends boolean = true> {
@@ -1340,6 +1524,76 @@ export interface PageExperienceBlockSelect<T extends boolean = true> {
               highlight?: T;
               id?: T;
             };
+        id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesBlock_select".
+ */
+export interface PageServicesBlockSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  services?:
+    | T
+    | {
+        name?: T;
+        forWho?: T;
+        features?:
+          | T
+          | {
+              feature?: T;
+              id?: T;
+            };
+        timeline?: T;
+        pricing?: T;
+        goodFitPoints?:
+          | T
+          | {
+              point?: T;
+              id?: T;
+            };
+        proofLabel?: T;
+        proofUrl?: T;
+        id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageProcessBlock_select".
+ */
+export interface PageProcessBlockSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  steps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageFaqBlock_select".
+ */
+export interface PageFaqBlockSelect<T extends boolean = true> {
+  title?: T;
+  intro?: T;
+  questions?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
         id?: T;
       };
   section?: T | SectionConfigSelect<T>;
