@@ -19,6 +19,10 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        solid:
+          "cursor-pointer border border-transparent bg-foreground text-background hover:bg-primary focus-visible:border-transparent focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
+        outlineGhost:
+          "cursor-pointer border border-border-strong bg-transparent text-muted-foreground hover:border-muted-foreground hover:text-foreground focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -31,6 +35,15 @@ const buttonVariants = cva(
         "icon-lg": "size-10",
       },
     },
+    compoundVariants: [
+      {
+        // Mockup buttons (§4.3) are padding-driven, not fixed-height, and sharp-radius —
+        // matches neither the default `size` scale nor the site-wide 0.625rem radius.
+        variant: ["solid", "outlineGhost"],
+        size: "default",
+        class: "h-auto rounded-sharp px-6.5 py-3.25 text-[15px] font-normal",
+      },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",

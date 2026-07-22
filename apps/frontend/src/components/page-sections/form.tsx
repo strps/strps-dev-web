@@ -15,6 +15,12 @@ import { RECAPTCHA_ACTION, RECAPTCHA_SITE_KEY, isRecaptchaConfigured } from '@/l
 
 type FormSectionProps = FormBlock & {
     form: FormType & { enableRecaptcha?: boolean }
+    /**
+     * Field skin (§3.9). Not a Payload field yet — schema work is Phase 3 — so this
+     * defaults to the mockup skin now that `/services`, the only current `formBlock`
+     * consumer, is switching over (§7 Phase 2 item 8).
+     */
+    variant?: 'default' | 'mockup'
 }
 
 type FormInnerProps = {
@@ -22,6 +28,7 @@ type FormInnerProps = {
     formID: string | number
     submitButtonLabel?: string | null
     recaptchaActive: boolean
+    variant: 'default' | 'mockup'
     onSubmit: (data: FieldValues, recaptchaToken?: string) => void
     onRecaptchaError: () => void
 }
@@ -36,6 +43,7 @@ const FormInner: React.FC<FormInnerProps> = ({
     formID,
     submitButtonLabel,
     recaptchaActive,
+    variant,
     onSubmit,
     onRecaptchaError,
 }) => {
@@ -82,7 +90,11 @@ const FormInner: React.FC<FormInnerProps> = ({
     )
 
     return (
-        <form id={String(formID)} onSubmit={handleSubmit(handleFormSubmit)}>
+        <form
+            id={String(formID)}
+            data-variant={variant}
+            onSubmit={handleSubmit(handleFormSubmit)}
+        >
             <div className="mb-4 last:mb-0">
                 {form?.fields?.map((field, index) => {
                     const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
@@ -91,7 +103,10 @@ const FormInner: React.FC<FormInnerProps> = ({
                         const { defaultBool, defaultNum, defaultStr, ...rest } = field as any
                         const defaultValue = defaultBool ?? defaultNum ?? defaultStr
                         return (
-                            <div className="mb-6 last:mb-0" key={index}>
+                            <div
+                                className={variant === 'mockup' ? 'mb-4.5 last:mb-0' : 'mb-6 last:mb-0'}
+                                key={index}
+                            >
                                 <Field
                                     form={form}
                                     {...rest}
@@ -108,7 +123,12 @@ const FormInner: React.FC<FormInnerProps> = ({
                 })}
             </div>
 
-            <Button form={String(formID)} type="submit" variant="default">
+            <Button
+                form={String(formID)}
+                type="submit"
+                variant={variant === 'mockup' ? 'solid' : 'default'}
+                className={variant === 'mockup' ? 'w-full' : undefined}
+            >
                 {submitButtonLabel}
             </Button>
         </form>
@@ -132,6 +152,7 @@ const FormSection: React.FC<FormSectionProps> = (props) => {
         introText,
         introType = 'none',
         section,
+        variant = 'mockup',
     } = props
 
     const formMethods = useForm({
@@ -241,6 +262,7 @@ const FormSection: React.FC<FormSectionProps> = (props) => {
             formID={formID as string | number}
             submitButtonLabel={submitButtonLabel}
             recaptchaActive={recaptchaActive}
+            variant={variant}
             onSubmit={onSubmit}
             onRecaptchaError={onRecaptchaError}
         />

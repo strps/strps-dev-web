@@ -527,9 +527,9 @@ Ordered so that nothing is built twice. Each phase is independently reviewable.
 5. [x] Add `--radius-sharp`, the 960px wrap width, and section spacing options to `Section`.
 
 **Phase 2 — Primitives**
-6. [ ] Build the eight primitives in §5 with the mockup's focus states and breakpoints.
-7. [ ] Add `solid` / `ghost` button variants.
-8. [ ] Skin the form fields in [components/form/](apps/frontend/src/components/form/) per §3.9, behind a
+6. [x] Build the eight primitives in §5 with the mockup's focus states and breakpoints.
+7. [x] Add `solid` / `ghost` button variants.
+8. [x] Skin the form fields in [components/form/](apps/frontend/src/components/form/) per §3.9, behind a
        variant, and switch `/services` over once it's right.
 
 **Phase 3 — Schema**

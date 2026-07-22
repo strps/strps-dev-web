@@ -199,3 +199,55 @@
     0px 0px 30px 9px var(--shadow-center),
     -37px -37px 92px var(--shadow-light);
 }
+
+/*
+ * Contact form field skin (§3.9). Deliberately unlayered — Tailwind's utility
+ * classes on Input/Textarea/SelectTrigger live in `@layer utilities`, and
+ * unlayered CSS always wins over layered CSS regardless of selector
+ * specificity, so these rules override them without touching the shared
+ * shadcn primitives (Input/Textarea/Select are used elsewhere unrestyled).
+ * Scoped to `[data-variant="mockup"]`, set on the <form> in
+ * page-sections/form.tsx, so `/services` opts in without a second form
+ * implementation.
+ */
+form[data-variant="mockup"] [data-slot="label"] {
+  display: block;
+  margin-bottom: 8px;
+  /* --font-mono is a Tailwind @theme-inline token, not a real runtime custom
+     property — it only exists inlined into generated utilities. The actual
+     variable next/font sets on <body> is --font-ibm-plex-mono. */
+  font-family: var(--font-ibm-plex-mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint-foreground);
+}
+
+form[data-variant="mockup"] [data-slot="input"],
+form[data-variant="mockup"] [data-slot="textarea"],
+form[data-variant="mockup"] [data-slot="select-trigger"] {
+  width: 100%;
+  height: auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sharp);
+  box-shadow: none;
+  color: var(--foreground);
+  font-size: 15px;
+  padding: 12px 14px;
+  transition: border-color 0.15s;
+}
+
+form[data-variant="mockup"] [data-slot="textarea"] {
+  min-height: 110px;
+  resize: vertical;
+}
+
+form[data-variant="mockup"] [data-slot="input"]:focus-visible,
+form[data-variant="mockup"] [data-slot="textarea"]:focus-visible,
+form[data-variant="mockup"] [data-slot="select-trigger"]:focus-visible {
+  border-color: var(--primary);
+  box-shadow: none;
+  outline: none;
+}
