@@ -20,7 +20,7 @@ export default function ReactionSpherePage() {
                     <p className="text-muted-foreground leading-relaxed">
                         This is the same Gray-Scott model as the{" "}
                         <Link
-                            href="/gallery/gray-scott"
+                            href="/lab/gray-scott"
                             className="text-primary underline underline-offset-4 hover:no-underline"
                         >
                             flat reaction-diffusion field

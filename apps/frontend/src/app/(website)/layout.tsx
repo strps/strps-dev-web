@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import { HeaderNav } from '@/components/HeaderNav';
 import { Code2 } from 'lucide-react';
@@ -8,7 +8,17 @@ import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Logo } from '@/components/logo';
 
-const inter = Inter({ subsets: ['latin'] });
+const archivo = Archivo({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-archivo',
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-ibm-plex-mono',
+});
 
 export const metadata: Metadata = {
   title: 'Cesar Jerez | Full Stack Developer',
@@ -24,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-background font-sans text-foreground antialiased`}>
+      <body className={`${archivo.variable} ${ibmPlexMono.variable} min-h-screen bg-background font-sans text-foreground antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

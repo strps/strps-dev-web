@@ -139,7 +139,7 @@ export function SvgCirclesHero() {
                         size="sm"
                         className="-ml-3 backdrop-blur-sm bg-background/40"
                     >
-                        <Link href="/gallery" className="gap-2">
+                        <Link href="/lab" className="gap-2">
                             <ArrowLeft className="h-4 w-4" /> Back to gallery
                         </Link>
                     </Button>

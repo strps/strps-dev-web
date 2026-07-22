@@ -5,6 +5,15 @@ import { type SectionConfig, type Media } from "@strps-website/types"
 import SVGCircles from "./SVGCircles"
 
 
+const SPACING_VARIANTS = {
+  default: "py-16",
+  hero: "pt-[110px] pb-[90px]",
+  section: "pt-[90px] pb-0",
+  contact: "pt-[90px] pb-[110px]",
+} as const
+
+type SectionSpacing = keyof typeof SPACING_VARIANTS
+
 interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<SectionConfig> {
   /**
    * Optional background image configuration.
@@ -18,6 +27,11 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<Sectio
    */
   overlayClassName?: string
   containerClassName?: string
+  /**
+   * Vertical rhythm preset. Defaults to the existing `py-16`.
+   * `hero` / `section` / `contact` match the mockup's spacing scale (§4.3).
+   */
+  spacing?: SectionSpacing
 }
 
 function resolveImageProps(backgroundImage: (number | null) | Media | undefined): ImageProps | undefined {
@@ -38,6 +52,7 @@ export default function Section({
   overlayClassName,
   containerClassName,
   children,
+  spacing = "default",
   // SectionConfig props
   section_id,
   theme,
@@ -95,7 +110,8 @@ export default function Section({
       )}
 
       <div className={cn(
-        "relative flex flex-col gap-8 z-20 h-full w-full py-16",
+        "relative flex flex-col gap-8 z-20 h-full w-full",
+        SPACING_VARIANTS[spacing],
         container && "container mx-auto",
         containerClassName
       )}>
