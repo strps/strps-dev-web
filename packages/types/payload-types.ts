@@ -258,9 +258,11 @@ export interface Page {
   layout: (
     | PageHeroBlock
     | PageServicesHeroBlock
+    | PageServicesTeaserBlock
     | PageAboutBlock
     | PageSkillsBlock
     | PageProjectsBlock
+    | PageLabTeaserBlock
     | PageExperienceBlock
     | PageServicesBlock
     | PageProcessBlock
@@ -289,7 +291,23 @@ export interface Page {
  * via the `definition` "PageHeroBlock".
  */
 export interface PageHeroBlock {
-  name: string;
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
+  variant?: ('portrait' | 'statement') | null;
+  /**
+   * Used as the h1 in the "portrait" variant.
+   */
+  name?: string | null;
+  /**
+   * Used as the h1 in the "statement" variant, e.g. "I build fast websites and web apps for businesses."
+   */
+  headline?: string | null;
+  /**
+   * Renders the animated plotter-line SVG under the headline.
+   */
+  showPlotLine?: boolean | null;
   label?: string | null;
   description?: string | null;
   location?: {
@@ -299,6 +317,10 @@ export interface PageHeroBlock {
   status?: {
     isAvailable?: boolean | null;
     label?: string | null;
+    /**
+     * Optional period, e.g. "Q3 2026". Rendered as "{label} — {availableFrom}" when present.
+     */
+    availableFrom?: string | null;
   };
   email?: string | null;
   links?:
@@ -320,7 +342,7 @@ export interface PageHeroBlock {
           /**
            * Choose how the link should be rendered.
            */
-          appearance?: ('default' | 'outline' | 'send' | 'github' | 'linkedin') | null;
+          appearance?: ('default' | 'outline' | 'solid' | 'outlineGhost' | 'send' | 'github' | 'linkedin') | null;
         };
         id?: string | null;
       }[]
@@ -450,6 +472,10 @@ export interface PageServicesHeroBlock {
   status?: {
     isAvailable?: boolean | null;
     label?: string | null;
+    /**
+     * Optional period, e.g. "Q3 2026". Rendered as "{label} — {availableFrom}" when present.
+     */
+    availableFrom?: string | null;
   };
   links?:
     | {
@@ -492,12 +518,132 @@ export interface PageServicesHeroBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesTeaserBlock".
+ */
+export interface PageServicesTeaserBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
+  title: string;
+  /**
+   * Action link, e.g. "Full details →" to /services.
+   */
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+    /**
+     * Choose how the link should be rendered.
+     */
+    appearance?: ('default' | 'outline') | null;
+  };
+  /**
+   * Rows are numbered automatically from their position (01, 02, 03) — do not store the number.
+   */
+  items?:
+    | {
+        name: string;
+        /**
+         * One line, roughly 48 characters or fewer.
+         */
+        summary?: string | null;
+        /**
+         * Row link, e.g. "Learn more" to /services#01.
+         */
+        link?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label?: string | null;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageServicesTeaser';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PageAboutBlock".
  */
 export interface PageAboutBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
   title: string;
-  summary: string;
+  layout?: ('single' | 'twoColumn') | null;
+  /**
+   * Fallback copy, used when Body is empty.
+   */
+  summary?: string | null;
+  /**
+   * Preferred over Summary when present — bold key phrases, one paragraph per block.
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   image?: (number | null) | Media;
+  /**
+   * Optional close link, e.g. "More about me →" to /about. Leave empty on the /about page itself.
+   */
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+    /**
+     * Choose how the link should be rendered.
+     */
+    appearance?: ('default' | 'outline') | null;
+  };
   section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
@@ -508,7 +654,12 @@ export interface PageAboutBlock {
  * via the `definition` "PageSkillsBlock".
  */
 export interface PageSkillsBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
   title: string;
+  variant?: ('cards' | 'list') | null;
   subtitle?: string | null;
   skillGroups?:
     | {
@@ -536,7 +687,34 @@ export interface PageSkillsBlock {
  * via the `definition` "PageProjectsBlock".
  */
 export interface PageProjectsBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
   title: string;
+  variant?: ('cards' | 'hairline') | null;
+  /**
+   * Optional action link, e.g. "All projects →" to /projects.
+   */
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+    /**
+     * Choose how the link should be rendered.
+     */
+    appearance?: ('default' | 'outline') | null;
+  };
   populateBy?: ('collection' | 'selection') | null;
   limit?: number | null;
   selectedProjects?: (number | Project)[] | null;
@@ -564,6 +742,36 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
+  caseStudy?: {
+    /**
+     * Home card eyebrow / projects list category, e.g. "Product", "Template / product".
+     */
+    tag?: string | null;
+    /**
+     * Projects list year, e.g. "2025" or "2024–2026".
+     */
+    year?: string | null;
+    /**
+     * Home card "Problem —" line.
+     */
+    problem?: string | null;
+    /**
+     * Home card "What I did —" line.
+     */
+    contribution?: string | null;
+    /**
+     * /projects accordion "Context".
+     */
+    context?: string | null;
+    /**
+     * /projects accordion "Key decisions".
+     */
+    decisions?: string | null;
+    /**
+     * /projects accordion "Outcome".
+     */
+    outcome?: string | null;
+  };
   content: {
     root: {
       type: string;
@@ -600,6 +808,48 @@ export interface Project {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageLabTeaserBlock".
+ */
+export interface PageLabTeaserBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
+  title: string;
+  intro?: string | null;
+  /**
+   * Action link, e.g. "Visit the lab →" to /lab.
+   */
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+    /**
+     * Choose how the link should be rendered.
+     */
+    appearance?: ('default' | 'outline') | null;
+  };
+  /**
+   * Number of lab items to show. Lab items are code, not CMS content — see src/app/(website)/lab/data.ts.
+   */
+  limit?: number | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageLabTeaser';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -680,7 +930,8 @@ export interface PageServicesBlock {
  * via the `definition` "PageProcessBlock".
  */
 export interface PageProcessBlock {
-  title: string;
+  variant?: ('full' | 'strip') | null;
+  title?: string | null;
   intro?: string | null;
   steps?:
     | {
@@ -718,9 +969,25 @@ export interface PageFaqBlock {
  * via the `definition` "PageContactBlock".
  */
 export interface PageContactBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
   title: string;
   description?: string | null;
   email?: string | null;
+  /**
+   * The line above the mailto, e.g. "Prefer email?"
+   */
+  emailLabel?: string | null;
+  /**
+   * The reply promise shown near the form, e.g. "I reply within one business day".
+   */
+  note?: string | null;
+  /**
+   * Renders in the right column when set.
+   */
+  form?: (number | null) | Form;
   links?:
     | {
         link: {
@@ -749,50 +1016,6 @@ export interface PageContactBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'pageContact';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "PageBlogBlock".
- */
-export interface PageBlogBlock {
-  title: string;
-  populateBy?: ('collection' | 'selection') | null;
-  limit?: number | null;
-  selectedPosts?: (number | Post)[] | null;
-  blogUrl?: string | null;
-  section: SectionConfig;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'pageBlog';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "FormBlock".
- */
-export interface FormBlock {
-  section: SectionConfig;
-  form: number | Form;
-  introType?: ('richText' | 'titleAndText' | 'none') | null;
-  introContent?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  introTitle?: string | null;
-  introText?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'formBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -971,6 +1194,54 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageBlogBlock".
+ */
+export interface PageBlogBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
+  title: string;
+  populateBy?: ('collection' | 'selection') | null;
+  limit?: number | null;
+  selectedPosts?: (number | Post)[] | null;
+  blogUrl?: string | null;
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageBlog';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FormBlock".
+ */
+export interface FormBlock {
+  section: SectionConfig;
+  form: number | Form;
+  introType?: ('richText' | 'titleAndText' | 'none') | null;
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  introTitle?: string | null;
+  introText?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'formBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1336,9 +1607,11 @@ export interface PagesSelect<T extends boolean = true> {
     | {
         pageHero?: T | PageHeroBlockSelect<T>;
         pageServicesHero?: T | PageServicesHeroBlockSelect<T>;
+        pageServicesTeaser?: T | PageServicesTeaserBlockSelect<T>;
         pageAbout?: T | PageAboutBlockSelect<T>;
         pageSkills?: T | PageSkillsBlockSelect<T>;
         pageProjects?: T | PageProjectsBlockSelect<T>;
+        pageLabTeaser?: T | PageLabTeaserBlockSelect<T>;
         pageExperience?: T | PageExperienceBlockSelect<T>;
         pageServices?: T | PageServicesBlockSelect<T>;
         pageProcess?: T | PageProcessBlockSelect<T>;
@@ -1366,7 +1639,11 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "PageHeroBlock_select".
  */
 export interface PageHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  variant?: T;
   name?: T;
+  headline?: T;
+  showPlotLine?: T;
   label?: T;
   description?: T;
   location?:
@@ -1380,6 +1657,7 @@ export interface PageHeroBlockSelect<T extends boolean = true> {
     | {
         isAvailable?: T;
         label?: T;
+        availableFrom?: T;
       };
   email?: T;
   links?:
@@ -1427,6 +1705,7 @@ export interface PageServicesHeroBlockSelect<T extends boolean = true> {
     | {
         isAvailable?: T;
         label?: T;
+        availableFrom?: T;
       };
   links?:
     | T
@@ -1456,12 +1735,63 @@ export interface PageServicesHeroBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesTeaserBlock_select".
+ */
+export interface PageServicesTeaserBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
+  items?:
+    | T
+    | {
+        name?: T;
+        summary?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "PageAboutBlock_select".
  */
 export interface PageAboutBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
   title?: T;
+  layout?: T;
   summary?: T;
+  body?: T;
   image?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
   section?: T | SectionConfigSelect<T>;
   id?: T;
   blockName?: T;
@@ -1471,7 +1801,9 @@ export interface PageAboutBlockSelect<T extends boolean = true> {
  * via the `definition` "PageSkillsBlock_select".
  */
 export interface PageSkillsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
   title?: T;
+  variant?: T;
   subtitle?: T;
   skillGroups?:
     | T
@@ -1495,11 +1827,46 @@ export interface PageSkillsBlockSelect<T extends boolean = true> {
  * via the `definition` "PageProjectsBlock_select".
  */
 export interface PageProjectsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
   title?: T;
+  variant?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
   populateBy?: T;
   limit?: T;
   selectedProjects?: T;
   githubUrl?: T;
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageLabTeaserBlock_select".
+ */
+export interface PageLabTeaserBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  intro?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
+  limit?: T;
   section?: T | SectionConfigSelect<T>;
   id?: T;
   blockName?: T;
@@ -1569,6 +1936,7 @@ export interface PageServicesBlockSelect<T extends boolean = true> {
  * via the `definition` "PageProcessBlock_select".
  */
 export interface PageProcessBlockSelect<T extends boolean = true> {
+  variant?: T;
   title?: T;
   intro?: T;
   steps?:
@@ -1605,9 +1973,13 @@ export interface PageFaqBlockSelect<T extends boolean = true> {
  * via the `definition` "PageContactBlock_select".
  */
 export interface PageContactBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
   title?: T;
   description?: T;
   email?: T;
+  emailLabel?: T;
+  note?: T;
+  form?: T;
   links?:
     | T
     | {
@@ -1632,6 +2004,7 @@ export interface PageContactBlockSelect<T extends boolean = true> {
  * via the `definition` "PageBlogBlock_select".
  */
 export interface PageBlogBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
   title?: T;
   populateBy?: T;
   limit?: T;
@@ -1731,6 +2104,17 @@ export interface ProjectsSelect<T extends boolean = true> {
     | {
         name?: T;
         id?: T;
+      };
+  caseStudy?:
+    | T
+    | {
+        tag?: T;
+        year?: T;
+        problem?: T;
+        contribution?: T;
+        context?: T;
+        decisions?: T;
+        outcome?: T;
       };
   content?: T;
   meta?:
@@ -2036,6 +2420,10 @@ export interface Copyright {
   name: string;
   startDate: string;
   link?: string | null;
+  /**
+   * Footer location line, e.g. "San José, CR · GMT-6".
+   */
+  location?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2090,6 +2478,10 @@ export interface Header {
               } | null);
           url?: string | null;
           label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outlineGhost') | null;
         };
         id?: string | null;
       }[]
@@ -2138,6 +2530,7 @@ export interface CopyrightSelect<T extends boolean = true> {
   name?: T;
   startDate?: T;
   link?: T;
+  location?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2181,6 +2574,7 @@ export interface HeaderSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+              appearance?: T;
             };
         id?: T;
       };

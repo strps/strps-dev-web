@@ -44,6 +44,14 @@ export const PageServicesHero: Block = {
                     type: 'text',
                     label: 'Status Label',
                 },
+                {
+                    name: 'availableFrom',
+                    type: 'text',
+                    label: 'Available From',
+                    admin: {
+                        description: 'Optional period, e.g. "Q3 2026". Rendered as "{label} — {availableFrom}" when present.',
+                    },
+                },
             ],
         },
         linkGroup({

@@ -1,5 +1,6 @@
 import { Block } from 'payload'
 import { SectionConfig } from '@/fields/section'
+import { eyebrowField } from '@/fields/eyebrow'
 
 export const PageSkills: Block = {
     slug: 'pageSkills',
@@ -9,12 +10,22 @@ export const PageSkills: Block = {
         plural: 'Page Skills',
     },
     fields: [
+        eyebrowField,
         {
             name: 'title',
             type: 'text',
             required: true,
             defaultValue: 'Technical Arsenal',
             label: 'Title',
+        },
+        {
+            name: 'variant',
+            type: 'select',
+            defaultValue: 'cards',
+            options: [
+                { label: 'Cards', value: 'cards' },
+                { label: 'List (mockup)', value: 'list' },
+            ],
         },
         {
             name: 'subtitle',

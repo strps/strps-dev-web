@@ -117,6 +117,69 @@ export const Projects: CollectionConfig<'projects'> = {
               ]
             },
             {
+              name: 'caseStudy',
+              label: 'Case Study',
+              type: 'group',
+              fields: [
+                {
+                  name: 'tag',
+                  type: 'text',
+                  label: 'Tag',
+                  admin: {
+                    description: 'Home card eyebrow / projects list category, e.g. "Product", "Template / product".',
+                  },
+                },
+                {
+                  name: 'year',
+                  type: 'text',
+                  label: 'Year',
+                  admin: {
+                    description: 'Projects list year, e.g. "2025" or "2024–2026".',
+                  },
+                },
+                {
+                  name: 'problem',
+                  type: 'textarea',
+                  label: 'Problem',
+                  admin: {
+                    description: 'Home card "Problem —" line.',
+                  },
+                },
+                {
+                  name: 'contribution',
+                  type: 'textarea',
+                  label: 'Contribution',
+                  admin: {
+                    description: 'Home card "What I did —" line.',
+                  },
+                },
+                {
+                  name: 'context',
+                  type: 'textarea',
+                  label: 'Context',
+                  admin: {
+                    description: '/projects accordion "Context".',
+                  },
+                },
+                {
+                  name: 'decisions',
+                  type: 'textarea',
+                  label: 'Key Decisions',
+                  admin: {
+                    description: '/projects accordion "Key decisions".',
+                  },
+                },
+                {
+                  name: 'outcome',
+                  type: 'textarea',
+                  label: 'Outcome',
+                  admin: {
+                    description: '/projects accordion "Outcome".',
+                  },
+                },
+              ],
+            },
+            {
               name: 'content',
               type: 'richText',
               editor: lexicalEditor({

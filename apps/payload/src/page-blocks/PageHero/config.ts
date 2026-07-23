@@ -1,6 +1,7 @@
-import { Block } from 'payload'
+import { Block, TextFieldSingleValidation } from 'payload'
 import { SectionConfig } from '@/fields/section'
 import { linkGroup } from '@/fields/linkGroup'
+import { eyebrowField } from '@/fields/eyebrow'
 
 export const PageHero: Block = {
     slug: 'pageHero',
@@ -10,11 +11,57 @@ export const PageHero: Block = {
         plural: 'Page Heroes',
     },
     fields: [
+        eyebrowField,
+        {
+            name: 'variant',
+            type: 'select',
+            defaultValue: 'portrait',
+            options: [
+                { label: 'Portrait (centered name)', value: 'portrait' },
+                { label: 'Statement (mockup)', value: 'statement' },
+            ],
+        },
         {
             name: 'name',
             type: 'text',
-            required: true,
             label: 'Name',
+            admin: {
+                description: 'Used as the h1 in the "portrait" variant.',
+                condition: (_, { variant } = {}) => (variant ?? 'portrait') === 'portrait',
+            },
+            validate: ((value, options) => {
+                const siblingData = options?.siblingData as { variant?: string } | undefined
+                if ((siblingData?.variant ?? 'portrait') === 'portrait' && !value) {
+                    return 'Name is required for the portrait variant.'
+                }
+                return true
+            }) as TextFieldSingleValidation,
+        },
+        {
+            name: 'headline',
+            type: 'text',
+            label: 'Headline',
+            admin: {
+                description: 'Used as the h1 in the "statement" variant, e.g. "I build fast websites and web apps for businesses."',
+                condition: (_, { variant } = {}) => variant === 'statement',
+            },
+            validate: ((value, options) => {
+                const siblingData = options?.siblingData as { variant?: string } | undefined
+                if (siblingData?.variant === 'statement' && !value) {
+                    return 'Headline is required for the statement variant.'
+                }
+                return true
+            }) as TextFieldSingleValidation,
+        },
+        {
+            name: 'showPlotLine',
+            type: 'checkbox',
+            defaultValue: true,
+            label: 'Show plot line',
+            admin: {
+                description: 'Renders the animated plotter-line SVG under the headline.',
+                condition: (_, { variant } = {}) => variant === 'statement',
+            },
         },
         {
             name: 'label',
@@ -56,6 +103,14 @@ export const PageHero: Block = {
                     type: 'text',
                     label: 'Status Label',
                 },
+                {
+                    name: 'availableFrom',
+                    type: 'text',
+                    label: 'Available From',
+                    admin: {
+                        description: 'Optional period, e.g. "Q3 2026". Rendered as "{label} — {availableFrom}" when present.',
+                    },
+                },
             ],
         },
         {
@@ -64,7 +119,7 @@ export const PageHero: Block = {
             label: 'Contact Email',
         },
         linkGroup({
-            appearances: ['default', 'outline', 'send', 'github', 'linkedin'],
+            appearances: ['default', 'outline', 'solid', 'outlineGhost', 'send', 'github', 'linkedin'],
         }),
         {
             name: 'backgroundImage',

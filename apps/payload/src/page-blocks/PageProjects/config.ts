@@ -1,5 +1,7 @@
 import { Block } from 'payload'
 import { SectionConfig } from '@/fields/section'
+import { eyebrowField } from '@/fields/eyebrow'
+import { link } from '@/fields/link'
 
 export const PageProjects: Block = {
     slug: 'pageProjects',
@@ -9,6 +11,7 @@ export const PageProjects: Block = {
         plural: 'Page Projects',
     },
     fields: [
+        eyebrowField,
         {
             name: 'title',
             type: 'text',
@@ -16,6 +19,23 @@ export const PageProjects: Block = {
             defaultValue: 'Featured Projects',
             label: 'Title',
         },
+        {
+            name: 'variant',
+            type: 'select',
+            defaultValue: 'cards',
+            options: [
+                { label: 'Cards', value: 'cards' },
+                { label: 'Hairline (mockup)', value: 'hairline' },
+            ],
+        },
+        link({
+            required: false,
+            overrides: {
+                admin: {
+                    description: 'Optional action link, e.g. "All projects →" to /projects.',
+                },
+            },
+        }),
         {
             name: 'populateBy',
             type: 'select',

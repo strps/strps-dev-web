@@ -285,6 +285,76 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
   }
 
+  fragment PageServicesTeaserFields on PageServicesTeaserBlock {
+    blockType
+    eyebrow
+    title
+    teaserLink: link {
+      type
+      newTab
+      url
+      label
+      appearance
+      reference {
+        relationTo
+        value {
+          ... on Page {
+            slug
+          }
+        }
+      }
+    }
+    items {
+      id
+      name
+      summary
+      link {
+        type
+        newTab
+        url
+        label
+        appearance
+        reference {
+          relationTo
+          value {
+            ... on Page {
+              slug
+            }
+          }
+        }
+      }
+    }
+    section {
+      ...SectionConfigFields
+    }
+  }
+
+  fragment PageLabTeaserFields on PageLabTeaserBlock {
+    blockType
+    eyebrow
+    title
+    intro
+    labTeaserLink: link {
+      type
+      newTab
+      url
+      label
+      appearance
+      reference {
+        relationTo
+        value {
+          ... on Page {
+            slug
+          }
+        }
+      }
+    }
+    limit
+    section {
+      ...SectionConfigFields
+    }
+  }
+
   fragment FormBlockFields on FormBlock {
     blockType
     introType
@@ -395,9 +465,11 @@ export const GET_PAGE_BY_SLUG = gql`
         layout {
           ...PageHeroFields
           ...PageServicesHeroFields
+          ...PageServicesTeaserFields
           ...PageAboutFields
           ...PageSkillsFields
           ...PageProjectsFields
+          ...PageLabTeaserFields
           ...PageExperienceFields
           ...PageServicesFields
           ...PageProcessFields

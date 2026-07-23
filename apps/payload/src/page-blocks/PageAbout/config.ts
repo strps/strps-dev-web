@@ -1,5 +1,7 @@
 import { Block } from 'payload'
 import { SectionConfig } from '@/fields/section'
+import { eyebrowField } from '@/fields/eyebrow'
+import { link } from '@/fields/link'
 
 export const PageAbout: Block = {
     slug: 'pageAbout',
@@ -9,6 +11,7 @@ export const PageAbout: Block = {
         plural: 'Page Abouts',
     },
     fields: [
+        eyebrowField,
         {
             name: 'title',
             type: 'text',
@@ -17,10 +20,29 @@ export const PageAbout: Block = {
             label: 'Title',
         },
         {
+            name: 'layout',
+            type: 'select',
+            defaultValue: 'single',
+            options: [
+                { label: 'Single column', value: 'single' },
+                { label: 'Two column', value: 'twoColumn' },
+            ],
+        },
+        {
             name: 'summary',
             type: 'textarea',
-            required: true,
             label: 'Summary',
+            admin: {
+                description: 'Fallback copy, used when Body is empty.',
+            },
+        },
+        {
+            name: 'body',
+            type: 'richText',
+            label: 'Body',
+            admin: {
+                description: 'Preferred over Summary when present — bold key phrases, one paragraph per block.',
+            },
         },
         {
             name: 'image',
@@ -28,6 +50,14 @@ export const PageAbout: Block = {
             relationTo: 'media',
             label: 'Profile Image',
         },
+        link({
+            required: false,
+            overrides: {
+                admin: {
+                    description: 'Optional close link, e.g. "More about me →" to /about. Leave empty on the /about page itself.',
+                },
+            },
+        }),
         SectionConfig,
     ],
 }

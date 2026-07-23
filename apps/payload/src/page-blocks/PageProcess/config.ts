@@ -10,16 +10,31 @@ export const PageProcess: Block = {
     },
     fields: [
         {
+            name: 'variant',
+            type: 'select',
+            defaultValue: 'full',
+            options: [
+                { label: 'Full (heading + card grid)', value: 'full' },
+                { label: 'Strip (mockup, no heading)', value: 'strip' },
+            ],
+        },
+        {
             name: 'title',
             type: 'text',
             required: true,
             defaultValue: 'How I Work',
             label: 'Title',
+            admin: {
+                condition: (_, { variant } = {}) => (variant ?? 'full') === 'full',
+            },
         },
         {
             name: 'intro',
             type: 'textarea',
             label: 'Section Intro',
+            admin: {
+                condition: (_, { variant } = {}) => (variant ?? 'full') === 'full',
+            },
         },
         {
             name: 'steps',

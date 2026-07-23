@@ -1,6 +1,7 @@
 import { Block } from 'payload'
 import { SectionConfig } from '@/fields/section'
 import { linkGroup } from '@/fields/linkGroup'
+import { eyebrowField } from '@/fields/eyebrow'
 
 export const PageContact: Block = {
     slug: 'pageContact',
@@ -10,6 +11,7 @@ export const PageContact: Block = {
         plural: 'Page Contacts',
     },
     fields: [
+        eyebrowField,
         {
             name: 'title',
             type: 'text',
@@ -26,6 +28,31 @@ export const PageContact: Block = {
             name: 'email',
             type: 'email',
             label: 'Contact Email',
+        },
+        {
+            name: 'emailLabel',
+            type: 'text',
+            label: 'Email Label',
+            admin: {
+                description: 'The line above the mailto, e.g. "Prefer email?"',
+            },
+        },
+        {
+            name: 'note',
+            type: 'text',
+            label: 'Note',
+            admin: {
+                description: 'The reply promise shown near the form, e.g. "I reply within one business day".',
+            },
+        },
+        {
+            name: 'form',
+            type: 'relationship',
+            relationTo: 'forms',
+            label: 'Form',
+            admin: {
+                description: 'Renders in the right column when set.',
+            },
         },
         linkGroup({
             appearances: ['default', 'outline'],

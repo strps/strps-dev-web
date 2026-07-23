@@ -12,6 +12,8 @@ import ServicesSection from '@/components/page-sections/services'
 import ServicesHeroSection from '@/components/page-sections/services-hero'
 import ProcessSection from '@/components/page-sections/process'
 import FaqSection from '@/components/page-sections/faq'
+import ServicesTeaserSection from '@/components/page-sections/services-teaser'
+import LabTeaserSection from '@/components/page-sections/lab-teaser'
 import type { Page } from '@strps-website/types'
 
 const blockComponents: Record<string, React.FC<any>> = {
@@ -27,6 +29,8 @@ const blockComponents: Record<string, React.FC<any>> = {
     pageServices: ServicesSection,
     pageProcess: ProcessSection,
     pageFaq: FaqSection,
+    pageServicesTeaser: ServicesTeaserSection,
+    pageLabTeaser: LabTeaserSection,
 }
 
 export const RenderBlocks: React.FC<{ blocks: Page['layout'] }> = ({ blocks }) => {

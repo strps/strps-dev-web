@@ -14,6 +14,14 @@ export const appearanceOptions: Record<string, { label: string; value: string }>
     label: 'Outline',
     value: 'outline',
   },
+  solid: {
+    label: 'Solid',
+    value: 'solid',
+  },
+  outlineGhost: {
+    label: 'Outline Ghost',
+    value: 'outlineGhost',
+  },
   send: {
     label: 'Send',
     value: 'send',
@@ -33,6 +41,14 @@ type LinkType = (options?: {
   disableLabel?: boolean
   overrides?: Partial<GroupField>
   hashEnumName?: boolean
+  /**
+   * Whether the link's destination (reference/url) and label are required once
+   * the group is touched. Defaults to `true` (existing behavior). Set `false`
+   * for a standalone, genuinely optional single-link field — otherwise Payload's
+   * generated type marks the whole group as required on the parent block, which
+   * makes it impossible to leave the link empty.
+   */
+  required?: boolean
 }) => Field
 
 export const link: LinkType = ({
@@ -40,6 +56,7 @@ export const link: LinkType = ({
   disableLabel = false,
   overrides = {},
   hashEnumName,
+  required = true,
 } = {}) => {
   const linkResult: GroupField = {
     name: 'link',
@@ -95,7 +112,7 @@ export const link: LinkType = ({
       },
       label: 'Document to link to',
       relationTo: ['pages', 'posts'],
-      required: true,
+      required,
     },
     {
       name: 'url',
@@ -104,7 +121,7 @@ export const link: LinkType = ({
         condition: (_, siblingData) => siblingData?.type === 'custom',
       },
       label: 'Custom URL',
-      required: true,
+      required,
     },
   ]
 
@@ -128,7 +145,7 @@ export const link: LinkType = ({
             width: '50%',
           },
           label: 'Label',
-          required: true,
+          required,
         },
       ],
     })

@@ -533,17 +533,17 @@ Ordered so that nothing is built twice. Each phase is independently reviewable.
        variant, and switch `/services` over once it's right.
 
 **Phase 3 — Schema**
-9. [ ] Add the shared `eyebrow` field alongside `SectionConfig` in [fields/](apps/payload/src/fields/).
-10. [ ] Extend `pageHero` (variant, headline, plot line, `status.availableFrom`), `pageAbout` (body,
+9. [x] Add the shared `eyebrow` field alongside `SectionConfig` in [fields/](apps/payload/src/fields/).
+10. [x] Extend `pageHero` (variant, headline, plot line, `status.availableFrom`), `pageAbout` (body,
         layout, link), `pageSkills` (variant), `pageProcess` (variant), `pageProjects` (variant),
         `pageContact` (form, note, emailLabel), `pageBlog` (eyebrow) — §3.
-11. [ ] Mirror the `status.availableFrom` change onto `pageServicesHero` so `/services` stays consistent.
-12. [ ] Add `pageServicesTeaser` and `pageLabTeaser`; register in
+11. [x] Mirror the `status.availableFrom` change onto `pageServicesHero` so `/services` stays consistent.
+12. [x] Add `pageServicesTeaser` and `pageLabTeaser`; register in
         [page-blocks/index.ts](apps/payload/src/page-blocks/index.ts) and
         [RenderBlocks.tsx](apps/frontend/src/components/RenderBlocks.tsx).
-13. [ ] Add the `caseStudy` group to the `projects` collection.
-14. [ ] Add `location` to the `copyright` global; enable a CTA appearance on `header.navItems`.
-15. [ ] Regenerate types (`@strps-website/types`) and **write a Payload migration** — this repo has
+13. [x] Add the `caseStudy` group to the `projects` collection.
+14. [x] Add `location` to the `copyright` global; enable a CTA appearance on `header.navItems`.
+15. [x] Regenerate types (`@strps-website/types`) and **write a Payload migration** — this repo has
         real migrations in [src/migrations/](apps/payload/src/migrations/), don't rely on dev push.
 
 **Phase 4 — Sections**

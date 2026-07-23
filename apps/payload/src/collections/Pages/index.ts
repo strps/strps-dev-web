@@ -25,6 +25,8 @@ import {
   PageServices,
   PageProcess,
   PageFaq,
+  PageServicesTeaser,
+  PageLabTeaser,
 } from '@/page-blocks'
 import { FormBlock } from '@/blocks/Form/config'
 import { headerOverrides } from '@/fields/header-overrrides'
@@ -87,9 +89,11 @@ export const Pages: CollectionConfig<'pages'> = {
               blocks: [
                 PageHero,
                 PageServicesHero,
+                PageServicesTeaser,
                 PageAbout,
                 PageSkills,
                 PageProjects,
+                PageLabTeaser,
                 PageExperience,
                 PageServices,
                 PageProcess,

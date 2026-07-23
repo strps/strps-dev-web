@@ -1,5 +1,6 @@
 import { Block } from 'payload'
 import { SectionConfig } from '@/fields/section'
+import { eyebrowField } from '@/fields/eyebrow'
 
 export const PageBlog: Block = {
     slug: 'pageBlog',
@@ -9,6 +10,7 @@ export const PageBlog: Block = {
         plural: 'Page Blogs',
     },
     fields: [
+        eyebrowField,
         {
             name: 'title',
             type: 'text',
