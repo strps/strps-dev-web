@@ -4,7 +4,7 @@ type ProjectSeed = Omit<RequiredDataFromCollectionSlug<'projects'>, 'createdAt' 
 
 export const projectsData: ProjectSeed[] = [
     {
-        title: 'STRPS Website Template',
+        title: 'STRPS — this site',
         slug: 'strps-website-template',
         _status: 'published',
         publishedAt: new Date().toISOString(),
@@ -22,6 +22,19 @@ export const projectsData: ProjectSeed[] = [
             { name: 'Vercel' },
             { name: 'Turborepo' },
         ],
+        caseStudy: {
+            tag: 'Template / product',
+            year: '2024–2026',
+            problem: 'Freelance portfolios usually look like a resume with a CSS file.',
+            contribution:
+                "Built a Next.js + Payload CMS template flexible enough to run a portfolio and a services business from the same codebase — the one you're looking at.",
+            context:
+                'Most freelance portfolios are a resume with a stylesheet — static, hard to update, and impossible to extend into an actual business tool. I wanted a template I could run my own portfolio on today and turn into a client-facing product later.',
+            decisions:
+                'Built content as Payload CMS collections from day one (projects, blog posts, and now lab items) rather than hardcoding pages — the same schema that powers my portfolio can power a client\'s site with zero rearchitecting. Framer Motion is used only for a handful of deliberate moments, not blanket page transitions.',
+            outcome:
+                'The site you\'re looking at right now, and the base template for the web design service I offer clients.',
+        },
         content: {
             root: {
                 type: 'root',
@@ -186,6 +199,20 @@ export const projectsData: ProjectSeed[] = [
             { name: 'Drizzle ORM' },
             { name: 'Zustand' },
         ],
+        caseStudy: {
+            tag: 'Product',
+            year: '2025',
+            problem:
+                'Habit trackers either oversimplify (a checkbox) or overwhelm (spreadsheets nobody keeps up with).',
+            contribution:
+                'Built a full-stack habit tracker with streak logic, weekly analytics, and a dashboard people actually open twice a day.',
+            context:
+                'Habit trackers either oversimplify to a checkbox or overwhelm with spreadsheets nobody keeps up with. I wanted something in between — enough structure to see patterns, not enough friction to abandon after a week.',
+            decisions:
+                'Streaks are computed server-side and cached, not recalculated on every render — the analytics dashboard stayed fast even with a year of daily entries. Chose Postgres over a document store specifically so streak queries could be plain SQL instead of application-layer logic.',
+            outcome:
+                "A working product with streak tracking, weekly analytics, and a dashboard that's actually opened daily rather than abandoned after onboarding.",
+        },
         content: {
             root: {
                 type: 'root',

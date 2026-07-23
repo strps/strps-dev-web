@@ -25,8 +25,16 @@ export const headerData: HeaderSeed = {
         {
             link: {
                 type: 'custom',
-                url: '/#experience',
-                label: 'Experience',
+                url: '/lab',
+                label: 'Lab',
+                newTab: false,
+            },
+        },
+        {
+            link: {
+                type: 'custom',
+                url: '/blog',
+                label: 'Blog',
                 newTab: false,
             },
         },
@@ -36,6 +44,7 @@ export const headerData: HeaderSeed = {
                 url: '/#contact',
                 label: 'Contact',
                 newTab: false,
+                appearance: 'outlineGhost',
             },
         },
     ],
@@ -46,6 +55,14 @@ export const headerData: HeaderSeed = {
 
 export const footerData: FooterSeed = {
     navItems: [
+        {
+            link: {
+                type: 'custom',
+                url: '/about',
+                label: 'About',
+                newTab: false,
+            },
+        },
         {
             link: {
                 type: 'custom',
@@ -69,4 +86,5 @@ export const copyrightData: CopyrightSeed = {
     name: 'CESAR JEREZ',
     startDate: '2024-01-01T00:00:00.000Z',
     link: 'https://www.strps.dev',
+    location: 'San José, CR · GMT-6',
 }

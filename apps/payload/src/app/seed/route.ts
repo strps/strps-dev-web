@@ -1,7 +1,8 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
 import { headers as getHeaders } from 'next/headers'
-import { homePageData } from './home-data'
+import { getHomePageData } from './home-data'
+import { getAboutPageData } from './about-data'
 import { headerData, footerData, copyrightData } from './globals-data'
 import { projectsData } from './projects-data'
 import { servicesFormData } from './forms-data'
@@ -28,6 +29,23 @@ export async function POST(): Promise<Response> {
         ])
         payload.logger.info('— Globals seeded.')
 
+        // The contact form is shared by pageContact (home, about) and formBlock (services)
+        let formDoc = (
+            await payload.find({
+                collection: 'forms',
+                where: { title: { equals: servicesFormData.title } },
+                limit: 1,
+            })
+        ).docs[0]
+
+        if (!formDoc) {
+            formDoc = await payload.create({
+                collection: 'forms',
+                data: servicesFormData,
+            })
+            payload.logger.info('— Contact form seeded.')
+        }
+
         // Check if home page already exists
         const existingPages = await payload.find({
             collection: 'pages',
@@ -40,9 +58,26 @@ export async function POST(): Promise<Response> {
         } else {
             await payload.create({
                 collection: 'pages',
-                data: homePageData,
+                data: getHomePageData(formDoc.id),
             })
             payload.logger.info('— Home page seeded.')
+        }
+
+        // Check if about page already exists
+        const existingAboutPage = await payload.find({
+            collection: 'pages',
+            where: { slug: { equals: 'about' } },
+            limit: 1,
+        })
+
+        if (existingAboutPage.docs.length > 0) {
+            payload.logger.info('— About page already exists, skipping page seed.')
+        } else {
+            await payload.create({
+                collection: 'pages',
+                data: getAboutPageData(formDoc.id),
+            })
+            payload.logger.info('— About page seeded.')
         }
 
         // Seed projects
@@ -71,22 +106,6 @@ export async function POST(): Promise<Response> {
         if (existingServicesPage.docs.length > 0) {
             payload.logger.info('— Services page already exists, skipping page seed.')
         } else {
-            let formDoc = (
-                await payload.find({
-                    collection: 'forms',
-                    where: { title: { equals: servicesFormData.title } },
-                    limit: 1,
-                })
-            ).docs[0]
-
-            if (!formDoc) {
-                formDoc = await payload.create({
-                    collection: 'forms',
-                    data: servicesFormData,
-                })
-                payload.logger.info('— Services contact form seeded.')
-            }
-
             await payload.create({
                 collection: 'pages',
                 data: getServicesPageData(formDoc.id),

@@ -1,7 +1,10 @@
 
 import type { RequiredDataFromCollectionSlug } from 'payload'
+import { aboutNarrativeBody } from './about-narrative'
 
-export const homePageData: Omit<RequiredDataFromCollectionSlug<'pages'>, 'createdAt' | 'updatedAt' | 'id'> = {
+type HomePageSeed = Omit<RequiredDataFromCollectionSlug<'pages'>, 'createdAt' | 'updatedAt' | 'id'>
+
+export const getHomePageData = (formId: number): HomePageSeed => ({
   title: 'Home',
   slug: 'home',
   _status: 'published',
@@ -15,36 +18,38 @@ export const homePageData: Omit<RequiredDataFromCollectionSlug<'pages'>, 'create
   layout: [
     {
       blockType: 'pageHero',
-      name: 'CESAR JEREZ',
-      label: 'Full Stack Developer',
+      variant: 'statement',
+      headline: 'I build fast websites and web apps for businesses.',
+      showPlotLine: true,
       description:
-        'Crafting interactive experiences and building efficient, scalable systems for the modern web.',
+        "I'm César Jerez — a full stack developer in San José, Costa Rica, working at the intersection of web development, electronics, and system architecture. From landing pages to custom internal tools, I build things that work.",
       location: {
         city: 'San José',
         region: 'Costa Rica',
       },
       status: {
         isAvailable: true,
-        label: 'Available for new opportunities',
+        label: 'Available for new projects',
+        availableFrom: 'Q4 2026',
       },
       email: 'csrstrps@gmail.com',
       links: [
         {
           link: {
             type: 'custom',
-            url: 'https://github.com/strps',
-            label: 'GitHub',
-            newTab: true,
-            appearance: 'default',
+            url: '#contact',
+            label: 'Work with me',
+            newTab: false,
+            appearance: 'solid',
           },
         },
         {
           link: {
             type: 'custom',
-            url: 'https://www.linkedin.com/in/cesar-jerez-e/',
-            label: 'LinkedIn',
-            newTab: true,
-            appearance: 'outline',
+            url: '#projects',
+            label: 'See my work',
+            newTab: false,
+            appearance: 'outlineGhost',
           },
         },
       ],
@@ -57,139 +62,80 @@ export const homePageData: Omit<RequiredDataFromCollectionSlug<'pages'>, 'create
       },
     },
     {
-      blockType: 'pageAbout',
-      title: 'About Me',
-      summary:
-        'Multidisciplinary developer with a strong foundation in front-end and back-end technologies, passionate about crafting interactive experiences and building efficient, scalable systems. Background in electronics, CNC programming, and technical theater. Focused on delivering robust digital solutions.',
+      blockType: 'pageServicesTeaser',
+      eyebrow: 'Services',
+      title: 'What I can build for you',
+      link: {
+        type: 'custom',
+        url: '/services',
+        label: 'Full details →',
+        newTab: false,
+      },
+      items: [
+        {
+          name: 'Websites & landing pages',
+          summary: 'Fast, modern sites with a CMS you can edit yourself.',
+          link: {
+            type: 'custom',
+            url: '/services',
+            label: 'Learn more',
+            newTab: false,
+          },
+        },
+        {
+          name: 'Web apps & internal tools',
+          summary: 'Dashboards, portals, and custom software built around your workflow.',
+          link: {
+            type: 'custom',
+            url: '/services',
+            label: 'Learn more',
+            newTab: false,
+          },
+        },
+        {
+          name: 'APIs & automation',
+          summary: 'Integrations and scripts that connect the tools you already use.',
+          link: {
+            type: 'custom',
+            url: '/services',
+            label: 'Learn more',
+            newTab: false,
+          },
+        },
+      ],
       section: {
         container: true,
-        section_id: 'about',
+        section_id: 'services',
         backgroundContainer: false,
         theme: 'auto',
         background: 'none',
       },
     },
     {
-      blockType: 'pageSkills',
-      title: 'Technical Arsenal',
-      subtitle: 'Technologies & tools I work with',
-      skillGroups: [
+      blockType: 'pageProcess',
+      variant: 'strip',
+      title: 'How I Work',
+      steps: [
         {
-          name: 'Front-End Development',
-          icon: 'Monitor',
-          keywords: [
-            { keyword: 'HTML5' },
-            { keyword: 'CSS3' },
-            { keyword: 'JavaScript' },
-            { keyword: 'TypeScript' },
-            { keyword: 'React' },
-            { keyword: 'Tailwind CSS' },
-            { keyword: 'Bootstrap' },
-            { keyword: 'Redux' },
-            { keyword: 'Zustand' },
-            { keyword: 'Framer Motion' },
-            { keyword: 'Responsive Design' },
-            { keyword: 'UI/UX' },
-            { keyword: 'TanStack Query' },
-          ],
+          title: 'Discovery',
+          description: 'Free call — we scope what you actually need.',
         },
         {
-          name: 'Back-End Development',
-          icon: 'Server',
-          keywords: [
-            { keyword: 'Node.js' },
-            { keyword: 'Express.js' },
-            { keyword: 'Flask' },
-            { keyword: 'FastAPI' },
-            { keyword: 'Zod' },
-            { keyword: 'Drizzle ORM' },
-            { keyword: 'SQL Server' },
-            { keyword: 'PostgreSQL' },
-            { keyword: 'MySQL' },
-            { keyword: 'Redis' },
-          ],
+          title: 'Proposal',
+          description: 'Fixed price for fixed scope, in writing.',
         },
         {
-          name: 'Programming Languages',
-          icon: 'Terminal',
-          keywords: [
-            { keyword: 'JavaScript' },
-            { keyword: 'TypeScript' },
-            { keyword: 'Python' },
-            { keyword: 'Java' },
-            { keyword: 'C#' },
-            { keyword: 'VHDL' },
-          ],
+          title: 'Build',
+          description: 'Weekly progress, no black-box silence.',
         },
         {
-          name: 'Tools & Technologies',
-          icon: 'Wrench',
-          keywords: [
-            { keyword: 'Git' },
-            { keyword: 'GitHub' },
-            { keyword: 'Chrome DevTools' },
-            { keyword: 'Figma' },
-            { keyword: 'Linux' },
-            { keyword: 'Windows' },
-            { keyword: 'MacOS' },
-            { keyword: 'Command Line' },
-            { keyword: 'Jest' },
-          ],
+          title: 'Handoff',
+          description: "All code and credentials — it's yours.",
         },
       ],
       section: {
         container: true,
-        section_id: 'skills',
-        backgroundContainer: false,
-        theme: 'auto',
-        background: 'none',
-      },
-    },
-    {
-      blockType: 'pageExperience',
-      title: 'Professional History',
-      positions: [
-        {
-          company: 'Amazon',
-          position: 'Customer Service Representative',
-          startDate: '2023-09',
-          endDate: 'Present',
-          summary:
-            'Provided logistical and delivery support for drivers and customers, managing package issues, check-ins, and refunds.',
-          highlights: [
-            { highlight: 'Assisted drivers with navigational challenges and warehouse check-ins.' },
-            { highlight: 'Handled scanning issues and coordinated replacements or refunds.' },
-            { highlight: 'Resolved delivery-related customer support tickets efficiently.' },
-          ],
-        },
-        {
-          company: 'Teleperformance',
-          position: 'Customer Service Representative',
-          startDate: '2021-05',
-          endDate: '2021-12',
-          summary:
-            'Supported customers of a retail account related to Target with inquiries on orders and returns.',
-          highlights: [
-            { highlight: 'Resolved customer questions about payments, shipments, returns, and refunds.' },
-            { highlight: 'Maintained a high satisfaction rate through empathetic and efficient service.' },
-          ],
-        },
-        {
-          company: 'Teatro Espressivo',
-          position: 'Theater Technician',
-          startDate: '2013-12',
-          endDate: '2014-12',
-          summary:
-            'Managed technical staging and customer-facing duties in a professional theater.',
-          highlights: [
-            { highlight: 'Installed and operated sound, lighting, and video systems.' },
-            { highlight: 'Worked as usher and stage technician to ensure smooth show execution.' },
-          ],
-        },
-      ],
-      section: {
-        container: true,
-        section_id: 'experience',
+        section_id: 'process',
         backgroundContainer: false,
         theme: 'auto',
         background: 'none',
@@ -197,7 +143,15 @@ export const homePageData: Omit<RequiredDataFromCollectionSlug<'pages'>, 'create
     },
     {
       blockType: 'pageProjects',
-      title: 'Featured Projects',
+      eyebrow: 'Projects',
+      title: 'Selected work',
+      variant: 'hairline',
+      link: {
+        type: 'custom',
+        url: '/projects',
+        label: 'All projects →',
+        newTab: false,
+      },
       populateBy: 'collection',
       limit: 6,
       githubUrl: 'https://github.com/strps',
@@ -210,31 +164,125 @@ export const homePageData: Omit<RequiredDataFromCollectionSlug<'pages'>, 'create
       },
     },
     {
-      blockType: 'pageContact',
-      title: 'Ready to build something great?',
-      description:
-        'I\'m always open to new opportunities, collaborations, and interesting projects. Feel free to reach out!',
-      email: 'csrstrps@gmail.com',
-      links: [
+      blockType: 'pageLabTeaser',
+      eyebrow: 'Lab',
+      title: 'Things I build for fun',
+      intro: "Electronics, CNC, generative sketches — the stuff that doesn't fit a client brief.",
+      link: {
+        type: 'custom',
+        url: '/lab',
+        label: 'Visit the lab →',
+        newTab: false,
+      },
+      limit: 3,
+      section: {
+        container: true,
+        section_id: 'lab',
+        backgroundContainer: false,
+        theme: 'auto',
+        background: 'none',
+      },
+    },
+    {
+      blockType: 'pageBlog',
+      eyebrow: 'Writing',
+      title: 'Notes and build logs',
+      populateBy: 'collection',
+      limit: 3,
+      blogUrl: '/blog',
+      section: {
+        container: true,
+        section_id: 'blog',
+        backgroundContainer: false,
+        theme: 'auto',
+        background: 'none',
+      },
+    },
+    {
+      blockType: 'pageAbout',
+      eyebrow: 'About',
+      title: 'How I got here',
+      layout: 'twoColumn',
+      body: aboutNarrativeBody,
+      link: {
+        type: 'custom',
+        url: '/about',
+        label: 'More about me →',
+        newTab: false,
+      },
+      section: {
+        container: true,
+        section_id: 'about',
+        backgroundContainer: false,
+        theme: 'auto',
+        background: 'none',
+      },
+    },
+    {
+      blockType: 'pageSkills',
+      eyebrow: 'Skills',
+      title: 'Core stack',
+      variant: 'list',
+      skillGroups: [
         {
-          link: {
-            type: 'custom',
-            url: 'mailto:csrstrps@gmail.com',
-            label: 'Get in Touch',
-            newTab: false,
-            appearance: 'default',
-          },
+          name: 'Frontend',
+          icon: 'Monitor',
+          keywords: [
+            { keyword: 'React' },
+            { keyword: 'Next.js' },
+            { keyword: 'TypeScript' },
+            { keyword: 'Tailwind CSS' },
+          ],
         },
         {
-          link: {
-            type: 'custom',
-            url: 'https://www.linkedin.com/in/cesar-jerez-e/',
-            label: 'LinkedIn',
-            newTab: true,
-            appearance: 'outline',
-          },
+          name: 'Backend',
+          icon: 'Server',
+          keywords: [
+            { keyword: 'Node.js' },
+            { keyword: 'Express' },
+            { keyword: 'PostgreSQL' },
+            { keyword: 'REST / GraphQL' },
+          ],
+        },
+        {
+          name: 'Electronics',
+          icon: 'Cpu',
+          keywords: [
+            { keyword: 'VHDL' },
+            { keyword: 'PCB design' },
+            { keyword: 'Embedded C' },
+            { keyword: 'CNC / 3D printing' },
+          ],
+        },
+        {
+          name: 'Tooling',
+          icon: 'Wrench',
+          keywords: [
+            { keyword: 'Git' },
+            { keyword: 'Docker' },
+            { keyword: 'CI/CD' },
+            { keyword: 'Figma' },
+          ],
         },
       ],
+      section: {
+        container: true,
+        section_id: 'skills',
+        backgroundContainer: false,
+        theme: 'auto',
+        background: 'none',
+      },
+    },
+    {
+      blockType: 'pageContact',
+      eyebrow: 'Contact',
+      title: 'Have a project in mind?',
+      description:
+        "Tell me what you're trying to build — a couple of sentences is enough to get started. I reply within one business day.",
+      email: 'csrstrps@gmail.com',
+      emailLabel: 'Prefer email?',
+      note: 'I reply within one business day',
+      form: formId,
       section: {
         container: true,
         section_id: 'contact',
@@ -244,5 +292,4 @@ export const homePageData: Omit<RequiredDataFromCollectionSlug<'pages'>, 'create
       },
     },
   ],
-}
-
+})

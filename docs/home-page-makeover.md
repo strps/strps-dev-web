@@ -475,7 +475,7 @@ already published, into the live `home` page document — the seed skips existin
 
 | Destination | New value |
 | --- | --- |
-| `pageHero.status` | `isAvailable: true` · `label: Available for new projects` · `availableFrom: Q3 2026` (§3.1 — composed, not one string) |
+| `pageHero.status` | `isAvailable: true` · `label: Available for new projects` · `availableFrom: Q4 2026` (§3.1 — composed, not one string; shipped as Q4 rather than the doc's original Q3, see note below) |
 | `pageHero.headline` | `I build fast websites and web apps for businesses.` |
 | `pageHero.description` | `I'm César Jerez — a full stack developer in San José, Costa Rica, working at the intersection of web development, electronics, and system architecture. From landing pages to custom internal tools, I build things that work.` |
 | `pageHero.links` | `Work with me` → `#contact` (solid) · `See my work` → `#projects` (ghost) |
@@ -506,7 +506,8 @@ already published, into the live `home` page document — the seed skips existin
   the short one.
 - **The blog teaser framing** — title and eyebrow are invented above; no mockup reference exists.
 
-**Check before publishing:** `Q3 2026` availability (it's now July 2026 — that window is closing);
+**Check before publishing:** ~~`Q3 2026` availability (it's now July 2026 — that window is closing)~~ —
+shipped as `Q4 2026` instead (Phase 5, seeded 2026-07-23 — re-check again as that quarter approaches);
 the Electronics skill group, which reads as a service capability once it sits under "Core stack" on a
 page selling services.
 
@@ -555,14 +556,14 @@ Ordered so that nothing is built twice. Each phase is independently reviewable.
 19. [x] Restyle header + footer.
 
 **Phase 5 — Content**
-20. [ ] Update `home-data.ts` with §6, and update the **live** `home` document — the seed route skips
+20. [x] Update `home-data.ts` with §6, and update the **live** `home` document — the seed route skips
         pages that already exist ([route.ts](apps/payload/src/app/seed/route.ts)), so a re-seed alone
         will not change production content.
-21. [ ] Add TrackBit to [projects-data.ts](apps/payload/src/app/seed/projects-data.ts) with full
+21. [x] Add TrackBit to [projects-data.ts](apps/payload/src/app/seed/projects-data.ts) with full
         `caseStudy` fields, and write `caseStudy` copy for the existing projects.
-22. [ ] Create `about-data.ts` (§3.10), wire it into the seed route, and publish the `/about` page.
-23. [ ] Seed the home contact form (or point `pageContact.form` at the existing services form).
-24. [ ] Reseed the header/footer globals (`updateGlobal` runs unconditionally, so these do refresh) —
+22. [x] Create `about-data.ts` (§3.10), wire it into the seed route, and publish the `/about` page.
+23. [x] Seed the home contact form (or point `pageContact.form` at the existing services form).
+24. [x] Reseed the header/footer globals (`updateGlobal` runs unconditionally, so these do refresh) —
         nav becomes Services / Projects / Lab / Blog / Contact-CTA, footer gains About + location.
 
 **Phase 6 — Verify**
@@ -594,16 +595,22 @@ Resolved 2026-07-22. These are settled — the sections above already reflect th
 
 ### Follow-ups these decisions created
 
-- **About page copy** — the narrative currently exists once, in the mockup. Decide whether home carries
-  a shortened version and `/about` the long one, or both show the same two paragraphs. Affects §6.
-- **Blog teaser framing** — eyebrow and title are invented (`Writing` / `Notes and build logs`); no
-  mockup reference. Also: is there enough published blog content for a 3-up row to look right?
-- **TrackBit case-study copy** — the mockup phrasing is a draft written to look plausible. Verify the
-  technical claims (server-side cached streaks, the Postgres rationale) before publishing them.
-- **Availability window** — `Q3 2026` is the current quarter as of this writing. Set the real value at
-  publish time.
+- ~~**About page copy**~~ — resolved in Phase 5: home and `/about` currently ship the *same* two
+  paragraphs (`about-narrative.ts`, shared by both). A genuinely shortened home version vs. the full
+  `/about` one is still open if that reads as too redundant in practice.
+- ~~**Blog teaser framing**~~ — shipped as eyebrow `Writing` / title `Notes and build logs` (Phase 5,
+  still invented copy, no mockup reference). Whether there's enough published blog content for a 3-up
+  row to look right wasn't verified — the section renders correctly empty if there isn't (see the
+  handoff's Phase 5 notes).
+- **TrackBit case-study copy** — seeded verbatim from the mockup's draft phrasing in Phase 5
+  (`server-side cached streaks`, the Postgres rationale). **Still unverified** — confirm the technical
+  claims are actually true before treating this as final copy.
+- ~~**Availability window**~~ — resolved in Phase 5: shipped as `Q4 2026` (since `Q3 2026` was already
+  the current quarter as of the 2026-07-23 seed date). Re-check as that quarter approaches.
 - **Light-theme design pass** — the mockups only prove the dark side. Hero, hairline grids, and amber
-  CTAs need a real review on light before launch, not just a contrast check.
+  CTAs need a real review on light before launch, not just a contrast check. Phase 5's screenshots
+  (§7 handoff) show light theme rendering correctly structurally, but this is still not the "real
+  design pass" this line calls for.
 
 ---
 

@@ -3,8 +3,8 @@
 > **For:** whoever picks this up next (another chat, another model, future me).
 > **Full spec:** [home-page-makeover.md](home-page-makeover.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) refer to it.
-> **Branch:** `makeover`. **As of:** 2026-07-23, Phases 0–4 of the §7 implementation plan are done.
-> Phase 0–3 is committed (`6883576` and earlier); Phase 4 is uncommitted (see suggested commit message
+> **Branch:** `makeover`. **As of:** 2026-07-23, Phases 0–5 of the §7 implementation plan are done.
+> Phase 0–4 is committed (`6a31c19` and earlier); Phase 5 is uncommitted (see suggested commit message
 > at the bottom).
 
 ---
@@ -455,23 +455,122 @@ same component, same code path) is already visually confirmed working via the *e
 `formBlock` screenshot. Worth a real check once Phase 5 seeds `pageContact.form`. No Lighthouse/reduced-
 motion/keyboard-nav pass — that's Phase 6, items 25–33, unchanged by this phase.
 
+### Phase 5 — Content (§7 items 20–24)
+
+**Seed data** — [home-data.ts](../apps/payload/src/app/seed/home-data.ts) was rewritten wholesale per §6:
+the export changed from a static `homePageData` object to `getHomePageData(formId: number)`, because
+`pageContact.form` is a relationship and needs a real form ID (see below). The layout array now matches
+§2's target order exactly — `pageHero` (statement) → `pageServicesTeaser` → `pageProcess` (strip) →
+`pageProjects` (hairline) → `pageLabTeaser` → `pageBlog` → `pageAbout` (twoColumn) → `pageSkills` (list) →
+`pageContact` — and **`pageExperience` was dropped from home entirely**, per §2's decision, not just
+deprioritized. A new [about-data.ts](../apps/payload/src/app/seed/about-data.ts) (`getAboutPageData`)
+follows the exact same shape/pattern as `services-data.ts`'s `getServicesPageData`, and
+[route.ts](../apps/payload/src/app/seed/route.ts) was restructured so the shared contact form is
+fetched-or-created **once**, up front, before either page is seeded — previously that logic lived
+entirely inside the services-page branch and only ran if the services page didn't exist yet, which would
+have silently left `formId` unavailable for home/about on a fresh install.
+
+**The about narrative is shared, not duplicated.** Both `pageAbout.body` instances (home's shortened
+close and `/about`'s full version) currently carry the **same** two paragraphs — §8's "About page copy"
+follow-up left open whether they should differ, and nothing in §6 supplies a longer version, so
+duplicating was the only faithful option without inventing new prose. Factored into
+[about-narrative.ts](../apps/payload/src/app/seed/about-narrative.ts) (`aboutNarrativeBody`, a Lexical
+`root` literal with `format: 1` bold runs for the mockup's bolded phrases) so the two seed files import
+one source of truth instead of hand-copying ~30 lines of Lexical JSON twice. Needed `direction: 'ltr' as
+const` / `format: '' as const` on each paragraph/root node — without the `as const`s, TS widens those to
+plain `string` and the literal no longer structurally matches the block's expected `TypedEditorState`
+shape (this only bit because the object is a standalone exported constant; inline literals like
+`projects-data.ts`'s `content` field get their literal types from surrounding context and don't need it).
+
+**`caseStudy` copy** — both projects now have `caseStudy` filled from the mockup copy (§3.4/§6): TrackBit
+gets the short problem/contribution pair (home card) plus context/decisions/outcome (`/projects`
+accordion), and so does the existing STRPS template entry. **Two judgment calls, not literal transcription:**
+1. Renamed the STRPS project's `title` from `"STRPS Website Template"` → `"STRPS — this site"` — both
+   mockups (home and `/projects`) display this project under that name, and `ProjectCard`/
+   `ProjectSummaryCard` render `project.title` directly, so matching the mockup's card required the
+   rename. Left `meta.title`/`meta.description` (SEO) alone since nothing asked for those to change.
+2. **Did not** touch TrackBit's `techStack`. The mockup's card copy lists a shorter stack (`Next.js,
+   PostgreSQL, Tailwind, Vercel`) than what was already seeded (`React, TypeScript, Node.js, Express,
+   PostgreSQL, Tailwind CSS, Drizzle ORM, Zustand`) — I started to overwrite it to match the mockup, then
+   reverted: the existing list was already-committed content describing a real project, and swapping its
+   framework (React → Next.js) and dropping Node/Express/Drizzle/Zustand is a factual claim about
+   real software I have no way to verify. §8's own follow-up explicitly warns the mockup's TrackBit copy
+   is "a draft written to look plausible" — that warning applies here too. Left the pre-existing stack
+   as-is; **still needs a real verification pass**, same as the `caseStudy.decisions` prose itself
+   (the "streaks are computed server-side and cached" claim).
+
+**Availability window** — shipped `status.availableFrom: 'Q4 2026'`, not the doc's literal `Q3 2026`.
+The doc's own follow-up flagged that Q3 2026 "is closing *now*"; since the seed actually ran on
+2026-07-23 (squarely inside Q3), publishing "available starting Q3 2026" would have read as already
+overdue. Moved it one quarter out. Whoever revisits this closer to Q4 should push it further still.
+
+**A significant, unplanned discovery: the dev database had never run a real migration.** Attempting to
+push this phase's content into the live dev DB (`payload.update` on the `home` page, `payload.updateGlobal`
+on `header`/`copyright`) failed with missing-column Postgres errors — not just the one or two columns a
+normal drift would produce, but essentially **all of Phase 3's schema** (`pages_blocks_page_hero.eyebrow`,
+`header_nav_items.link_appearance`, `copyright.location`, …). `payload migrate:status` confirmed all
+three migrations, including the two from *before* this makeover, showed `Ran: No` — the dev DB's schema
+had been built entirely by Payload's development auto-push, every session, this whole time. The likely
+mechanism: once real migration files exist in the project (as of Phase 3's `20260723_171252_phase3_schema.ts`),
+Payload stops trusting auto-push to reconcile schema on its own, so newly-added columns silently stopped
+landing in Postgres from that point on, even though the running dev server's in-memory config (and
+therefore GraphQL, and therefore every screenshot in the Phase 3/4 handoffs) reflected the new fields fine
+— the gap was invisible until something tried to read/write a column that was never actually created.
+**This was flagged to the user rather than fixed unilaterally** — running `payload migrate` cold against
+a database whose tables already exist from push (not from migration 1) risked `CREATE TABLE` conflicts on
+a real local database with real content. The user applied the migration themselves; `payload migrate:status`
+now shows all three migrations `Ran: Yes`, and the previously-missing columns are confirmed present via
+direct `psql` inspection. **If you hit a "column does not exist" error on this dev DB again, check
+`payload migrate:status` first** — auto-push is no longer a safety net now that migrations exist.
+
+**How the live DB actually got updated:** `route.ts`'s seed logic intentionally skips pages that already
+exist (§7 item 20 flags this), so re-running the normal `/seed` endpoint would not have touched the
+already-existing `home` page. Used a temporary, unauthenticated API route
+(`apps/payload/src/app/dev-seed-phase5/route.ts`, plain `payload.update`/`payload.create` calls mirroring
+`route.ts` but updating in place instead of skipping) to push content into the live dev DB, hit once via
+`curl -X POST`, then **deleted** — same throwaway-and-discard pattern the Phase 4 handoff used for its QA
+route. `git status` is clean of it. **Do not recreate anything like it on a deployed environment** — it
+had no auth check, which was fine for a localhost-only one-shot but would not be for anything reachable
+from outside.
+
+**Verification performed:** `tsc --noEmit` and `eslint` clean on every new/touched seed file (only the
+pre-existing, unrelated `sharp` type error remains in `payload.config.ts`, same as every prior phase).
+`payload migrate:status` shows all three migrations applied. Direct `psql` queries confirm: `pages` has
+`home`/`about`/`services`; both `projects` rows have `case_study_tag` populated; the previously-missing
+columns exist. Both dev servers restarted, `/`, `/about`, and `/services` all return 200. Full-page
+Playwright screenshots of `/` (light and dark) and `/about` (dark) confirm: correct section order and
+copy, hairline styling, amber accent, the header's outlined Contact CTA rendering correctly (proving
+`header.navItems[].appearance` round-tripped through the DB fix), the light theme reading correctly
+structurally in both hero and card grids, and — new versus Phase 4, which explicitly skipped this —
+`pageContact`'s **form-populated branch** is now exercised for real on both `/` and `/about` (both point
+at the same seeded contact form), not just inferred from `/services`' unrelated `formBlock` screenshot.
+
+**Verification NOT performed:** no submission-through-success-state form e2e test (that's Phase 6 item
+28). No check of the pre-existing "Each child in a list should have a unique key prop" React warning
+visible in the dev console on `/` — this predates Phase 5 (flagged as pre-existing/unrelated in the
+Phase 2–4 handoffs too) and wasn't tracked down to its exact source this time either; worth actually
+identifying before Phase 6's checklist, since a component stack wasn't captured. No Lighthouse pass, no
+keyboard-nav pass, no reduced-motion check — all still Phase 6.
+
 ---
 
 ## What's next
 
-Follow §7 in order — it's sequenced so nothing gets built twice:
+Only **Phase 6 — Verify** remains: the full checklist in §7 items 25–33 (both themes, breakpoints,
+keyboard nav, form e2e, reduced-motion, live preview, Lighthouse). Notes for whoever picks it up:
 
-- **Phase 5 — Content**: seed data (§6), including the real TrackBit project entry and the new `/about`
-  page (§3.10). This is also where the live `home` page document actually gets the new blocks/fields —
-  Phase 3 only made them possible to author, it didn't populate anything.
-- **Phase 6 — Verify**: the full checklist in §7 items 25–33 (both themes, breakpoints, keyboard nav,
-  form e2e, reduced-motion, live preview, Lighthouse). Also worth doing once real content exists: apply
-  the Phase 3 migration to the actual dev DB (`payload migrate`) rather than leaving it on auto-push
-  forever — see the "Verification NOT performed" note above.
+- The dev DB is now on real migrations (`payload migrate:status` → all three `Ran: Yes`) — no need to
+  re-apply anything, but see Phase 5's drift note above if schema errors show up again.
+- Track down the source of the "unique key prop" React warning on `/` (Phase 5 saw it in the dev console
+  but didn't isolate the component) before running the rest of the checklist, so it doesn't get lost in
+  the noise of a full pass.
+- Item 28 (form e2e) can now be tested for real on `/` and `/about`, not just `/services` — `pageContact.form`
+  is seeded on all three.
 
 Decisions are already settled (§8) — don't re-litigate scope; the open items are the "Follow-ups" list
-at the bottom of §8 (about-page copy length, blog teaser framing, TrackBit copy verification, the
-`Q3 2026` availability window which is closing *now*, and the light-theme design pass).
+at the bottom of §8. Phase 5 resolved the about-page-copy question (shipped identical, not shortened) and
+the availability window (shipped `Q4 2026`); still open: TrackBit copy verification and the light-theme
+design pass — see §8 for detail on each.
 
 ---
 
