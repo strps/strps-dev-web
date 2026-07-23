@@ -3,37 +3,82 @@ import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Section from '../section';
 import { CMSLink } from '@/components/cms-link';
-import type { PageContactBlock } from '@strps-website/types';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { PayloadForm } from '@/components/form/PayloadForm';
+import type { PageContactBlock, Form as FormType } from '@strps-website/types';
 
-type ContactProps = Omit<PageContactBlock, 'links'> & {
+type ContactProps = Omit<PageContactBlock, 'links' | 'form'> & {
     contactLinks?: PageContactBlock['links'];
+    contactForm?: FormType | null;
 };
 
-const ContactSection: React.FC<ContactProps> = ({ title, description, email, contactLinks, section }) => {
+const ContactSection: React.FC<ContactProps> = ({
+    eyebrow,
+    title,
+    description,
+    email,
+    emailLabel,
+    note,
+    contactForm: form,
+    contactLinks,
+    section,
+}) => {
     return (
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'contact'}
-            className="bg-muted/50 rounded-lg text-center space-y-6"
-            containerClassName='py-32'
+            spacing="contact"
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap px-6"
         >
-            <h2 className="text-3xl md:text-4xl font-bold">{title}</h2>
-            {description && (
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-                    {description}
-                </p>
-            )}
-            <div className="flex justify-center gap-4">
-                {email && (
-                    <Button size="lg" asChild>
-                        <Link href={`mailto:${email}`}>
-                            <Mail className="mr-2 h-4 w-4" /> Send me an email
-                        </Link>
-                    </Button>
+            <div className="grid grid-cols-1 gap-11 min-[721px]:grid-cols-[1fr_1.2fr] min-[721px]:gap-15">
+                <div>
+                    <Eyebrow as="div">{eyebrow || 'Contact'}</Eyebrow>
+                    <h2 className="mt-3.5 text-2xl font-medium">{title}</h2>
+                    {description && (
+                        <p className="mt-4 max-w-[40ch] text-[15px] leading-[1.65] text-muted-foreground">
+                            {description}
+                        </p>
+                    )}
+
+                    {email && (
+                        <div className="mt-7.5">
+                            <Eyebrow as="span" className="mb-2.5 block normal-case tracking-normal">
+                                {emailLabel || 'Prefer email?'}
+                            </Eyebrow>
+                            <a
+                                href={`mailto:${email}`}
+                                className="border-b border-border-strong text-[15px] text-foreground no-underline transition-colors duration-150 hover:border-primary hover:text-primary"
+                            >
+                                {email}
+                            </a>
+                        </div>
+                    )}
+                </div>
+
+                {form ? (
+                    <div>
+                        <PayloadForm
+                            form={form}
+                            variant="mockup"
+                            successClassName="border border-border-strong p-10 text-center"
+                        />
+                        {note && <p className="mt-3 text-xs text-muted-foreground">{note}</p>}
+                    </div>
+                ) : (
+                    <div className="flex flex-wrap items-start gap-4">
+                        {email && (
+                            <Button variant="solid" asChild>
+                                <Link href={`mailto:${email}`}>
+                                    <Mail className="mr-2 h-4 w-4" /> Send me an email
+                                </Link>
+                            </Button>
+                        )}
+                        {contactLinks?.map(({ link }, i) => (
+                            <CMSLink key={i} {...link} appearance={link.appearance ?? undefined} />
+                        ))}
+                    </div>
                 )}
-                {contactLinks?.map(({ link }, i) => (
-                    <CMSLink key={i} {...link} appearance={link.appearance ?? undefined} size="lg" />
-                ))}
             </div>
         </Section>
     );

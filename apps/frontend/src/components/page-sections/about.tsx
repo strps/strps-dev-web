@@ -1,32 +1,55 @@
-import Image from 'next/image';
+import { cn } from '@/lib/utils';
+import RichText from '@/components/RichText';
 import Section from '../section';
-import type { PageAboutBlock, Media } from '@strps-website/types';
+import { SectionHeader } from '@/components/primitives/SectionHeader';
+import { LinkArrow } from '@/components/primitives/LinkArrow';
+import { resolveLinkHref } from '@/lib/resolveLinkHref';
+import type { PageAboutBlock } from '@strps-website/types';
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical';
 
-const AboutSection: React.FC<PageAboutBlock> = ({ title, summary, image, section }) => {
-    const img = typeof image === 'object' && image ? image as Media : null;
+type AboutProps = Omit<PageAboutBlock, 'link'> & {
+    aboutLink?: PageAboutBlock['link'];
+};
+
+const proseClassName =
+    '[&_p]:text-[15px] [&_p]:leading-[1.7] [&_p]:text-muted-foreground [&_strong]:font-medium [&_strong]:text-foreground [&_b]:font-medium [&_b]:text-foreground';
+
+const AboutSection: React.FC<AboutProps> = ({ eyebrow, title, layout, summary, body, aboutLink: link, section }) => {
+    const actionHref = resolveLinkHref(link);
+    const isTwoColumn = layout === 'twoColumn';
+
     return (
-        <Section {...(section ?? {})} id={section?.section_id || 'about'} className='min-h-[50em] flex items-center'>
-            <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
-                {img?.url && (
-                    <div className="shrink-0">
-                        <div className="relative h-40 w-40 md:h-52 md:w-52 overflow-hidden border-4 border-background shadow-lv1">
-                            <Image
-                                src={`${process.env.NEXT_PUBLIC_PAYLOAD_URL}${img.url}`}
-                                alt={img.alt || title}
-                                fill
-                                className="object-cover"
-                            />
-                        </div>
-                    </div>
-                )}
+        <Section
+            {...(section ?? {})}
+            id={section?.section_id || 'about'}
+            spacing="section"
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap px-6"
+        >
+            <SectionHeader
+                eyebrow={eyebrow || 'About'}
+                title={title}
+                action={
+                    actionHref && link?.label ? (
+                        <LinkArrow href={actionHref}>{link.label}</LinkArrow>
+                    ) : undefined
+                }
+            />
 
-                <div className="space-y-4 text-center md:text-left">
-                    <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-                    <p className="text-lg text-muted-foreground leading-relaxed">
-                        {summary}
-                    </p>
-                </div>
-            </div>
+            {body ? (
+                <RichText
+                    data={body as DefaultTypedEditorState}
+                    enableGutter={false}
+                    enableProse={false}
+                    className={cn(
+                        'mt-9',
+                        isTwoColumn ? 'grid items-start gap-12.5 md:grid-cols-2' : 'max-w-[60ch] space-y-4',
+                        proseClassName,
+                    )}
+                />
+            ) : summary ? (
+                <p className="mt-9 max-w-[60ch] text-[15px] leading-[1.7] text-muted-foreground">{summary}</p>
+            ) : null}
         </Section>
     );
 };

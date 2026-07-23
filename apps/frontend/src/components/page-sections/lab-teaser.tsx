@@ -2,9 +2,10 @@ import Section from '../section'
 import type { PageLabTeaserBlock } from '@strps-website/types'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
-import { GalleryCard } from '@/components/gallery/GalleryCard'
+import { LabTeaserCard } from '@/components/cards/LabTeaserCard'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
 import { getGalleryItems } from '@/app/(website)/lab/data'
+import { GALLERY_CATEGORIES } from '@/app/(website)/lab/types'
 
 type LabTeaserProps = Omit<PageLabTeaserBlock, 'link'> & {
     labTeaserLink?: PageLabTeaserBlock['link']
@@ -23,10 +24,11 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
 
     return (
         <Section
+            {...(section ?? {})}
             id={section?.section_id || 'lab'}
             spacing="section"
-            containerClassName="gap-[22px]"
-            {...(section ?? {})}
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <SectionHeader
                 eyebrow={eyebrow || 'Lab'}
@@ -40,11 +42,16 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
 
             {intro && <p className="max-w-2xl text-muted-foreground">{intro}</p>}
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3">
                 {items.map((item) => (
-                    <div key={item.id} className="aspect-4/3">
-                        <GalleryCard item={item} className="h-full" />
-                    </div>
+                    <LabTeaserCard
+                        key={item.id}
+                        href={item.href}
+                        tag={GALLERY_CATEGORIES.find((c) => c.value === item.category)?.label ?? item.category}
+                        title={item.title}
+                        note={item.description}
+                        imageUrl={typeof item.imageUrl === 'string' ? item.imageUrl : item.imageUrl?.src}
+                    />
                 ))}
             </div>
         </Section>

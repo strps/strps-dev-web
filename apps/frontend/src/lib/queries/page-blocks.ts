@@ -17,7 +17,11 @@ export const PAGE_BLOCK_FIELDS = gql`
 
   fragment PageHeroFields on PageHeroBlock {
     blockType
+    eyebrow
+    heroVariant: variant
     name
+    headline
+    showPlotLine
     label
     description
     location {
@@ -27,6 +31,7 @@ export const PAGE_BLOCK_FIELDS = gql`
     status {
       isAvailable
       label
+      availableFrom
     }
     email
     heroLinks: links {
@@ -65,6 +70,7 @@ export const PAGE_BLOCK_FIELDS = gql`
     status {
       isAvailable
       label
+      availableFrom
     }
     servicesHeroLinks: links {
       link {
@@ -99,13 +105,31 @@ export const PAGE_BLOCK_FIELDS = gql`
 
   fragment PageAboutFields on PageAboutBlock {
     blockType
+    eyebrow
     title
+    layout
     summary
+    body
     image {
       url
       alt
       width
       height
+    }
+    aboutLink: link {
+      type
+      newTab
+      url
+      label
+      appearance
+      reference {
+        relationTo
+        value {
+          ... on Page {
+            slug
+          }
+        }
+      }
     }
     section {
       ...SectionConfigFields
@@ -114,7 +138,9 @@ export const PAGE_BLOCK_FIELDS = gql`
 
   fragment PageSkillsFields on PageSkillsBlock {
     blockType
+    eyebrow
     title
+    skillsVariant: variant
     subtitle
     skillGroups {
       name
@@ -130,7 +156,24 @@ export const PAGE_BLOCK_FIELDS = gql`
 
   fragment PageProjectsFields on PageProjectsBlock {
     blockType
+    eyebrow
     title
+    projectsVariant: variant
+    projectsLink: link {
+      type
+      newTab
+      url
+      label
+      appearance
+      reference {
+        relationTo
+        value {
+          ... on Page {
+            slug
+          }
+        }
+      }
+    }
     populateBy
     limit
     selectedProjects {
@@ -150,6 +193,15 @@ export const PAGE_BLOCK_FIELDS = gql`
       }
       techStack {
         name
+      }
+      caseStudy {
+        tag
+        year
+        problem
+        contribution
+        context
+        decisions
+        outcome
       }
     }
     githubUrl
@@ -178,9 +230,15 @@ export const PAGE_BLOCK_FIELDS = gql`
 
   fragment PageContactFields on PageContactBlock {
     blockType
+    eyebrow
     title
     description
     email
+    emailLabel
+    note
+    contactForm: form {
+      ...FormDetailFields
+    }
     contactLinks: links {
       link {
         type
@@ -205,6 +263,7 @@ export const PAGE_BLOCK_FIELDS = gql`
 
   fragment PageBlogFields on PageBlogBlock {
     blockType
+    eyebrow
     title
     blogPopulateBy: populateBy
     blogLimit: limit
@@ -259,6 +318,7 @@ export const PAGE_BLOCK_FIELDS = gql`
 
   fragment PageProcessFields on PageProcessBlock {
     blockType
+    processVariant: variant
     title
     intro
     steps {
@@ -355,6 +415,90 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
   }
 
+  fragment FormDetailFields on Form {
+    id
+    enableRecaptcha
+    title
+    fields {
+      ... on Checkbox {
+        blockType
+        name
+        label
+        width
+        required
+        defaultBool: defaultValue
+      }
+      ... on Country {
+        blockType
+        name
+        label
+        width
+        required
+      }
+      ... on Email {
+        blockType
+        name
+        label
+        width
+        required
+      }
+      ... on Message {
+        blockType
+        message
+      }
+      ... on Number {
+        blockType
+        name
+        label
+        width
+        defaultNum: defaultValue
+        required
+      }
+      ... on Select {
+        blockType
+        name
+        label
+        width
+        defaultStr: defaultValue
+        placeholder
+        options {
+          label
+          value
+        }
+        required
+      }
+      ... on State {
+        blockType
+        name
+        label
+        width
+        required
+      }
+      ... on Text {
+        blockType
+        name
+        label
+        width
+        defaultStr: defaultValue
+        required
+      }
+      ... on Textarea {
+        blockType
+        name
+        label
+        width
+        defaultStr: defaultValue
+        required
+      }
+    }
+    submitButtonLabel
+    confirmationType
+    confirmationMessage
+    redirect {
+      url
+    }
+  }
+
   fragment FormBlockFields on FormBlock {
     blockType
     introType
@@ -362,87 +506,7 @@ export const PAGE_BLOCK_FIELDS = gql`
     introTitle
     introText
     form {
-      id
-      enableRecaptcha
-      title
-      fields {
-        ... on Checkbox {
-          blockType
-          name
-          label
-          width
-          required
-          defaultBool: defaultValue
-        }
-        ... on Country {
-          blockType
-          name
-          label
-          width
-          required
-        }
-        ... on Email {
-          blockType
-          name
-          label
-          width
-          required
-        }
-        ... on Message {
-          blockType
-          message
-        }
-        ... on Number {
-          blockType
-          name
-          label
-          width
-          defaultNum: defaultValue
-          required
-        }
-        ... on Select {
-          blockType
-          name
-          label
-          width
-          defaultStr: defaultValue
-          placeholder
-          options {
-            label
-            value
-          }
-          required
-        }
-        ... on State {
-          blockType
-          name
-          label
-          width
-          required
-        }
-        ... on Text {
-          blockType
-          name
-          label
-          width
-          defaultStr: defaultValue
-          required
-        }
-        ... on Textarea {
-          blockType
-          name
-          label
-          width
-          defaultStr: defaultValue
-          required
-        }
-      }
-      submitButtonLabel
-      confirmationType
-      confirmationMessage
-      redirect {
-        url
-      }
+      ...FormDetailFields
     }
     section {
       ...SectionConfigFields

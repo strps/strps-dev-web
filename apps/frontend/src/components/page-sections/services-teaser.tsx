@@ -20,10 +20,11 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
 
     return (
         <Section
+            {...(section ?? {})}
             id={section?.section_id || 'services'}
             spacing="section"
-            containerClassName="gap-[22px]"
-            {...(section ?? {})}
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <SectionHeader
                 eyebrow={eyebrow || 'Services'}

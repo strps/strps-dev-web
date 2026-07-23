@@ -4,11 +4,12 @@ import { Menu, X } from 'lucide-react';
 import React, { type FC, useState } from 'react';
 import Link from 'next/link';
 import { ThemeSwitch } from './ThemeSwitch';
+import { Button } from './ui/button';
 
 
 
 export interface HeaderClientProps {
-    navItems: { name: string; href?: string }[];
+    navItems: { name: string; href?: string; appearance?: string }[];
     overlay?: boolean;
     background?: boolean;
     theme?: 'auto' | 'light' | 'dark' | 'inverted';
@@ -36,8 +37,8 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
     return (
         <header
             className={`
-                top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-border 
-                ${overlay ? 'absolute' : 'relative'} 
+                top-0 left-0 right-0 z-50 border-b border-border
+                ${overlay ? 'absolute' : 'sticky'}
                 ${background ? 'bg-background' : 'bg-transparent'}
                 `
             }
@@ -52,16 +53,28 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
                 </Link>
 
                 {/* Desktop Nav */}
-                <div className="hidden md:flex items-center space-x-8">
-                    {navItems.map((item) => (
-                        <a
-                            key={item.name}
-                            href={item.href}
-                            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                        >
-                            {item.name}
-                        </a>
-                    ))}
+                <div className="hidden md:flex items-center gap-7">
+                    {navItems.map((item) =>
+                        item.appearance === 'outlineGhost' ? (
+                            <Button
+                                key={item.name}
+                                asChild
+                                variant="outlineGhost"
+                                size="sm"
+                                className="h-auto rounded-sharp px-4 py-2 text-[13px]"
+                            >
+                                <a href={item.href}>{item.name}</a>
+                            </Button>
+                        ) : (
+                            <a
+                                key={item.name}
+                                href={item.href}
+                                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                                {item.name}
+                            </a>
+                        ),
+                    )}
                     <ThemeSwitch />
                 </div>
 

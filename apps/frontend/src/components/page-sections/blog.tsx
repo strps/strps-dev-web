@@ -1,19 +1,18 @@
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import Section from '../section'
 import { ArticleCard } from '../cards/ArticleCard'
+import { SectionHeader } from '@/components/primitives/SectionHeader'
+import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { getBlogPosts } from '@/app/(website)/blog/data'
 import type { PageBlogBlock, Post, Media, BlogTag } from '@strps-website/types'
 
 const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blogLimit?: number }) => {
-    const { title, selectedPosts, blogUrl, section } = props
+    const { eyebrow, title, selectedPosts, blogUrl, section } = props
     const populateBy = (props as any).blogPopulateBy ?? props.populateBy
     const limit = (props as any).blogLimit ?? props.limit
     let posts: Post[] = []
 
     if (populateBy === 'collection') {
-        const { posts: fetched } = await getBlogPosts({ limit: limit ?? 6 })
+        const { posts: fetched } = await getBlogPosts({ limit: limit ?? 3 })
         posts = fetched
     } else {
         posts = (selectedPosts || []).filter(
@@ -22,19 +21,20 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
     }
 
     return (
-        <Section {...(section ?? {})} id={section?.section_id || 'blog'} className="space-y-8 py-10">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-                {blogUrl && (
-                    <Button variant="ghost" asChild className="hidden sm:flex">
-                        <Link href={blogUrl}>
-                            View all articles <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                )}
-            </div>
+        <Section
+            {...(section ?? {})}
+            id={section?.section_id || 'blog'}
+            spacing="section"
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
+        >
+            <SectionHeader
+                eyebrow={eyebrow || 'Writing'}
+                title={title}
+                action={blogUrl ? <LinkArrow href={blogUrl}>All articles →</LinkArrow> : undefined}
+            />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3">
                 {posts.map((post) => {
                     const heroImage =
                         typeof post.heroImage === 'object' && post.heroImage
@@ -44,10 +44,6 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
                     const tags = (post.tags || [])
                         .filter((t): t is BlogTag => typeof t === 'object' && t !== null)
                         .map((t) => ({ tag: t.tag }))
-
-                    const authors = (post.populatedAuthors || [])
-                        .filter((a): a is { name?: string | null } => typeof a === 'object' && a !== null)
-                        .map((a) => ({ name: a.name }))
 
                     return (
                         <ArticleCard
@@ -59,21 +55,10 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
                             publishedAt={post.publishedAt}
                             tags={tags}
                             slug={post.slug}
-                            authors={authors}
                         />
                     )
                 })}
             </div>
-
-            {blogUrl && (
-                <div className="sm:hidden flex justify-center">
-                    <Button variant="outline" asChild>
-                        <Link href={blogUrl}>
-                            View all articles <ArrowRight className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
-            )}
         </Section>
     )
 }

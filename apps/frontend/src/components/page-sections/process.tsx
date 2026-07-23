@@ -1,8 +1,38 @@
 import Section from '../section'
 import type { PageProcessBlock } from '@strps-website/types'
 import { ProcessStepCard } from '../cards/ProcessStepCard'
+import { HairlineGrid } from '@/components/primitives/HairlineGrid'
 
-const ProcessSection: React.FC<PageProcessBlock> = ({ title, intro, steps, section }) => {
+type ProcessProps = Omit<PageProcessBlock, 'variant'> & {
+    processVariant?: PageProcessBlock['variant'];
+};
+
+const ProcessSection: React.FC<ProcessProps> = ({ processVariant: variant, title, intro, steps, section }) => {
+    if (variant === 'strip') {
+        const total = steps?.length ?? 0
+        return (
+            <Section
+                {...(section ?? {})}
+                id={section?.section_id || 'process'}
+                spacing="section"
+                container={false}
+                containerClassName="mx-auto w-full max-w-wrap px-6 pt-9 pb-0"
+            >
+                <HairlineGrid minItemWidth={190} cellClassName="px-5 py-[22px]">
+                    {steps?.map((step, i) => (
+                        <div key={step.id || i}>
+                            <span className="font-mono text-xs text-primary">{i + 1} / {total}</span>
+                            <h4 className="mt-2.5 text-[15px] font-medium">{step.title}</h4>
+                            <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+                                {step.description}
+                            </p>
+                        </div>
+                    ))}
+                </HairlineGrid>
+            </Section>
+        )
+    }
+
     return (
         <Section
             id={section?.section_id || 'process'}

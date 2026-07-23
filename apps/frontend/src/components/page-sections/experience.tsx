@@ -6,29 +6,38 @@ const ExperienceSection: React.FC<PageExperienceBlock> = ({ title, positions, se
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'experience'}
-            className="space-y-8 py-10 max-w-4xl mx-auto"
+            spacing="section"
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap px-6"
         >
-            <h2 className="text-3xl font-bold tracking-tight text-center">{title}</h2>
-            <div className="relative border-l border-muted ml-4 md:ml-6 space-y-12 pb-10">
-                {positions?.map((job) => (
-                    <div key={job.id || job.company} className="relative pl-8 md:pl-12">
-                        {/* Timeline dot */}
-                        <div className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-background" />
+            <h2 className="text-2xl font-medium tracking-[-0.01em]">{title}</h2>
 
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
-                            <h3 className="text-xl font-semibold">{job.company}</h3>
-                            <span className="text-sm text-muted-foreground font-mono bg-muted px-2 py-1 rounded w-fit mt-1 sm:mt-0">
-                                {job.startDate} — {job.endDate || "Present"}
+            <div className="relative mt-9 border-l border-border pl-8 md:pl-10">
+                {positions?.map((job, i) => (
+                    <div
+                        key={job.id || job.company}
+                        className={
+                            i === (positions.length ?? 0) - 1
+                                ? 'relative pb-0'
+                                : 'relative border-b border-border pb-9 mb-9'
+                        }
+                    >
+                        <span className="absolute -left-[calc(2rem+5px)] top-1.5 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-background md:-left-[calc(2.5rem+5px)]" />
+
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                            <h3 className="text-lg font-medium">{job.company}</h3>
+                            <span className="font-mono text-xs text-faint-foreground">
+                                {job.startDate} — {job.endDate || 'Present'}
                             </span>
                         </div>
-                        <h4 className="text-lg text-primary mb-2">{job.position}</h4>
+                        <h4 className="mt-1 text-[15px] text-muted-foreground">{job.position}</h4>
                         {job.summary && (
-                            <p className="text-muted-foreground leading-relaxed mb-4">
+                            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                                 {job.summary}
                             </p>
                         )}
                         {job.highlights && job.highlights.length > 0 && (
-                            <ul className="list-disc list-outside ml-5 text-muted-foreground space-y-1">
+                            <ul className="mt-3 list-disc list-outside space-y-1 pl-5 text-sm text-muted-foreground">
                                 {job.highlights.map((item) => (
                                     <li key={item.id || item.highlight}>{item.highlight}</li>
                                 ))}

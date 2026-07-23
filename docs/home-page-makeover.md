@@ -547,11 +547,12 @@ Ordered so that nothing is built twice. Each phase is independently reviewable.
         real migrations in [src/migrations/](apps/payload/src/migrations/), don't rely on dev push.
 
 **Phase 4 — Sections**
-16. [ ] Rebuild hero, services teaser, process strip, projects, lab teaser, blog teaser, about, skills,
+16. [x] Rebuild hero, services teaser, process strip, projects, lab teaser, blog teaser, about, skills,
         contact against the primitives. One PR per section keeps review sane.
-17. [ ] Restyle `ArticleCard` and `GalleryCard` to the shared card anatomy (§3.6).
-18. [ ] Restyle `ExperienceSection` to the hairline language for `/about` (§3.10).
-19. [ ] Restyle header + footer.
+17. [x] Restyle `ArticleCard` to the shared card anatomy (§3.6). `GalleryCard` deliberately left alone —
+        see the Phase 4 handoff notes for why.
+18. [x] Restyle `ExperienceSection` to the hairline language for `/about` (§3.10).
+19. [x] Restyle header + footer.
 
 **Phase 5 — Content**
 20. [ ] Update `home-data.ts` with §6, and update the **live** `home` document — the seed route skips

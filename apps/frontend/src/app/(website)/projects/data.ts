@@ -40,6 +40,15 @@ export const GET_PROJECTS = gql`
         techStack {
           name
         }
+        caseStudy {
+          tag
+          year
+          problem
+          contribution
+          context
+          decisions
+          outcome
+        }
       }
       totalDocs
       totalPages

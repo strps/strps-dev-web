@@ -3,8 +3,8 @@
 > **For:** whoever picks this up next (another chat, another model, future me).
 > **Full spec:** [home-page-makeover.md](home-page-makeover.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) refer to it.
-> **Branch:** `makeover`. **As of:** 2026-07-23, Phases 0–3 of the §7 implementation plan are done.
-> Phase 0–2 is committed (`c74f6ed` and earlier); Phase 3 is uncommitted (see suggested commit message
+> **Branch:** `makeover`. **As of:** 2026-07-23, Phases 0–4 of the §7 implementation plan are done.
+> Phase 0–3 is committed (`6883576` and earlier); Phase 4 is uncommitted (see suggested commit message
 > at the bottom).
 
 ---
@@ -290,21 +290,177 @@ check beyond confirming the two new sections render without crashing — they us
 render actual query data, but with genuinely no CMS content yet (`home` page's live document still has
 none of the new blocks), so there's nothing populated to look at. That starts in Phase 5.
 
+### Phase 4 — Sections (§7 items 16–19)
+
+Every section component now reads its Phase-3 fields and renders the mockup's look; the GraphQL
+fragments in [page-blocks.ts](../apps/frontend/src/lib/queries/page-blocks.ts) were extended to fetch
+them. Nothing in this phase touched content — the live `home` document still has the old field values
+(no `variant`, no `headline`, etc.), so `/` renders **identically to before** except where a component's
+new default itself changed (see the two call-outs below). The new-look code paths (statement hero, list
+skills, hairline projects, strip process) are real and tested (see Verification) but won't be visible on
+the live site until Phase 5 sets the relevant `variant`/content fields.
+
+**A GraphQL landmine, worse than the Phase 3 one:** adding `variant` to `pageHero`, `pageSkills`,
+`pageProjects`, and `pageProcess` broke `GetPageBySlug` at request time (not build time — Apollo's runtime
+validation, so `tsc` stayed clean while `/` and `/services` both 500'd) with *"Fields 'variant' conflict
+because they return conflicting types 'PageHeroBlock_variant' and 'PageSkillsBlock_variant'"*. Same root
+cause as Phase 3's `link`/`form` aliasing, easy to forget because it doesn't announce itself until you
+actually hit the query: **any `select` (enum) field reused across sibling block fragments in the same
+union selection needs a per-block alias**, even though the option lists (`portrait`/`statement` vs.
+`cards`/`list`) are unrelated and Payload generates a distinctly-named enum type per block regardless.
+Plain scalar fields (`String`, `Boolean`) reused across blocks — `title`, `eyebrow`, `intro` — do **not**
+conflict; only `select`/`relationship`/`group` fields, because those are the ones that get a
+block-specific generated type name. Fixed by aliasing all four: `heroVariant: variant`,
+`skillsVariant: variant`, `projectsVariant: variant`, `processVariant: variant`, and renaming the matching
+section-component props to match (`HeroProps.heroVariant`, etc. — same `Omit<Block, 'x'> & { xAlias?:
+Block['x'] }` pattern as the Phase 3 link fields). **If you add a `select` field to any block that already
+has one of these names elsewhere in the union, alias it too — don't wait for the runtime error.**
+`pageContact.form` got the same treatment (`contactForm: form`) purely as a precaution, since `formBlock`
+already has its own unrelated `form` field of the same underlying `Form` type.
+
+**Hero** ([hero.tsx](../apps/frontend/src/components/page-sections/hero.tsx)) — `portrait` (default, keeps
+the exact pre-makeover centered layout, ping-animated badge included) and `statement` (mockup: left
+eyebrow, static-dot availability badge composed from `status`, `headline` as h1, `<PlotLine>`, lead
+paragraph, solid/outlineGhost CTAs) are two fully separate render branches (`PortraitHero`/`StatementHero`)
+rather than one branch with conditionals threaded through it — the mockup's changes touch nearly every
+element, so a shared tree would have been messier than two small components. `statement` is the only
+variant that opts into the `max-w-wrap` 960px container (see below); `portrait` keeps the site-wide
+Tailwind `container` untouched since nothing else currently uses it.
+
+**Width consistency, the thing §4.3 warned about:** the Phase 3 first-pass `services-teaser.tsx` and
+`lab-teaser.tsx` were never actually wired to the 960px `max-w-wrap` token — they used Section's default
+Tailwind `container` (much wider). Every makeover-path section now passes `container={false}
+containerClassName="mx-auto w-full max-w-wrap px-6"` (or `px-6` folded into a wider class list) — **and
+critically, the `{...(section ?? {})}` CMS spread must come *before* these two props in JSX**, not after.
+`section.container` is a real, independent CMS checkbox (whether to wrap content in a container at all)
+that happens to share a prop name with my width override; if the spread lands last, an editor's stored
+`section.container` value silently overwrites `container={false}` and the width fix disappears the moment
+someone touches that block in the admin. Every section touched this phase spreads `section` first, then
+overrides `container`/`containerClassName` — copy that order for any new one. Non-makeover variants
+(`pageHero` `portrait`, `pageProcess` `full`, `pageSkills` `cards`) were deliberately left on the old
+default container — they're existing, out-of-scope layouts (`/services`), not this phase's problem.
+
+**Process strip** ([process.tsx](../apps/frontend/src/components/page-sections/process.tsx)) — `strip`
+renders via `<HairlineGrid>` with a tight `pt-9 pb-0` top spacing instead of the `section` spacing preset's
+90px, because in the mockup the strip is inside the *same* `<section>` as the services teaser above it
+(no gap of its own) — as two separate Payload blocks that's not reproducible exactly, so this is the
+closest approximation (visually attached, not truly merged). `full` (the `/services` layout) is untouched,
+same prop order as before.
+
+**Projects** ([projects.tsx](../apps/frontend/src/components/page-sections/projects.tsx),
+new [ProjectSummaryCard](../apps/frontend/src/components/cards/ProjectSummaryCard.tsx)) — `hairline`
+variant reads `project.caseStudy.{tag,problem,contribution}` (added to both `GET_PAGE_BY_SLUG`'s
+`selectedProjects` sub-selection and `projects/data.ts`'s `GET_PROJECTS`, since the home section can
+populate either by manual selection or by collection). No case-study copy is seeded yet (Phase 5), so the
+hairline cards currently show tag/title/stack/case-study-link only — confirmed correct, not broken, in the
+QA render (see Verification). `cards` variant (existing `ProjectCard`, `/projects` listing) untouched.
+
+**Lab teaser card swap — a deliberate deviation from §7 item 17's literal wording.** The doc says "restyle
+`GalleryCard`," but `GalleryCard` also renders the **`/lab` page's own grid** ([Gallery.tsx](../apps/frontend/src/components/gallery/Gallery.tsx)),
+a colorful gradient-overlay design that §10 explicitly keeps out of scope for this makeover (the `/lab`
+page has its own not-yet-built mockup). Restyling `GalleryCard` itself would have either forced a
+premature `/lab` redesign into this phase or left `/lab` and the home teaser using the same component with
+irreconcilable visual requirements. Took §3.5's own escape hatch instead: built a new, slimmer
+[LabTeaserCard](../apps/frontend/src/components/cards/LabTeaserCard.tsx) (4:3 media/gradient placeholder,
+mono category tag, title, note) used only by the home lab teaser; `GalleryCard` and `/lab` are completely
+untouched. **`ArticleCard`** ([ArticleCard.tsx](../apps/frontend/src/components/cards/ArticleCard.tsx)) got
+the full restyle the doc asked for (same hairline/mono anatomy as the new lab card) because, unlike
+`GalleryCard`, it turned out to have exactly one consumer — the home blog teaser (`/blog`'s own listing
+page uses a separate `BlogList`/`blog-list.tsx` component) — so there was no out-of-scope page riding along
+with the change.
+
+**About** ([about.tsx](../apps/frontend/src/components/page-sections/about.tsx)) — `body` (richText)
+renders via the shared `<RichText>` component with `enableProse={false}` and a hand-written className
+targeting `[&_p]` / `[&_strong]` / `[&_b]` directly with the mockup's exact values (15px/1.7/muted,
+foreground/medium for bold), rather than Tailwind Typography's `prose` classes, which don't know about
+this project's custom color tokens and would need their own override work to match. For `twoColumn`, the
+grid classes go directly on `<RichText>`'s own wrapper element (not an extra wrapping div) — Payload's
+`ConvertRichText` puts each top-level lexical node (each paragraph) as a **direct child** of that element,
+so `grid md:grid-cols-2` on it auto-places the two `<p>`s into the mockup's two columns for free. Falls
+back to plain `summary` text (existing field, now optional) when `body` is empty; the old avatar `image`
+render was dropped entirely — the mockup has no photo, and the doc's about-section rewrite doesn't
+mention one.
+
+**Skills** ([skills.tsx](../apps/frontend/src/components/page-sections/skills.tsx)) — `list` variant is
+an `auto-fit, minmax(200px,1fr)` grid of mono group labels over hairline-divided `<li>`s, `cards` (default,
+`SkillsCard` icon grid) untouched.
+
+**Contact** ([contact.tsx](../apps/frontend/src/components/page-sections/contact.tsx)) — split grid, left
+column (eyebrow/title/description/`emailLabel`+mailto), right column renders the CMS-linked form **when
+`pageContact.form` is set**, else falls back to the pre-existing centered email-button + `links[]`
+behavior (so an unseeded contact block doesn't render broken). This required pulling the actual
+submit/error/success state machine and field rendering out of
+[form.tsx](../apps/frontend/src/components/page-sections/form.tsx) into a new shared
+[PayloadForm.tsx](../apps/frontend/src/components/form/PayloadForm.tsx) — `formBlock` (used by
+`/services`, full `Section`+`Card` shell) and `pageContact` (embedded directly in this split layout, no
+card, mockup "sent" box styling passed in via a `successClassName` prop) are two different shells around
+the *same* form logic now, not two implementations, per decision #4. `form.tsx` itself shrank to intro
+rendering + `<Card>` + `<PayloadForm>` and, no longer using any hooks itself, dropped its `'use client'`
+pragma — it's a Server Component wrapping a Client Component now, which is the more idiomatic direction
+anyway. Behavior-identical for the existing `/services` consumer, confirmed both by reading the diff and
+by screenshot (see Verification). `note` (the "I reply within one business day" trust line) renders under
+the form, not folded into `description` — the doc's own content table keeps them as two separate strings.
+
+**Experience** ([experience.tsx](../apps/frontend/src/components/page-sections/experience.tsx)) —
+restyled to the hairline language (mono `--faint` dates, weight-500 company names, muted role/summary,
+hairline row separators between positions) while keeping the left-border timeline structure and dot,
+per §3.10's instruction. `pageExperience` has no `eyebrow` field (Phase 3 deliberately didn't add one — see
+that phase's notes), so this section keeps a plain `<h2>`, not a `<SectionHeader>`.
+
+**Header** ([HeaderNav.tsx](../apps/frontend/src/components/HeaderNav.tsx),
+[data.ts](../apps/frontend/src/data/data.ts)) — three real chrome bugs fixed, not just restyling: (1) the
+header was never actually sticky — `${overlay ? 'absolute' : 'relative'}` — so on any normal (non-overlay)
+page it scrolled away like ordinary content; now `sticky` when not overlaying. (2) dropped
+`backdrop-blur-md` (the mockup's nav background is solid, no blur). (3) `GET_HEADER`'s `navItems` query
+never selected `link.appearance` at all, so the schema work in Phase 3 that let a nav item render as the
+`outlineGhost` CTA button had **no way to reach the component** — added `appearance` to the query, the
+`HeaderLink`/`HeaderData` types, `getHeaderData`'s mapping, and `HeaderClientProps.navItems`, and
+`HeaderNav` now renders any item with `appearance: 'outlineGhost'` as a small `Button` (explicit
+`rounded-sharp` + tighter padding via `className`, since the shared `solid`/`outlineGhost` compound-variant
+geometry from Phase 2 is keyed to `size: "default"` and a header CTA needs `size: "sm"`'s height instead).
+**Deliberately not changed:** the mobile hamburger dropdown. The mockup just hides every non-CTA nav link
+below 720px with no mobile menu at all; `HeaderNav` is shared site-wide, and removing the only way to reach
+Services/Projects/Lab/Blog on mobile is a real UX regression the doc doesn't ask for. Kept the hamburger,
+only restyled the desktop chrome. Also deliberately not changed: the `<Logo>` SVG wordmark — it's the
+site's real vector brand mark, not the mockup's plaintext "STRPS"; the doc's "mono wordmark" note reads as
+mockup-shorthand, not a request to demote the actual logo to plain text.
+
+**Footer** ([Footer.tsx](../apps/frontend/src/components/Footer.tsx),
+[data.ts](../apps/frontend/src/data/data.ts)) — all-mono type, `copyright.location` (added to
+`GET_COPYRIGHT` and threaded through `getFooterData`) rendered as a middle line, hairline top border kept.
+No CSS transform for uppercase — the mockup's all-caps look is literal content casing ("CESAR JEREZ"), not
+a `text-transform`, confirmed by reading the mockup's own stylesheet; don't force-uppercase whatever
+`copyright.name` actually contains.
+
+**Verification performed:** `tsc --noEmit` clean; `eslint` across the whole frontend app shows only
+pre-existing errors/warnings in files this phase didn't touch, plus the same two pre-existing
+`no-explicit-any` errors in `form.tsx`'s logic (now living in `PayloadForm.tsx`) and `blog.tsx` flagged in
+the Phase 2/3 handoffs — confirmed unrelated by inspection, not just assumed. Both dev servers restarted;
+`/` and `/services` return 200 with zero console errors (checked via a headless-Chromium screenshot pass,
+not just curl). Critically, **the live `home` document's content doesn't exercise any of this phase's new
+variants** (no `headline`, no `variant: 'statement'/'list'/'hairline'/'strip'` set anywhere yet — that's
+Phase 5), so a plain screenshot of `/` only proves the *old* code paths still work. To actually verify the
+new ones, built a temporary route rendering the real section components with hand-written mock props
+covering `statement` hero, `strip` process, `hairline` projects, `list` skills, and `twoColumn` about (incl.
+a hand-built minimal Lexical doc for the bold-phrase rendering) — screenshotted in both themes, zero
+console errors, visually matches the mockup closely in both light and dark, then **deleted** (it was never
+committed; nothing from it should appear in `git status`). If you need to re-verify after further changes,
+recreate a similar throwaway route rather than mutating the live `home` document to test — that document
+is real, if sparse, content.
+
+**Verification NOT performed:** `pageContact`'s form-populated branch (right column showing the actual
+`PayloadForm` instead of the email/links fallback) — no `pageContact.form` is seeded yet, and I judged the
+risk low enough to skip building a mock `Form` object for the QA route, since `PayloadForm` itself (the
+same component, same code path) is already visually confirmed working via the *existing* `/services`
+`formBlock` screenshot. Worth a real check once Phase 5 seeds `pageContact.form`. No Lighthouse/reduced-
+motion/keyboard-nav pass — that's Phase 6, items 25–33, unchanged by this phase.
+
 ---
 
 ## What's next
 
 Follow §7 in order — it's sequenced so nothing gets built twice:
 
-- **Phase 4 — Sections** (§7 items 16–19): rebuild hero, services teaser, process strip, projects, lab
-  teaser, blog teaser, about, skills, contact against the primitives — one PR per section keeps review
-  sane. For the two brand-new sections (services teaser, lab teaser) this means *refining* the Phase 3
-  first-pass components, not building from scratch. For the other seven, it means wiring this phase's new
-  schema fields (`eyebrow`, `variant`, `headline`, `status.availableFrom`, etc.) into both the section
-  component *and* the GraphQL fragments in
-  [page-blocks.ts](../apps/frontend/src/lib/queries/page-blocks.ts) — neither was touched for the
-  existing seven blocks in Phase 3, only for the two new ones (see the Phase 3 notes above for why).
-  Also restyle `ArticleCard`/`GalleryCard` (§3.6) and `ExperienceSection` (§3.10), and the header/footer.
 - **Phase 5 — Content**: seed data (§6), including the real TrackBit project entry and the new `/about`
   page (§3.10). This is also where the live `home` page document actually gets the new blocks/fields —
   Phase 3 only made them possible to author, it didn't populate anything.
@@ -318,30 +474,6 @@ at the bottom of §8 (about-page copy length, blog teaser framing, TrackBit copy
 `Q3 2026` availability window which is closing *now*, and the light-theme design pass).
 
 ---
-
-## Suggested commit messages
-
-Phase 0–2 is already committed (`e3d0e9f`, `c74f6ed`). Phase 3 is uncommitted:
-
-```
-feat(home-makeover): add Phase 3 schema — teaser blocks, block extensions, migration
-
-Phase 3 of docs/home-page-makeover.md (§7 items 9-15): shared eyebrow
-field; pageHero/pageAbout/pageSkills/pageProcess/pageProjects/
-pageContact/pageBlog extensions per §3; new pageServicesTeaser and
-pageLabTeaser blocks with first-pass primitive-based section
-components and GraphQL fragments; caseStudy group on the projects
-collection; copyright.location; outlineGhost CTA appearance on
-header.navItems. Adds a required:false option to the shared link()
-field so standalone action links can actually be left empty — Payload
-was otherwise marking the whole group non-optional in generated types
-because one nested field was unconditionally required. Regenerates
-@strps-website/types and adds a real Payload migration (generated via
-migrate:create against a disposable database, not hand-written, and
-not applied to the live dev DB — see the Phase 3 section of the
-handoff doc for the two hand-fixes it needed and the pre-existing
-migration gap it also happens to close).
-```
 
 (Note: `docs/home-page-makeover.md` also carries pre-existing edits from before this session — the
 doc was already modified on disk when this session started, per the plan's own decisions in §8. Those

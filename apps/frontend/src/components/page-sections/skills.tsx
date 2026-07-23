@@ -1,18 +1,51 @@
-import { Terminal, Server, Cpu, Wrench } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import Section from '../section';
 import type { PageSkillsBlock } from '@strps-website/types';
 import { SkillsCard } from '../cards/SkillsCard';
+import { SectionHeader } from '@/components/primitives/SectionHeader';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { IconName } from 'lucide-react/dynamic';
 
 
-const SkillsSection: React.FC<PageSkillsBlock> = ({ title, subtitle, skillGroups, section }) => {
+type SkillsProps = Omit<PageSkillsBlock, 'variant'> & {
+    skillsVariant?: PageSkillsBlock['variant'];
+};
+
+const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: variant, subtitle, skillGroups, section }) => {
+    if (variant === 'list') {
+        return (
+            <Section
+                {...(section ?? {})}
+                id={section?.section_id || 'skills'}
+                spacing="section"
+                container={false}
+                containerClassName="mx-auto w-full max-w-wrap px-6"
+            >
+                <SectionHeader eyebrow={eyebrow || 'Skills'} title={title} />
+
+                <div
+                    className="mt-9 grid gap-8.5"
+                    style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}
+                >
+                    {skillGroups?.map((group) => (
+                        <div key={group.id}>
+                            <Eyebrow>{group.name}</Eyebrow>
+                            <ul className="mt-4 list-none">
+                                {group.keywords?.map((skill) => (
+                                    <li
+                                        key={skill.id || skill.keyword}
+                                        className="border-b border-border py-1.5 text-[15px] last:border-b-0"
+                                    >
+                                        {skill.keyword}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </Section>
+        );
+    }
+
     return (
         <Section
             id={section?.section_id || 'skills'}
@@ -30,10 +63,8 @@ const SkillsSection: React.FC<PageSkillsBlock> = ({ title, subtitle, skillGroups
                         key={skillGroup.id}
                         title={skillGroup.name}
                         iconName={skillGroup.icon as IconName}
-                        // iconName={getIcon(skillGroup.title) as any}
                         skills={skillGroup.keywords?.map((skill) => ({ text: skill.keyword })) || []}
                     />
-
                 ))}
             </div>
         </Section>

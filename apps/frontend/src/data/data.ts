@@ -12,6 +12,7 @@ export const GET_HEADER = gql`
           newTab
           url
           label
+          appearance
           reference {
             relationTo
             value {
@@ -38,6 +39,7 @@ interface HeaderLink {
     newTab?: boolean | null
     url?: string | null
     label: string
+    appearance?: 'default' | 'outlineGhost' | null
     reference?: {
       relationTo: string
       value: { slug: string }
@@ -73,6 +75,7 @@ async function getHeaderData() {
   const navItems = (header?.navItems ?? []).map((item) => ({
     name: item.link.label,
     href: resolveHref(item.link),
+    appearance: item.link.appearance ?? 'default',
   }))
 
   return {
@@ -122,6 +125,7 @@ export const GET_COPYRIGHT = gql`
       name
       startDate
       link
+      location
     }
   }
 `
@@ -137,6 +141,7 @@ interface CopyrightData {
     name: string
     startDate: string
     link?: string | null
+    location?: string | null
   }
 }
 
@@ -168,6 +173,7 @@ export async function getFooterData() {
       name: copyright?.name ?? '',
       years: startYear < currentYear ? `${startYear}–${currentYear}` : `${currentYear}`,
       link: copyright?.link ?? null,
+      location: copyright?.location ?? null,
     },
   }
 }
