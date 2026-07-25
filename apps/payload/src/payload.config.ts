@@ -116,7 +116,11 @@ export default buildConfig({
   },
   localization: {
     defaultLocale: 'en',
-    locales: ['en', 'es'],
+    fallback: true,
+    locales: [
+      { label: 'English', code: 'en' },
+      { label: 'Español', code: 'es' },
+    ],
   },
 
   email: resendAdapter({
