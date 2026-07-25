@@ -32,7 +32,6 @@ export const getAboutPageData = (formId: number): AboutPageSeed => ({
         isAvailable: false,
       },
       section: {
-        container: false,
         section_id: 'hero',
         backgroundContainer: false,
         theme: 'dark',
@@ -46,7 +45,6 @@ export const getAboutPageData = (formId: number): AboutPageSeed => ({
       layout: 'twoColumn',
       body: aboutNarrativeBody,
       section: {
-        container: true,
         section_id: 'about',
         backgroundContainer: false,
         theme: 'auto',
@@ -95,7 +93,6 @@ export const getAboutPageData = (formId: number): AboutPageSeed => ({
         },
       ],
       section: {
-        container: true,
         section_id: 'experience',
         backgroundContainer: false,
         theme: 'auto',
@@ -170,7 +167,6 @@ export const getAboutPageData = (formId: number): AboutPageSeed => ({
         },
       ],
       section: {
-        container: true,
         section_id: 'skills',
         backgroundContainer: false,
         theme: 'auto',
@@ -188,7 +184,6 @@ export const getAboutPageData = (formId: number): AboutPageSeed => ({
       note: 'I reply within one business day',
       form: formId,
       section: {
-        container: true,
         section_id: 'contact',
         backgroundContainer: false,
         theme: 'auto',

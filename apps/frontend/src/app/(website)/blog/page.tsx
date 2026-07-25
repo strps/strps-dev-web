@@ -23,8 +23,12 @@ export default async function BlogPage({
   return (
     <main className="min-h-screen">
       {/* Blog Header */}
-      <Section className="py-20 md:py-32 bg-muted/30">
-        <div className="container mx-auto px-4 text-center max-w-3xl space-y-4">
+      <Section
+        className="py-20 md:py-32 bg-muted/30"
+        container={false}
+        containerClassName="mx-auto w-full max-w-wrap px-6"
+      >
+        <div className="mx-auto max-w-3xl text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
             Writing & <span className="text-primary">Thoughts</span>
           </h1>
@@ -35,7 +39,7 @@ export default async function BlogPage({
       </Section>
 
       {/* Blog List & Filters */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="mx-auto w-full max-w-wrap px-6 py-16">
         <BlogList posts={posts} />
         <Pagination
           page={page}

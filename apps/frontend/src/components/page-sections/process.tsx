@@ -35,10 +35,11 @@ const ProcessSection: React.FC<ProcessProps> = ({ processVariant: variant, title
 
     return (
         <Section
+            {...(section ?? {})}
             id={section?.section_id || 'process'}
             className="py-8 md:py-14"
-            containerClassName="gap-10 md:gap-14"
-            {...(section ?? {})}
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap gap-10 px-6 md:gap-14"
         >
             <div className="max-w-2xl space-y-4">
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{title}</h2>

@@ -28,6 +28,12 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<Sectio
   overlayClassName?: string
   containerClassName?: string
   /**
+   * Whether to wrap content in a centered container. Defaults to `true`.
+   * No longer CMS-driven (the `section.container` field was removed) —
+   * callers pass this directly.
+   */
+  container?: boolean
+  /**
    * Vertical rhythm preset. Defaults to the existing `py-16`.
    * `hero` / `section` / `contact` match the mockup's spacing scale (§4.3).
    */

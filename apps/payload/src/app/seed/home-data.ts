@@ -54,7 +54,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
         },
       ],
       section: {
-        container: false,
         section_id: 'hero',
         backgroundContainer: false,
         theme: 'dark',
@@ -104,7 +103,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
         },
       ],
       section: {
-        container: true,
         section_id: 'services',
         backgroundContainer: false,
         theme: 'auto',
@@ -134,7 +132,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
         },
       ],
       section: {
-        container: true,
         section_id: 'process',
         backgroundContainer: false,
         theme: 'auto',
@@ -156,7 +153,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
       limit: 6,
       githubUrl: 'https://github.com/strps',
       section: {
-        container: true,
         section_id: 'projects',
         backgroundContainer: false,
         theme: 'auto',
@@ -176,7 +172,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
       },
       limit: 3,
       section: {
-        container: true,
         section_id: 'lab',
         backgroundContainer: false,
         theme: 'auto',
@@ -191,7 +186,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
       limit: 3,
       blogUrl: '/blog',
       section: {
-        container: true,
         section_id: 'blog',
         backgroundContainer: false,
         theme: 'auto',
@@ -211,7 +205,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
         newTab: false,
       },
       section: {
-        container: true,
         section_id: 'about',
         backgroundContainer: false,
         theme: 'auto',
@@ -266,7 +259,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
         },
       ],
       section: {
-        container: true,
         section_id: 'skills',
         backgroundContainer: false,
         theme: 'auto',
@@ -284,7 +276,6 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
       note: 'I reply within one business day',
       form: formId,
       section: {
-        container: true,
         section_id: 'contact',
         backgroundContainer: false,
         theme: 'auto',

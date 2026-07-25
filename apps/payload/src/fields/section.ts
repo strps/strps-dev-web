@@ -13,10 +13,6 @@ export const SectionConfig: Field = {
   type: 'group',
   fields: [
     {
-      name: 'container',
-      type: 'checkbox',
-    },
-    {
       name: 'section_id',
       type: 'text',
     },

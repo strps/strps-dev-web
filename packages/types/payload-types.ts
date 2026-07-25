@@ -451,7 +451,6 @@ export interface User {
  * via the `definition` "SectionConfig".
  */
 export interface SectionConfig {
-  container?: boolean | null;
   section_id?: string | null;
   backgroundContainer?: boolean | null;
   theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
@@ -1685,7 +1684,6 @@ export interface PageHeroBlockSelect<T extends boolean = true> {
  * via the `definition` "SectionConfig_select".
  */
 export interface SectionConfigSelect<T extends boolean = true> {
-  container?: T;
   section_id?: T;
   backgroundContainer?: T;
   theme?: T;

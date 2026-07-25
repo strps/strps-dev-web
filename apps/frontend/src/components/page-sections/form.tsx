@@ -46,8 +46,10 @@ const FormSection: React.FC<FormSectionProps> = (props) => {
             {...(section ?? {})}
             id={section?.section_id || 'form'}
             className="flex items-center justify-center py-16 md:py-24"
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap px-6"
         >
-            <div className="w-full max-w-4xl mx-auto px-4">
+            <div className="w-full">
                 {intros[introType ?? 'none']}
                 <Card className="p-6 md:p-12">
                     <PayloadForm form={form} variant={variant} />

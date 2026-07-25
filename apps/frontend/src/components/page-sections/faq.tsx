@@ -6,10 +6,11 @@ import { FaqItem } from '../cards/FaqItem'
 const FaqSection: React.FC<PageFaqBlock> = ({ title, intro, questions, section }) => {
     return (
         <Section
+            {...(section ?? {})}
             id={section?.section_id || 'faq'}
             className="py-8 md:py-14"
-            containerClassName="gap-10 md:gap-12 max-w-3xl"
-            {...(section ?? {})}
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap gap-10 px-6 md:gap-12"
         >
             <div className="space-y-4">
                 <h2 className="text-3xl font-bold tracking-tight md:text-4xl">{title}</h2>

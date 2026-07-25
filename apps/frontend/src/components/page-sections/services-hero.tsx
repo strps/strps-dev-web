@@ -24,6 +24,8 @@ const ServicesHeroSection: React.FC<ServicesHeroProps> = ({
         <Section
             {...(section ?? {})}
             className="pt-24 pb-12 md:pt-36 md:pb-16"
+            container={false}
+            containerClassName="mx-auto w-full max-w-wrap px-6"
             {...(bgImage?.url ? {
                 image: {
                     src: `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${bgImage.url}`,

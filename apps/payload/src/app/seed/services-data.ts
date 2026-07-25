@@ -55,7 +55,6 @@ export const getServicesPageData = (formId: number): ServicesPageSeed => ({
                 },
             ],
             section: {
-                container: true,
                 section_id: 'hero',
                 backgroundContainer: false,
                 theme: 'dark',
@@ -139,7 +138,6 @@ export const getServicesPageData = (formId: number): ServicesPageSeed => ({
                 },
             ],
             section: {
-                container: true,
                 section_id: 'services',
                 backgroundContainer: false,
                 theme: 'auto',
@@ -173,7 +171,6 @@ export const getServicesPageData = (formId: number): ServicesPageSeed => ({
                 },
             ],
             section: {
-                container: true,
                 section_id: 'process',
                 backgroundContainer: false,
                 theme: 'auto',
@@ -220,7 +217,6 @@ export const getServicesPageData = (formId: number): ServicesPageSeed => ({
                 },
             ],
             section: {
-                container: true,
                 section_id: 'faq',
                 backgroundContainer: false,
                 theme: 'auto',
@@ -235,7 +231,6 @@ export const getServicesPageData = (formId: number): ServicesPageSeed => ({
             introText:
                 'Tell me what you\'re trying to build — a couple of sentences is enough to get started. I reply within one business day.',
             section: {
-                container: true,
                 section_id: 'contact',
                 backgroundContainer: false,
                 theme: 'auto',

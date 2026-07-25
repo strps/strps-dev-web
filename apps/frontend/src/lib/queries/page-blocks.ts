@@ -2,7 +2,6 @@ import { gql } from '@apollo/client'
 
 export const PAGE_BLOCK_FIELDS = gql`
   fragment SectionConfigFields on SectionConfig {
-    container
     section_id
     backgroundContainer
     theme

@@ -20,8 +20,12 @@ export default async function ProjectsPage({
 
   return (
     <main className="min-h-screen">
-      <Section className="py-20 md:py-32 bg-muted/30">
-        <div className="container mx-auto px-4 text-center max-w-3xl space-y-4">
+      <Section
+        className="py-20 md:py-32 bg-muted/30"
+        container={false}
+        containerClassName="mx-auto w-full max-w-wrap px-6"
+      >
+        <div className="mx-auto max-w-3xl text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
             Projects & <span className="text-primary">Creations</span>
           </h1>
@@ -31,7 +35,7 @@ export default async function ProjectsPage({
         </div>
       </Section>
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="mx-auto w-full max-w-wrap px-6 py-16">
         <ProjectsList projects={projects} />
         <Pagination
           page={page}
@@ -44,24 +48,21 @@ export default async function ProjectsPage({
 
 const ProjectsList = ({ projects }: { projects: Array<Project> }) => {
   return (
-    <div className="container mx-auto px-4 py-16">
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => {
-          return (
-            <ProjectCard
-              key={project.id}
-              title={project.title}
-              description={project.meta?.description}
-              imageUrl={typeof project.meta?.image === 'object' && project.meta.image ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${project.meta.image.url}` : undefined}
-              technologies={project.techStack?.filter((t): t is { name: string } => !!t.name)}
-              liveUrl={project.links?.liveSite}
-              repoUrl={project.links?.github}
-              caseStudyUrl={`/projects/${project.slug}`}
-            />
-          )
-        }
-        )}
-      </div>
+    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {projects.map((project) => {
+        return (
+          <ProjectCard
+            key={project.id}
+            title={project.title}
+            description={project.meta?.description}
+            imageUrl={typeof project.meta?.image === 'object' && project.meta.image ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${project.meta.image.url}` : undefined}
+            technologies={project.techStack?.filter((t): t is { name: string } => !!t.name)}
+            liveUrl={project.links?.liveSite}
+            repoUrl={project.links?.github}
+            caseStudyUrl={`/projects/${project.slug}`}
+          />
+        )
+      })}
     </div>
   )
 }
