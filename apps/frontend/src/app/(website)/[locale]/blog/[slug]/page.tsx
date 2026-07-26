@@ -9,12 +9,14 @@ import type { Metadata } from 'next'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { Post } from '@strps-website/types'
 import { generateStaticParams, getPostBySlug } from '../data'
+import type { Locale } from '@/i18n/config'
 
 export { generateStaticParams }
 
 type Args = {
   params: Promise<{
     slug?: string
+    locale: Locale
   }>
 }
 
@@ -26,10 +28,10 @@ export default async function Post({ params: paramsPromise }: Args) {
   } catch {
     // draftMode() is unavailable during static generation
   }
-  const { slug = '' } = await paramsPromise
+  const { slug = '', locale } = await paramsPromise
   const url = `/posts/${slug}`
 
-  const post = await getPostBySlug({ slug })
+  const post = await getPostBySlug({ slug, locale })
 
   if (!post) return <PayloadRedirects url={url} />
 
@@ -61,8 +63,8 @@ export default async function Post({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  const post = await getPostBySlug({ slug })
+  const { slug = '', locale } = await paramsPromise
+  const post = await getPostBySlug({ slug, locale })
 
   return generateMeta({ doc: post })
 }

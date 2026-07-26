@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { getFooterData } from '@/data/data';
+import type { Locale } from '@/i18n/config';
 
-export default async function Footer() {
-    const { navItems, copyright } = await getFooterData();
+export default async function Footer({ locale }: { locale: Locale }) {
+    const { navItems, copyright } = await getFooterData(locale);
 
     return (
         <footer className="border-t border-border py-7">

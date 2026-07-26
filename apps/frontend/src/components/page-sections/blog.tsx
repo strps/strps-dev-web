@@ -2,17 +2,18 @@ import Section from '../section'
 import { ArticleCard } from '../cards/ArticleCard'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
-import { getBlogPosts } from '@/app/(website)/blog/data'
+import { getBlogPosts } from '@/app/(website)/[locale]/blog/data'
 import type { PageBlogBlock, Post, Media, BlogTag } from '@strps-website/types'
+import type { Locale } from '@/i18n/config'
 
-const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blogLimit?: number }) => {
-    const { eyebrow, title, selectedPosts, blogUrl, section } = props
+const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blogLimit?: number; locale: Locale }) => {
+    const { eyebrow, title, selectedPosts, blogUrl, section, locale } = props
     const populateBy = (props as any).blogPopulateBy ?? props.populateBy
     const limit = (props as any).blogLimit ?? props.limit
     let posts: Post[] = []
 
     if (populateBy === 'collection') {
-        const { posts: fetched } = await getBlogPosts({ limit: limit ?? 3 })
+        const { posts: fetched } = await getBlogPosts({ limit: limit ?? 3, locale })
         posts = fetched
     } else {
         posts = (selectedPosts || []).filter(

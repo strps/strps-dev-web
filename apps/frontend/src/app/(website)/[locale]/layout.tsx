@@ -43,7 +43,7 @@ export default async function RootLayout({
     notFound();
   }
 
-  const { navItems, theme, overlay } = await getCachedHeaderData()();
+  const { navItems, theme, overlay } = await getCachedHeaderData(locale)();
 
   return (
     <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
@@ -66,7 +66,7 @@ export default async function RootLayout({
             }
           />
           {children}
-          <Footer />
+          <Footer locale={locale} />
         </ThemeProvider>
       </body>
     </html>

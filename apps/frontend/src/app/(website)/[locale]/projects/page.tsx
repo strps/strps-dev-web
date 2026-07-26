@@ -3,6 +3,7 @@ import { Pagination } from '@/components/pagination';
 import { ProjectCard } from '@/components/cards/ProjectCard'
 import Section from '@/components/section';
 import { Media, Project } from '@strps-website/types';
+import type { Locale } from '@/i18n/config';
 
 export const metadata = {
   title: 'Projects | Cesar Jerez',
@@ -11,12 +12,15 @@ export const metadata = {
 
 export default async function ProjectsPage({
   searchParams,
+  params,
 }: {
   searchParams: Promise<{ page?: string }>
+  params: Promise<{ locale: Locale }>
 }) {
 
   const page = Number((await searchParams).page) || 1
-  const { projects, pagination } = await getProjects({ page, limit: 12 })
+  const { locale } = await params
+  const { projects, pagination } = await getProjects({ page, limit: 12, locale })
 
   return (
     <main className="min-h-screen">

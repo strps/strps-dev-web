@@ -15,6 +15,7 @@ import FaqSection from '@/components/page-sections/faq'
 import ServicesTeaserSection from '@/components/page-sections/services-teaser'
 import LabTeaserSection from '@/components/page-sections/lab-teaser'
 import type { Page } from '@strps-website/types'
+import type { Locale } from '@/i18n/config'
 
 const blockComponents: Record<string, React.FC<any>> = {
     pageHero: HeroSection,
@@ -33,7 +34,7 @@ const blockComponents: Record<string, React.FC<any>> = {
     pageLabTeaser: LabTeaserSection,
 }
 
-export const RenderBlocks: React.FC<{ blocks: Page['layout'] }> = ({ blocks }) => {
+export const RenderBlocks: React.FC<{ blocks: Page['layout']; locale: Locale }> = ({ blocks, locale }) => {
     if (!blocks?.length) return null
 
     return (
@@ -45,7 +46,7 @@ export const RenderBlocks: React.FC<{ blocks: Page['layout'] }> = ({ blocks }) =
                     const Block = blockComponents[blockType]
                     return (
                         <div key={index}>
-                            <Block {...block} />
+                            <Block {...block} locale={locale} />
                         </div>
                     )
                 }

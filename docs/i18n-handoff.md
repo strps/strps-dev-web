@@ -3,11 +3,10 @@
 > **For:** whoever picks this up next (another chat, another model, future me).
 > **Full spec:** [internationalization.md](internationalization.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) and phase numbers refer to it.
-> **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–2 are done** (Phase 1 = all schema fields marked
-> `localized`; Phase 2 = committed migration + locale-aware bilingual seed). **Phase 3 is in progress** —
-> Part A (routing scaffold: `[locale]` segment, middleware, locale validation, dynamic `<html lang>`) is
-> **done**; Part B (thread `locale` into GraphQL + locale-namespaced caches + live preview) is **next**.
-> Phases 4–6 not started.
+> **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–3 are done** (Phase 1 = all schema fields marked
+> `localized`; Phase 2 = committed migration + locale-aware bilingual seed; Phase 3 = `[locale]` routing
+> scaffold **and** locale threaded through every GraphQL data fetch + locale-namespaced caches). Phases 4–6
+> not started next.
 > **Goal:** English (`en`) + Spanish (`es`) across the Payload CMS schema and the public Next.js site.
 
 ---
@@ -19,7 +18,7 @@
 | **0** | Decisions & config | ✅ **Done** |
 | **1** | Mark localized fields in schema | ✅ **Done** |
 | **2** | DB schema + migration + locale-aware seed | ✅ **Done** |
-| **3** | Frontend routing & locale plumbing | 🚧 **In progress** — Part A (routing scaffold) done; Part B (locale data plumbing) next |
+| **3** | Frontend routing & locale plumbing | ✅ **Done** — Part A (routing scaffold) + Part B (locale data plumbing) |
 | 4 | Language switcher & UI chrome | ⬜ Not started |
 | 5 | Static UI strings + SEO | ⬜ Not started |
 | 6 | Content entry, QA & launch | ⬜ Not started |
@@ -284,24 +283,69 @@ If the first path segment is already a valid locale → `next()`. Otherwise nego
 `['/((?!api|admin|exp|_next/static|_next/image|.*\\..*).*)']` — the trailing `.*\..*` excludes favicon,
 `*-sitemap.xml`, and static assets in one clause.
 
-**⚠️ Intermediate state (important for whoever tests):** `/en/...` and `/es/...` both resolve, but **content
-is still English on both** — the CMS `locale` argument isn't threaded into GraphQL yet (that's Part B). Nav
-hrefs aren't locale-prefixed yet either, so a nav click currently costs **one middleware redirect hop**
-(`/about` → `/en/about`); the Phase 4 link audit removes that. `<html lang>` is already correct per route.
+**⚠️ Intermediate state at the end of Part A (resolved by Part B, below):** `/en/...` and `/es/...` both
+resolved, but content was still English on both since the CMS `locale` argument wasn't threaded into GraphQL
+yet. Nav hrefs weren't locale-prefixed either. `<html lang>` was already correct per route.
 
-### Part B — locale data plumbing ⬜ (next)
+### Part B — locale data plumbing ✅ (done this session)
 
-A locale-parameterized `data.ts` (header/footer/copyright taking `locale`, cache keys
-`['global_header', locale]` + tags `[`global_header_${locale}`, 'global_header']`, nav hrefs prefixed),
-`page-blocks.ts` (`$locale: LocaleInputType` on `GET_PAGE_BY_SLUG` / `GET_HOME_PAGE`), and a `Footer`
-`locale` prop were **drafted then reverted** this session to keep the commit scoped to Part A. Reapply that as
-the start of Part B, then extend to blog/projects/post detail queries and the live-preview listener. Payload's
-GraphQL locale enum is confirmed **`LocaleInputType`** with values `en`/`es` (globals accept `Header(locale: …)`).
+**GraphQL queries now take `$locale: LocaleInputType`** (confirmed enum values `en`/`es`; globals accept
+`Header(locale: …)` directly, finds accept `locale` alongside `where`/`draft`):
+- [`lib/queries/page-blocks.ts`](../apps/frontend/src/lib/queries/page-blocks.ts) — `GET_PAGE_BY_SLUG` and
+  `GET_HOME_PAGE` gain `$locale`; threaded through [`[locale]/page.tsx`](../apps/frontend/src/app/(website)/[locale]/page.tsx)
+  and [`[locale]/[slug]/page.tsx`](../apps/frontend/src/app/(website)/[locale]/[slug]/page.tsx) (both the
+  page component and `generateMetadata`).
+- [`data/data.ts`](../apps/frontend/src/data/data.ts) — `GET_HEADER`, `GET_FOOTER`, `GET_COPYRIGHT` all take
+  `$locale`. `resolveHref()` now prefixes reference-based hrefs and relative custom URLs
+  (`url.startsWith('/')`) with `/${locale}`; external URLs pass through unprefixed. `getCachedHeaderData(locale)`
+  and `getFooterData(locale)` take locale explicitly; `Footer.tsx` takes a `locale` prop from the layout.
+- [`blog/data.ts`](../apps/frontend/src/app/(website)/[locale]/blog/data.ts) /
+  [`projects/data.ts`](../apps/frontend/src/app/(website)/[locale]/projects/data.ts) — `GET_POSTS`/`GET_PROJECTS`
+  (listing) and `GET_POST_BY_SLUG`/`GET_PROJECT_BY_SLUG` (detail) all gain `$locale`; `getBlogPosts`/`getProjects`
+  now *require* a `locale` param (no silent English default) so a caller can't forget it.
+- [`RenderBlocks.tsx`](../apps/frontend/src/components/RenderBlocks.tsx) — takes a `locale` prop and passes it to
+  every block component, so `BlogSection`/`ProjectsSection`'s `populateBy: 'collection'` fetch path (which calls
+  `getBlogPosts`/`getProjects` directly, independent of the page-level query) is locale-correct too.
 
-### Verification (Phase 3 Part A)
+**Cache-key locale bleed (the #1 risk called out in §4) — fixed at the one place it existed.**
+`getCachedHeaderData` was the only `unstable_cache` wrapper on locale-sensitive data; its key is now
+`['global_header', locale]` and tags `['global_header_' + locale, 'global_header']` (shared tag kept so a
+plain `revalidateTag('global_header')` from a Payload hook still busts all locales at once). Footer/copyright
+were already uncached per-request, so passing `locale` as a query variable was sufficient there — nothing to
+namespace.
+
+**`generateStaticParams`:** confirmed no change needed — slugs are shared across locales (Phase 1 decision),
+so the parent `[locale]` layout's `{en, es}` set × the existing (locale-independent) slug generators already
+covers both locales.
+
+**Live preview:** no code change to
+[`live-preview-listener.tsx`](../apps/frontend/src/components/live-preview-listener.tsx) — `RefreshRouteOnSave`
+only calls `router.refresh()`, which re-runs the page's server data fetch; since that fetch is now locale-aware,
+a draft-mode refresh on `/es/...` correctly re-fetches Spanish. **Found but explicitly NOT fixed (pre-existing,
+out of scope):** the CMS-side `livePreview.url` builder
+([`apps/payload/src/utilities/generatePreviewPath.ts`](../apps/payload/src/utilities/generatePreviewPath.ts))
+doesn't thread locale, doesn't have a `projects` entry in its `collectionPrefixMap` (only `posts`/`pages`), and
+there is **no `/next/preview` route in the frontend app at all** to receive it — the admin "Preview" button was
+already non-functional before this session touched anything. That's a separate, real gap; flagging it for
+whoever owns it rather than silently absorbing it into this phase's scope.
+
+**Bonus fix — stale imports from Part A's `git mv` (build-breaking, unrelated to locale plumbing but found
+while wiring it):** moving routes under `[locale]/` renamed the files but missed several **absolute imports
+elsewhere** still pointing at the old pre-`[locale]` paths, which would not resolve:
+`components/page-sections/blog.tsx` (`getBlogPosts` from `@/app/(website)/blog/data`),
+`components/page-sections/projects.tsx` (`getProjects` from `@/app/(website)/projects/data`),
+`components/page-sections/lab-teaser.tsx`, `components/gallery/{GalleryCard,Gallery,GalleryBar}.tsx` (all
+`@/app/(website)/lab/types`), and `app/exp/(tracked)/{gray-scott,reaction-sphere}/page.tsx` (canvases under
+`@/app/(website)/lab/(items)/...`). All repointed at `@/app/(website)/[locale]/...`. (`globals.css` imports
+were already fine — that file intentionally stayed at the `(website)` group root, not moved.)
+
+### Verification (Phase 3, both parts)
 Per the working convention / `defer-checks-to-end` memory, **no build/lint/dev-server run was performed.**
-Recommended checkpoint before Part B: `pnpm dev` in `apps/frontend`, confirm `/` → `/en`, and `/en`, `/es`,
-`/en/blog`, `/en/projects`, `/en/lab` all render (English content on both locales is expected at this stage).
+Recommended checkpoint before Phase 4: `pnpm dev` in `apps/frontend`, confirm `/` → `/en`, and that
+`/en`/`/es` (home, a CMS page, `/blog`, `/blog/:slug`, `/projects`, `/projects/:slug`, `/lab`) all render —
+`es` should show translated header/footer/page copy once the Phase 2 seed has run against a live DB (still
+outstanding per Phase 2's verification notes); until then `fallback: true` means `es` renders `en` content,
+which is expected, not a bug.
 
 ### Files touched — Phase 3 Part A
 - **New:** [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts), [`middleware.ts`](../apps/frontend/src/middleware.ts).
@@ -312,6 +356,45 @@ Recommended checkpoint before Part B: `pnpm dev` in `apps/frontend`, confirm `/`
 - **Reverted (kept unchanged):** `data/data.ts`, `lib/queries/page-blocks.ts`, `components/Footer.tsx` — the
   Part B draft was rolled back so this scope is Part A only.
 - **Docs:** [`internationalization.md`](internationalization.md) (Phase 3 split into Part A/B), this file.
+
+### Files touched — Phase 3 Part B (this session)
+**Locale threaded into GraphQL + caches**
+- [`lib/queries/page-blocks.ts`](../apps/frontend/src/lib/queries/page-blocks.ts) — `$locale` on `GET_PAGE_BY_SLUG`/`GET_HOME_PAGE`.
+- [`data/data.ts`](../apps/frontend/src/data/data.ts) — `$locale` on `GET_HEADER`/`GET_FOOTER`/`GET_COPYRIGHT`;
+  `resolveHref()` locale-prefixes internal hrefs; `getCachedHeaderData`/`getFooterData` take `locale`; header
+  cache key/tags namespaced by locale.
+- [`app/(website)/[locale]/blog/data.ts`](../apps/frontend/src/app/(website)/[locale]/blog/data.ts) — `$locale` on `GET_POSTS`/`GET_POST_BY_SLUG`.
+- [`app/(website)/[locale]/projects/data.ts`](../apps/frontend/src/app/(website)/[locale]/projects/data.ts) — `$locale` on `GET_PROJECTS`/`GET_PROJECT_BY_SLUG`.
+- [`components/RenderBlocks.tsx`](../apps/frontend/src/components/RenderBlocks.tsx) — new `locale` prop, passed to every block.
+- [`components/Footer.tsx`](../apps/frontend/src/components/Footer.tsx) — new `locale` prop.
+
+**Pages threading `params.locale` through to the data layer**
+- `[locale]/page.tsx`, `[locale]/layout.tsx`, `[locale]/[slug]/page.tsx`, `[locale]/blog/page.tsx`,
+  `[locale]/blog/[slug]/page.tsx`, `[locale]/projects/page.tsx`, `[locale]/projects/[slug]/page.tsx`.
+
+**Bonus fix — stale Part A import paths**
+- `components/page-sections/blog.tsx`, `components/page-sections/projects.tsx` (also gained a `locale` prop),
+  `components/page-sections/lab-teaser.tsx`, `components/gallery/{GalleryCard,Gallery,GalleryBar}.tsx`,
+  `app/exp/(tracked)/{gray-scott,reaction-sphere}/page.tsx`.
+
+**Docs** — [`internationalization.md`](internationalization.md) (Phase 3 Part B checked off), this file.
+
+### Suggested commit message
+```
+feat(i18n): Phase 3 Part B — thread locale through GraphQL + fix cache bleed
+
+Add $locale: LocaleInputType to every CMS GraphQL query (page-blocks,
+header/footer/copyright, blog/projects listing + detail) and thread
+params.locale from each [locale] route down to the fetch layer, including
+RenderBlocks -> BlogSection/ProjectsSection's own collection-fetch path.
+Namespace the one existing unstable_cache (header) by locale to close the
+cache-bleed risk flagged in the plan's §4; resolveHref() now locale-prefixes
+internal nav hrefs. Also repoints several absolute imports left stale by
+Part A's git mv of routes under [locale]/ (blog/projects/lab data + gallery
++ exp canvases), which would otherwise have failed to resolve at build time.
+No frontend link-audit yet (hardcoded internal hrefs in cards/redirects) —
+that's Phase 4.
+```
 
 ---
 

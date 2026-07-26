@@ -2,6 +2,7 @@ import Section from '@/components/section';
 import { BlogList } from '@/components/blog/blog-list';
 import { getBlogPosts } from './data';
 import { Pagination } from '@/components/pagination';
+import type { Locale } from '@/i18n/config';
 
 export const metadata = {
   title: 'Blog | Cesar Jerez',
@@ -10,12 +11,15 @@ export const metadata = {
 
 export default async function BlogPage({
   searchParams,
+  params,
 }: {
   searchParams: Promise<{ page?: string }>
+  params: Promise<{ locale: Locale }>
 }) {
 
   const page = Number((await searchParams).page) || 1
-  const { posts, pagination } = await getBlogPosts({ page, limit: 12 })
+  const { locale } = await params
+  const { posts, pagination } = await getBlogPosts({ page, limit: 12, locale })
 
 
   const url = new URL(process.env.NEXT_PUBLIC_PAYLOAD_URL!)

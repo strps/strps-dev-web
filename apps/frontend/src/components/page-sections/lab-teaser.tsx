@@ -4,8 +4,8 @@ import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { LabTeaserCard } from '@/components/cards/LabTeaserCard'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
-import { getGalleryItems } from '@/app/(website)/lab/data'
-import { GALLERY_CATEGORIES } from '@/app/(website)/lab/types'
+import { getGalleryItems } from '@/app/(website)/[locale]/lab/data'
+import { GALLERY_CATEGORIES } from '@/app/(website)/[locale]/lab/types'
 
 type LabTeaserProps = Omit<PageLabTeaserBlock, 'link'> & {
     labTeaserLink?: PageLabTeaserBlock['link']

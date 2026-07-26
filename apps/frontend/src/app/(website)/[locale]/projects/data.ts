@@ -3,18 +3,21 @@ import { getClient } from '@/lib/apollo-client'
 import type { Project } from '@strps-website/types' // your generated types
 import { draftMode } from 'next/headers'
 import { cache } from 'react'
+import type { Locale } from '@/i18n/config'
 
 export const GET_PROJECTS = gql`
   query GetProjects(
     $page: Int = 1
     $limit: Int = 12
     $where: Project_where
+    $locale: LocaleInputType
   ) {
     Projects(
       page: $page
       limit: $limit
       where: $where
       sort: "-publishedAt"
+      locale: $locale
     ) {
       docs {
         id
@@ -72,9 +75,10 @@ type ProjectsResponse = {
 type GetProjectsParams = {
   page?: number
   limit?: number
+  locale: Locale
 }
 
-export async function getProjects({ page = 1, limit = 12 }: GetProjectsParams = {}) {
+export async function getProjects({ page = 1, limit = 12, locale }: GetProjectsParams) {
   const client = getClient()
 
   const { data } = await client.query<ProjectsResponse>({
@@ -82,6 +86,7 @@ export async function getProjects({ page = 1, limit = 12 }: GetProjectsParams = 
     variables: {
       page,
       limit,
+      locale,
       where: {
         _status: { equals: 'published' },
       },
@@ -102,11 +107,12 @@ export async function getProjects({ page = 1, limit = 12 }: GetProjectsParams = 
 
 
 export const GET_PROJECT_BY_SLUG = gql`
-  query GetProjectBySlug($slug: String!, $draft: Boolean) {
+  query GetProjectBySlug($slug: String!, $draft: Boolean, $locale: LocaleInputType) {
     Projects(
       where: { slug: { equals: $slug } }
       limit: 1
       draft: $draft
+      locale: $locale
     ) {
       docs {
         id
@@ -134,9 +140,10 @@ export const GET_PROJECT_BY_SLUG = gql`
 `
 type GetProjectBySlugArgs = {
   slug: string
+  locale: Locale
 }
 
-export const getProjectBySlug = cache(async ({ slug }: GetProjectBySlugArgs) => {
+export const getProjectBySlug = cache(async ({ slug, locale }: GetProjectBySlugArgs) => {
   const { isEnabled: draft } = await draftMode()
   const client = getClient()
 
@@ -145,6 +152,7 @@ export const getProjectBySlug = cache(async ({ slug }: GetProjectBySlugArgs) => 
     variables: {
       slug,
       draft,
+      locale,
     },
     fetchPolicy: draft ? 'no-cache' : 'cache-first',
   })

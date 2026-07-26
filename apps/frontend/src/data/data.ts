@@ -1,11 +1,12 @@
 import { getClient } from '@/lib/apollo-client'
 import { gql } from '@apollo/client'
 import { unstable_cache } from 'next/cache'
+import type { Locale } from '@/i18n/config'
 
 
 export const GET_HEADER = gql`
-  query GetHeader {
-    Header {
+  query GetHeader($locale: LocaleInputType) {
+    Header(locale: $locale) {
       navItems {
         link {
           type
@@ -56,25 +57,27 @@ interface HeaderData {
   }
 }
 
-function resolveHref(link: HeaderLink['link']): string {
+function resolveHref(link: HeaderLink['link'], locale: Locale): string {
   if (link.type === 'reference' && link.reference?.value?.slug) {
     const prefix = link.reference.relationTo !== 'pages' ? `/${link.reference.relationTo}` : ''
-    return `${prefix}/${link.reference.value.slug}`
+    return `/${locale}${prefix}/${link.reference.value.slug}`
   }
-  return link.url || '#'
+  const url = link.url || '#'
+  return url.startsWith('/') ? `/${locale}${url}` : url
 }
 
-async function getHeaderData() {
+async function getHeaderData(locale: Locale) {
   const client = getClient()
 
   const { data } = await client.query<HeaderData>({
     query: GET_HEADER,
+    variables: { locale },
   })
 
   const header = data?.Header
   const navItems = (header?.navItems ?? []).map((item) => ({
     name: item.link.label,
-    href: resolveHref(item.link),
+    href: resolveHref(item.link, locale),
     appearance: item.link.appearance ?? 'default',
   }))
 
@@ -86,16 +89,16 @@ async function getHeaderData() {
   }
 }
 
-export const getCachedHeaderData = () =>
+export const getCachedHeaderData = (locale: Locale) =>
   unstable_cache(
-    async () => getHeaderData(),
-    ['global_header'],
-    { tags: ['global_header'] },
+    async () => getHeaderData(locale),
+    ['global_header', locale],
+    { tags: [`global_header_${locale}`, 'global_header'] },
   )
 
 export const GET_FOOTER = gql`
-  query GetFooter {
-    Footer {
+  query GetFooter($locale: LocaleInputType) {
+    Footer(locale: $locale) {
       navItems {
         link {
           type
@@ -120,8 +123,8 @@ export const GET_FOOTER = gql`
 `
 
 export const GET_COPYRIGHT = gql`
-  query GetCopyright {
-    Copyright {
+  query GetCopyright($locale: LocaleInputType) {
+    Copyright(locale: $locale) {
       name
       startDate
       link
@@ -145,12 +148,12 @@ interface CopyrightData {
   }
 }
 
-export async function getFooterData() {
+export async function getFooterData(locale: Locale) {
   const client = getClient()
 
   const [footerResult, copyrightResult] = await Promise.all([
-    client.query<FooterData>({ query: GET_FOOTER }),
-    client.query<CopyrightData>({ query: GET_COPYRIGHT }),
+    client.query<FooterData>({ query: GET_FOOTER, variables: { locale } }),
+    client.query<CopyrightData>({ query: GET_COPYRIGHT, variables: { locale } }),
   ])
 
   const footer = footerResult.data?.Footer
@@ -158,7 +161,7 @@ export async function getFooterData() {
 
   const navItems = (footer?.navItems ?? []).map((item) => ({
     label: item.link.label,
-    href: resolveHref(item.link),
+    href: resolveHref(item.link, locale),
     newTab: item.link.newTab ?? false,
   }))
 

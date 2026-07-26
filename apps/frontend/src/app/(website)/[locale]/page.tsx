@@ -8,23 +8,29 @@ import { GET_PAGE_BY_SLUG } from '@/lib/queries/page-blocks'
 import { generateMeta } from '@/lib/generateMeta'
 import { RenderBlocks } from '@/components/RenderBlocks'
 import { LivePreviewListener } from '@/components/live-preview-listener'
+import type { Locale } from '@/i18n/config'
 
-const getHomePage = cache(async () => {
+type Args = {
+  params: Promise<{ locale: Locale }>
+}
+
+const getHomePage = cache(async (locale: Locale) => {
   const { isEnabled: draft } = await draftMode()
   const client = getClient()
 
   const { data } = await client.query<{ Pages: { docs: Page[] } }>({
     query: GET_PAGE_BY_SLUG,
-    variables: { slug: 'home', draft },
+    variables: { slug: 'home', draft, locale },
     fetchPolicy: draft ? 'no-cache' : 'cache-first',
   })
 
   return data?.Pages?.docs?.[0] || null
 })
 
-export default async function HomePage() {
+export default async function HomePage({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const page = await getHomePage()
+  const { locale } = await paramsPromise
+  const page = await getHomePage(locale)
 
   if (!page) {
     notFound()
@@ -33,12 +39,13 @@ export default async function HomePage() {
   return (
     <main>
       {draft && <LivePreviewListener />}
-      <RenderBlocks blocks={page.layout as any[]} />
+      <RenderBlocks blocks={page.layout as any[]} locale={locale} />
     </main>
   )
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const page = await getHomePage()
+export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  const { locale } = await paramsPromise
+  const page = await getHomePage(locale)
   return generateMeta({ doc: page })
 }

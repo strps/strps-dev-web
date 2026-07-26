@@ -2,7 +2,7 @@
 import ControlPanel from "@/app/exp/(tracked)/components/ControlPanel";
 import AdjustableSlider from "@/app/exp/(tracked)/components/AdjustableSlider";
 import { useState } from "react";
-import { GrayScottCanvas } from "@/app/(website)/lab/(items)/gray-scott/GrayScottCanvas";
+import { GrayScottCanvas } from "@/app/(website)/[locale]/lab/(items)/gray-scott/GrayScottCanvas";
 
 
 interface Preset {

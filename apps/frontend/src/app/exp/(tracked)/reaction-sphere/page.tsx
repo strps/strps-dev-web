@@ -3,7 +3,7 @@
 import ControlPanel from "@/app/exp/(tracked)/components/ControlPanel";
 import AdjustableSlider from "@/app/exp/(tracked)/components/AdjustableSlider";
 import { useState } from "react";
-import IcoReactionDiffusionCanvas from "@/app/(website)/lab/(items)/reaction-sphere/IcoReactionDiffusionCanvas";
+import IcoReactionDiffusionCanvas from "@/app/(website)/[locale]/lab/(items)/reaction-sphere/IcoReactionDiffusionCanvas";
 
 
 interface Preset {

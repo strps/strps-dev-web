@@ -10,20 +10,22 @@ import { RenderBlocks } from '@/components/RenderBlocks'
 import { PayloadRedirects } from '@/components/payload-redirects'
 import { LivePreviewListener } from '@/components/live-preview-listener'
 import { gql } from '@apollo/client'
+import type { Locale } from '@/i18n/config'
 
 type Args = {
     params: Promise<{
         slug?: string
+        locale: Locale
     }>
 }
 
-const getPageBySlug = cache(async (slug: string) => {
+const getPageBySlug = cache(async (slug: string, locale: Locale) => {
     const { isEnabled: draft } = await draftMode()
     const client = getClient()
 
     const { data } = await client.query<{ Pages: { docs: Page[] } }>({
         query: GET_PAGE_BY_SLUG,
-        variables: { slug, draft },
+        variables: { slug, draft, locale },
         fetchPolicy: draft ? 'no-cache' : 'cache-first',
     })
 
@@ -32,10 +34,10 @@ const getPageBySlug = cache(async (slug: string) => {
 
 export default async function PageRoute({ params: paramsPromise }: Args) {
     const { isEnabled: draft } = await draftMode()
-    const { slug = '' } = await paramsPromise
+    const { slug = '', locale } = await paramsPromise
     const url = `/${slug}`
 
-    const page = await getPageBySlug(slug)
+    const page = await getPageBySlug(slug, locale)
 
     if (!page) {
         return <PayloadRedirects url={url} />
@@ -44,14 +46,14 @@ export default async function PageRoute({ params: paramsPromise }: Args) {
     return (
         <main>
             {draft && <LivePreviewListener />}
-            <RenderBlocks blocks={page.layout as any[]} />
+            <RenderBlocks blocks={page.layout as any[]} locale={locale} />
         </main>
     )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-    const { slug = '' } = await paramsPromise
-    const page = await getPageBySlug(slug)
+    const { slug = '', locale } = await paramsPromise
+    const page = await getPageBySlug(slug, locale)
     return generateMeta({ doc: page })
 }
 

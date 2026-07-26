@@ -3,18 +3,21 @@ import { getClient } from '@/lib/apollo-client'
 import type { Post } from '@strps-website/types' // your generated types
 import { draftMode } from 'next/headers'
 import { cache } from 'react'
+import type { Locale } from '@/i18n/config'
 
 export const GET_POSTS = gql`
   query GetPosts(
     $page: Int = 1
     $limit: Int = 12
     $where: Post_where   # ← This was the main issue
+    $locale: LocaleInputType
   ) {
     Posts(
       page: $page
       limit: $limit
       where: $where
       sort: "-publishedAt"
+      locale: $locale
     ) {
       docs {
         id
@@ -58,9 +61,10 @@ type PostsResponse = {
 type GetPostsParams = {
   page?: number
   limit?: number
+  locale: Locale
 }
 
-export async function getBlogPosts({ page = 1, limit = 12 }: GetPostsParams = {}) {
+export async function getBlogPosts({ page = 1, limit = 12, locale }: GetPostsParams) {
   const client = getClient()
 
   const { data } = await client.query<PostsResponse>({
@@ -68,6 +72,7 @@ export async function getBlogPosts({ page = 1, limit = 12 }: GetPostsParams = {}
     variables: {
       page,
       limit,
+      locale,
       where: {
         _status: { equals: 'published' },
         // publishedAt: { less_than_equal: new Date().toISOString() } // optional extra safety
@@ -90,11 +95,12 @@ export async function getBlogPosts({ page = 1, limit = 12 }: GetPostsParams = {}
 
 
 export const GET_POST_BY_SLUG = gql`
-  query GetPostBySlug($slug: String!, $draft: Boolean) {
+  query GetPostBySlug($slug: String!, $draft: Boolean, $locale: LocaleInputType) {
     Posts(
       where: { slug: { equals: $slug } }
       limit: 1
       draft: $draft          # ← This is the proper way
+      locale: $locale
     ) {
       docs {
         id
@@ -119,9 +125,10 @@ export const GET_POST_BY_SLUG = gql`
 `
 type GetPostBySlugArgs = {
   slug: string
+  locale: Locale
 }
 
-export const getPostBySlug = cache(async ({ slug }: GetPostBySlugArgs) => {
+export const getPostBySlug = cache(async ({ slug, locale }: GetPostBySlugArgs) => {
   let draft = false
   try {
     const { isEnabled } = await draftMode()
@@ -136,6 +143,7 @@ export const getPostBySlug = cache(async ({ slug }: GetPostBySlugArgs) => {
     variables: {
       slug,
       draft,                    // ← Enables draft preview when in draft mode
+      locale,
     },
     fetchPolicy: draft ? 'no-cache' : 'cache-first',
   })

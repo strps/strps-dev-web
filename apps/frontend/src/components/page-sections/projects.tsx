@@ -9,11 +9,13 @@ import { LinkArrow } from '@/components/primitives/LinkArrow';
 import { HairlineGrid } from '@/components/primitives/HairlineGrid';
 import { resolveLinkHref } from '@/lib/resolveLinkHref';
 import type { PageProjectsBlock, Project, Media } from '@strps-website/types';
-import { getProjects } from '@/app/(website)/projects/data';
+import { getProjects } from '@/app/(website)/[locale]/projects/data';
+import type { Locale } from '@/i18n/config';
 
 type ProjectsProps = Omit<PageProjectsBlock, 'link' | 'variant'> & {
     projectsLink?: PageProjectsBlock['link'];
     projectsVariant?: PageProjectsBlock['variant'];
+    locale: Locale;
 };
 
 const ProjectsSection = async ({
@@ -26,11 +28,12 @@ const ProjectsSection = async ({
     selectedProjects,
     githubUrl,
     section,
+    locale,
 }: ProjectsProps) => {
     let projects: Project[] = [];
 
     if (populateBy === 'collection') {
-        const { projects: fetched } = await getProjects({ limit: limit ?? 6 });
+        const { projects: fetched } = await getProjects({ limit: limit ?? 6, locale });
         projects = fetched;
     } else {
         projects = (selectedProjects || []).filter(

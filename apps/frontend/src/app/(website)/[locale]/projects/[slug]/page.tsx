@@ -8,6 +8,7 @@ import { PostHero } from '@/components/blog/hero'
 import { generateMeta } from '@/lib/generateMeta'
 import { LivePreviewListener } from '@/components/live-preview-listener'
 import { getProjectBySlug, generateStaticParams as generateProjectStaticParams } from '../data'
+import type { Locale } from '@/i18n/config'
 
 export async function generateStaticParams() {
   return await generateProjectStaticParams()
@@ -16,14 +17,15 @@ export async function generateStaticParams() {
 type Args = {
   params: Promise<{
     slug?: string
+    locale: Locale
   }>
 }
 
 export default async function ProjectPage({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = '' } = await paramsPromise
+  const { slug = '', locale } = await paramsPromise
   const url = '/projects/' + slug
-  const project = await getProjectBySlug({ slug })
+  const project = await getProjectBySlug({ slug, locale })
   const headerOverrides = project?.appearance?.headerOverrides
 
   if (!project) return <PayloadRedirects url={url} />
@@ -54,8 +56,8 @@ export default async function ProjectPage({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  const project = await getProjectBySlug({ slug })
+  const { slug = '', locale } = await paramsPromise
+  const project = await getProjectBySlug({ slug, locale })
 
   return generateMeta({ doc: project })
 }

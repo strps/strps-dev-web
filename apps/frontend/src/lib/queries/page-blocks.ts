@@ -515,11 +515,12 @@ export const PAGE_BLOCK_FIELDS = gql`
 
 export const GET_PAGE_BY_SLUG = gql`
   ${PAGE_BLOCK_FIELDS}
-  query GetPageBySlug($slug: String!, $draft: Boolean) {
+  query GetPageBySlug($slug: String!, $draft: Boolean, $locale: LocaleInputType) {
     Pages(
       where: { slug: { equals: $slug } }
       limit: 1
       draft: $draft
+      locale: $locale
     ) {
       docs {
         id
@@ -556,11 +557,12 @@ export const GET_PAGE_BY_SLUG = gql`
 
 export const GET_HOME_PAGE = gql`
   ${PAGE_BLOCK_FIELDS}
-  query GetHomePage($draft: Boolean) {
+  query GetHomePage($draft: Boolean, $locale: LocaleInputType) {
     Pages(
       where: { slug: { equals: "home" } }
       limit: 1
       draft: $draft
+      locale: $locale
     ) {
       docs {
         id

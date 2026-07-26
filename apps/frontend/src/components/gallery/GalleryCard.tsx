@@ -3,7 +3,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import type { GalleryItem, GalleryPriority } from "@/app/(website)/lab/types";
+import type { GalleryItem, GalleryPriority } from "@/app/(website)/[locale]/lab/types";
 
 const categoryLabel: Record<GalleryItem["category"], string> = {
     art: "Art",
