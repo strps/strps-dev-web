@@ -4,8 +4,10 @@
 > **Full spec:** [internationalization.md](internationalization.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) and phase numbers refer to it.
 > **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–2 are done** (Phase 1 = all schema fields marked
-> `localized`; Phase 2 = committed migration + locale-aware bilingual seed). Phase 3 (frontend routing &
-> locale plumbing) is **next**. Phases 4–6 not started.
+> `localized`; Phase 2 = committed migration + locale-aware bilingual seed). **Phase 3 is in progress** —
+> Part A (routing scaffold: `[locale]` segment, middleware, locale validation, dynamic `<html lang>`) is
+> **done**; Part B (thread `locale` into GraphQL + locale-namespaced caches + live preview) is **next**.
+> Phases 4–6 not started.
 > **Goal:** English (`en`) + Spanish (`es`) across the Payload CMS schema and the public Next.js site.
 
 ---
@@ -16,8 +18,8 @@
 |---|---|---|
 | **0** | Decisions & config | ✅ **Done** |
 | **1** | Mark localized fields in schema | ✅ **Done** |
-| **2** | DB schema + migration + locale-aware seed | ✅ **Done** (this session) |
-| 3 | Frontend routing & locale plumbing | ⬜ Not started — **next** |
+| **2** | DB schema + migration + locale-aware seed | ✅ **Done** |
+| **3** | Frontend routing & locale plumbing | 🚧 **In progress** — Part A (routing scaffold) done; Part B (locale data plumbing) next |
 | 4 | Language switcher & UI chrome | ⬜ Not started |
 | 5 | Static UI strings + SEO | ⬜ Not started |
 | 6 | Content entry, QA & launch | ⬜ Not started |
@@ -243,6 +245,73 @@ seeds both locales; reseeding onto a non-empty DB skips the `es` pass too, so **
 `pnpm payload migrate` runs `20260726_154000_add_localized_fields` against a DB that has the 4 prior migrations
 applied. If a target DB was ever push-built (like dev), reconcile `migrate:status` first — don't run `migrate`
 cold onto push-built tables.
+
+---
+
+## What's in progress — Phase 3 (Frontend routing & locale plumbing)
+
+Phase 3 was split into two parts. **Part A (routing scaffold) is done this session; Part B (locale data
+plumbing) is next.**
+
+### Part A — routing scaffold ✅ (done)
+
+**Locale config — new single source of truth.**
+[`i18n/config.ts`](../apps/frontend/src/i18n/config.ts) exports `locales` (`['en','es'] as const`),
+`defaultLocale` (`'en'`), the `Locale` type, and the `isValidLocale()` type guard. Kept intentionally
+minimal — the `localizedHref()` / `localeLabels` helpers a first draft added were **removed** to keep this
+commit scoped to routing; re-add them in Part B / Phase 4 when a consumer exists.
+
+**Route restructure — `[locale]` segment.**
+Every page route moved under [`app/(website)/[locale]/`](../apps/frontend/src/app/(website)/[locale]) via
+`git mv` (tracked as renames, history preserved): `page.tsx` (home), `[slug]/`, `blog/`, `projects/`, `lab/`
+(including all `lab/(items)` subtrees). Left **at the `(website)` group root** because they're route
+handlers (no html layout needed) and get their own per-locale treatment later: `(sitemaps)/` (Phase 5) and
+`api/revalidate/`. `globals.css` + `favicon.ico` stayed at the group root; `exp/` is untouched (separate
+root layout, intentionally un-localized).
+
+- The **root layout moved** to [`[locale]/layout.tsx`](../apps/frontend/src/app/(website)/[locale]/layout.tsx)
+  so it receives `params.locale`. It now: `notFound()`s on an invalid locale, sets `<html lang={locale}>`
+  (was hardcoded `"en"`), exports `generateStaticParams()` → `[{locale:'en'},{locale:'es'}]`, and fixed its
+  CSS import to `'../globals.css'`.
+- **`generateStaticParams` note:** the layout supplies the locale set; child dynamic routes (`[slug]`,
+  `blog/[slug]`, `projects/[slug]`) still return only `{slug}` and Next takes the **cartesian** with the
+  parent locale param — so `/en/foo` + `/es/foo` are both generated with no change to the child generators.
+
+**Middleware — new** [`middleware.ts`](../apps/frontend/src/middleware.ts).
+If the first path segment is already a valid locale → `next()`. Otherwise negotiate
+**cookie (`NEXT_LOCALE`) → `Accept-Language` → `defaultLocale`**, redirect to the prefixed path
+(`/about` → `/en/about`, `/` → `/en`) and persist the cookie (1-year, `sameSite: lax`). Matcher:
+`['/((?!api|admin|exp|_next/static|_next/image|.*\\..*).*)']` — the trailing `.*\..*` excludes favicon,
+`*-sitemap.xml`, and static assets in one clause.
+
+**⚠️ Intermediate state (important for whoever tests):** `/en/...` and `/es/...` both resolve, but **content
+is still English on both** — the CMS `locale` argument isn't threaded into GraphQL yet (that's Part B). Nav
+hrefs aren't locale-prefixed yet either, so a nav click currently costs **one middleware redirect hop**
+(`/about` → `/en/about`); the Phase 4 link audit removes that. `<html lang>` is already correct per route.
+
+### Part B — locale data plumbing ⬜ (next)
+
+A locale-parameterized `data.ts` (header/footer/copyright taking `locale`, cache keys
+`['global_header', locale]` + tags `[`global_header_${locale}`, 'global_header']`, nav hrefs prefixed),
+`page-blocks.ts` (`$locale: LocaleInputType` on `GET_PAGE_BY_SLUG` / `GET_HOME_PAGE`), and a `Footer`
+`locale` prop were **drafted then reverted** this session to keep the commit scoped to Part A. Reapply that as
+the start of Part B, then extend to blog/projects/post detail queries and the live-preview listener. Payload's
+GraphQL locale enum is confirmed **`LocaleInputType`** with values `en`/`es` (globals accept `Header(locale: …)`).
+
+### Verification (Phase 3 Part A)
+Per the working convention / `defer-checks-to-end` memory, **no build/lint/dev-server run was performed.**
+Recommended checkpoint before Part B: `pnpm dev` in `apps/frontend`, confirm `/` → `/en`, and `/en`, `/es`,
+`/en/blog`, `/en/projects`, `/en/lab` all render (English content on both locales is expected at this stage).
+
+### Files touched — Phase 3 Part A
+- **New:** [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts), [`middleware.ts`](../apps/frontend/src/middleware.ts).
+- **Moved (git renames):** all of `app/(website)/{page.tsx,layout.tsx,[slug],blog,projects,lab}` → under
+  `app/(website)/[locale]/`.
+- **Modified:** [`[locale]/layout.tsx`](../apps/frontend/src/app/(website)/[locale]/layout.tsx) (locale param,
+  validation, `<html lang>`, `generateStaticParams`, `'../globals.css'` import).
+- **Reverted (kept unchanged):** `data/data.ts`, `lib/queries/page-blocks.ts`, `components/Footer.tsx` — the
+  Part B draft was rolled back so this scope is Part A only.
+- **Docs:** [`internationalization.md`](internationalization.md) (Phase 3 split into Part A/B), this file.
 
 ---
 

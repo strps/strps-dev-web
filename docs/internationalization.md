@@ -1,6 +1,6 @@
 # Internationalization (i18n) — Action Plan
 
-Status: **Phases 0–2 complete — Phase 3 next** · Owner: TBD · Last updated: 2026-07-26
+Status: **Phases 0–2 complete — Phase 3 in progress (routing scaffold done)** · Owner: TBD · Last updated: 2026-07-26
 
 This document is the implementation plan for adding **English (`en`) + Spanish (`es`)** internationalization across the CMS schema (`apps/payload`) and the public site (`apps/frontend`). It is written to be executed in phases, each independently shippable and verifiable.
 
@@ -173,21 +173,27 @@ The seed route ([`apps/payload/src/app/seed/route.ts`](../apps/payload/src/app/s
 
 ---
 
-### Phase 3 — Frontend routing & locale plumbing (2 days)
+### Phase 3 — Frontend routing & locale plumbing (2 days) 🚧 **IN PROGRESS**
 
 Introduce the `[locale]` segment and make locale flow through every data fetch.
 
-- [ ] **Route restructure:** move the site under a locale segment, e.g. `app/(website)/[locale]/...`, or convert the `(website)` group root to `[locale]`. Update `page.tsx`, `[slug]/page.tsx`, `blog`, `projects`, `lab` routes accordingly.
-- [ ] **Middleware** (`apps/frontend/src/middleware.ts`): detect locale from path → cookie → `Accept-Language`; redirect `/` and unprefixed paths to the negotiated locale. Guard the matcher against `_next`, static assets, API, and admin.
-- [ ] **Locale validation:** a shared `locales`/`defaultLocale` constant + `isValidLocale()` guard; `notFound()` on unknown locale.
-- [ ] **Pass `locale` to GraphQL.** Payload's GraphQL accepts a `locale` argument on queries. Update:
-  - [ ] [`lib/queries/page-blocks.ts`](../apps/frontend/src/lib/queries/page-blocks.ts) — `GET_PAGE_BY_SLUG`, `GET_HOME_PAGE` gain `locale` variables/args.
-  - [ ] [`data/data.ts`](../apps/frontend/src/data/data.ts) — `GET_HEADER`, `GET_FOOTER`, copyright.
-  - [ ] Blog/projects/post detail queries.
-  - [ ] **Cache keys must include locale.** `unstable_cache([...], ['global_header'], ...)` currently caches one header for all locales — change keys to `['global_header', locale]` and tags to `global_header_${locale}`. Same for footer/sitemaps. **This is a correctness bug source if missed.**
-- [ ] **`generateStaticParams`** now returns the cartesian product of `{ locale } × { slug }`. Update the pages, blog, and projects param generators.
-- [ ] **Dynamic `<html lang>`** in the root layout from the route locale (currently hardcoded `"en"`).
+**Part A — routing scaffold (✅ done, see [i18n-handoff.md](i18n-handoff.md) Phase 3):**
+- [x] **Route restructure:** all page routes moved under `app/(website)/[locale]/…` (home, `[slug]`, `blog`, `projects`, `lab`; git-tracked as renames). Route handlers (`(sitemaps)`, `api/revalidate`) stay at the `(website)` group root; `exp/` left un-localized.
+- [x] **Middleware** ([`apps/frontend/src/middleware.ts`](../apps/frontend/src/middleware.ts)): locale from path → cookie (`NEXT_LOCALE`) → `Accept-Language` → default; redirect `/` and unprefixed paths to the negotiated locale, set the cookie. Matcher excludes `api`, `admin`, `exp`, `_next/*`, and any dotted path (favicon, `*-sitemap.xml`, assets).
+- [x] **Locale validation:** shared [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts) (`locales`, `defaultLocale`, `Locale`, `isValidLocale`); layout `notFound()`s on unknown locale.
+- [x] **Dynamic `<html lang>`** from the route locale (was hardcoded `"en"`).
+- [x] **`generateStaticParams` locale set:** `[locale]/layout.tsx` emits `{en, es}`; child `[slug]`/blog/projects generators inherit it (Next takes the cartesian with their existing slug params). *Content is not yet locale-aware — both prefixes render `en` until Part B.*
+
+**Part B — locale data plumbing (⬜ not started — next):**
+- [ ] **Pass `locale` to GraphQL.** Payload's GraphQL accepts a `locale: LocaleInputType` argument on find queries + globals (confirmed enum values `en`/`es`). Update:
+  - [ ] [`lib/queries/page-blocks.ts`](../apps/frontend/src/lib/queries/page-blocks.ts) — `GET_PAGE_BY_SLUG`, `GET_HOME_PAGE` gain `$locale` variable/arg; thread through `[locale]/page.tsx` + `[locale]/[slug]/page.tsx`.
+  - [ ] [`data/data.ts`](../apps/frontend/src/data/data.ts) — `GET_HEADER`, `GET_FOOTER`, `GET_COPYRIGHT`; take `locale` and prefix resolved nav hrefs with it.
+  - [ ] Blog/projects/post detail queries (`blog/data.ts`, `projects/data.ts`).
+  - [ ] **Cache keys must include locale.** `unstable_cache([...], ['global_header'], ...)` currently caches one header for all locales — change keys to `['global_header', locale]` and tags to `[`global_header_${locale}`, 'global_header']` (keep the shared tag so existing revalidation still clears all locales). Same for footer/sitemaps. **This is a correctness bug source if missed.**
+- [ ] **`generateStaticParams` content pass:** confirm slug generators emit per-locale where localized slugs ever diverge (they don't today — shared slugs), otherwise the inherited locale set is sufficient.
 - [ ] **Live preview** ([`live-preview-listener`](../apps/frontend/src/components/live-preview-listener.tsx)) — pass the active locale so admin preview matches the chosen locale.
+
+> A locale-parameterized `data.ts` / `page-blocks.ts` / `Footer.tsx` was drafted then reverted this session to keep the scoped commit to Part A only — reapply it as the start of Part B.
 
 **Exit:** `/en/...` and `/es/...` both render; `es` shows translated content where present, English fallback elsewhere; header/footer localize; no cross-locale cache bleed.
 
