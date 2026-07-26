@@ -1,5 +1,5 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
-import { aboutNarrativeBody } from './about-narrative'
+import { aboutNarrativeBody, aboutNarrativeBodyES } from './about-narrative'
 
 type AboutPageSeed = Omit<RequiredDataFromCollectionSlug<'pages'>, 'createdAt' | 'updatedAt' | 'id'>
 
@@ -192,3 +192,84 @@ export const getAboutPageData = (formId: number): AboutPageSeed => ({
     },
   ],
 })
+
+/* -------------------------------------------------------------------------- */
+/*  Spanish (es) patch — localized fields only, layout blocks in en order.    */
+/* -------------------------------------------------------------------------- */
+
+export const aboutPageDataES = {
+  title: 'Sobre mí',
+  meta: {
+    title: 'Sobre mí — César Jerez',
+    description:
+      'De la técnica teatral y la electrónica al desarrollo full stack: la trayectoria, las habilidades y la experiencia detrás del trabajo.',
+  },
+  layout: [
+    // pageHero
+    {
+      eyebrow: 'Sobre mí',
+      headline: 'Cómo llegué hasta aquí.',
+      description:
+        'De la técnica teatral al desarrollo full stack: la versión larga del camino que me llevó a construir aplicaciones web para vivir.',
+    },
+    // pageAbout
+    {
+      eyebrow: 'Historia',
+      title: 'La versión larga',
+      body: aboutNarrativeBodyES,
+    },
+    // pageExperience
+    {
+      title: 'Historia profesional',
+      positions: [
+        {
+          position: 'Representante de servicio al cliente',
+          summary:
+            'Brindé soporte logístico y de entregas a conductores y clientes, gestionando incidencias con paquetes, registros de entrada y reembolsos.',
+          highlights: [
+            { highlight: 'Asistí a conductores con desafíos de navegación y registros de entrada en bodega.' },
+            { highlight: 'Atendí problemas de escaneo y coordiné reemplazos o reembolsos.' },
+            { highlight: 'Resolví tickets de soporte relacionados con entregas de forma eficiente.' },
+          ],
+        },
+        {
+          position: 'Representante de servicio al cliente',
+          summary:
+            'Atendí a clientes de una cuenta minorista vinculada a Target con consultas sobre pedidos y devoluciones.',
+          highlights: [
+            { highlight: 'Resolví dudas sobre pagos, envíos, devoluciones y reembolsos.' },
+            { highlight: 'Mantuve un alto índice de satisfacción con un servicio empático y eficiente.' },
+          ],
+        },
+        {
+          position: 'Técnico de teatro',
+          summary: 'Gestioné el montaje técnico y la atención al público en un teatro profesional.',
+          highlights: [
+            { highlight: 'Instalé y operé sistemas de sonido, iluminación y video.' },
+            { highlight: 'Trabajé como acomodador y técnico de escenario para asegurar funciones sin contratiempos.' },
+          ],
+        },
+      ],
+    },
+    // pageSkills
+    {
+      eyebrow: 'Habilidades',
+      title: 'Stack principal',
+      skillGroups: [
+        { name: 'Frontend' },
+        { name: 'Backend' },
+        { name: 'Electrónica' },
+        { name: 'Herramientas' },
+      ],
+    },
+    // pageContact
+    {
+      eyebrow: 'Contacto',
+      title: '¿Tenés un proyecto en mente?',
+      description:
+        'Contame qué estás tratando de construir: con un par de oraciones basta para empezar. Respondo en un día hábil.',
+      emailLabel: '¿Preferís el correo?',
+      note: 'Respondo en un día hábil',
+    },
+  ],
+}

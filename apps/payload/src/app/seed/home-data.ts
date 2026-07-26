@@ -1,6 +1,6 @@
 
 import type { RequiredDataFromCollectionSlug } from 'payload'
-import { aboutNarrativeBody } from './about-narrative'
+import { aboutNarrativeBody, aboutNarrativeBodyES } from './about-narrative'
 
 type HomePageSeed = Omit<RequiredDataFromCollectionSlug<'pages'>, 'createdAt' | 'updatedAt' | 'id'>
 
@@ -284,3 +284,109 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
     },
   ],
 })
+
+/* -------------------------------------------------------------------------- */
+/*  Spanish (es) patch — localized fields only, layout blocks in en order.    */
+/* -------------------------------------------------------------------------- */
+
+export const homePageDataES = {
+  title: 'Inicio',
+  layout: [
+    // pageHero
+    {
+      headline: 'Construyo sitios web y aplicaciones rápidas para empresas.',
+      description:
+        'Soy César Jerez, desarrollador full stack en San José, Costa Rica, trabajando en la intersección entre el desarrollo web, la electrónica y la arquitectura de sistemas. Desde landing pages hasta herramientas internas a medida, construyo cosas que funcionan.',
+      location: {
+        city: 'San José',
+        region: 'Costa Rica',
+      },
+      status: {
+        label: 'Disponible para nuevos proyectos',
+        availableFrom: 'Q4 2026',
+      },
+      links: [
+        { link: { label: 'Trabajemos juntos' } },
+        { link: { label: 'Ver mi trabajo' } },
+      ],
+    },
+    // pageServicesTeaser
+    {
+      eyebrow: 'Servicios',
+      title: 'Lo que puedo construir para vos',
+      link: { label: 'Todos los detalles →' },
+      items: [
+        {
+          name: 'Sitios web y landing pages',
+          summary: 'Sitios rápidos y modernos con un CMS que podés editar vos mismo.',
+          link: { label: 'Saber más' },
+        },
+        {
+          name: 'Aplicaciones web y herramientas internas',
+          summary: 'Dashboards, portales y software a medida diseñado en torno a tu flujo de trabajo.',
+          link: { label: 'Saber más' },
+        },
+        {
+          name: 'APIs y automatización',
+          summary: 'Integraciones y scripts que conectan las herramientas que ya usás.',
+          link: { label: 'Saber más' },
+        },
+      ],
+    },
+    // pageProcess
+    {
+      title: 'Cómo trabajo',
+      steps: [
+        { title: 'Descubrimiento', description: 'Llamada gratuita: definimos lo que realmente necesitás.' },
+        { title: 'Propuesta', description: 'Precio fijo para alcance fijo, por escrito.' },
+        { title: 'Construcción', description: 'Avances semanales, sin silencios de caja negra.' },
+        { title: 'Entrega', description: 'Todo el código y las credenciales: es tuyo.' },
+      ],
+    },
+    // pageProjects
+    {
+      eyebrow: 'Proyectos',
+      title: 'Trabajo seleccionado',
+      link: { label: 'Todos los proyectos →' },
+    },
+    // pageLabTeaser
+    {
+      eyebrow: 'Lab',
+      title: 'Cosas que construyo por gusto',
+      intro: 'Electrónica, CNC, bocetos generativos: lo que no cabe en un encargo de cliente.',
+      link: { label: 'Visitar el lab →' },
+    },
+    // pageBlog
+    {
+      eyebrow: 'Escritos',
+      title: 'Notas y bitácoras de construcción',
+    },
+    // pageAbout
+    {
+      eyebrow: 'Sobre mí',
+      title: 'Cómo llegué hasta aquí',
+      body: aboutNarrativeBodyES,
+      link: { label: 'Más sobre mí →' },
+    },
+    // pageSkills
+    {
+      eyebrow: 'Habilidades',
+      title: 'Stack principal',
+      skillGroups: [
+        { name: 'Frontend' },
+        { name: 'Backend' },
+        { name: 'Electrónica' },
+        { name: 'Herramientas' },
+      ],
+    },
+    // pageContact
+    {
+      eyebrow: 'Contacto',
+      title: '¿Tenés un proyecto en mente?',
+      description:
+        'Contame qué estás tratando de construir: con un par de oraciones basta para empezar. Respondo en un día hábil.',
+      emailLabel: '¿Preferís el correo?',
+      note: 'Respondo en un día hábil',
+    },
+  ],
+}

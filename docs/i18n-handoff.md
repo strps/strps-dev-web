@@ -3,8 +3,9 @@
 > **For:** whoever picks this up next (another chat, another model, future me).
 > **Full spec:** [internationalization.md](internationalization.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) and phase numbers refer to it.
-> **Branch:** `dev`. **As of:** 2026-07-25, **Phases 0–1 are done** (Phase 1 = all schema fields marked
-> `localized`). Phase 2 (DB schema + migration + locale-aware seed) is **next**. Phases 3–6 not started.
+> **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–2 are done** (Phase 1 = all schema fields marked
+> `localized`; Phase 2 = committed migration + locale-aware bilingual seed). Phase 3 (frontend routing &
+> locale plumbing) is **next**. Phases 4–6 not started.
 > **Goal:** English (`en`) + Spanish (`es`) across the Payload CMS schema and the public Next.js site.
 
 ---
@@ -14,9 +15,9 @@
 | Phase | Scope | Status |
 |---|---|---|
 | **0** | Decisions & config | ✅ **Done** |
-| **1** | Mark localized fields in schema | ✅ **Done** (this session) |
-| 2 | DB schema + migration + locale-aware seed | ⬜ Not started — **next** |
-| 3 | Frontend routing & locale plumbing | ⬜ Not started |
+| **1** | Mark localized fields in schema | ✅ **Done** |
+| **2** | DB schema + migration + locale-aware seed | ✅ **Done** (this session) |
+| 3 | Frontend routing & locale plumbing | ⬜ Not started — **next** |
 | 4 | Language switcher & UI chrome | ⬜ Not started |
 | 5 | Static UI strings + SEO | ⬜ Not started |
 | 6 | Content entry, QA & launch | ⬜ Not started |
@@ -176,6 +177,75 @@ placeholders (fallback covers gaps) and be refined in-admin later.
 
 ---
 
+## What's done — Phase 2 (DB schema + migration + locale-aware seed)
+
+### The migration
+[`20260726_154000_add_localized_fields.ts`](../apps/payload/src/migrations/20260726_154000_add_localized_fields.ts)
+— generated with `pnpm payload migrate:create add_localized_fields` against a **throwaway scratch DB**
+(`website-db-i18n-check`), never touching the real dev/prod DB, per the makeover recipe:
+
+1. `createdb website-db-i18n-check` → `POSTGRES_URL=<scratch> pnpm payload migrate` to apply the **4 prior**
+   committed migrations (scratch DB now at the pre-localization schema).
+2. `NODE_ENV=development POSTGRES_URL=<scratch> pnpm payload migrate:create add_localized_fields` — diffs the
+   localized config against the scratch DB → emits the localization migration (392 `_locales`-related lines).
+3. Cycle-tested on the scratch DB, then dropped it.
+
+**Zero hand-fixes were needed** — unlike the makeover:
+- **No `ADD VALUE` enum re-emissions.** Localizing fields adds no enum values, so the stale-snapshot enum
+  trap the makeover hit simply doesn't arise here.
+- **The `_locales` enum type already exists** (created in `first_migration` — localization was *enabled* in
+  config from the start, and the SEO/form-builder/search plugins already ship ~18 `_locales` tables). The new
+  migration correctly relies on the pre-existing type rather than re-creating it.
+
+**Full cycle validated on the scratch DB:** `migrate` (up: **18 → 76 `_locales` tables**, matching Phase 1) →
+`migrate:create` again = **clean** (only the known cosmetic `copyright.start_date` `new Date()` default drift,
+pre-existing & unrelated — same as the makeover) → `migrate:down` (76 → 18, clean) → `migrate` (back to 76).
+The throwaway `verify_clean` file was deleted and its auto-regenerated `index.ts` entries removed.
+
+⚠️ **The migration was never applied to the real dev DB** (it's on push, already at the localized shape) — same
+posture as the makeover. Whoever deploys should expect `pnpm payload migrate` to run it for real against
+staging/prod. `payload migrate:status` currently shows **all migrations `Ran: No`** on dev, because Phase 1's
+`DROP SCHEMA` wiped the `payload_migrations` table — dev is push-built, not migration-built. That's expected;
+don't "fix" it by running `migrate` cold against dev (risks `CREATE TABLE` conflicts — see the makeover's
+Phase 3 lesson).
+
+### Locale-aware seed (§3.1) — real bilingual content
+New helper [`localize.ts`](../apps/payload/src/app/seed/localize.ts) with `deepMergeLocalized`,
+`seedLocalizedDoc`, `seedLocalizedGlobal`. **The core problem it solves:** localized fields inside
+non-localized arrays/blocks are keyed by the row `id` Payload assigns on the `en` create — so a naive `es`
+update without ids creates *new* rows and orphans the `en` values. The helper overlays the `es` patch onto the
+doc Payload **returned** from the `en` write (already carries every id + all shared config), preserving ids and
+shared structure, then writes it back at `locale: 'es'`. Rich-text (`{ root }`) values are replaced wholesale;
+arrays zip by index; only localized leaves change.
+
+Each seed data file now exports its `en` data **plus** an `es` patch (localized fields only, same nested shape /
+array order): `homePageDataES`, `aboutPageDataES`, `servicesPageDataES`, `projectsDataES` (parallel by index),
+`headerDataES`/`footerDataES`/`copyrightDataES`, `aboutNarrativeBodyES`, and `servicesFormDataES` (only the
+plugin's localized fields — labels, submit button, confirmation message; **not** select option labels, which
+aren't localized upstream, so translating them would clobber the shared value). Spanish is **real translation**,
+not placeholders (per the chosen approach), refine in-admin as desired.
+
+The seed route ([`route.ts`](../apps/payload/src/app/seed/route.ts)) now routes every create/updateGlobal
+through those helpers. Its existing "skip if slug already exists" guards are unchanged — a fresh (empty) DB
+seeds both locales; reseeding onto a non-empty DB skips the `es` pass too, so **clear the docs first**.
+
+### Verification
+- `tsc --noEmit` in `apps/payload` is **clean** except the pre-existing, unrelated `sharp` error in
+  `payload.config.ts` (confirmed pre-existing by the makeover handoff). `generate:types` output is unchanged
+  (localized text keeps the same `string` TS shape).
+- The migration cycle was exercised end-to-end on the scratch DB (above).
+- **NOT run** (per the working convention / `defer-checks-to-end` memory): the seed was **not executed** against
+  a live DB, and no dev server was booted. To exercise it locally: `pnpm dev` in `apps/payload`, create the
+  first admin user (Phase 1 wiped the dev DB), then `POST /seed`. Confirm `es` docs materialize (admin locale
+  switcher → Español) and the site would fall back to `en` only for shared fields (tech names, dates).
+
+### For prod deploy (Phase 6 / whoever ships)
+`pnpm payload migrate` runs `20260726_154000_add_localized_fields` against a DB that has the 4 prior migrations
+applied. If a target DB was ever push-built (like dev), reconcile `migrate:status` first — don't run `migrate`
+cold onto push-built tables.
+
+---
+
 ## Don't re-litigate
 
 The five decisions in §2 are **settled** (all ✅ in the plan). The known risks are catalogued in §4 of
@@ -185,7 +255,7 @@ the other. It's the most likely silent bug in the whole effort.
 
 ---
 
-## Files touched — Phase 1 (this session)
+## Files touched — Phase 1
 **Shared factories**
 - [`fields/eyebrow.ts`](../apps/payload/src/fields/eyebrow.ts) — `localized: true`.
 - [`fields/link.ts`](../apps/payload/src/fields/link.ts) — `localized: true` on the `label` leaf only.
@@ -220,4 +290,43 @@ location, and all 13 page-block content fields. Structural config (slugs,
 selects, relationships, URLs, dates, tech names) stays shared. Header/Footer
 nav labels and the form-builder plugin localize automatically. No migration
 or seed changes yet — that's Phase 2.
+```
+
+---
+
+## Files touched — Phase 2 (this session)
+**Migration**
+- [`migrations/20260726_154000_add_localized_fields.ts`](../apps/payload/src/migrations/20260726_154000_add_localized_fields.ts)
+  (+ `.json` snapshot) — the localization schema migration.
+- [`migrations/index.ts`](../apps/payload/src/migrations/index.ts) — registers the new migration.
+
+**Seed infrastructure**
+- [`seed/localize.ts`](../apps/payload/src/app/seed/localize.ts) — **new.** `deepMergeLocalized` +
+  `seedLocalizedDoc` / `seedLocalizedGlobal` (two-pass en→es write with id-preserving overlay).
+- [`seed/route.ts`](../apps/payload/src/app/seed/route.ts) — routes every create/updateGlobal through the
+  localize helpers.
+
+**Seed data (added `es` patches)**
+- [`seed/home-data.ts`](../apps/payload/src/app/seed/home-data.ts) — `homePageDataES`.
+- [`seed/about-data.ts`](../apps/payload/src/app/seed/about-data.ts) — `aboutPageDataES`.
+- [`seed/services-data.ts`](../apps/payload/src/app/seed/services-data.ts) — `servicesPageDataES`.
+- [`seed/projects-data.ts`](../apps/payload/src/app/seed/projects-data.ts) — `projectsDataES` (+ Lexical builders).
+- [`seed/globals-data.ts`](../apps/payload/src/app/seed/globals-data.ts) — `headerDataES` / `footerDataES` / `copyrightDataES`.
+- [`seed/about-narrative.ts`](../apps/payload/src/app/seed/about-narrative.ts) — `aboutNarrativeBodyES`.
+- [`seed/forms-data.ts`](../apps/payload/src/app/seed/forms-data.ts) — `servicesFormDataES`.
+
+**Docs** — [`docs/internationalization.md`](internationalization.md) (Phase 2 + §3.1 checkboxes, status),
+[`docs/i18n-handoff.md`](i18n-handoff.md) (this file).
+
+### Suggested commit message
+```
+feat(i18n): Phase 2 — localization migration + bilingual locale-aware seed
+
+Add the committed `add_localized_fields` migration (generated against a
+throwaway scratch DB; up 18→76 _locales tables, cycle-tested, zero hand-fixes)
+and rework the seed for two-locale content. New seed/localize.ts overlays an
+`es` patch onto the en-created doc — preserving array/block row ids so the
+locale:'es' write doesn't orphan en values — then writes it back. Every seed
+data file gains a real Spanish `es` patch (home, about, services, projects,
+globals, contact form). No frontend changes yet — that's Phase 3.
 ```

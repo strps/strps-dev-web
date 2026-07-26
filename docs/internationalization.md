@@ -1,6 +1,6 @@
 # Internationalization (i18n) — Action Plan
 
-Status: **Phases 0–1 complete — Phase 2 next** · Owner: TBD · Last updated: 2026-07-25
+Status: **Phases 0–2 complete — Phase 3 next** · Owner: TBD · Last updated: 2026-07-26
 
 This document is the implementation plan for adding **English (`en`) + Spanish (`es`)** internationalization across the CMS schema (`apps/payload`) and the public site (`apps/frontend`). It is written to be executed in phases, each independently shippable and verifiable.
 
@@ -119,43 +119,57 @@ Add `localized: true` to **user-facing content fields only**. Do **not** localiz
 
 ---
 
-### Phase 2 — Database schema + migration (0.5 day)
+### Phase 2 — Database schema + migration (0.5 day) ✅ **DONE**
 
 Localizing fields changes the Postgres schema (Payload creates `_locales` sidecar tables). **Per §2.5 we do not preserve existing data** — this is a clean schema rebuild + reseed, so there is no data-backfill step to get right.
 
-- [ ] In dev, let Payload build the new schema (drop/recreate is fine — no data to keep).
-- [ ] Generate a committed migration so the change is reproducible in prod (still never rely on dev `push` in prod):
-  ```bash
-  cd apps/payload
-  bunx payload migrate:create add_localized_fields
-  ```
-  The migration only needs to bring the schema to the localized shape; it does **not** need to preserve/backfill rows.
-- [ ] After applying, run the (locale-aware) seed to repopulate content — see **Phase 6 / §3.1**.
+- [x] In dev, let Payload build the new schema (done in Phase 1 via `DROP SCHEMA` + push — 76 `_locales` tables).
+- [x] Generate a committed migration so the change is reproducible in prod (still never rely on dev `push` in prod):
+  [`20260726_154000_add_localized_fields.ts`](../apps/payload/src/migrations/20260726_154000_add_localized_fields.ts),
+  generated with `pnpm payload migrate:create` against a **throwaway scratch DB** (never touched dev/prod).
+  **Zero hand-fixes needed** — no `ADD VALUE` enum re-emissions this time (localization adds no enum values),
+  and the `_locales` enum type already exists from `first_migration`. Full cycle validated on the scratch DB:
+  up (18→76 `_locales` tables) → re-diff clean (only the pre-existing cosmetic `new Date()` default drift) →
+  down (76→18) → up again.
+- [x] Locale-aware seed written (see §3.1) — repopulates `en` **and** `es` on a fresh reseed.
 
 > ⚠️ Known env note: a cold-boot `column "id" is in a primary key` Postgres warning is pre-existing and self-recovers (see memory `payload-dev-schema-push-error`); don't confuse it with a migration failure.
 
-**Exit:** localized schema applied; DB reseeded with `en` (and `es`) content; `es` returns fallback (`en`) where a Spanish value wasn't seeded.
+**Exit:** ✅ localized schema captured in a committed, cycle-tested migration; locale-aware seed writes `en` + real `es`
+content; `es` falls back to `en` only where a Spanish value wasn't seeded (e.g. shared tech names, dates).
 
 #### 3.1 — Locale-aware seeding (the "update the seed data" work)
 
 The seed route ([`apps/payload/src/app/seed/route.ts`](../apps/payload/src/app/seed/route.ts)) drives typed data files. Once fields are `localized: true`, a plain `payload.create` / `updateGlobal` writes **only the default locale (`en`)**. Spanish content requires a **second write to the same doc with `locale: 'es'`**.
 
-- [ ] **Restructure the seed data files** to carry both locales. Recommended shape: each data module exports `en` data plus an `es` patch containing only the localized fields:
+- [x] **Restructured the seed data files** to carry both locales. Shape used: each module keeps its `en` data
+  and adds an exported **`es` patch** containing only the localized fields, in the *same nested shape / array
+  order*. Files: [`home-data.ts`](../apps/payload/src/app/seed/home-data.ts) (`homePageDataES`),
+  [`about-data.ts`](../apps/payload/src/app/seed/about-data.ts) (`aboutPageDataES`),
+  [`services-data.ts`](../apps/payload/src/app/seed/services-data.ts) (`servicesPageDataES`),
+  [`projects-data.ts`](../apps/payload/src/app/seed/projects-data.ts) (`projectsDataES`, parallel by index),
+  [`globals-data.ts`](../apps/payload/src/app/seed/globals-data.ts) (`headerDataES`/`footerDataES`/`copyrightDataES`),
+  [`about-narrative.ts`](../apps/payload/src/app/seed/about-narrative.ts) (`aboutNarrativeBodyES`),
+  [`forms-data.ts`](../apps/payload/src/app/seed/forms-data.ts) (`servicesFormDataES` — only the plugin's
+  localized fields: labels, submit button, confirmation message; **not** select options).
+- [x] **Updated the seed route** to write both locales via new helpers in
+  [`localize.ts`](../apps/payload/src/app/seed/localize.ts). The key subtlety: localized fields inside
+  non-localized arrays/blocks are keyed by the row `id` Payload assigns on the `en` create — so the `es`
+  pass must reuse those ids or Payload creates new rows and the `en` values are lost. `deepMergeLocalized`
+  overlays the `es` patch onto the doc Payload **returned** from the `en` write (which already carries every
+  id + all shared config), then writes it back at `locale: 'es'`:
   ```ts
-  // e.g. home-data.ts
-  export const getHomePageData = (formId, locale: 'en' | 'es') => ({ /* ... */ })
-  // or: getHomePageDataEN(formId) + getHomePageDataES(formId)
+  const created = await payload.create({ collection, data: enData, depth: 0 })
+  const esData = deepMergeLocalized(created, esPatch)   // ids + shared kept, localized leaves swapped
+  await payload.update({ collection, id: created.id, data: esData, locale: 'es', depth: 0 })
   ```
-  Affected files: [`home-data.ts`](../apps/payload/src/app/seed/home-data.ts), [`about-data.ts`](../apps/payload/src/app/seed/about-data.ts), [`services-data.ts`](../apps/payload/src/app/seed/services-data.ts), [`projects-data.ts`](../apps/payload/src/app/seed/projects-data.ts), [`globals-data.ts`](../apps/payload/src/app/seed/globals-data.ts), [`about-narrative.ts`](../apps/payload/src/app/seed/about-narrative.ts). Forms ([`forms-data.ts`](../apps/payload/src/app/seed/forms-data.ts)) only if form labels are localized.
-- [ ] **Update the seed route** to write both locales. Pattern:
-  ```ts
-  const page = await payload.create({ collection: 'pages', data: enData, locale: 'en' })
-  await payload.update({ collection: 'pages', id: page.id, data: esData, locale: 'es' })
-  ```
-  For globals: `updateGlobal({ slug, data: enData, locale: 'en' })` then again with `locale: 'es'`.
-- [ ] **Non-localized fields** (slug, selects, relationships, section config) only need to be provided on the `en` create; the `es` update should send **only** the localized fields to avoid clobbering shared structure.
-- [ ] Note the route currently **skips seeding if a page/project already exists** — after a schema rebuild the tables are empty so it runs fresh; if reseeding onto a non-empty DB, clear those docs first or the `es` pass is skipped too.
-- [ ] Provide the Spanish copy (can start as English placeholders and refine in-admin later, since fallback covers gaps).
+- [x] **Non-localized fields** stay correct automatically — the `es` patch carries *only* localized leaves;
+  everything else is inherited from the `en`-created doc, so shared structure is never clobbered (§4 risk).
+- [x] Note the route still **skips seeding if a page/project already exists** — after a schema rebuild the
+  tables are empty so it runs fresh (both locales). Reseeding onto a non-empty DB skips the `es` pass too;
+  clear those docs first.
+- [x] Spanish copy provided as **real translations** (not placeholders) across home, about, services, projects,
+  globals, and the contact form; refine wording in-admin as needed.
 
 ---
 

@@ -70,3 +70,44 @@ export const servicesFormData: FormSeed = {
         },
     ],
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Spanish (es) patch — only fields the form-builder plugin localizes         */
+/*  upstream (field label, submitButtonLabel, confirmationMessage). Select     */
+/*  option labels are NOT localized, so they're intentionally omitted.         */
+/* -------------------------------------------------------------------------- */
+
+export const servicesFormDataES = {
+    submitButtonLabel: 'Enviar mensaje',
+    confirmationMessage: {
+        root: {
+            type: 'root',
+            children: [
+                {
+                    type: 'paragraph',
+                    children: [
+                        {
+                            type: 'text',
+                            text: 'Gracias — te responderé en un día hábil.',
+                            version: 1,
+                        },
+                    ],
+                    direction: 'ltr',
+                    format: '',
+                    indent: 0,
+                    version: 1,
+                },
+            ],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            version: 1,
+        },
+    },
+    fields: [
+        { label: 'Nombre' },
+        { label: 'Correo' },
+        { label: '¿Qué necesitás?' },
+        { label: 'Rango de presupuesto' },
+    ],
+}

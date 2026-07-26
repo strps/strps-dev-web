@@ -68,3 +68,70 @@ export const aboutNarrativeBody = {
         version: 1,
     },
 }
+
+/** Spanish (es) translation of the narrative — replaces the rich-text value wholesale. */
+export const aboutNarrativeBodyES = {
+    root: {
+        type: 'root',
+        children: [
+            {
+                type: 'paragraph',
+                children: [
+                    {
+                        type: 'text',
+                        text: 'Antes de escribir una sola línea de código en producción, andaba tendiendo cable y programando consolas de luces tras bambalinas en el teatro: ',
+                        format: 0,
+                        version: 1,
+                    },
+                    {
+                        type: 'text',
+                        text: 'aprendí que un sistema en vivo o funciona justo cuando tiene que funcionar, o no funciona del todo.',
+                        format: 1,
+                        version: 1,
+                    },
+                    {
+                        type: 'text',
+                        text: ' Esa mentalidad me siguió hacia la electrónica: mecanizado CNC, diseño de PCB, VHDL. No hay crédito parcial cuando un circuito está mal.',
+                        format: 0,
+                        version: 1,
+                    },
+                ],
+                direction: 'ltr' as const,
+                format: '' as const,
+                indent: 0,
+                version: 1,
+            },
+            {
+                type: 'paragraph',
+                children: [
+                    {
+                        type: 'text',
+                        text: 'El software resultó ser la misma disciplina con un ciclo de retroalimentación más rápido. Aporto el mismo instinto para los sistemas — ',
+                        format: 0,
+                        version: 1,
+                    },
+                    {
+                        type: 'text',
+                        text: 'cómo encajan las piezas, qué se rompe bajo carga, dónde está la verdadera restricción',
+                        format: 1,
+                        version: 1,
+                    },
+                    {
+                        type: 'text',
+                        text: ' — a cada aplicación web y proyecto de cliente que asumo. Por eso opto por soluciones simples y bien estructuradas antes que por las ingeniosas.',
+                        format: 0,
+                        version: 1,
+                    },
+                ],
+                direction: 'ltr' as const,
+                format: '' as const,
+                indent: 0,
+                version: 1,
+            },
+        ],
+        direction: 'ltr' as const,
+        format: '' as const,
+        indent: 0,
+        version: 1,
+    },
+}

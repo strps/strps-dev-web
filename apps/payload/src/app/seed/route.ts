@@ -1,12 +1,20 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
 import { headers as getHeaders } from 'next/headers'
-import { getHomePageData } from './home-data'
-import { getAboutPageData } from './about-data'
-import { headerData, footerData, copyrightData } from './globals-data'
-import { projectsData } from './projects-data'
-import { servicesFormData } from './forms-data'
-import { getServicesPageData } from './services-data'
+import { getHomePageData, homePageDataES } from './home-data'
+import { getAboutPageData, aboutPageDataES } from './about-data'
+import {
+    headerData,
+    footerData,
+    copyrightData,
+    headerDataES,
+    footerDataES,
+    copyrightDataES,
+} from './globals-data'
+import { projectsData, projectsDataES } from './projects-data'
+import { servicesFormData, servicesFormDataES } from './forms-data'
+import { getServicesPageData, servicesPageDataES } from './services-data'
+import { seedLocalizedDoc, seedLocalizedGlobal } from './localize'
 
 export async function POST(): Promise<Response> {
     const payload = await getPayload({ config })
@@ -19,13 +27,13 @@ export async function POST(): Promise<Response> {
     }
 
     try {
-        payload.logger.info('— Seeding database...')
+        payload.logger.info('— Seeding database (en + es)...')
 
-        // Seed globals
+        // Seed globals — en write, then es translation onto the same doc.
         await Promise.all([
-            payload.updateGlobal({ slug: 'header', data: headerData }),
-            payload.updateGlobal({ slug: 'footer', data: footerData }),
-            payload.updateGlobal({ slug: 'copyright', data: copyrightData }),
+            seedLocalizedGlobal(payload, 'header', headerData, headerDataES),
+            seedLocalizedGlobal(payload, 'footer', footerData, footerDataES),
+            seedLocalizedGlobal(payload, 'copyright', copyrightData, copyrightDataES),
         ])
         payload.logger.info('— Globals seeded.')
 
@@ -39,10 +47,7 @@ export async function POST(): Promise<Response> {
         ).docs[0]
 
         if (!formDoc) {
-            formDoc = await payload.create({
-                collection: 'forms',
-                data: servicesFormData,
-            })
+            formDoc = await seedLocalizedDoc(payload, 'forms', servicesFormData, servicesFormDataES)
             payload.logger.info('— Contact form seeded.')
         }
 
@@ -56,10 +61,7 @@ export async function POST(): Promise<Response> {
         if (existingPages.docs.length > 0) {
             payload.logger.info('— Home page already exists, skipping page seed.')
         } else {
-            await payload.create({
-                collection: 'pages',
-                data: getHomePageData(formDoc.id),
-            })
+            await seedLocalizedDoc(payload, 'pages', getHomePageData(formDoc.id), homePageDataES)
             payload.logger.info('— Home page seeded.')
         }
 
@@ -73,25 +75,19 @@ export async function POST(): Promise<Response> {
         if (existingAboutPage.docs.length > 0) {
             payload.logger.info('— About page already exists, skipping page seed.')
         } else {
-            await payload.create({
-                collection: 'pages',
-                data: getAboutPageData(formDoc.id),
-            })
+            await seedLocalizedDoc(payload, 'pages', getAboutPageData(formDoc.id), aboutPageDataES)
             payload.logger.info('— About page seeded.')
         }
 
         // Seed projects
-        for (const project of projectsData) {
+        for (const [i, project] of projectsData.entries()) {
             const existing = await payload.find({
                 collection: 'projects',
                 where: { slug: { equals: project.slug } },
                 limit: 1,
             })
             if (existing.docs.length === 0) {
-                await payload.create({
-                    collection: 'projects',
-                    data: project,
-                })
+                await seedLocalizedDoc(payload, 'projects', project, projectsDataES[i])
             }
         }
         payload.logger.info('— Projects seeded.')
@@ -106,10 +102,7 @@ export async function POST(): Promise<Response> {
         if (existingServicesPage.docs.length > 0) {
             payload.logger.info('— Services page already exists, skipping page seed.')
         } else {
-            await payload.create({
-                collection: 'pages',
-                data: getServicesPageData(formDoc.id),
-            })
+            await seedLocalizedDoc(payload, 'pages', getServicesPageData(formDoc.id), servicesPageDataES)
             payload.logger.info('— Services page seeded.')
         }
 

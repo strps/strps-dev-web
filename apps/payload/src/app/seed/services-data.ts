@@ -239,3 +239,186 @@ export const getServicesPageData = (formId: number): ServicesPageSeed => ({
         },
     ],
 })
+
+/* -------------------------------------------------------------------------- */
+/*  Spanish (es) patch — localized fields only, layout blocks in en order.    */
+/* -------------------------------------------------------------------------- */
+
+export const servicesPageDataES = {
+    title: 'Servicios',
+    meta: {
+        title: 'Servicios de desarrollo web | César Jerez — Desarrollador full stack freelance',
+        description:
+            'Desarrollador web freelance en Costa Rica que construye sitios rápidos, aplicaciones web a medida e integraciones de API para empresas de todo el mundo. Next.js, React, Node.js. Llamada de descubrimiento gratuita.',
+    },
+    layout: [
+        // pageServicesHero
+        {
+            eyebrow: 'Desarrollo web freelance',
+            title: 'Sitios y aplicaciones web que trabajan tan duro como vos.',
+            description:
+                'Soy César, desarrollador full stack en San José, Costa Rica. Ayudo a empresas y fundadores a convertir ideas en productos digitales rápidos y confiables, desde una landing page que convierte hasta una herramienta a medida que le ahorra horas a tu equipo cada semana.',
+            status: {
+                label: 'Actualmente disponible para nuevos proyectos',
+            },
+            highlights: [
+                { text: 'Trabajás directamente con el desarrollador' },
+                { text: 'Propuestas a precio fijo, sin facturas sorpresa' },
+                { text: 'Remoto, a nivel mundial — EN / ES' },
+            ],
+            links: [
+                { link: { label: 'Contame sobre tu proyecto' } },
+                { link: { label: 'Ver mi trabajo' } },
+            ],
+        },
+        // pageServices
+        {
+            title: 'Servicios',
+            intro:
+                'Sin agencias, sin intermediarios, sin teléfono descompuesto. Trabajás directamente con la persona que escribe el código, desde la primera llamada hasta el lanzamiento y más allá.',
+            services: [
+                {
+                    name: 'Sitios web de negocio y landing pages',
+                    forWho:
+                        'Pequeños negocios, profesionales y startups que necesitan una presencia web que de verdad atraiga clientes, no solo una tarjeta de presentación digital.',
+                    features: [
+                        { feature: 'Un sitio web rápido y moderno construido con Next.js, la misma tecnología que usan Nike, Notion y OpenAI' },
+                        { feature: 'Un sistema de gestión de contenido (CMS) para que actualices textos, imágenes y páginas vos mismo, sin necesitar un desarrollador para cada cambio' },
+                        { feature: 'Diseño responsive mobile-first que se ve impecable en cualquier pantalla' },
+                        { feature: 'Fundamentos de SEO bien hechos: metadatos, rendimiento, datos estructurados, sitemap' },
+                        { feature: 'Analítica configurada para que sepás qué está funcionando' },
+                        { feature: 'Despliegue, configuración del dominio y una entrega sin fricciones' },
+                    ],
+                    timeline: '2–4 semanas',
+                    pricing: 'Desde $800',
+                    goodFitPoints: [
+                        { point: 'Nuestro sitio actual es lento / anticuado / vergonzoso' },
+                        { point: 'Estamos lanzando y necesitamos vernos creíbles' },
+                        { point: 'Quiero editar mi propio sitio sin llamar a un desarrollador' },
+                    ],
+                },
+                {
+                    name: 'Aplicaciones web y herramientas internas',
+                    forWho:
+                        'Negocios ahogados en hojas de cálculo, procesos manuales o software genérico que casi encaja. Fundadores que necesitan un MVP bien hecho desde la primera vez.',
+                    features: [
+                        { feature: 'Una aplicación web a medida diseñada en torno a tu flujo real de trabajo: dashboards, sistemas de reservas, paneles de administración, portales de clientes, rastreadores' },
+                        { feature: 'Arquitectura sólida: frontend en React/Next.js, backend en Node.js, base de datos PostgreSQL' },
+                        { feature: 'Cuentas de usuario, roles y permisos donde los necesités' },
+                        { feature: 'Código limpio y documentado que es completamente tuyo, sin ataduras' },
+                        { feature: 'Pruebas y pipeline de despliegue para que las actualizaciones no rompan nada' },
+                    ],
+                    timeline: '4–10 semanas según el alcance',
+                    pricing: 'Desde $4,500, según alcance',
+                    goodFitPoints: [
+                        { point: 'Manejamos toda nuestra operación en hojas de cálculo' },
+                        { point: 'Necesitamos software que haga exactamente esto, y nada en el mercado lo hace' },
+                        { point: 'Tengo una idea y necesito un producto funcional para mostrar a usuarios o inversionistas' },
+                    ],
+                    proofLabel: 'Mirá TrackBit — una aplicación completa de seguimiento de hábitos →',
+                },
+                {
+                    name: 'APIs, integraciones y automatización',
+                    forWho: 'Equipos cuyos sistemas no se comunican entre sí, o que pierden horas en tareas que un script podría hacer en segundos.',
+                    features: [
+                        { feature: 'APIs REST o GraphQL a medida construidas con Node.js, Express o FastAPI' },
+                        { feature: 'Integraciones entre las herramientas que ya usás: procesadores de pago, CRMs, plataformas de correo, hojas de cálculo' },
+                        { feature: 'Automatización de flujos repetitivos: sincronización de datos, generación de reportes, notificaciones' },
+                        { feature: 'Diseño y optimización de bases de datos (PostgreSQL, MySQL, Redis)' },
+                        { feature: 'Documentación que tu próximo desarrollador te agradecerá' },
+                    ],
+                    timeline: '1–4 semanas por integración o API',
+                    pricing: 'Desde $600/proyecto o $45/hora',
+                    goodFitPoints: [
+                        { point: 'Alguien copia datos del sistema A al sistema B todos los días' },
+                        { point: 'Necesitamos que nuestro sitio se comunique con nuestro inventario / CRM / sistema de pagos' },
+                    ],
+                },
+                {
+                    name: 'Soporte y mantenimiento continuo',
+                    forWho: 'Cualquiera que quiera que su sitio o aplicación se mantenga rápido, seguro y al día sin tener que pensar en ello.',
+                    features: [
+                        { feature: 'Actualizaciones mensuales, parches de seguridad y actualización de dependencias' },
+                        { feature: 'Monitoreo de disponibilidad y rendimiento' },
+                        { feature: 'Una cantidad definida de horas para cambios y mejoras pequeñas' },
+                        { feature: 'Respuesta prioritaria cuando algo se rompe' },
+                    ],
+                    pricing: 'Desde $150/mes · Cancelás cuando querás',
+                },
+            ],
+        },
+        // pageProcess
+        {
+            title: 'Cómo trabajo',
+            intro: 'Un proceso claro, sin sorpresas. Así se ve trabajar juntos:',
+            steps: [
+                {
+                    title: 'Descubrimiento (gratis)',
+                    description:
+                        'Hablamos: videollamada o correo, vos elegís. Me contás qué necesitás y cómo se ve el éxito. Hago muchas preguntas. Si no soy la persona indicada, te lo digo y te oriento hacia algo mejor.',
+                },
+                {
+                    title: 'Propuesta',
+                    description:
+                        'Recibís una propuesta por escrito: alcance, plazos, precio y qué incluye. Precio fijo para alcance fijo, sin facturas sorpresa.',
+                },
+                {
+                    title: 'Construcción',
+                    description:
+                        'Trabajo en ciclos cortos y te muestro avances con regularidad, normalmente cada semana. Ves lo real temprano y seguido, así las correcciones ocurren cuando son baratas, no al final.',
+                },
+                {
+                    title: 'Lanzamiento y entrega',
+                    description:
+                        'Despliego el proyecto, te explico todo y te entrego el código, las credenciales y la documentación. Es tuyo. Si querés que siga cerca, para eso está el plan de soporte.',
+                },
+            ],
+        },
+        // pageFaq
+        {
+            title: 'Preguntas frecuentes',
+            questions: [
+                {
+                    question: '¿Trabajás con clientes fuera de Costa Rica?',
+                    answer:
+                        'Sí, trabajo de forma remota con clientes en cualquier lugar. Estoy en la zona horaria central (GMT-6), que coincide bien con el horario laboral de Norteamérica. Hablo español e inglés con fluidez.',
+                },
+                {
+                    question: '¿Cuánto cuesta un sitio web?',
+                    answer:
+                        'Depende del alcance, por eso las llamadas de descubrimiento son gratuitas. Como referencia: una landing page suele empezar en $800, un sitio de negocio completo en $2,000 y las aplicaciones a medida desde $4,500. Siempre vas a saber el precio antes de empezar.',
+                },
+                {
+                    question: '¿Podés emitir factura electrónica?',
+                    answer: 'Sí, puedo emitir factura electrónica para clientes corporativos en Costa Rica.',
+                },
+                {
+                    question: '¿El código es mío?',
+                    answer:
+                        'Por completo. Todo lo que construyo para vos —código, diseños, contenido, cuentas— es tuyo en la entrega. Sin ataduras, sin situaciones de rehén.',
+                },
+                {
+                    question: '¿Y si necesito cambios después del lanzamiento?',
+                    answer:
+                        'Los ajustes pequeños durante las primeras dos semanas tras el lanzamiento van incluidos. Después de eso, podés contratarme por hora o tomar un plan de soporte mensual.',
+                },
+                {
+                    question: '¿Podés trabajar con mi sitio o base de código existente?',
+                    answer:
+                        'Normalmente sí. Enviame lo que tenés y te diré con honestidad si tiene más sentido mejorarlo o reconstruirlo.',
+                },
+                {
+                    question: '¿Cuántas revisiones incluye?',
+                    answer:
+                        'Como ves los avances cada semana, corregimos sobre la marcha en lugar de guardar todo el feedback para el final. Cada propuesta detalla exactamente qué incluye, así nunca hay ambigüedad.',
+                },
+            ],
+        },
+        // formBlock
+        {
+            introTitle: '¿Tenés un proyecto en mente?',
+            introText:
+                'Contame qué estás tratando de construir: con un par de oraciones basta para empezar. Respondo en un día hábil.',
+        },
+    ],
+}

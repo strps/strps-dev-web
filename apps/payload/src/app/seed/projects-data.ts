@@ -359,3 +359,123 @@ export const projectsData: ProjectSeed[] = [
         },
     },
 ]
+
+/* -------------------------------------------------------------------------- */
+/*  Spanish (es) patches — localized fields only, parallel to projectsData.    */
+/*  Merged onto each created project by index (see localize.ts).               */
+/* -------------------------------------------------------------------------- */
+
+// Minimal Lexical node builders — content richText is replaced wholesale.
+const h2 = (text: string) => ({
+    type: 'heading',
+    tag: 'h2',
+    children: [{ type: 'text', text, version: 1 }],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 1,
+})
+const p = (text: string) => ({
+    type: 'paragraph',
+    children: [{ type: 'text', text, version: 1 }],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 1,
+})
+const ul = (items: string[]) => ({
+    type: 'list',
+    listType: 'bullet',
+    start: 1,
+    tag: 'ul',
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 1,
+    children: items.map((text, i) => ({
+        type: 'listitem',
+        children: [{ type: 'text', text, version: 1 }],
+        direction: 'ltr',
+        format: '',
+        indent: 0,
+        value: i + 1,
+        version: 1,
+    })),
+})
+const doc = (...children: object[]) => ({
+    root: { type: 'root', children, direction: 'ltr', format: '', indent: 0, version: 1 },
+})
+
+export const projectsDataES = [
+    // STRPS — this site
+    {
+        title: 'STRPS — este sitio',
+        meta: {
+            title: 'Plantilla de sitio STRPS — Portafolio full-stack y CMS',
+            description:
+                'Una plantilla de sitio web moderna construida con Next.js, PayloadCMS y Tailwind CSS. Incluye un CMS headless, API GraphQL, modo oscuro y optimización para SEO.',
+        },
+        caseStudy: {
+            tag: 'Plantilla / producto',
+            problem: 'Los portafolios freelance suelen verse como un currículum con una hoja de estilos.',
+            contribution:
+                'Construí una plantilla con Next.js + Payload CMS lo bastante flexible para manejar un portafolio y un negocio de servicios desde la misma base de código: la que estás viendo.',
+            context:
+                'La mayoría de los portafolios freelance son un currículum con una hoja de estilos: estáticos, difíciles de actualizar e imposibles de convertir en una herramienta de negocio real. Quería una plantilla con la que pudiera manejar mi propio portafolio hoy y convertir en un producto para clientes después.',
+            decisions:
+                'Construí el contenido como colecciones de Payload CMS desde el día uno (proyectos, entradas de blog y ahora elementos del lab) en lugar de páginas hardcodeadas: el mismo esquema que impulsa mi portafolio puede impulsar el sitio de un cliente sin rearquitectura. Framer Motion se usa solo en un puñado de momentos deliberados, no en transiciones de página generalizadas.',
+            outcome:
+                'El sitio que estás viendo ahora mismo, y la plantilla base del servicio de diseño web que ofrezco a mis clientes.',
+        },
+        content: doc(
+            h2('Resumen'),
+            p('Una plantilla de sitio web moderna y full-stack construida con Next.js 16 y PayloadCMS 3. Diseñada como monorepo con Turborepo, ofrece un portafolio totalmente personalizable y una solución de gestión de contenido con un backend headless CMS y un frontend desacoplado.'),
+            h2('Características'),
+            ul([
+                'CMS headless con PayloadCMS 3 y el editor de texto enriquecido Lexical',
+                'Secciones de página configurables con maquetado de bloques por arrastrar y soltar',
+                'Cliente Apollo GraphQL para una obtención de datos eficiente',
+                'Soporte para modo oscuro con detección automática de tema',
+                'Optimizado para SEO con campos meta y generación de sitemap',
+                'Vista previa en vivo en el panel de administración para edición de contenido en tiempo real',
+            ]),
+            h2('Arquitectura'),
+            p('El proyecto sigue una estructura de monorepo gestionada por pnpm workspaces y Turborepo. La app de Payload funciona como backend del CMS e interfaz de administración, mientras que la app frontend es una aplicación Next.js independiente que obtiene datos vía GraphQL. Los tipos compartidos se generan a partir del esquema de Payload y ambos apps los consumen mediante un paquete compartido.'),
+        ),
+    },
+    // TrackBit
+    {
+        meta: {
+            title: 'TrackBit — Rastreador de hábitos',
+            description:
+                'Una app de seguimiento de hábitos construida con React, Node.js y PostgreSQL. Incluye seguimiento de rachas, dashboards de analítica y recordatorios personalizables para ayudar a construir mejores rutinas.',
+        },
+        caseStudy: {
+            tag: 'Producto',
+            problem: 'Los rastreadores de hábitos o simplifican de más (una casilla) o abruman (hojas de cálculo que nadie mantiene).',
+            contribution:
+                'Construí un rastreador de hábitos full-stack con lógica de rachas, analítica semanal y un dashboard que la gente de verdad abre dos veces al día.',
+            context:
+                'Los rastreadores de hábitos o se simplifican a una casilla o abruman con hojas de cálculo que nadie mantiene. Quería algo intermedio: suficiente estructura para ver patrones, no tanta fricción como para abandonarlo tras una semana.',
+            decisions:
+                'Las rachas se calculan en el servidor y se cachean, no se recalculan en cada render: el dashboard de analítica se mantuvo rápido incluso con un año de entradas diarias. Elegí Postgres sobre un almacén de documentos precisamente para que las consultas de rachas fueran SQL plano en lugar de lógica en la capa de aplicación.',
+            outcome:
+                'Un producto funcional con seguimiento de rachas, analítica semanal y un dashboard que de verdad se abre a diario en lugar de abandonarse tras el onboarding.',
+        },
+        content: doc(
+            h2('Resumen'),
+            p('TrackBit es una aplicación de seguimiento de hábitos que ayuda a los usuarios a construir y mantener rutinas diarias positivas. Con una interfaz intuitiva y una analítica reveladora, facilita mantener el compromiso y visualizar el progreso a lo largo del tiempo.'),
+            h2('Características'),
+            ul([
+                'Crear y gestionar hábitos diarios, semanales y personalizados',
+                'Seguimiento visual de rachas con mapas de calor de calendario',
+                'Analítica de progreso con gráficos y porcentajes de cumplimiento',
+                'Recordatorios y notificaciones personalizables',
+                'Diseño responsive que funciona en escritorio y móvil',
+                'Autenticación de usuarios con gestión segura de sesiones',
+            ]),
+            h2('Cómo funciona'),
+            p('Los usuarios crean hábitos con horarios y metas personalizables. Cada día marcan los hábitos completados desde su dashboard. TrackBit registra los cumplimientos y calcula las rachas, ofreciendo retroalimentación visual mediante mapas de calor y gráficos. El backend usa Drizzle ORM con PostgreSQL para un almacenamiento y recuperación de datos eficientes, mientras que Zustand gestiona el estado del lado del cliente para una experiencia ágil.'),
+        ),
+    },
+]

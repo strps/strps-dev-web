@@ -88,3 +88,30 @@ export const copyrightData: CopyrightSeed = {
     link: 'https://www.strps.dev',
     location: 'San José, CR · GMT-6',
 }
+
+/* -------------------------------------------------------------------------- */
+/*  Spanish (es) patches — localized fields only, same nested shape.          */
+/*  Merged onto the created doc by index (see localize.ts).                    */
+/* -------------------------------------------------------------------------- */
+
+export const headerDataES = {
+    navItems: [
+        { link: { label: 'Servicios' } },
+        { link: { label: 'Proyectos' } },
+        { link: { label: 'Lab' } },
+        { link: { label: 'Blog' } },
+        { link: { label: 'Contacto' } },
+    ],
+}
+
+export const footerDataES = {
+    navItems: [
+        { link: { label: 'Sobre mí' } },
+        { link: { label: 'GitHub' } },
+        { link: { label: 'LinkedIn' } },
+    ],
+}
+
+export const copyrightDataES = {
+    location: 'San José, CR · GMT-6',
+}
