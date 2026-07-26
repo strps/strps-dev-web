@@ -17,6 +17,7 @@ export const PageSkills: Block = {
             required: true,
             defaultValue: 'Technical Arsenal',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'variant',
@@ -31,6 +32,7 @@ export const PageSkills: Block = {
             name: 'subtitle',
             type: 'text',
             label: 'Subtitle',
+            localized: true,
         },
         {
             name: 'skillGroups',
@@ -42,6 +44,7 @@ export const PageSkills: Block = {
                     type: 'text',
                     required: true,
                     label: 'Group Name',
+                    localized: true,
                 },
                 {
                     name: 'icon',

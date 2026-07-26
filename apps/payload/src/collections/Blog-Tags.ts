@@ -21,6 +21,7 @@ export const BlogTags: CollectionConfig = {
       name: 'tag',
       type: 'text',
       required: true,
+      localized: true,
     },
     ...slugField(),
   ],

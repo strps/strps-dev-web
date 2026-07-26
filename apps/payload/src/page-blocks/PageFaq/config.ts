@@ -15,11 +15,13 @@ export const PageFaq: Block = {
             required: true,
             defaultValue: 'FAQ',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'intro',
             type: 'textarea',
             label: 'Section Intro',
+            localized: true,
         },
         {
             name: 'questions',
@@ -31,11 +33,13 @@ export const PageFaq: Block = {
                     name: 'question',
                     type: 'text',
                     required: true,
+                    localized: true,
                 },
                 {
                     name: 'answer',
                     type: 'textarea',
                     required: true,
+                    localized: true,
                 },
             ],
         },

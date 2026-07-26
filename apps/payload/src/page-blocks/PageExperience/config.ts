@@ -15,6 +15,7 @@ export const PageExperience: Block = {
             required: true,
             defaultValue: 'Professional History',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'positions',
@@ -30,6 +31,7 @@ export const PageExperience: Block = {
                     name: 'position',
                     type: 'text',
                     required: true,
+                    localized: true,
                 },
                 {
                     name: 'startDate',
@@ -48,6 +50,7 @@ export const PageExperience: Block = {
                 {
                     name: 'summary',
                     type: 'textarea',
+                    localized: true,
                 },
                 {
                     name: 'highlights',
@@ -58,6 +61,7 @@ export const PageExperience: Block = {
                             name: 'highlight',
                             type: 'text',
                             required: true,
+                            localized: true,
                         },
                     ],
                 },

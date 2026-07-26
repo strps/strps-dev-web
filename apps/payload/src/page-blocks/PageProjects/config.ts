@@ -18,6 +18,7 @@ export const PageProjects: Block = {
             required: true,
             defaultValue: 'Featured Projects',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'variant',

@@ -17,11 +17,13 @@ export const PageLabTeaser: Block = {
             type: 'text',
             required: true,
             label: 'Title',
+            localized: true,
         },
         {
             name: 'intro',
             type: 'textarea',
             label: 'Intro',
+            localized: true,
         },
         link({
             required: false,

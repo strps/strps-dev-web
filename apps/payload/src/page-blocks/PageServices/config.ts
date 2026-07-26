@@ -15,11 +15,13 @@ export const PageServices: Block = {
             required: true,
             defaultValue: 'Services',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'intro',
             type: 'textarea',
             label: 'Section Intro',
+            localized: true,
         },
         {
             name: 'services',
@@ -32,11 +34,13 @@ export const PageServices: Block = {
                     type: 'text',
                     required: true,
                     label: 'Service Name',
+                    localized: true,
                 },
                 {
                     name: 'forWho',
                     type: 'textarea',
                     label: 'For',
+                    localized: true,
                 },
                 {
                     name: 'features',
@@ -47,6 +51,7 @@ export const PageServices: Block = {
                             name: 'feature',
                             type: 'text',
                             required: true,
+                            localized: true,
                         },
                     ],
                 },
@@ -54,11 +59,13 @@ export const PageServices: Block = {
                     name: 'timeline',
                     type: 'text',
                     label: 'Typical Timeline',
+                    localized: true,
                 },
                 {
                     name: 'pricing',
                     type: 'text',
                     label: 'Pricing',
+                    localized: true,
                     admin: {
                         description: 'Free text, e.g. "From $800" or "$45/hr" — placeholder values, edit precisely later.',
                     },
@@ -72,6 +79,7 @@ export const PageServices: Block = {
                             name: 'point',
                             type: 'text',
                             required: true,
+                            localized: true,
                         },
                     ],
                 },
@@ -79,6 +87,7 @@ export const PageServices: Block = {
                     name: 'proofLabel',
                     type: 'text',
                     label: 'Proof Link Label',
+                    localized: true,
                     admin: {
                         description: 'Optional, e.g. "See TrackBit"',
                     },

@@ -25,6 +25,7 @@ export const PageHero: Block = {
             name: 'name',
             type: 'text',
             label: 'Name',
+            localized: true,
             admin: {
                 description: 'Used as the h1 in the "portrait" variant.',
                 condition: (_, { variant } = {}) => (variant ?? 'portrait') === 'portrait',
@@ -41,6 +42,7 @@ export const PageHero: Block = {
             name: 'headline',
             type: 'text',
             label: 'Headline',
+            localized: true,
             admin: {
                 description: 'Used as the h1 in the "statement" variant, e.g. "I build fast websites and web apps for businesses."',
                 condition: (_, { variant } = {}) => variant === 'statement',
@@ -67,11 +69,13 @@ export const PageHero: Block = {
             name: 'label',
             type: 'text',
             label: 'Label / Subtitle',
+            localized: true,
         },
         {
             name: 'description',
             type: 'textarea',
             label: 'Description',
+            localized: true,
         },
         {
             name: 'location',
@@ -81,10 +85,12 @@ export const PageHero: Block = {
                 {
                     name: 'city',
                     type: 'text',
+                    localized: true,
                 },
                 {
                     name: 'region',
                     type: 'text',
+                    localized: true,
                 },
             ],
         },
@@ -102,11 +108,13 @@ export const PageHero: Block = {
                     name: 'label',
                     type: 'text',
                     label: 'Status Label',
+                    localized: true,
                 },
                 {
                     name: 'availableFrom',
                     type: 'text',
                     label: 'Available From',
+                    localized: true,
                     admin: {
                         description: 'Optional period, e.g. "Q3 2026". Rendered as "{label} — {availableFrom}" when present.',
                     },

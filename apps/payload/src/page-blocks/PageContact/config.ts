@@ -18,11 +18,13 @@ export const PageContact: Block = {
             required: true,
             defaultValue: 'Ready to build something great?',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'description',
             type: 'textarea',
             label: 'Description',
+            localized: true,
         },
         {
             name: 'email',
@@ -33,6 +35,7 @@ export const PageContact: Block = {
             name: 'emailLabel',
             type: 'text',
             label: 'Email Label',
+            localized: true,
             admin: {
                 description: 'The line above the mailto, e.g. "Prefer email?"',
             },
@@ -41,6 +44,7 @@ export const PageContact: Block = {
             name: 'note',
             type: 'text',
             label: 'Note',
+            localized: true,
             admin: {
                 description: 'The reply promise shown near the form, e.g. "I reply within one business day".',
             },

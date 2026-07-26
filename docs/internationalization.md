@@ -1,6 +1,6 @@
 # Internationalization (i18n) — Action Plan
 
-Status: **Phase 0 complete — Phase 1 next** · Owner: TBD · Last updated: 2026-07-25
+Status: **Phases 0–1 complete — Phase 2 next** · Owner: TBD · Last updated: 2026-07-25
 
 This document is the implementation plan for adding **English (`en`) + Spanish (`es`)** internationalization across the CMS schema (`apps/payload`) and the public site (`apps/frontend`). It is written to be executed in phases, each independently shippable and verifiable.
 
@@ -92,7 +92,7 @@ Each phase ends in a shippable, verifiable state. Phases 1–2 are backend; 3–
 
 ---
 
-### Phase 1 — Mark localized fields in the schema (1–1.5 days)
+### Phase 1 — Mark localized fields in the schema (1–1.5 days) ✅ **DONE**
 
 Ref: <https://payloadcms.com/docs/configuration/localization#field-localization>
 
@@ -107,15 +107,15 @@ Add `localized: true` to **user-facing content fields only**. Do **not** localiz
 - Media **files** themselves (but `alt` text on Media **should** be localized)
 
 **Work items (field audit per surface):**
-- [ ] Collections: `Pages` (title + block content), `Posts`, `Projects` (+ `caseStudy` text, `techStack` is structural), `ProjectTags`, `BlogTags`, `Media.alt`
-- [ ] Globals: `Header` nav labels, `Footer`, `Copyright`, `BlogPage`, `ProjectsPage`
-- [ ] Page-blocks (13): `PageHero`, `PageServicesHero`, `PageAbout`, `PageSkills`, `PageProjects`, `PageExperience`, `PageContact`, `PageBlog`, `PageServices`, `PageProcess`, `PageFaq`, `PageServicesTeaser`, `PageLabTeaser`
-- [ ] Shared field factories: [`fields/eyebrow`](../apps/payload/src/fields), `linkGroup` (the `label`), SEO fields — localize once in the factory and it propagates everywhere.
-- [ ] Form-builder plugin fields (labels, messages) — verify plugin localization support; the `@payloadcms/plugin-form-builder` field labels may need `localized` overrides.
+- [x] Collections: `Pages` (title + block content), `Posts` (title + content), `Projects` (title + content + `caseStudy` prose; `techStack`/`year` structural), `ProjectTags`, `BlogTags`, `Media.alt`
+- [x] Globals: `Header`/`Footer` nav labels (via `link` factory), `Copyright` (`location`). `BlogPage`/`ProjectsPage` have no localizable content (config + relationships only).
+- [x] Page-blocks (13): `PageHero`, `PageServicesHero`, `PageAbout`, `PageSkills`, `PageProjects`, `PageExperience`, `PageContact`, `PageBlog`, `PageServices`, `PageProcess`, `PageFaq`, `PageServicesTeaser`, `PageLabTeaser`
+- [x] Shared field factories: `eyebrow`, `link` (the `label` only), SEO `MetaTitle`/`MetaDescription` (via `overrides`) — localized once, propagates everywhere.
+- [x] Form-builder plugin fields — **verified: no work needed.** `@payloadcms/plugin-form-builder` v3.33.0 already ships its labels/messages as `localized: true` upstream.
 
-> **Tip:** Prefer editing the shared field factories (`eyebrow`, `linkGroup`, `SectionConfig`, SEO) so a single change localizes many blocks consistently.
+> **Tip:** Prefer editing the shared field factories (`eyebrow`, `link`, SEO) so a single change localizes many blocks consistently. (`SectionConfig`/`headerOverrides` are structural — intentionally left shared.)
 
-**Exit:** `bunx payload generate:types` runs clean; localized fields show per-locale inputs in the admin UI (dev).
+**Exit:** ✅ `pnpm generate:types` runs clean (unchanged output — localized fields keep the same TS shape); dev schema pushed to the localized shape (76 `_locales` tables). Push required a clean `DROP SCHEMA` + re-push per §2.5 — dev DB is now empty pending the Phase 2 reseed. See [i18n-handoff.md](i18n-handoff.md) for the push notes (data-loss prompt + `42P16` recovery).
 
 ---
 

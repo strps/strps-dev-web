@@ -73,6 +73,7 @@ export const Projects: CollectionConfig<'projects'> = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       type: 'tabs',
@@ -125,6 +126,7 @@ export const Projects: CollectionConfig<'projects'> = {
                   name: 'tag',
                   type: 'text',
                   label: 'Tag',
+                  localized: true,
                   admin: {
                     description: 'Home card eyebrow / projects list category, e.g. "Product", "Template / product".',
                   },
@@ -141,6 +143,7 @@ export const Projects: CollectionConfig<'projects'> = {
                   name: 'problem',
                   type: 'textarea',
                   label: 'Problem',
+                  localized: true,
                   admin: {
                     description: 'Home card "Problem —" line.',
                   },
@@ -149,6 +152,7 @@ export const Projects: CollectionConfig<'projects'> = {
                   name: 'contribution',
                   type: 'textarea',
                   label: 'Contribution',
+                  localized: true,
                   admin: {
                     description: 'Home card "What I did —" line.',
                   },
@@ -157,6 +161,7 @@ export const Projects: CollectionConfig<'projects'> = {
                   name: 'context',
                   type: 'textarea',
                   label: 'Context',
+                  localized: true,
                   admin: {
                     description: '/projects accordion "Context".',
                   },
@@ -165,6 +170,7 @@ export const Projects: CollectionConfig<'projects'> = {
                   name: 'decisions',
                   type: 'textarea',
                   label: 'Key Decisions',
+                  localized: true,
                   admin: {
                     description: '/projects accordion "Key decisions".',
                   },
@@ -173,6 +179,7 @@ export const Projects: CollectionConfig<'projects'> = {
                   name: 'outcome',
                   type: 'textarea',
                   label: 'Outcome',
+                  localized: true,
                   admin: {
                     description: '/projects accordion "Outcome".',
                   },
@@ -182,6 +189,7 @@ export const Projects: CollectionConfig<'projects'> = {
             {
               name: 'content',
               type: 'richText',
+              localized: true,
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [
@@ -212,12 +220,13 @@ export const Projects: CollectionConfig<'projects'> = {
             }),
             MetaTitleField({
               hasGenerateFn: true,
+              overrides: { localized: true },
             }),
             MetaImageField({
               relationTo: 'media',
             }),
 
-            MetaDescriptionField({}),
+            MetaDescriptionField({ overrides: { localized: true } }),
             PreviewField({
               // if the `generateUrl` function is configured
               hasGenerateFn: true,

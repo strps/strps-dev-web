@@ -141,6 +141,9 @@ export const link: LinkType = ({
         {
           name: 'label',
           type: 'text',
+          // Only the visible link text is localized — reference/url/appearance
+          // stay shared across locales (same destination, translated label).
+          localized: true,
           admin: {
             width: '50%',
           },

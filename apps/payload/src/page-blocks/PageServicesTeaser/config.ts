@@ -17,6 +17,7 @@ export const PageServicesTeaser: Block = {
             type: 'text',
             required: true,
             label: 'Title',
+            localized: true,
         },
         link({
             required: false,
@@ -40,11 +41,13 @@ export const PageServicesTeaser: Block = {
                     type: 'text',
                     required: true,
                     label: 'Name',
+                    localized: true,
                 },
                 {
                     name: 'summary',
                     type: 'text',
                     label: 'Summary',
+                    localized: true,
                     admin: {
                         description: 'One line, roughly 48 characters or fewer.',
                     },

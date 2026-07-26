@@ -27,6 +27,7 @@ export const Copyright: GlobalConfig = {
     {
       name: 'location',
       type: 'text',
+      localized: true,
       admin: {
         description: 'Footer location line, e.g. "San José, CR · GMT-6".',
       },

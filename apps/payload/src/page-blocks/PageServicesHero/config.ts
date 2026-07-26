@@ -14,6 +14,7 @@ export const PageServicesHero: Block = {
             name: 'eyebrow',
             type: 'text',
             label: 'Eyebrow',
+            localized: true,
             admin: {
                 description: 'Small label above the title, e.g. "Freelance web development"',
             },
@@ -23,11 +24,13 @@ export const PageServicesHero: Block = {
             type: 'text',
             required: true,
             label: 'Title',
+            localized: true,
         },
         {
             name: 'description',
             type: 'textarea',
             label: 'Description',
+            localized: true,
         },
         {
             name: 'status',
@@ -43,11 +46,13 @@ export const PageServicesHero: Block = {
                     name: 'label',
                     type: 'text',
                     label: 'Status Label',
+                    localized: true,
                 },
                 {
                     name: 'availableFrom',
                     type: 'text',
                     label: 'Available From',
+                    localized: true,
                     admin: {
                         description: 'Optional period, e.g. "Q3 2026". Rendered as "{label} — {availableFrom}" when present.',
                     },
@@ -69,6 +74,7 @@ export const PageServicesHero: Block = {
                     name: 'text',
                     type: 'text',
                     required: true,
+                    localized: true,
                 },
             ],
         },

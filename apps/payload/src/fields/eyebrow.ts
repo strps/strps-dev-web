@@ -8,6 +8,7 @@ export const eyebrowField: Field = {
   name: 'eyebrow',
   type: 'text',
   label: 'Eyebrow',
+  localized: true,
   admin: {
     description: 'Small mono label above the title, e.g. "Services"',
   },

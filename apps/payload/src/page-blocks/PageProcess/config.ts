@@ -24,6 +24,7 @@ export const PageProcess: Block = {
             required: true,
             defaultValue: 'How I Work',
             label: 'Title',
+            localized: true,
             admin: {
                 condition: (_, { variant } = {}) => (variant ?? 'full') === 'full',
             },
@@ -32,6 +33,7 @@ export const PageProcess: Block = {
             name: 'intro',
             type: 'textarea',
             label: 'Section Intro',
+            localized: true,
             admin: {
                 condition: (_, { variant } = {}) => (variant ?? 'full') === 'full',
             },
@@ -47,12 +49,14 @@ export const PageProcess: Block = {
                     type: 'text',
                     required: true,
                     label: 'Step Title',
+                    localized: true,
                 },
                 {
                     name: 'description',
                     type: 'textarea',
                     required: true,
                     label: 'Step Description',
+                    localized: true,
                 },
             ],
         },

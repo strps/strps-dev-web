@@ -18,6 +18,7 @@ export const PageAbout: Block = {
             required: true,
             defaultValue: 'About Me',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'layout',
@@ -32,6 +33,7 @@ export const PageAbout: Block = {
             name: 'summary',
             type: 'textarea',
             label: 'Summary',
+            localized: true,
             admin: {
                 description: 'Fallback copy, used when Body is empty.',
             },
@@ -40,6 +42,7 @@ export const PageAbout: Block = {
             name: 'body',
             type: 'richText',
             label: 'Body',
+            localized: true,
             admin: {
                 description: 'Preferred over Summary when present — bold key phrases, one paragraph per block.',
             },

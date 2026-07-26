@@ -17,6 +17,7 @@ export const PageBlog: Block = {
             required: true,
             defaultValue: 'Latest Articles',
             label: 'Title',
+            localized: true,
         },
         {
             name: 'populateBy',
