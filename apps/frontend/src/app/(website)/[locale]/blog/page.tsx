@@ -1,13 +1,26 @@
+import type { Metadata } from 'next';
 import Section from '@/components/section';
 import { BlogList } from '@/components/blog/blog-list';
 import { getBlogPosts } from './data';
 import { Pagination } from '@/components/pagination';
 import type { Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
+import { buildAlternates } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Blog | Cesar Jerez',
-  description: 'Thoughts on software development, electronics, and technology.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const dictionary = getDictionary(locale)
+
+  return {
+    title: dictionary.seo.blogTitle,
+    description: dictionary.seo.blogDescription,
+    alternates: buildAlternates(locale, '/blog'),
+  }
+}
 
 export default async function BlogPage({
   searchParams,
@@ -19,6 +32,7 @@ export default async function BlogPage({
 
   const page = Number((await searchParams).page) || 1
   const { locale } = await params
+  const dictionary = getDictionary(locale)
   const { posts, pagination } = await getBlogPosts({ page, limit: 12, locale })
 
 
@@ -34,10 +48,10 @@ export default async function BlogPage({
       >
         <div className="mx-auto max-w-3xl text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-            Writing & <span className="text-primary">Thoughts</span>
+            {dictionary.blog.heroTitlePrefix} <span className="text-primary">{dictionary.blog.heroTitleHighlight}</span>
           </h1>
           <p className="text-xl text-muted-foreground">
-            Exploring the intersection of web development, electronics, and system architecture.
+            {dictionary.blog.heroSubtitle}
           </p>
         </div>
       </Section>

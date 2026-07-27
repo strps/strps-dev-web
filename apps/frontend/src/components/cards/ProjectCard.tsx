@@ -5,6 +5,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "../ui/badge"
+import { defaultLocale, type Locale } from "@/i18n/config"
+import { getDictionary } from "@/i18n/getDictionary"
 
 
 export interface ProjectTech {
@@ -24,6 +26,7 @@ export interface ProjectCardProps {
     // featured?: boolean
     orientation?: 'vertical' | 'horizontal'
     className?: string
+    locale?: Locale
 }
 
 export function ProjectCard({
@@ -37,7 +40,9 @@ export function ProjectCard({
     // featured = false,
     orientation = 'vertical',
     className,
+    locale = defaultLocale,
 }: ProjectCardProps) {
+    const dictionary = getDictionary(locale)
     const placeholderImage = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80"
     const isHorizontal = orientation === 'horizontal'
 
@@ -109,7 +114,7 @@ export function ProjectCard({
                     {caseStudyUrl && (
                         <Button size="sm" variant="ghost" asChild className="text-primary hover:text-primary/90 justify-self-end">
                             <Link href={caseStudyUrl}>
-                                Read more →
+                                {dictionary.common.readMore} →
                             </Link>
                         </Button>
                     )}
@@ -120,7 +125,7 @@ export function ProjectCard({
                     {liveUrl && (
                         <Button size="sm" asChild className="gap-1.5">
                             <Link href={liveUrl} target="_blank" rel="noopener noreferrer">
-                                Live Demo
+                                {dictionary.common.liveDemo}
                                 <ArrowUpRight className="h-3.5 w-3.5" />
                             </Link>
                         </Button>
@@ -130,7 +135,7 @@ export function ProjectCard({
                         <Button size="sm" variant="outline" asChild className="gap-1.5">
                             <Link href={repoUrl} target="_blank" rel="noopener noreferrer">
                                 <Github className="h-3.5 w-3.5" />
-                                Source
+                                {dictionary.common.source}
                             </Link>
                         </Button>
                     )}

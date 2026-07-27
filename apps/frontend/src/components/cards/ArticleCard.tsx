@@ -30,7 +30,7 @@ export function ArticleCard({
 }: ArticleCardProps) {
     const articleUrl = slug ? localizedHref(locale, `/blog/${slug}`) : undefined
     const formattedDate = publishedAt
-        ? new Date(publishedAt).toLocaleDateString('en-US', {
+        ? new Date(publishedAt).toLocaleDateString(locale, {
             year: 'numeric',
             month: 'short',
             day: 'numeric',

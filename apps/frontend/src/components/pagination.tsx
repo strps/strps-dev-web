@@ -9,8 +9,10 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { cn } from '@/lib/utils'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useParams } from 'next/navigation'
 import React from 'react'
+import { defaultLocale, isValidLocale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export const Pagination: React.FC<{
   className?: string
@@ -20,6 +22,9 @@ export const Pagination: React.FC<{
 }> = (props) => {
   const router = useRouter()
   const pathname = usePathname()
+  const routeParams = useParams<{ locale?: string }>()
+  const locale = isValidLocale(routeParams.locale) ? routeParams.locale : defaultLocale
+  const dictionary = getDictionary(locale)
 
   const { className, page, totalPages, basePath } = props
   const resolvedBasePath = basePath ?? pathname
@@ -37,18 +42,20 @@ export const Pagination: React.FC<{
 
   return (
     <div className={cn('my-12', className)}>
-      <PaginationComponent>
+      <PaginationComponent aria-label={dictionary.pagination.nav}>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
               disabled={!hasPrevPage}
               onClick={() => navigateToPage(page - 1)}
+              label={dictionary.pagination.previous}
+              aria-label={dictionary.pagination.goToPreviousPage}
             />
           </PaginationItem>
 
           {hasExtraPrevPages && (
             <PaginationItem>
-              <PaginationEllipsis />
+              <PaginationEllipsis label={dictionary.pagination.morePages} />
             </PaginationItem>
           )}
 
@@ -83,7 +90,7 @@ export const Pagination: React.FC<{
 
           {hasExtraNextPages && (
             <PaginationItem>
-              <PaginationEllipsis />
+              <PaginationEllipsis label={dictionary.pagination.morePages} />
             </PaginationItem>
           )}
 
@@ -91,6 +98,8 @@ export const Pagination: React.FC<{
             <PaginationNext
               disabled={!hasNextPage}
               onClick={() => navigateToPage(page + 1)}
+              label={dictionary.pagination.next}
+              aria-label={dictionary.pagination.goToNextPage}
             />
           </PaginationItem>
         </PaginationContent>

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import { Post } from "@strps-website/types"
 import { localizedHref, type Locale } from "@/i18n/config"
+import { getDictionary } from "@/i18n/getDictionary"
 
 interface BlogListProps {
     posts: Post[];
@@ -31,6 +32,7 @@ interface BlogListProps {
 const ITEMS_PER_PAGE = 6;
 
 export function BlogList({ posts, locale }: BlogListProps) {
+    const dictionary = getDictionary(locale);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -90,7 +92,7 @@ export function BlogList({ posts, locale }: BlogListProps) {
                 <div className="relative max-w-md mx-auto md:mx-0">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search articles..."
+                        placeholder={dictionary.blog.searchPlaceholder}
                         value={searchQuery}
                         onChange={(e) => {
                             setSearchQuery(e.target.value);
@@ -110,7 +112,7 @@ export function BlogList({ posts, locale }: BlogListProps) {
 
                 {/* Tags Filter */}
                 <div className="flex flex-wrap gap-2 items-center">
-                    <span className="text-sm text-muted-foreground mr-2">Filter by:</span>
+                    <span className="text-sm text-muted-foreground mr-2">{dictionary.blog.filterBy}</span>
                     {allTags.map(tag => (
                         <Badge
                             key={tag}
@@ -128,7 +130,7 @@ export function BlogList({ posts, locale }: BlogListProps) {
                             onClick={clearFilters}
                             className="h-6 px-2 text-xs ml-auto sm:ml-2"
                         >
-                            Reset Filters
+                            {dictionary.blog.resetFilters}
                             <X className="ml-1 h-3 w-3" />
                         </Button>
                     )}
@@ -169,7 +171,7 @@ export function BlogList({ posts, locale }: BlogListProps) {
                                 {post.publishedAt && (
                                     <div className="flex items-center text-sm text-muted-foreground gap-4 pt-1">
                                         <span className="flex items-center gap-1">
-                                            <Calendar className="h-3 w-3" /> {new Date(post.publishedAt).toLocaleDateString()}
+                                            <Calendar className="h-3 w-3" /> {new Date(post.publishedAt).toLocaleDateString(locale)}
                                         </span>
                                     </div>
                                 )}
@@ -184,7 +186,7 @@ export function BlogList({ posts, locale }: BlogListProps) {
                             <CardFooter className="mt-auto pt-0">
                                 <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-primary" asChild>
                                     <Link href={localizedHref(locale, `/blog/${post.slug}`)} className="flex items-center gap-1">
-                                        Read Article <ArrowRight className="h-4 w-4" />
+                                        {dictionary.common.readArticle} <ArrowRight className="h-4 w-4" />
                                     </Link>
                                 </Button>
                             </CardFooter>
@@ -193,16 +195,16 @@ export function BlogList({ posts, locale }: BlogListProps) {
                 </div>
             ) : (
                 <div className="text-center py-20 bg-muted/30 rounded-lg border border-dashed">
-                    <h3 className="text-lg font-medium">No articles found</h3>
+                    <h3 className="text-lg font-medium">{dictionary.blog.noArticlesFound}</h3>
                     <p className="text-muted-foreground mt-1">
-                        Try adjusting your search terms or filters.
+                        {dictionary.blog.tryAdjusting}
                     </p>
                     <Button
                         variant="link"
                         onClick={clearFilters}
                         className="mt-2 text-primary"
                     >
-                        Clear all filters
+                        {dictionary.blog.clearAllFilters}
                     </Button>
                 </div>
             )}
@@ -210,7 +212,7 @@ export function BlogList({ posts, locale }: BlogListProps) {
             {/* --- Pagination --- */}
             {totalPages > 1 && (
                 <div className="flex justify-center text-sm text-muted-foreground">
-                    Showing {paginatedPosts.length} of {filteredPosts.length} articles
+                    {dictionary.blog.showingCount(paginatedPosts.length, filteredPosts.length)}
                 </div>
             )}
         </div>

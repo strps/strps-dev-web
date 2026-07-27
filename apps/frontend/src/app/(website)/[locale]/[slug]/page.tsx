@@ -54,7 +54,7 @@ export default async function PageRoute({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
     const { slug = '', locale } = await paramsPromise
     const page = await getPageBySlug(slug, locale)
-    return generateMeta({ doc: page })
+    return generateMeta({ doc: page, locale, path: `/${slug}` })
 }
 
 export async function generateStaticParams() {

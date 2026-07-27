@@ -6,10 +6,13 @@ import { cn } from "@/lib/utils";
 import { GalleryBar } from "./GalleryBar";
 import { GalleryCard } from "./GalleryCard";
 import type { GalleryCategory, GalleryItem, GalleryPriority } from "@/app/(website)/[locale]/lab/types";
+import { defaultLocale, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/getDictionary";
 
 export interface GalleryProps {
     items: GalleryItem[];
     title: string;
+    locale?: Locale;
 }
 
 const PRIORITY_SPAN: Record<GalleryPriority, string> = {
@@ -21,7 +24,8 @@ const PRIORITY_SPAN: Record<GalleryPriority, string> = {
     low: "col-span-2 sm:col-span-1 lg:col-span-1 row-span-2",
 };
 
-export function Gallery({ items, title }: GalleryProps) {
+export function Gallery({ items, title, locale = defaultLocale }: GalleryProps) {
+    const dictionary = getDictionary(locale);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<GalleryCategory[]>([]);
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -77,6 +81,7 @@ export function Gallery({ items, title }: GalleryProps) {
         <div className="space-y-10">
             <GalleryBar
                 title={title}
+                locale={locale}
                 searchQuery={searchQuery}
                 onSearchQueryChange={setSearchQuery}
                 selectedCategories={selectedCategories}
@@ -100,24 +105,25 @@ export function Gallery({ items, title }: GalleryProps) {
                         <GalleryCard
                             key={item.id}
                             item={item}
+                            locale={locale}
                             className={PRIORITY_SPAN[item.priority ?? "low"]}
                         />
                     ))}
                 </div>
             ) : (
                 <div className="text-center py-20 bg-muted/30 rounded-lg border border-dashed">
-                    <h3 className="text-lg font-medium">Nothing matches those filters</h3>
+                    <h3 className="text-lg font-medium">{dictionary.lab.noMatches}</h3>
                     <p className="text-muted-foreground mt-1 text-sm">
-                        Try widening the search or clearing a filter.
+                        {dictionary.lab.tryWidening}
                     </p>
                     <Button variant="link" onClick={reset} className="mt-2 text-primary">
-                        Clear all filters
+                        {dictionary.blog.clearAllFilters}
                     </Button>
                 </div>
             )}
 
             <div className="flex justify-center text-xs text-muted-foreground">
-                Showing {filteredItems.length} of {items.length}
+                {dictionary.lab.showingCount(filteredItems.length, items.length)}
             </div>
         </div>
     );

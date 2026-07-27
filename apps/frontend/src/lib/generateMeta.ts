@@ -1,8 +1,12 @@
 import type { Metadata } from 'next'
 
 import type { Media, Page, Post, Config } from '@strps-website/types'
+import type { Locale } from '@/i18n/config'
+import { locales } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
+import { buildAlternates } from './seo'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = process.env.NEXT_PUBLIC_PAYLOAD_URL
@@ -25,15 +29,20 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
 
 export const generateMeta = async (args: {
   doc: Partial<Page> | Partial<Post> | null
+  /** Current locale, plus its locale-less path (`/`, `/about`, `/blog/my-post`, …) for hreflang/canonical. */
+  locale: Locale
+  path: string
 }): Promise<Metadata> => {
-  const { doc } = args
+  const { doc, locale, path } = args
+  const dictionary = getDictionary(locale)
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title ? doc?.meta?.title : 'César Jerez'
+  const title = doc?.meta?.title ? doc?.meta?.title : dictionary.seo.defaultTitle
 
   return {
     description: doc?.meta?.description,
+    alternates: buildAlternates(locale, path),
     openGraph: mergeOpenGraph({
       description: doc?.meta?.description || '',
       images: ogImage
@@ -44,7 +53,9 @@ export const generateMeta = async (args: {
         ]
         : undefined,
       title,
-      url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
+      url: `/${locale}${path === '/' ? '' : path}`,
+      locale,
+      alternateLocale: locales.filter((l) => l !== locale),
     }),
     title,
   }

@@ -41,7 +41,7 @@ export default async function ProjectPage({ params: paramsPromise }: Args) {
         {draft && <LivePreviewListener />}
 
         <div className="flex flex-col items-center gap-4">
-          <PostHero post={project} className="dark" />
+          <PostHero post={project} className="dark" locale={locale} />
           <div className="container px-4 pt-8">
             <RichText
               className="max-w-3xl mx-auto"
@@ -59,5 +59,5 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '', locale } = await paramsPromise
   const project = await getProjectBySlug({ slug, locale })
 
-  return generateMeta({ doc: project })
+  return generateMeta({ doc: project, locale, path: `/projects/${slug}` })
 }

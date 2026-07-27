@@ -4,13 +4,18 @@ import { SkillsCard } from '../cards/SkillsCard';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { IconName } from 'lucide-react/dynamic';
+import type { Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
 
 
 type SkillsProps = Omit<PageSkillsBlock, 'variant'> & {
     skillsVariant?: PageSkillsBlock['variant'];
+    locale: Locale;
 };
 
-const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: variant, subtitle, skillGroups, section }) => {
+const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: variant, subtitle, skillGroups, section, locale }) => {
+    const dictionary = getDictionary(locale)
+
     if (variant === 'list') {
         return (
             <Section
@@ -20,7 +25,7 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
                 container={false}
                 containerClassName="mx-auto w-full max-w-wrap px-6"
             >
-                <SectionHeader eyebrow={eyebrow || 'Skills'} title={title} />
+                <SectionHeader eyebrow={eyebrow || dictionary.eyebrowFallback.skills} title={title} />
 
                 <div
                     className="mt-9 grid gap-8.5"

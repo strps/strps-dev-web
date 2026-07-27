@@ -10,6 +10,7 @@ import { ImageCard } from './image-card'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
 import { localizedHref, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export type RelatedPostsProps = {
   className?: string
@@ -20,6 +21,7 @@ export type RelatedPostsProps = {
 
 export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
   const { className, docs, introContent, locale } = props
+  const dictionary = getDictionary(locale)
 
   return (
     <div className={clsx('lg:container', className)}>
@@ -40,7 +42,7 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
                   href={localizedHref(locale, `/blog/${doc.slug}`)}
                   className={buttonVariants({ variant: 'default' })}
                 >
-                  Read More...
+                  {dictionary.common.readMoreEllipsis}
                 </Link>
               }
             />

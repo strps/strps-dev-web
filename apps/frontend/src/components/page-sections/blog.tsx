@@ -5,9 +5,11 @@ import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { getBlogPosts } from '@/app/(website)/[locale]/blog/data'
 import type { PageBlogBlock, Post, Media, BlogTag } from '@strps-website/types'
 import { localizedHref, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blogLimit?: number; locale: Locale }) => {
     const { eyebrow, title, selectedPosts, blogUrl, section, locale } = props
+    const dictionary = getDictionary(locale)
     const populateBy = (props as any).blogPopulateBy ?? props.populateBy
     const limit = (props as any).blogLimit ?? props.limit
     let posts: Post[] = []
@@ -30,9 +32,9 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
             containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <SectionHeader
-                eyebrow={eyebrow || 'Writing'}
+                eyebrow={eyebrow || dictionary.eyebrowFallback.writing}
                 title={title}
-                action={blogUrl ? <LinkArrow href={localizedHref(locale, blogUrl)}>All articles →</LinkArrow> : undefined}
+                action={blogUrl ? <LinkArrow href={localizedHref(locale, blogUrl)}>{dictionary.common.allArticles} →</LinkArrow> : undefined}
             />
 
             <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3">

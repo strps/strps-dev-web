@@ -4,9 +4,9 @@ import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { LabTeaserCard } from '@/components/cards/LabTeaserCard'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
-import { getGalleryItems } from '@/app/(website)/[locale]/lab/data'
-import { GALLERY_CATEGORIES } from '@/app/(website)/[locale]/lab/types'
+import { getLocalizedGalleryItems } from '@/app/(website)/[locale]/lab/data'
 import { localizedHref, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 type LabTeaserProps = Omit<PageLabTeaserBlock, 'link'> & {
     labTeaserLink?: PageLabTeaserBlock['link']
@@ -23,7 +23,8 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
     locale,
 }) => {
     const actionHref = resolveLinkHref(link, locale)
-    const items = getGalleryItems().slice(0, limit ?? 3)
+    const items = getLocalizedGalleryItems(locale).slice(0, limit ?? 3)
+    const dictionary = getDictionary(locale)
 
     return (
         <Section
@@ -34,7 +35,7 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
             containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <SectionHeader
-                eyebrow={eyebrow || 'Lab'}
+                eyebrow={eyebrow || dictionary.eyebrowFallback.lab}
                 title={title}
                 action={
                     actionHref && link?.label ? (
@@ -50,7 +51,7 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
                     <LabTeaserCard
                         key={item.id}
                         href={localizedHref(locale, item.href)}
-                        tag={GALLERY_CATEGORIES.find((c) => c.value === item.category)?.label ?? item.category}
+                        tag={dictionary.lab.categories[item.category]}
                         title={item.title}
                         note={item.description}
                         imageUrl={typeof item.imageUrl === 'string' ? item.imageUrl : item.imageUrl?.src}

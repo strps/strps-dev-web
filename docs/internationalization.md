@@ -1,6 +1,6 @@
 # Internationalization (i18n) — Action Plan
 
-Status: **Phases 0–4 complete** · Owner: TBD · Last updated: 2026-07-26
+Status: **Phases 0–5 complete** · Owner: TBD · Last updated: 2026-07-26
 
 This document is the implementation plan for adding **English (`en`) + Spanish (`es`)** internationalization across the CMS schema (`apps/payload`) and the public site (`apps/frontend`). It is written to be executed in phases, each independently shippable and verifiable.
 
@@ -209,14 +209,39 @@ Introduce the `[locale]` segment and make locale flow through every data fetch.
 
 ---
 
-### Phase 5 — Static UI strings + SEO (1 day)
-- [ ] **Dictionaries:** `apps/frontend/src/i18n/dictionaries/{en,es}.ts` (per §2.3) with a typed `getDictionary(locale)` server helper. Migrate hardcoded strings: nav fallbacks, "Read more"/pagination, form labels/validation & success/error messages, footer legal, 404/empty states, date formatting (`Intl.DateTimeFormat(locale)`).
-- [ ] **SEO metadata** per locale in `generateMetadata` (localized `meta.title`/`description` from CMS).
-- [ ] **`hreflang` alternates** via `alternates.languages` in Next metadata for every page.
-- [ ] **Sitemaps** ([`(sitemaps)/*`](../apps/frontend/src/app/(website)/(sitemaps))) emit one entry per locale with `xhtml:link` alternates; include the locale prefix in `loc`.
-- [ ] Localize `robots`/canonical as needed.
+### Phase 5 — Static UI strings + SEO (1 day) ✅ **DONE**
+- [x] **Dictionaries:** [`apps/frontend/src/i18n/dictionaries/{en,es}.ts`](../apps/frontend/src/i18n/dictionaries) (per §2.3) with a typed
+  [`getDictionary(locale)`](../apps/frontend/src/i18n/getDictionary.ts) helper. Migrated every hardcoded UI-chrome string found in a full
+  sweep: pagination, form loading/validation/error/reCAPTCHA-notice messages, blog/gallery search & filter & empty states, date-formatted
+  labels, "read more"/CTA link labels, eyebrow fallbacks, 404 page copy, theme-toggle aria-label. **Deliberately excluded** (content
+  authoring, not UI chrome — see §Phase 5 notes below): the 4 lab-item pages' bespoke narrative body copy and metadata text.
+- [x] **SEO metadata** per locale in every CMS-backed `generateMetadata` (`generateMeta()` now takes `locale` + `path`; `meta.title`/
+  `description` were already locale-fetched via Phase 3B's `$locale` GraphQL threading, so this was mostly wiring `alternates` +
+  `openGraph.locale`/`alternateLocale` on top of data that was already correct).
+- [x] **`hreflang` alternates** — new [`lib/seo.ts`](../apps/frontend/src/lib/seo.ts) `buildAlternates(locale, path)` sets
+  `alternates.canonical` + `alternates.languages` (incl. `x-default`) on every route: the 4 CMS routes, the root layout fallback, the 3
+  static listing pages (blog/projects/lab), and the 4 lab-item detail pages (alternates only, English text kept — see below).
+  `metadataBase` is set once at [`[locale]/layout.tsx`](../apps/frontend/src/app/(website)/[locale]/layout.tsx).
+- [x] **Sitemaps** — all 3 dynamic routes rewritten around new [`lib/sitemap.ts`](../apps/frontend/src/lib/sitemap.ts)
+  `localizeSitemapEntries()`: since slugs are shared across locales (§Phase 1), one query still covers both locales — each doc now expands
+  into one `<url>` per locale, `loc` locale-prefixed, with `alternateRefs` (`xhtml:link`) to every locale + `x-default`.
+- [x] Localize `robots`/canonical — canonical handled via `buildAlternates` above; `robots.txt` itself needs no per-locale content (it's a
+  single global file listing the 3 sitemap URLs, which already enumerate every locale's pages internally) — confirmed no change needed.
 
-**Exit:** localized titles/descriptions, correct hreflang + sitemaps, no hardcoded English left in chrome.
+**Exit:** ✅ met. Localized titles/descriptions, correct hreflang + sitemaps, no hardcoded English left in reachable UI chrome (verified by
+a repo-wide grep sweep — remaining hits are the intentionally-excluded lab narrative pages and one pre-existing dead file, see
+[i18n-handoff.md](i18n-handoff.md)).
+
+#### Scope note: what "static UI strings" did *not* include
+The 4 lab experiment detail pages (`/lab/gray-scott`, `/lab/svg-circles`, `/lab/reaction-sphere`, `/lab/image-to-svg`) contain
+paragraphs of bespoke, hand-written narrative explaining each demo — genuine long-form content, not reusable chrome, closer in kind to a
+blog post than a button label. Translating that prose is content-authoring work, not the "1 day" static-strings pass this phase scoped.
+Both `/en/...` and `/es/...` render the same English prose for these 4 pages today (no `fallback` mechanism needed since there's no CMS
+doc involved — they're plain React). `alternates`/hreflang were still added (mechanical, cheap, and correct: both locale URLs really do
+exist and are the same document) so search engines don't treat `/en/lab/gray-scott` and `/es/lab/gray-scott` as unrelated duplicate
+content. Also left untranslated for the same reason: the static `galleryItems` data (`/lab` gallery card titles/descriptions) and each
+lab item's own hero tag chips ("Experiment", "WebGL", "Three.js", "SVG", "Interactive", "Circles"). Whoever eventually translates the lab
+copy can lean on the same `getDictionary`/CMS patterns established here.
 
 ---
 

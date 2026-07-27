@@ -4,12 +4,8 @@ import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { GalleryItem, GalleryPriority } from "@/app/(website)/[locale]/lab/types";
-
-const categoryLabel: Record<GalleryItem["category"], string> = {
-    art: "Art",
-    experiment: "Experiment",
-    project: "Project",
-};
+import { defaultLocale, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/getDictionary";
 
 const placeholderGradient: Record<GalleryItem["category"], string> = {
     art: "from-fuchsia-600 via-purple-600 to-indigo-700",
@@ -20,9 +16,11 @@ const placeholderGradient: Record<GalleryItem["category"], string> = {
 export interface GalleryCardProps {
     item: GalleryItem;
     className?: string;
+    locale?: Locale;
 }
 
-export function GalleryCard({ item, className }: GalleryCardProps) {
+export function GalleryCard({ item, className, locale = defaultLocale }: GalleryCardProps) {
+    const categoryLabel = getDictionary(locale).lab.categories;
     const priority: GalleryPriority = item.priority ?? "low";
     const isHigh = priority === "high";
 

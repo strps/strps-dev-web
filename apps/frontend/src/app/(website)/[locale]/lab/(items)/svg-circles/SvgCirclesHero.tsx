@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import { ArrowLeft, MousePointer2, Settings2, X } from "lucide-react";
 import SVGCircles, { type MotionPattern } from "@/components/section/SVGCircles";
 import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
+import { getDictionary } from "@/i18n/getDictionary";
+import { getLabContent } from "../../content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VerticalSlider } from "@/components/ui/vertical-slider";
@@ -15,6 +17,8 @@ const MOTION_PATTERNS: MotionPattern[] = ["spring", "ease", "direct"];
 export function SvgCirclesHero() {
     const params = useParams<{ locale: string }>();
     const locale = isValidLocale(params.locale) ? params.locale : defaultLocale;
+    const chrome = getDictionary(locale).lab.controls;
+    const { hero, controls } = getLabContent(locale, "svg-circles");
     const [numCircles, setNumCircles] = useState(10);
     const [strokeWidth, setStrokeWidth] = useState(6);
     const [focalLength, setFocalLength] = useState(1000);
@@ -46,11 +50,11 @@ export function SvgCirclesHero() {
                     <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-[280px] md:w-[320px]">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                                Controls
+                                {chrome.heading}
                             </span>
                             <button
                                 type="button"
-                                aria-label="Close controls"
+                                aria-label={chrome.close}
                                 onClick={() => setControlsOpen(false)}
                                 className="text-muted-foreground hover:text-foreground"
                             >
@@ -60,7 +64,7 @@ export function SvgCirclesHero() {
 
                         <div className="flex justify-between gap-2 mb-4">
                             <VerticalSlider
-                                label="Circles"
+                                label={controls?.sliders?.circles ?? "Circles"}
                                 value={numCircles}
                                 onChange={setNumCircles}
                                 min={2}
@@ -68,7 +72,7 @@ export function SvgCirclesHero() {
                                 step={1}
                             />
                             <VerticalSlider
-                                label="Stroke"
+                                label={controls?.sliders?.stroke ?? "Stroke"}
                                 value={strokeWidth}
                                 onChange={setStrokeWidth}
                                 min={1}
@@ -76,7 +80,7 @@ export function SvgCirclesHero() {
                                 step={1}
                             />
                             <VerticalSlider
-                                label="Focal"
+                                label={controls?.sliders?.focal ?? "Focal"}
                                 value={focalLength}
                                 onChange={setFocalLength}
                                 min={200}
@@ -84,7 +88,7 @@ export function SvgCirclesHero() {
                                 step={100}
                             />
                             <VerticalSlider
-                                label="Max R"
+                                label={controls?.sliders?.maxR ?? "Max R"}
                                 value={maxRadius}
                                 onChange={setMaxRadius}
                                 min={300}
@@ -92,7 +96,7 @@ export function SvgCirclesHero() {
                                 step={20}
                             />
                             <VerticalSlider
-                                label="Dash"
+                                label={controls?.sliders?.dash ?? "Dash"}
                                 value={dashOn}
                                 onChange={setDashOn}
                                 min={2}
@@ -103,7 +107,7 @@ export function SvgCirclesHero() {
 
                         <div className="space-y-1.5">
                             <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                Motion
+                                {chrome.motion}
                             </span>
                             <div className="flex gap-1">
                                 {MOTION_PATTERNS.map((p) => (
@@ -116,7 +120,7 @@ export function SvgCirclesHero() {
                                             : "bg-muted text-muted-foreground hover:text-foreground"
                                             }`}
                                     >
-                                        {p}
+                                        {controls?.motion?.[p] ?? p}
                                     </button>
                                 ))}
                             </div>
@@ -130,7 +134,7 @@ export function SvgCirclesHero() {
                         className="backdrop-blur-md bg-background/60"
                     >
                         <Settings2 className="h-4 w-4" />
-                        Controls
+                        {chrome.heading}
                     </Button>
                 )}
             </div>
@@ -144,25 +148,23 @@ export function SvgCirclesHero() {
                         className="-ml-3 backdrop-blur-sm bg-background/40"
                     >
                         <Link href={localizedHref(locale, "/lab")} className="gap-2">
-                            <ArrowLeft className="h-4 w-4" /> Back to gallery
+                            <ArrowLeft className="h-4 w-4" /> {chrome.backToGallery}
                         </Link>
                     </Button>
                     <div className="flex flex-wrap gap-2">
-                        <Badge>Experiment</Badge>
+                        <Badge>{hero.categoryBadge}</Badge>
                         <Badge variant="secondary">2025</Badge>
-                        <Badge variant="outline">Interactive</Badge>
+                        <Badge variant="outline">{hero.techBadge}</Badge>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-                        Parallax <span className="text-primary">Circles</span>
+                        {hero.titleLead} <span className="text-primary">{hero.titleHighlight}</span>
                     </h1>
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-prose">
-                        Move your pointer. Each ring drifts on its own parallax factor while
-                        counter-rotating on its own clock. The same component drives the
-                        section backgrounds elsewhere on this site.
+                        {hero.lede}
                     </p>
                     <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
                         <MousePointer2 className="h-4 w-4" />
-                        Move the cursor across the page to nudge the field.
+                        {hero.hint}
                     </div>
                 </div>
             </div>

@@ -1,14 +1,27 @@
+import type { Metadata } from 'next';
 import { getProjects } from './data';
 import { Pagination } from '@/components/pagination';
 import { ProjectCard } from '@/components/cards/ProjectCard'
 import Section from '@/components/section';
 import { Media, Project } from '@strps-website/types';
 import { localizedHref, type Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
+import { buildAlternates } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Projects | Cesar Jerez',
-  description: 'A collection of projects by Cesar Jerez.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const dictionary = getDictionary(locale)
+
+  return {
+    title: dictionary.seo.projectsTitle,
+    description: dictionary.seo.projectsDescription,
+    alternates: buildAlternates(locale, '/projects'),
+  }
+}
 
 export default async function ProjectsPage({
   searchParams,
@@ -20,6 +33,7 @@ export default async function ProjectsPage({
 
   const page = Number((await searchParams).page) || 1
   const { locale } = await params
+  const dictionary = getDictionary(locale)
   const { projects, pagination } = await getProjects({ page, limit: 12, locale })
 
   return (
@@ -31,10 +45,10 @@ export default async function ProjectsPage({
       >
         <div className="mx-auto max-w-3xl text-center space-y-4">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-            Projects & <span className="text-primary">Creations</span>
+            {dictionary.projects.heroTitlePrefix} <span className="text-primary">{dictionary.projects.heroTitleHighlight}</span>
           </h1>
           <p className="text-xl text-muted-foreground">
-            A curated selection of my technical work, from web applications to hardware experiments.
+            {dictionary.projects.heroSubtitle}
           </p>
         </div>
       </Section>
@@ -64,6 +78,7 @@ const ProjectsList = ({ projects, locale }: { projects: Array<Project>; locale: 
             liveUrl={project.links?.liveSite}
             repoUrl={project.links?.github}
             caseStudyUrl={localizedHref(locale, `/projects/${project.slug}`)}
+            locale={locale}
           />
         )
       })}

@@ -1,8 +1,9 @@
 import Section from '../section'
 import type { PageServicesBlock } from '@strps-website/types'
 import { ServiceCard } from '../cards/ServiceCard'
+import type { Locale } from '@/i18n/config'
 
-const ServicesSection: React.FC<PageServicesBlock> = ({ title, intro, services, section }) => {
+const ServicesSection: React.FC<PageServicesBlock & { locale: Locale }> = ({ title, intro, services, section, locale }) => {
     return (
         <Section
             {...(section ?? {})}
@@ -31,6 +32,7 @@ const ServicesSection: React.FC<PageServicesBlock> = ({ title, intro, services, 
                         goodFitPoints={service.goodFitPoints}
                         proofLabel={service.proofLabel}
                         proofUrl={service.proofUrl}
+                        locale={locale}
                     />
                 ))}
             </div>

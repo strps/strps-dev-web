@@ -11,6 +11,7 @@ import { resolveLinkHref } from '@/lib/resolveLinkHref';
 import type { PageProjectsBlock, Project, Media } from '@strps-website/types';
 import { getProjects } from '@/app/(website)/[locale]/projects/data';
 import { localizedHref, type Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
 
 type ProjectsProps = Omit<PageProjectsBlock, 'link' | 'variant'> & {
     projectsLink?: PageProjectsBlock['link'];
@@ -30,6 +31,7 @@ const ProjectsSection = async ({
     section,
     locale,
 }: ProjectsProps) => {
+    const dictionary = getDictionary(locale);
     let projects: Project[] = [];
 
     if (populateBy === 'collection') {
@@ -53,7 +55,7 @@ const ProjectsSection = async ({
                 containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
             >
                 <SectionHeader
-                    eyebrow={eyebrow || 'Projects'}
+                    eyebrow={eyebrow || dictionary.eyebrowFallback.projects}
                     title={title}
                     action={
                         actionHref && link?.label ? (
@@ -73,6 +75,7 @@ const ProjectsSection = async ({
                             contribution={project.caseStudy?.contribution}
                             stack={project.techStack?.map((t) => t.name || '').filter(Boolean) || []}
                             caseStudyHref={project.slug ? localizedHref(locale, `/projects/${project.slug}`) : undefined}
+                            locale={locale}
                         />
                     ))}
                 </HairlineGrid>
@@ -87,7 +90,7 @@ const ProjectsSection = async ({
                 {githubUrl && (
                     <Button variant="ghost" asChild className="hidden sm:flex">
                         <Link href={githubUrl} target="_blank">
-                            View all on GitHub <ExternalLink className="ml-2 h-4 w-4" />
+                            {dictionary.common.viewAllOnGithub} <ExternalLink className="ml-2 h-4 w-4" />
                         </Link>
                     </Button>
                 )}
@@ -110,6 +113,7 @@ const ProjectsSection = async ({
                             repoUrl={project.links?.github}
                             caseStudyUrl={project.slug ? localizedHref(locale, `/projects/${project.slug}`) : undefined}
                             orientation='horizontal'
+                            locale={locale}
                         />
                     );
                 })}
@@ -119,7 +123,7 @@ const ProjectsSection = async ({
                 <div className="sm:hidden flex justify-center">
                     <Button variant="outline" asChild>
                         <Link href={githubUrl} target="_blank">
-                            View all on GitHub <ExternalLink className="ml-2 h-4 w-4" />
+                            {dictionary.common.viewAllOnGithub} <ExternalLink className="ml-2 h-4 w-4" />
                         </Link>
                     </Button>
                 </div>

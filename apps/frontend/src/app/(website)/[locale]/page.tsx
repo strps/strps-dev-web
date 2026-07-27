@@ -47,5 +47,5 @@ export default async function HomePage({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { locale } = await paramsPromise
   const page = await getHomePage(locale)
-  return generateMeta({ doc: page })
+  return generateMeta({ doc: page, locale, path: '/' })
 }

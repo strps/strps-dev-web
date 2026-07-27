@@ -1,4 +1,6 @@
-import type { GalleryItem } from './types';
+import type { GalleryItem, LabSlug } from './types';
+import type { Locale } from '@/i18n/config';
+import { getLabContent } from './content';
 import svgCirclesImage from './(items)/svg-circles/svg-circles.png';
 import reactionSphereImage from './(items)/reaction-sphere/reaction-sphere.png';
 import grayScottImage from './(items)/gray-scott/gray-scott.png';
@@ -65,4 +67,23 @@ export function getGalleryItems(): GalleryItem[] {
 
 export function getGalleryItem(slug: string): GalleryItem | undefined {
   return galleryItems.find((item) => item.slug === slug);
+}
+
+/**
+ * Gallery items with their card copy (title/description/tags) overlaid from the
+ * localized lab content. The entries above stay the structural source of truth
+ * (id/slug/category/image/href/year/priority); the visible copy comes from
+ * `content/{locale}`. Use this anywhere cards are rendered (the `/lab` grid, the
+ * home-page teaser) so no locale ever shows the English card text.
+ */
+export function getLocalizedGalleryItems(locale: Locale): GalleryItem[] {
+  return galleryItems.map((item) => {
+    const content = getLabContent(locale, item.slug as LabSlug);
+    return {
+      ...item,
+      title: content.card.title,
+      description: content.card.description,
+      tags: content.card.tags,
+    };
+  });
 }

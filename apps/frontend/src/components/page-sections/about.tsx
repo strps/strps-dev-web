@@ -7,6 +7,7 @@ import { resolveLinkHref } from '@/lib/resolveLinkHref';
 import type { PageAboutBlock } from '@strps-website/types';
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical';
 import type { Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
 
 type AboutProps = Omit<PageAboutBlock, 'link'> & {
     aboutLink?: PageAboutBlock['link'];
@@ -19,6 +20,7 @@ const proseClassName =
 const AboutSection: React.FC<AboutProps> = ({ eyebrow, title, layout, summary, body, aboutLink: link, section, locale }) => {
     const actionHref = resolveLinkHref(link, locale);
     const isTwoColumn = layout === 'twoColumn';
+    const dictionary = getDictionary(locale);
 
     return (
         <Section
@@ -29,7 +31,7 @@ const AboutSection: React.FC<AboutProps> = ({ eyebrow, title, layout, summary, b
             containerClassName="mx-auto w-full max-w-wrap px-6"
         >
             <SectionHeader
-                eyebrow={eyebrow || 'About'}
+                eyebrow={eyebrow || dictionary.eyebrowFallback.about}
                 title={title}
                 action={
                     actionHref && link?.label ? (

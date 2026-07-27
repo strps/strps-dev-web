@@ -7,6 +7,7 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { PayloadForm } from '@/components/form/PayloadForm';
 import type { PageContactBlock, Form as FormType } from '@strps-website/types';
 import type { Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
 
 type ContactProps = Omit<PageContactBlock, 'links' | 'form'> & {
     contactLinks?: PageContactBlock['links'];
@@ -26,6 +27,8 @@ const ContactSection: React.FC<ContactProps> = ({
     section,
     locale,
 }) => {
+    const dictionary = getDictionary(locale)
+
     return (
         <Section
             {...(section ?? {})}
@@ -36,7 +39,7 @@ const ContactSection: React.FC<ContactProps> = ({
         >
             <div className="grid grid-cols-1 gap-11 min-[721px]:grid-cols-[1fr_1.2fr] min-[721px]:gap-15">
                 <div>
-                    <Eyebrow as="div">{eyebrow || 'Contact'}</Eyebrow>
+                    <Eyebrow as="div">{eyebrow || dictionary.eyebrowFallback.contact}</Eyebrow>
                     <h2 className="mt-3.5 text-2xl font-medium">{title}</h2>
                     {description && (
                         <p className="mt-4 max-w-[40ch] text-[15px] leading-[1.65] text-muted-foreground">
@@ -47,7 +50,7 @@ const ContactSection: React.FC<ContactProps> = ({
                     {email && (
                         <div className="mt-7.5">
                             <Eyebrow as="span" className="mb-2.5 block normal-case tracking-normal">
-                                {emailLabel || 'Prefer email?'}
+                                {emailLabel || dictionary.common.preferEmail}
                             </Eyebrow>
                             <a
                                 href={`mailto:${email}`}
@@ -73,7 +76,7 @@ const ContactSection: React.FC<ContactProps> = ({
                         {email && (
                             <Button variant="solid" asChild>
                                 <Link href={`mailto:${email}`}>
-                                    <Mail className="mr-2 h-4 w-4" /> Send me an email
+                                    <Mail className="mr-2 h-4 w-4" /> {dictionary.common.sendMeAnEmail}
                                 </Link>
                             </Button>
                         )}

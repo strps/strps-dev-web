@@ -7,7 +7,9 @@ import { getCachedHeaderData } from '@/data/data';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Logo } from '@/components/logo';
-import { locales, isValidLocale } from '@/i18n/config';
+import { locales, isValidLocale, type Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
+import { buildAlternates, SITE_URL } from '@/lib/seo';
 
 const archivo = Archivo({
   subsets: ['latin'],
@@ -21,13 +23,30 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: '--font-ibm-plex-mono',
 });
 
-export const metadata: Metadata = {
-  title: 'Cesar Jerez | Full Stack Developer',
-  description: 'Portfolio of Cesar Jerez, a Multidisciplinary Developer based in Costa Rica.',
-};
-
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
+}
+
+/**
+ * Root fallback metadata (merged under any leaf that doesn't set its own title/description,
+ * e.g. not-found.tsx if it opts out). `metadataBase` lives here once, at the root, per Next's
+ * convention, so every leaf's relative `alternates`/`openGraph.images` resolve to absolute URLs.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const resolvedLocale: Locale = isValidLocale(locale) ? locale : 'en';
+  const dictionary = getDictionary(resolvedLocale);
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: dictionary.seo.defaultTitle,
+    description: dictionary.seo.defaultDescription,
+    alternates: buildAlternates(resolvedLocale, '/'),
+  };
 }
 
 export default async function RootLayout({

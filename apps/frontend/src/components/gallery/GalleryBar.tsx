@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { GALLERY_CATEGORIES, GalleryCategory } from "@/app/(website)/[locale]/lab/types";
+import { defaultLocale, type Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/getDictionary";
 // import { GALLERY_CATEGORIES, type GalleryCategory } from "@/app/gallery/types";
 
 export interface GalleryBarProps {
@@ -20,6 +22,7 @@ export interface GalleryBarProps {
     onToggleTag: (tag: string) => void;
     onReset: () => void;
     className?: string;
+    locale?: Locale;
 }
 
 export function GalleryBar({
@@ -33,7 +36,9 @@ export function GalleryBar({
     onToggleTag,
     onReset,
     className,
+    locale = defaultLocale,
 }: GalleryBarProps) {
+    const dictionary = getDictionary(locale);
     const [filtersOpen, setFiltersOpen] = useState(false);
 
     const activeFilterCount =
@@ -57,7 +62,7 @@ export function GalleryBar({
                     aria-controls="gallery-filters"
                 >
                     <Filter className="h-4 w-4" />
-                    Filters
+                    {dictionary.lab.filters}
                     {hasActiveFilters && (
                         <Badge
                             variant="secondary"
@@ -75,7 +80,7 @@ export function GalleryBar({
                         <div className="relative w-full md:max-w-sm">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Search the gallery…"
+                                placeholder={dictionary.lab.searchPlaceholder}
                                 value={searchQuery}
                                 onChange={(e) => onSearchQueryChange(e.target.value)}
                                 className="pl-9"
@@ -83,7 +88,7 @@ export function GalleryBar({
                             {searchQuery && (
                                 <button
                                     type="button"
-                                    aria-label="Clear search"
+                                    aria-label={dictionary.lab.clearSearch}
                                     onClick={() => onSearchQueryChange("")}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                                 >
@@ -93,7 +98,7 @@ export function GalleryBar({
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                            {GALLERY_CATEGORIES.map(({ value, label }) => {
+                            {GALLERY_CATEGORIES.map(({ value }) => {
                                 const active = selectedCategories.includes(value);
                                 return (
                                     <Badge
@@ -102,7 +107,7 @@ export function GalleryBar({
                                         onClick={() => onToggleCategory(value)}
                                         className="cursor-pointer select-none px-3 py-1 text-xs transition-colors"
                                     >
-                                        {label}
+                                        {dictionary.lab.categories[value]}
                                     </Badge>
                                 );
                             })}
@@ -112,7 +117,7 @@ export function GalleryBar({
                     {availableTags.length > 0 && (
                         <div className="flex flex-wrap items-center gap-2">
                             <span className="text-xs uppercase tracking-wider text-muted-foreground mr-1">
-                                Tags
+                                {dictionary.lab.tags}
                             </span>
                             {availableTags.map((tag) => {
                                 const active = selectedTags.includes(tag);
@@ -134,7 +139,7 @@ export function GalleryBar({
                                     onClick={onReset}
                                     className="h-6 px-2 text-xs ml-auto"
                                 >
-                                    Reset
+                                    {dictionary.lab.reset}
                                     <X className="ml-1 h-3 w-3" />
                                 </Button>
                             )}

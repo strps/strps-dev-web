@@ -12,6 +12,7 @@ import { fields } from '@/components/form/fields'
 import { RECAPTCHA_ACTION, RECAPTCHA_SITE_KEY, isRecaptchaConfigured } from '@/lib/recaptcha'
 import { cn } from '@/lib/utils'
 import { defaultLocale, isValidLocale, localizedHref } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export interface PayloadFormProps {
     form: FormType
@@ -160,6 +161,7 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
     const router = useRouter()
     const routeParams = useParams<{ locale: string }>()
     const locale = isValidLocale(routeParams.locale) ? routeParams.locale : defaultLocale
+    const dictionary = getDictionary(locale)
 
     // reCAPTCHA is only active when the editor enabled it AND the site key exists.
     // Without this the legend below would claim protection that isn't running.
@@ -175,8 +177,8 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
     }, [enableRecaptcha, formID])
 
     const onRecaptchaError = useCallback(() => {
-        setError({ message: 'Recaptcha verification failed' })
-    }, [])
+        setError({ message: dictionary.form.recaptchaFailed })
+    }, [dictionary])
 
     const onSubmit = useCallback(
         (data: FieldValues, recaptchaToken?: string) => {
@@ -213,7 +215,7 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
                     if (req.status >= 400) {
                         setIsLoading(false)
                         setError({
-                            message: res.errors?.[0]?.message || 'Internal Server Error',
+                            message: res.errors?.[0]?.message || dictionary.form.internalServerError,
                             status: res.status,
                         })
                         return
@@ -229,13 +231,13 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
                 } catch (err) {
                     console.warn(err)
                     setIsLoading(false)
-                    setError({ message: 'Something went wrong.' })
+                    setError({ message: dictionary.form.somethingWentWrong })
                 }
             }
 
             void submitForm()
         },
-        [confirmationType, formID, redirect, router, locale],
+        [confirmationType, formID, redirect, router, locale, dictionary],
     )
 
     const formInner = (
@@ -262,7 +264,7 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
                         />
                     </div>
                 )}
-                {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
+                {isLoading && !hasSubmitted && <p>{dictionary.form.loading}</p>}
                 {error && (
                     <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
                         {`${error.status || '500'}: ${error.message || ''}`}
@@ -283,25 +285,25 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
                             variant !== 'mockup' && 'text-center',
                         )}
                     >
-                        This site is protected by reCAPTCHA and the Google{' '}
+                        {dictionary.form.recaptchaNoticePrefix}{' '}
                         <a
                             className="underline hover:text-primary"
                             href="https://policies.google.com/privacy"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            Privacy Policy
+                            {dictionary.form.privacyPolicy}
                         </a>{' '}
-                        and{' '}
+                        {dictionary.form.and}{' '}
                         <a
                             className="underline hover:text-primary"
                             href="https://policies.google.com/terms"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            Terms of Service
+                            {dictionary.form.termsOfService}
                         </a>{' '}
-                        apply.
+                        {dictionary.form.recaptchaNoticeSuffix}
                     </p>
                 )}
             </div>

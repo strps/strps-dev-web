@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { CMSLink } from '@/components/cms-link'
 import { cn } from '@/lib/utils'
+import { defaultLocale, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export interface ServiceCardProps {
     index: number
@@ -15,6 +17,7 @@ export interface ServiceCardProps {
     proofLabel?: string | null
     proofUrl?: string | null
     className?: string
+    locale?: Locale
 }
 
 const MicroLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -34,7 +37,10 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
     proofLabel,
     proofUrl,
     className,
+    locale = defaultLocale,
 }) => {
+    const dictionary = getDictionary(locale)
+
     return (
         <Card
             className={cn(
@@ -56,7 +62,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             <CardContent className="flex flex-1 flex-col gap-7 px-7 pt-7 pb-8 md:px-8">
                 {features && features.length > 0 && (
                     <div className="space-y-3">
-                        <MicroLabel>What you get</MicroLabel>
+                        <MicroLabel>{dictionary.common.whatYouGet}</MicroLabel>
                         <ul className="space-y-2.5">
                             {features.map((item, i) => (
                                 <li key={i} className="flex items-start gap-2.5">
@@ -72,7 +78,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
 
                 {goodFitPoints && goodFitPoints.length > 0 && (
                     <div className="space-y-3">
-                        <MicroLabel>Good fit if you&apos;re thinking</MicroLabel>
+                        <MicroLabel>{dictionary.common.goodFitIfThinking}</MicroLabel>
                         <div className="flex flex-wrap gap-2">
                             {goodFitPoints.map((item, i) => (
                                 <Badge
@@ -103,13 +109,13 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
                     <div className="mt-auto flex flex-wrap items-end justify-between gap-x-8 gap-y-4 border-t pt-6">
                         {pricing && (
                             <div className="space-y-1">
-                                <MicroLabel>Pricing</MicroLabel>
+                                <MicroLabel>{dictionary.common.pricing}</MicroLabel>
                                 <p className="text-base font-semibold tracking-tight">{pricing}</p>
                             </div>
                         )}
                         {timeline && (
                             <div className="space-y-1">
-                                <MicroLabel>Timeline</MicroLabel>
+                                <MicroLabel>{dictionary.common.timeline}</MicroLabel>
                                 <p className="text-sm text-muted-foreground">{timeline}</p>
                             </div>
                         )}

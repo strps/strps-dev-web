@@ -6,6 +6,7 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { PlotLine } from '@/components/primitives/PlotLine';
 import type { PageHeroBlock, Media } from '@strps-website/types';
 import type { Locale } from '@/i18n/config';
+import { getDictionary } from '@/i18n/getDictionary';
 import SVGButton from '../SVGButton';
 
 type HeroProps = Omit<PageHeroBlock, 'links' | 'variant'> & {
@@ -119,6 +120,8 @@ const PortraitHero: React.FC<HeroProps> = ({
     heroLinks,
     locale,
 }) => {
+    const dictionary = getDictionary(locale);
+
     return (
         <div className="space-y-6 max-w-3xl px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
             {status?.isAvailable && (
@@ -159,7 +162,7 @@ const PortraitHero: React.FC<HeroProps> = ({
             <div className="flex flex-wrap justify-center gap-4 pt-4">
                 {email && (
                     <SVGButton variant='send' className='' href={`mailto:${email}`}>
-                        <Mail className="mr-2 h-4 w-4" /> <span>Contact Me</span>
+                        <Mail className="mr-2 h-4 w-4" /> <span>{dictionary.common.contactMe}</span>
                     </SVGButton>
                 )}
                 {heroLinks?.map(({ link }, i) => {

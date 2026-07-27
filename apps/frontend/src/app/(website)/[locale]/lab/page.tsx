@@ -1,12 +1,24 @@
+import type { Metadata } from 'next';
 import { Gallery } from "@/components/gallery/Gallery";
-import { getGalleryItems } from "./data";
+import { getLocalizedGalleryItems } from "./data";
 import { localizedHref, type Locale } from "@/i18n/config";
+import { getDictionary } from '@/i18n/getDictionary';
+import { buildAlternates } from '@/lib/seo';
 
-export const metadata = {
-    title: "Gallery | Cesar Jerez",
-    description:
-        "A small gallery of personal projects, experiments, and art — most pieces live as their own pages.",
-};
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ locale: Locale }>
+}): Promise<Metadata> {
+    const { locale } = await params
+    const dictionary = getDictionary(locale)
+
+    return {
+        title: dictionary.seo.labTitle,
+        description: dictionary.seo.labDescription,
+        alternates: buildAlternates(locale, '/lab'),
+    }
+}
 
 export default async function GalleryPage({
     params,
@@ -14,7 +26,8 @@ export default async function GalleryPage({
     params: Promise<{ locale: Locale }>
 }) {
     const { locale } = await params;
-    const items = getGalleryItems().map((item) => ({
+    const dictionary = getDictionary(locale);
+    const items = getLocalizedGalleryItems(locale).map((item) => ({
         ...item,
         href: localizedHref(locale, item.href),
     }));
@@ -22,7 +35,7 @@ export default async function GalleryPage({
     return (
         <main className="min-h-screen">
             <div className=" mx-auto px-4 py-16">
-                <Gallery items={items} title="Gallery & Tinkering" />
+                <Gallery items={items} title={dictionary.lab.galleryTitle} locale={locale} />
             </div>
         </main>
     );

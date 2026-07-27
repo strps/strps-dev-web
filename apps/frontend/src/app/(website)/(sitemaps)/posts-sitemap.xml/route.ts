@@ -3,6 +3,7 @@ import { gql } from '@apollo/client'
 import { getClient } from '@/lib/apollo-client'
 import { unstable_cache } from 'next/cache'
 import { Post } from '@strps-website/types'
+import { localizeSitemapEntries } from '@/lib/sitemap'
 
 interface PostsSitemapData {
   Posts: {
@@ -28,23 +29,22 @@ const POSTS_SITEMAP_QUERY = gql`
 const getPostsSitemap = unstable_cache(
   async () => {
     const client = getClient()
-    const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
 
     const { data } = await client.query<PostsSitemapData>({ query: POSTS_SITEMAP_QUERY })
     const results = data?.Posts
 
     const dateFallback = new Date().toISOString()
 
-    const sitemap = results?.docs
+    const entries = results?.docs
       ? results.docs
         .filter((post) => Boolean(post?.slug))
         .map((post) => ({
-          loc: `${SITE_URL}/blog/${post?.slug}`,
+          path: `/blog/${post?.slug}`,
           lastmod: post.updatedAt || dateFallback,
         }))
       : []
 
-    return sitemap
+    return localizeSitemapEntries(entries)
   },
   ['blog-sitemap'],
   {

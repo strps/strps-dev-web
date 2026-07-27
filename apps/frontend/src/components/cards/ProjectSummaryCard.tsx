@@ -1,6 +1,8 @@
 import { Eyebrow } from '@/components/primitives/Eyebrow'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { StackChip } from '@/components/primitives/StackChip'
+import { defaultLocale, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export interface ProjectSummaryCardProps {
     number: string
@@ -10,6 +12,7 @@ export interface ProjectSummaryCardProps {
     contribution?: string | null
     stack?: string[]
     caseStudyHref?: string | null
+    locale?: Locale
 }
 
 /** The home projects grid card (§3.4): tag + /id, title, problem/solution pair, stack chips, case-study link. */
@@ -21,7 +24,9 @@ export function ProjectSummaryCard({
     contribution,
     stack = [],
     caseStudyHref,
+    locale = defaultLocale,
 }: ProjectSummaryCardProps) {
+    const dictionary = getDictionary(locale)
     return (
         <div className="flex h-full flex-col px-7 py-7.5">
             <div className="flex items-baseline justify-between">
@@ -31,13 +36,13 @@ export function ProjectSummaryCard({
             <h3 className="mt-3.5 text-[19px] font-medium">{title}</h3>
             {problem && (
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    <b className="font-medium text-foreground">Problem — </b>
+                    <b className="font-medium text-foreground">{dictionary.common.problem}</b>
                     {problem}
                 </p>
             )}
             {contribution && (
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    <b className="font-medium text-foreground">What I did — </b>
+                    <b className="font-medium text-foreground">{dictionary.common.whatIDid}</b>
                     {contribution}
                 </p>
             )}
@@ -50,7 +55,7 @@ export function ProjectSummaryCard({
             )}
             {caseStudyHref && (
                 <div className="mt-5">
-                    <LinkArrow href={caseStudyHref}>View case study →</LinkArrow>
+                    <LinkArrow href={caseStudyHref}>{dictionary.common.viewCaseStudy} →</LinkArrow>
                 </div>
             )}
         </div>

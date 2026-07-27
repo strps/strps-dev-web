@@ -10,6 +10,7 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { Post } from '@strps-website/types'
 import { generateStaticParams, getPostBySlug } from '../data'
 import type { Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export { generateStaticParams }
 
@@ -30,6 +31,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   }
   const { slug = '', locale } = await paramsPromise
   const url = `/posts/${slug}`
+  const dictionary = getDictionary(locale)
 
   const post = await getPostBySlug({ slug, locale })
 
@@ -43,12 +45,12 @@ export default async function Post({ params: paramsPromise }: Args) {
         {draft && <LivePreviewListener />}
 
         <div className="flex flex-col items-center gap-8">
-          <PostHero post={post} className="dark" />
+          <PostHero post={post} className="dark" locale={locale} />
           <div className="container px-4">
             <RichText className="max-w-3xl mx-auto" data={post.content as DefaultTypedEditorState} enableGutter={false} />
             {post.relatedPosts && post.relatedPosts.length > 0 && (
               <div className="my-12">
-                <h2>Related Posts</h2>
+                <h2>{dictionary.blog.relatedPosts}</h2>
                 <RelatedPosts
                   className="mt-12 max-w-208 lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
                   docs={post.relatedPosts.filter((p): p is Post => typeof p === 'object')}
@@ -67,5 +69,5 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '', locale } = await paramsPromise
   const post = await getPostBySlug({ slug, locale })
 
-  return generateMeta({ doc: post })
+  return generateMeta({ doc: post, locale, path: `/blog/${slug}` })
 }

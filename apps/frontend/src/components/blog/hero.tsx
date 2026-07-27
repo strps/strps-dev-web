@@ -6,12 +6,16 @@ import type { Post } from '@strps-website/types'
 import { Media } from '@/components/cms-media'
 import { formatAuthors } from '@/lib/formatAuthors'
 import { cn } from '@/lib/utils'
+import { defaultLocale, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export const PostHero: React.FC<{
     post: Post
     className?: string
-}> = ({ post, className }) => {
+    locale?: Locale
+}> = ({ post, className, locale = defaultLocale }) => {
     const { tags, heroImage, populatedAuthors, publishedAt, title } = post
+    const dictionary = getDictionary(locale)
 
     const hasAuthors =
         populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
@@ -50,7 +54,7 @@ export const PostHero: React.FC<{
                         {hasAuthors && (
                             <div className="flex flex-col gap-4">
                                 <div className="flex flex-col gap-1">
-                                    <p className="text-sm">Author</p>
+                                    <p className="text-sm">{dictionary.blog.author}</p>
 
                                     <p>{formatAuthors(populatedAuthors)}</p>
                                 </div>
@@ -58,9 +62,9 @@ export const PostHero: React.FC<{
                         )}
                         {publishedAt && (
                             <div className="flex flex-col gap-1">
-                                <p className="text-sm">Date Published</p>
+                                <p className="text-sm">{dictionary.blog.datePublished}</p>
 
-                                <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
+                                <time dateTime={publishedAt}>{formatDateTime(publishedAt, locale)}</time>
                             </div>
                         )}
                     </div>

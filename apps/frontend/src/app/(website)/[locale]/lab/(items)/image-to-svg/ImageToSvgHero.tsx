@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Download, ImageUp, Settings2, X } from "lucide-react";
 import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
+import { getDictionary } from "@/i18n/getDictionary";
+import { getLabContent } from "../../content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -75,6 +77,8 @@ function makeSampleImage(): Promise<HTMLImageElement> {
 export function ImageToSvgHero() {
     const routeParams = useParams<{ locale: string }>();
     const locale = isValidLocale(routeParams.locale) ? routeParams.locale : defaultLocale;
+    const chrome = getDictionary(locale).lab.controls;
+    const { hero } = getLabContent(locale, "image-to-svg");
     const [strategyId, setStrategyId] = useState(STRATEGIES[0].id);
     const [params, setParams] = useState<Record<string, number>>(() =>
         defaultParams(STRATEGIES[0]),
@@ -114,7 +118,7 @@ export function ImageToSvgHero() {
 
     const loadFile = useCallback((file: File) => {
         if (!file.type.startsWith("image/")) {
-            setError("That file isn't an image.");
+            setError(chrome.notAnImage);
             return;
         }
         setError(null);
@@ -126,9 +130,9 @@ export function ImageToSvgHero() {
             setImage(img);
             setFileName(file.name.replace(/\.[^.]+$/, "") || "image");
         };
-        img.onerror = () => setError("Couldn't decode that image.");
+        img.onerror = () => setError(chrome.decodeFailed);
         img.src = url;
-    }, []);
+    }, [chrome.notAnImage, chrome.decodeFailed]);
 
     function onDrop(e: React.DragEvent) {
         e.preventDefault();
@@ -177,7 +181,7 @@ export function ImageToSvgHero() {
             {dragging && (
                 <div className="absolute inset-0 z-30 flex items-center justify-center border-4 border-dashed border-primary/70 bg-background/70 backdrop-blur-sm pointer-events-none">
                     <span className="text-lg font-semibold text-foreground">
-                        Drop an image to convert
+                        {chrome.dropToConvert}
                     </span>
                 </div>
             )}
@@ -187,11 +191,11 @@ export function ImageToSvgHero() {
                     <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-[300px] md:w-[340px] max-h-[calc(80vh-2rem)] overflow-y-auto">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                                Controls
+                                {chrome.heading}
                             </span>
                             <button
                                 type="button"
-                                aria-label="Close controls"
+                                aria-label={chrome.close}
                                 onClick={() => setControlsOpen(false)}
                                 className="text-muted-foreground hover:text-foreground"
                             >
@@ -201,7 +205,7 @@ export function ImageToSvgHero() {
 
                         <div className="space-y-1.5 mb-4">
                             <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                Strategy
+                                {chrome.strategy}
                             </span>
                             <Select value={strategyId} onValueChange={handleStrategyChange}>
                                 <SelectTrigger className="w-full" size="sm">
@@ -283,14 +287,14 @@ export function ImageToSvgHero() {
                                 className="w-full gap-1.5"
                                 onClick={() => fileInputRef.current?.click()}
                             >
-                                <ImageUp className="h-3.5 w-3.5" /> Upload image
+                                <ImageUp className="h-3.5 w-3.5" /> {chrome.uploadImage}
                             </Button>
                             <Button
                                 size="sm"
                                 className="w-full gap-1.5"
                                 onClick={handleDownload}
                             >
-                                <Download className="h-3.5 w-3.5" /> Download SVG
+                                <Download className="h-3.5 w-3.5" /> {chrome.downloadSvg}
                             </Button>
                             {error && (
                                 <span className="text-xs text-destructive">{error}</span>
@@ -317,7 +321,7 @@ export function ImageToSvgHero() {
                         className="backdrop-blur-md bg-background/60"
                     >
                         <Settings2 className="h-4 w-4" />
-                        Controls
+                        {chrome.heading}
                     </Button>
                 )}
             </div>
@@ -331,25 +335,23 @@ export function ImageToSvgHero() {
                         className="-ml-3 backdrop-blur-sm bg-background/40"
                     >
                         <Link href={localizedHref(locale, "/lab")} className="gap-2">
-                            <ArrowLeft className="h-4 w-4" /> Back to gallery
+                            <ArrowLeft className="h-4 w-4" /> {chrome.backToGallery}
                         </Link>
                     </Button>
                     <div className="flex flex-wrap gap-2">
-                        <Badge>Experiment</Badge>
+                        <Badge>{hero.categoryBadge}</Badge>
                         <Badge variant="secondary">2026</Badge>
-                        <Badge variant="outline">SVG</Badge>
+                        <Badge variant="outline">{hero.techBadge}</Badge>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-                        Image to <span className="text-primary">SVG</span>
+                        {hero.titleLead} <span className="text-primary">{hero.titleHighlight}</span>
                     </h1>
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-prose">
-                        Drop in any image and watch it redrawn as vector line art. The first
-                        converter renders classic engraving-style hatching and
-                        cross-hatching — darker tones pile on more crossed lines.
+                        {hero.lede}
                     </p>
                     <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
                         <ImageUp className="h-4 w-4" />
-                        Drag an image anywhere, or use Upload in the controls.
+                        {hero.hint}
                     </div>
                 </div>
             </div>

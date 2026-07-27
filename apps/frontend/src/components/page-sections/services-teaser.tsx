@@ -5,6 +5,7 @@ import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { NumberedRow } from '@/components/primitives/NumberedRow'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
 import type { Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 type ServicesTeaserProps = Omit<PageServicesTeaserBlock, 'link'> & {
     teaserLink?: PageServicesTeaserBlock['link']
@@ -20,6 +21,7 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
     locale,
 }) => {
     const actionHref = resolveLinkHref(link, locale)
+    const dictionary = getDictionary(locale)
 
     return (
         <Section
@@ -30,7 +32,7 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
             containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <SectionHeader
-                eyebrow={eyebrow || 'Services'}
+                eyebrow={eyebrow || dictionary.eyebrowFallback.services}
                 title={title}
                 action={
                     actionHref && link?.label ? (

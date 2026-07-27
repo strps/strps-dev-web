@@ -3,11 +3,12 @@
 > **For:** whoever picks this up next (another chat, another model, future me).
 > **Full spec:** [internationalization.md](internationalization.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) and phase numbers refer to it.
-> **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–4 are done** (Phase 1 = all schema fields marked
+> **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–5 are done** (Phase 1 = all schema fields marked
 > `localized`; Phase 2 = committed migration + locale-aware bilingual seed; Phase 3 = `[locale]` routing
 > scaffold **and** locale threaded through every GraphQL data fetch + locale-namespaced caches; Phase 4 =
-> language switcher in the header + every internal link across the app locale-prefixed). Phases 5–6
-> not started next.
+> language switcher in the header + every internal link across the app locale-prefixed; Phase 5 = static
+> UI-string dictionary + hreflang/canonical metadata + locale-prefixed sitemaps). Phase 6 (content entry,
+> QA & launch) not started next.
 > **Goal:** English (`en`) + Spanish (`es`) across the Payload CMS schema and the public Next.js site.
 
 ---
@@ -21,7 +22,7 @@
 | **2** | DB schema + migration + locale-aware seed | ✅ **Done** |
 | **3** | Frontend routing & locale plumbing | ✅ **Done** — Part A (routing scaffold) + Part B (locale data plumbing) |
 | **4** | Language switcher & UI chrome | ✅ **Done** |
-| 5 | Static UI strings + SEO | ⬜ Not started |
+| **5** | Static UI strings + SEO | ✅ **Done** |
 | 6 | Content entry, QA & launch | ⬜ Not started |
 
 ---
@@ -529,6 +530,235 @@ Bonus fixes found while auditing: RelatedPosts linked to a nonexistent
 /posts/:slug route (posts live at /blog/:slug); HeaderNav's brand logo
 linked to the bare root instead of /{locale}, costing a needless
 middleware redirect on every click.
+```
+
+---
+
+## What's done — Phase 5 (Static UI strings + SEO)
+
+### Dictionaries
+New [`i18n/dictionaries/en.ts`](../apps/frontend/src/i18n/dictionaries/en.ts) /
+[`es.ts`](../apps/frontend/src/i18n/dictionaries/es.ts) + [`i18n/getDictionary.ts`](../apps/frontend/src/i18n/getDictionary.ts), per §2.3.
+One deliberate deviation from the plan's exact wording ("server helper"): `getDictionary()` is a **plain sync function**, not async I/O —
+the dictionaries are static TS object literals, there's nothing to await — and it's **not** marked server-only, so it's callable from both
+RSC data fetches *and* `'use client'` leaves (`Error.tsx`'s field-required message, `PayloadForm.tsx`'s submit/recaptcha errors,
+`ThemeSwitch.tsx`'s aria-label, `components/pagination.tsx`) that read `locale` via `useParams()` — the same pattern Phase 4 established
+for the lab back-links and the form's post-submit redirect. `es.ts` is typed `Dictionary = typeof en` so a missing key is a compile error,
+not a silent English fallback in the Spanish UI.
+
+A full repo grep swept every `>Capitalized text<` JSX child plus `placeholder=`/`aria-label=`/`title=` attributes across `components/` and
+`app/(website)/`, then each hit was triaged file-by-file (not batch-replaced) to catch things a naive sweep misses: fallback defaults like
+`eyebrow || 'Projects'` (7 page-sections — the fallback only fires when a CMS editor leaves the field blank, but it's still reachable
+English), a hardcoded `'en-US'` in `ArticleCard.tsx`'s date formatting that would have shown English-formatted dates on `/es/...` forever,
+and `formatDateTime.ts`'s hand-rolled `MM/DD/YYYY` string-concat replaced with `Intl.DateTimeFormat(locale, {...})`. See
+[internationalization.md §Phase 5](internationalization.md#scope-note-what-static-ui-strings-did-not-include) for what was **deliberately
+excluded** (the 4 lab items' bespoke narrative content) and why. ✅ **That exclusion has since been addressed** — see
+[§Lab-item content localization](#whats-done--lab-item-content-localization-phase-5-follow-up) below.
+
+### SEO: hreflang, canonical, sitemaps
+New [`lib/seo.ts`](../apps/frontend/src/lib/seo.ts) `buildAlternates(locale, path)` — pure prefix logic (`/${locale}${path}` per locale +
+`x-default` → the default locale), valid because §Phase 1 kept slugs shared across locales, so there's never a per-locale slug lookup to
+do. Wired into: `generateMeta()` ([`lib/generateMeta.ts`](../apps/frontend/src/lib/generateMeta.ts), now takes `locale` + `path` and also
+sets `openGraph.locale`/`alternateLocale`), all 4 CMS-backed `generateMetadata` functions (home, `[slug]`, `blog/[slug]`,
+`projects/[slug]`), the root [`[locale]/layout.tsx`](../apps/frontend/src/app/(website)/[locale]/layout.tsx) fallback (which also now
+carries the one `metadataBase` for the whole tree — previously unset anywhere), the 3 static listing pages (blog/projects/lab, converted
+from static `export const metadata` to `generateMetadata` so they can be locale-aware), and the 4 lab-item detail pages (alternates only,
+per the scope note above).
+
+**Meta title/description were already locale-correct before this phase** — Phase 3B threaded `$locale` into the GraphQL queries that
+fetch `meta.title`/`meta.description`, so `doc.meta.title` in `generateMeta()` was already the Spanish value on `/es/...`. This phase's
+SEO work was really just adding `alternates`/`openGraph.locale` on top of data that was already right, not a data-fetching change.
+
+New [`lib/sitemap.ts`](../apps/frontend/src/lib/sitemap.ts) `localizeSitemapEntries()` expands each CMS doc into one `<url>` per locale
+with `alternateRefs` (rendered as `xhtml:link`) to every locale + `x-default` — confirmed `next-sitemap`'s `ISitemapField` supports this
+natively (`alternateRefs?: Array<{ href, hreflang, hrefIsAbsolute }>`) before writing it, no library gap. Wired into all 3 dynamic sitemap
+routes ([`pages-sitemap.xml`](../apps/frontend/src/app/(website)/(sitemaps)/pages-sitemap.xml/route.ts),
+[`posts-sitemap.xml`](../apps/frontend/src/app/(website)/(sitemaps)/posts-sitemap.xml/route.ts),
+[`projects-sitemap.xml`](../apps/frontend/src/app/(website)/(sitemaps)/projects-sitemap.xml/route.ts)) — the underlying GraphQL queries
+were **not** changed (slug/updatedAt aren't localized fields, so one query still covers both locales' entries).
+
+**Bonus fix found while rewriting `pages-sitemap.xml`:** its old `defaultSitemap` array hardcoded `${SITE_URL}/search` and
+`${SITE_URL}/posts` — neither route exists in the frontend app (there's no `/search` page anywhere, and posts are served at `/blog/:slug`,
+not `/posts`; the makeover/Phase-3 handoff had already flagged `/posts` as a collection-slug-only string, not a real route). Multiplying
+two already-dead links across two locales would have made it worse, so they were dropped rather than carried forward.
+
+`robots.txt` needed **no changes** — it's generated once by `next-sitemap`'s build step, lists the 3 dynamic sitemap URLs (which now
+enumerate every locale internally), and has no per-locale human-readable text to translate. Confirmed this rather than assumed it.
+
+### 404 page
+New [`[locale]/not-found.tsx`](../apps/frontend/src/app/(website)/[locale]/not-found.tsx) — none existed before (confirmed via repo
+search), so every 404 previously fell through to Next's built-in English default. Reads `locale` from `params` (supported on
+`not-found.js` in the Next 16 this repo runs) with an `isValidLocale` fallback to `en`, since the boundary can also be hit from the root
+layout's own `notFound()` call when the locale segment itself is invalid.
+
+### Verification
+Per the working convention / `defer-checks-to-end` memory, **no build/type-check/lint/dev-server run was performed.** The dictionary's
+`es.ts satisfies typeof en` typing means a missing translation key would be a compile error, so `pnpm exec tsc --noEmit` in
+`apps/frontend` is a meaningful checkpoint before shipping — recommended next step. Also worth a manual spot-check once a server is
+running: `/es/blog` (search/filter/empty states + article dates), `/es/projects` and `/es` contact form (submit an invalid form to see the
+required-field/error copy in Spanish), `/es/some-bad-slug` (404 page), and viewing page source on a couple of `/es/...` routes for
+`<link rel="alternate" hreflang="es" ...>` tags plus `curl .../pages-sitemap.xml` for `xhtml:link` alternates.
+
+### Files touched — Phase 5 (this session)
+**New**
+- [`i18n/dictionaries/en.ts`](../apps/frontend/src/i18n/dictionaries/en.ts), [`es.ts`](../apps/frontend/src/i18n/dictionaries/es.ts),
+  [`i18n/getDictionary.ts`](../apps/frontend/src/i18n/getDictionary.ts).
+- [`lib/seo.ts`](../apps/frontend/src/lib/seo.ts) (`buildAlternates`, `SITE_URL`), [`lib/sitemap.ts`](../apps/frontend/src/lib/sitemap.ts)
+  (`localizeSitemapEntries`).
+- [`[locale]/not-found.tsx`](../apps/frontend/src/app/(website)/[locale]/not-found.tsx).
+
+**SEO wiring**
+- [`lib/generateMeta.ts`](../apps/frontend/src/lib/generateMeta.ts), `[locale]/layout.tsx`, `[locale]/page.tsx`, `[locale]/[slug]/page.tsx`,
+  `[locale]/blog/[slug]/page.tsx`, `[locale]/projects/[slug]/page.tsx`, `[locale]/blog/page.tsx`, `[locale]/projects/page.tsx`,
+  `[locale]/lab/page.tsx`, `[locale]/lab/(items)/{gray-scott,image-to-svg,reaction-sphere,svg-circles}/page.tsx` (alternates only).
+
+**Sitemaps** — all 3 routes under `(sitemaps)/`.
+
+**UI-string localization**
+- Pagination: `components/ui/pagination.tsx` (optional `label`/`aria-label` overrides, English defaults kept), `components/pagination.tsx`
+  (locale via `useParams`).
+- Forms: `components/form/PayloadForm.tsx`, `components/form/Error.tsx`.
+- Blog: `components/blog/{hero,related-posts,blog-list}.tsx`, `lib/formatDateTime.ts`, `[locale]/blog/[slug]/page.tsx` ("Related Posts").
+- Gallery/lab chrome: `components/gallery/{Gallery,GalleryBar}.tsx`.
+- Cards: `components/cards/{ProjectCard,ArticleCard,ServiceCard,ProjectSummaryCard}.tsx`.
+- Page-sections (eyebrow fallbacks + CTA strings): `page-sections/{services-teaser,contact,skills,about,lab-teaser,projects,blog,hero,
+  services}.tsx`.
+- Chrome: `components/ThemeSwitch.tsx`.
+
+**Docs** — this file, [`internationalization.md`](internationalization.md) (Phase 5 checkboxes, status, scope note).
+
+### Suggested commit message
+```
+feat(i18n): Phase 5 — static UI-string dictionary + hreflang/canonical + locale sitemaps
+
+Add i18n/dictionaries/{en,es}.ts + getDictionary() (§2.3) and migrate every
+reachable hardcoded UI-chrome string onto it: pagination, form loading/
+validation/error/reCAPTCHA-notice copy, blog & lab search/filter/empty
+states, eyebrow fallbacks, CTA link labels, the 404 page (new — none
+existed), and ThemeSwitch's aria-label. Fix a hardcoded 'en-US' in
+ArticleCard's date formatting and replace formatDateTime's manual
+MM/DD/YYYY with Intl.DateTimeFormat(locale). Deliberately leave the 4 lab
+items' bespoke narrative copy untranslated (content-authoring work, not UI
+chrome) but still give them correct hreflang alternates.
+
+Add lib/seo.ts buildAlternates() and wire alternates/canonical + openGraph
+locale into every CMS route's generateMeta() plus the static listing pages
+(meta.title/description were already locale-correct via Phase 3B's $locale
+GraphQL threading — this only adds the alternates on top). Set metadataBase
+once at the root layout. Rewrite all 3 dynamic sitemaps around a new
+localizeSitemapEntries() helper that expands each doc into one <url> per
+locale with xhtml:link alternateRefs; drop two pre-existing dead links
+(/search, /posts) found while touching pages-sitemap.xml rather than
+multiplying them across locales.
+```
+
+---
+
+## What's done — Lab-item content localization (Phase 5 follow-up)
+
+Phase 5 deliberately left the **4 lab items' bespoke narrative content** untranslated (flagged as content-authoring work, not UI
+chrome — it only gave them correct hreflang alternates). This follow-up closes that gap: cards, hero copy, interactive control
+chrome, and the full below-the-hero prose now render in the active locale on `/en` **and** `/es`.
+
+### Approach (three decisions, all confirmed with the author up front)
+- **A separate lab content module, not the main dictionary** — the long-form prose would have ballooned
+  `i18n/dictionaries/{en,es}.ts` and mixed chrome with content, so it lives on its own under `lab/content/`.
+- **Everything, including the in-canvas control chrome** — not just the readable prose.
+- **A typed rich-segment model** for the marked-up body paragraphs — inline `<code>`/`<strong>`/links are preserved as data, not
+  hardcoded JSX, so a translator moves whole paragraphs without touching markup.
+
+### The type (the "type for lab items")
+[`lab/types.ts`](../apps/frontend/src/app/(website)/[locale]/lab/types.ts) — `GalleryItem` (the pre-existing structural type) is
+unchanged; **new**: `LabItemContent` (meta + card + hero + optional `controls` + `sections` + svg-circles-only `variants`), the
+rich-text model (`RichSegment` = `string | {code} | {strong} | {link,href,external?}` → `RichText` → `ContentBlock` → `LabSection`),
+and a `LabSlug` union (`'svg-circles' | 'gray-scott' | 'reaction-sphere' | 'image-to-svg'`). Both content maps are typed
+`Record<LabSlug, LabItemContent>`, so a missing item **or field** is a compile error, not a silent English fallback — same guardrail
+as `es.ts satisfies typeof en` for the main dictionary.
+
+### The content + helper
+- [`lab/content/en.ts`](../apps/frontend/src/app/(website)/[locale]/lab/content/en.ts) — the existing English copy extracted verbatim.
+- [`lab/content/es.ts`](../apps/frontend/src/app/(website)/[locale]/lab/content/es.ts) — **real Spanish translation**; formulas/code
+  segments and proper nouns (Gray-Scott, WebGL, Three.js, SVG) left intact.
+- [`lab/content/index.ts`](../apps/frontend/src/app/(website)/[locale]/lab/content/index.ts) — `getLabContent(locale, slug)`, a plain
+  sync lookup (same pattern/rationale as `getDictionary` — callable from the `'use client'` heroes that read `locale` via `useParams()`).
+
+### The renderer
+[`components/lab/lab-content.tsx`](../apps/frontend/src/components/lab/lab-content.tsx) — `<RichText>` (renders inline segments;
+internal links run through `localizedHref`, `external` links get `target=_blank rel=noopener`) and `<LabSections>` (reproduces the
+exact prose layout the item pages used to hardcode). `<RichText>` is exported because svg-circles' "Variants" intro renders it
+directly in the page (the live SVG tiles stay in the page; only their surrounding text is localized).
+
+### Wiring
+- **4 item pages** — locale-aware `generateMetadata` (title/description now from `content.meta`, replacing the old English-only
+  literals + their "see gray-scott note" comments) and the narrative replaced by `<LabSections>`. gray-scott / image-to-svg / svg-circles
+  became `async` with `params` to get `locale`.
+- **4 heroes** — title/lede/hint/badges from `content.hero`; slider / preset / motion micro-labels from `content.controls`; shared
+  chrome (Controls, Presets, Reset field, Upload/Download, drop + error text, Back to gallery) from the dictionary.
+- **Gallery surfaces** — new `getLocalizedGalleryItems(locale)` in [`lab/data.ts`](../apps/frontend/src/app/(website)/[locale]/lab/data.ts)
+  overlays localized card title/description/tags onto the structural registry (which stays the source of truth for
+  id/slug/image/href/year/priority). Category labels (`Art/Experiment/Project`) + shared control chrome were added to
+  `dictionary.lab.categories` / `dictionary.lab.controls` in [`en.ts`](../apps/frontend/src/i18n/dictionaries/en.ts) /
+  [`es.ts`](../apps/frontend/src/i18n/dictionaries/es.ts). This reaches **both** the `/lab` grid (`GalleryCard`/`GalleryBar` gained
+  locale-aware category labels) **and** the home-page `lab-teaser` section.
+
+### Scope carve-out (flagged, not silently dropped)
+The **image-to-svg strategy registry** (`(items)/image-to-svg/strategies/*.ts` — strategy names like "Hatching", control labels like
+"Spacing"/"Levels", select options) is **not** localized. Those labels live inside the framework-free strategy modules ("pure function
+from tone buffer to SVG"), and threading a locale through them is a distinct refactor of that subsystem. Documented in a header comment
+in `content/en.ts`. Everything else on that page (Controls, Strategy heading, Upload/Download, drop + error text, hero) **is** localized.
+
+### Follow-up for whoever adds a new lab item
+[`CREATING_GALLERY_ITEMS.md`](../apps/frontend/src/app/(website)/[locale]/lab/CREATING_GALLERY_ITEMS.md) predates this and still shows
+the old hardcoded-copy pattern — a new item now also needs a `LabSlug` entry + an `en`/`es` `LabItemContent` block (that doc wasn't
+updated in this pass).
+
+### Verification
+Per the working convention / `defer-checks-to-end` memory, **no build/type-check/lint/dev-server run was performed.** The
+`Record<LabSlug, LabItemContent>` typing on `es.ts` makes `pnpm exec tsc --noEmit` (in `apps/frontend`) the meaningful checkpoint —
+any en/es structural drift surfaces there. Then a manual spot-check on `/es/lab` (cards + category chips + filter search) and each
+`/es/lab/:item` (hero, control panel labels, narrative prose, the Karl Sims / cross-links).
+
+### Files touched — Lab-item content localization (this session)
+**New**
+- [`lab/content/{en,es,index}.ts`](../apps/frontend/src/app/(website)/[locale]/lab/content/),
+  [`components/lab/lab-content.tsx`](../apps/frontend/src/components/lab/lab-content.tsx).
+
+**Types / data / dictionary**
+- [`lab/types.ts`](../apps/frontend/src/app/(website)/[locale]/lab/types.ts) (content types + `LabSlug`),
+  [`lab/data.ts`](../apps/frontend/src/app/(website)/[locale]/lab/data.ts) (`getLocalizedGalleryItems`),
+  `i18n/dictionaries/{en,es}.ts` (`lab.categories`, `lab.controls`).
+
+**Pages / heroes**
+- `lab/page.tsx`, `lab/(items)/{svg-circles,gray-scott,reaction-sphere,image-to-svg}/page.tsx` + their hero components.
+
+**Gallery**
+- `components/gallery/{Gallery,GalleryCard,GalleryBar}.tsx`, `components/page-sections/lab-teaser.tsx`.
+
+### Suggested commit message
+```
+feat(i18n): localize the lab gallery items (content + type model)
+
+Add a typed, locale-keyed content module for the four lab items so their
+cards, heroes, interactive control chrome, and narrative prose all render in
+the active locale — the piece Phase 5 deferred as content-authoring work.
+
+- types: LabItemContent + a rich-segment model (RichSegment/RichText/
+  ContentBlock/LabSection) that preserves inline code/strong/links, plus a
+  LabSlug union so a missing translation is a compile error.
+- content/{en,es}.ts: English extracted verbatim; full Spanish translation
+  (formulas/code and proper nouns left intact). getLabContent(locale, slug)
+  mirrors the getDictionary pattern.
+- components/lab/lab-content.tsx: RichText + LabSections renderers reproducing
+  the prose markup; internal links run through localizedHref.
+- rewire all 4 item pages (locale-aware metadata + LabSections) and all 4
+  heroes (title/lede/hint/badges + control labels).
+- gallery: getLocalizedGalleryItems(locale) overlays card copy from content;
+  category labels + shared control chrome move into dictionary.lab.
+  categories/.controls, reaching the /lab grid and the home-page lab-teaser.
+
+Scope carve-out: the image-to-svg strategy registry (strategies/*.ts labels)
+is intentionally not localized — a separate refactor of that framework-free
+subsystem — noted in content/en.ts.
 ```
 
 ---

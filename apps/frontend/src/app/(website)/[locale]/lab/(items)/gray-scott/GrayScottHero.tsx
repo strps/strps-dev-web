@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { VerticalSlider } from "@/components/ui/vertical-slider";
 import { GrayScottCanvas } from "./GrayScottCanvas";
 import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
+import { getDictionary } from "@/i18n/getDictionary";
+import { getLabContent } from "../../content";
 
 interface Preset {
     name: string;
@@ -28,6 +30,8 @@ const PRESETS: Preset[] = [
 export function GrayScottHero() {
     const params = useParams<{ locale: string }>();
     const locale = isValidLocale(params.locale) ? params.locale : defaultLocale;
+    const chrome = getDictionary(locale).lab.controls;
+    const { hero, controls } = getLabContent(locale, "gray-scott");
     const [feed, setFeed] = useState(PRESETS[0].feed);
     const [kill, setKill] = useState(PRESETS[0].kill);
     const [dA, setDA] = useState(1.0);
@@ -61,11 +65,11 @@ export function GrayScottHero() {
                     <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-[280px] md:w-[320px]">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                                Controls
+                                {chrome.heading}
                             </span>
                             <button
                                 type="button"
-                                aria-label="Close controls"
+                                aria-label={chrome.close}
                                 onClick={() => setControlsOpen(false)}
                                 className="text-muted-foreground hover:text-foreground"
                             >
@@ -75,7 +79,7 @@ export function GrayScottHero() {
 
                         <div className="flex justify-between gap-2 mb-4">
                             <VerticalSlider
-                                label="Feed"
+                                label={controls?.sliders?.feed ?? "Feed"}
                                 value={feed}
                                 onChange={setFeed}
                                 min={0.01}
@@ -84,7 +88,7 @@ export function GrayScottHero() {
                                 formatValue={(v) => v.toFixed(4)}
                             />
                             <VerticalSlider
-                                label="Kill"
+                                label={controls?.sliders?.kill ?? "Kill"}
                                 value={kill}
                                 onChange={setKill}
                                 min={0.045}
@@ -93,7 +97,7 @@ export function GrayScottHero() {
                                 formatValue={(v) => v.toFixed(4)}
                             />
                             <VerticalSlider
-                                label="Diff A"
+                                label={controls?.sliders?.diffA ?? "Diff A"}
                                 value={dA}
                                 onChange={setDA}
                                 min={0.6}
@@ -102,7 +106,7 @@ export function GrayScottHero() {
                                 formatValue={(v) => v.toFixed(2)}
                             />
                             <VerticalSlider
-                                label="Diff B"
+                                label={controls?.sliders?.diffB ?? "Diff B"}
                                 value={dB}
                                 onChange={setDB}
                                 min={0.3}
@@ -114,7 +118,7 @@ export function GrayScottHero() {
 
                         <div className="space-y-1.5">
                             <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                Presets
+                                {chrome.presets}
                             </span>
                             <div className="flex flex-wrap gap-1">
                                 {PRESETS.map((p) => (
@@ -127,7 +131,7 @@ export function GrayScottHero() {
                                             : "bg-muted text-muted-foreground hover:text-foreground"
                                             }`}
                                     >
-                                        {p.name}
+                                        {controls?.presets?.[p.name] ?? p.name}
                                     </button>
                                 ))}
                             </div>
@@ -137,7 +141,7 @@ export function GrayScottHero() {
                                 className="w-full mt-2 gap-1.5"
                                 onClick={() => setSeedKey((k) => k + 1)}
                             >
-                                <RotateCcw className="h-3.5 w-3.5" /> Reset field
+                                <RotateCcw className="h-3.5 w-3.5" /> {chrome.reset}
                             </Button>
                         </div>
                     </div>
@@ -149,7 +153,7 @@ export function GrayScottHero() {
                         className="backdrop-blur-md bg-background/60"
                     >
                         <Settings2 className="h-4 w-4" />
-                        Controls
+                        {chrome.heading}
                     </Button>
                 )}
             </div>
@@ -163,25 +167,23 @@ export function GrayScottHero() {
                         className="-ml-3 backdrop-blur-sm bg-background/40"
                     >
                         <Link href={localizedHref(locale, "/lab")} className="gap-2">
-                            <ArrowLeft className="h-4 w-4" /> Back to gallery
+                            <ArrowLeft className="h-4 w-4" /> {chrome.backToGallery}
                         </Link>
                     </Button>
                     <div className="flex flex-wrap gap-2">
-                        <Badge>Experiment</Badge>
+                        <Badge>{hero.categoryBadge}</Badge>
                         <Badge variant="secondary">2025</Badge>
-                        <Badge variant="outline">WebGL</Badge>
+                        <Badge variant="outline">{hero.techBadge}</Badge>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-                        Gray-Scott <span className="text-primary">Reaction-Diffusion</span>
+                        {hero.titleLead} <span className="text-primary">{hero.titleHighlight}</span>
                     </h1>
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-prose">
-                        Two virtual chemicals feed, react, and diffuse across a field running entirely
-                        on the GPU. Nudge the feed and kill rates to slide between corals, mazes, and
-                        dividing cells.
+                        {hero.lede}
                     </p>
                     <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
                         <MousePointer2 className="h-4 w-4" />
-                        Click and drag across the field to paint chemical into it.
+                        {hero.hint}
                     </div>
                 </div>
             </div>
