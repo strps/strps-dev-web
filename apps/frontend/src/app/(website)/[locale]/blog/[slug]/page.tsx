@@ -33,7 +33,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   const post = await getPostBySlug({ slug, locale })
 
-  if (!post) return <PayloadRedirects url={url} />
+  if (!post) return <PayloadRedirects url={url} locale={locale} />
 
   return (
     <>
@@ -52,6 +52,7 @@ export default async function Post({ params: paramsPromise }: Args) {
                 <RelatedPosts
                   className="mt-12 max-w-208 lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
                   docs={post.relatedPosts.filter((p): p is Post => typeof p === 'object')}
+                  locale={locale}
                 />
               </div>
             )}

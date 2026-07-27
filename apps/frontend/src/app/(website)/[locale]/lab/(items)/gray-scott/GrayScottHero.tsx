@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ArrowLeft, MousePointer2, RotateCcw, Settings2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VerticalSlider } from "@/components/ui/vertical-slider";
 import { GrayScottCanvas } from "./GrayScottCanvas";
+import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
 
 interface Preset {
     name: string;
@@ -24,6 +26,8 @@ const PRESETS: Preset[] = [
 ];
 
 export function GrayScottHero() {
+    const params = useParams<{ locale: string }>();
+    const locale = isValidLocale(params.locale) ? params.locale : defaultLocale;
     const [feed, setFeed] = useState(PRESETS[0].feed);
     const [kill, setKill] = useState(PRESETS[0].kill);
     const [dA, setDA] = useState(1.0);
@@ -158,7 +162,7 @@ export function GrayScottHero() {
                         size="sm"
                         className="-ml-3 backdrop-blur-sm bg-background/40"
                     >
-                        <Link href="/lab" className="gap-2">
+                        <Link href={localizedHref(locale, "/lab")} className="gap-2">
                             <ArrowLeft className="h-4 w-4" /> Back to gallery
                         </Link>
                     </Button>

@@ -9,15 +9,17 @@ import { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 import { ImageCard } from './image-card'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
+import { localizedHref, type Locale } from '@/i18n/config'
 
 export type RelatedPostsProps = {
   className?: string
   docs?: Post[]
   introContent?: SerializedEditorState
+  locale: Locale
 }
 
 export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
-  const { className, docs, introContent } = props
+  const { className, docs, introContent, locale } = props
 
   return (
     <div className={clsx('lg:container', className)}>
@@ -35,7 +37,7 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
               description={doc.meta?.description}
               action={
                 <Link
-                  href={`/posts/${doc.slug}`}
+                  href={localizedHref(locale, `/blog/${doc.slug}`)}
                   className={buttonVariants({ variant: 'default' })}
                 >
                   Read More...

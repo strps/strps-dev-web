@@ -3,9 +3,10 @@
 > **For:** whoever picks this up next (another chat, another model, future me).
 > **Full spec:** [internationalization.md](internationalization.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) and phase numbers refer to it.
-> **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–3 are done** (Phase 1 = all schema fields marked
+> **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–4 are done** (Phase 1 = all schema fields marked
 > `localized`; Phase 2 = committed migration + locale-aware bilingual seed; Phase 3 = `[locale]` routing
-> scaffold **and** locale threaded through every GraphQL data fetch + locale-namespaced caches). Phases 4–6
+> scaffold **and** locale threaded through every GraphQL data fetch + locale-namespaced caches; Phase 4 =
+> language switcher in the header + every internal link across the app locale-prefixed). Phases 5–6
 > not started next.
 > **Goal:** English (`en`) + Spanish (`es`) across the Payload CMS schema and the public Next.js site.
 
@@ -19,7 +20,7 @@
 | **1** | Mark localized fields in schema | ✅ **Done** |
 | **2** | DB schema + migration + locale-aware seed | ✅ **Done** |
 | **3** | Frontend routing & locale plumbing | ✅ **Done** — Part A (routing scaffold) + Part B (locale data plumbing) |
-| 4 | Language switcher & UI chrome | ⬜ Not started |
+| **4** | Language switcher & UI chrome | ✅ **Done** |
 | 5 | Static UI strings + SEO | ⬜ Not started |
 | 6 | Content entry, QA & launch | ⬜ Not started |
 
@@ -394,6 +395,140 @@ Part A's git mv of routes under [locale]/ (blog/projects/lab data + gallery
 + exp canvases), which would otherwise have failed to resolve at build time.
 No frontend link-audit yet (hardcoded internal hrefs in cards/redirects) —
 that's Phase 4.
+```
+
+---
+
+## What's done — Phase 4 (Language switcher & UI chrome)
+
+### Language switcher
+New [`LanguageSwitcher.tsx`](../apps/frontend/src/components/LanguageSwitcher.tsx) — a `'use client'` component
+modeled on the existing `ThemeSwitch`: reads `usePathname()` + `useSearchParams()`, swaps the first path
+segment for the target locale, preserves the query string, and sets the `NEXT_LOCALE` cookie on click (same
+shape the middleware writes: `path=/`, 1-year `max-age`, `samesite=lax`) so a later visit to an unprefixed
+path or `/` negotiates the just-picked locale instead of re-deriving from `Accept-Language`. Each option
+renders as an `en`/`es` link with `hrefLang` and `aria-current="true"` on the active one. Wired into
+[`HeaderNav.tsx`](../apps/frontend/src/components/HeaderNav.tsx) next to `ThemeSwitch` in both the desktop
+and mobile rows, each instance wrapped in its own `<Suspense>` — `useSearchParams()` requires a Suspense
+boundary for routes that are statically rendered, and this scopes the requirement to just the switcher
+rather than forcing the whole header (and therefore every page under the root layout) into a Suspense
+fallback.
+
+### The centralizing helper (re-added, per Part A's note)
+`localizedHref(locale, href)` in [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts) — the helper Part A
+deliberately left out ("re-add it in Part B/Phase 4 when a consumer exists"). One line: prefixes a relative
+(`/...`) href with `/${locale}`; anything else (external URLs, `mailto:`, `tel:`, already-external content)
+passes through untouched. `resolveLinkHref()` ([`lib/resolveLinkHref.ts`](../apps/frontend/src/lib/resolveLinkHref.ts))
+and `CMSLink` ([`components/cms-link.tsx`](../apps/frontend/src/components/cms-link.tsx)) both gained an
+**optional** `locale` param/prop and apply this helper — optional so the one call site that's always
+external (`ServiceCard`'s `proofUrl`, a plain outbound link) didn't need touching, while every internal-link
+call site now passes its route's `locale` through.
+
+### The link audit — every internal href now carries the current locale
+Traced `locale` from each route down to the actual `<Link>`/`redirect()`/`router.push()` call, rather than
+resolving hrefs once at the top and hoping they survive prop-drilling unchanged:
+
+- **CMSLink consumers** (shared `link()` field CTAs): `hero.tsx` (both `StatementHero` and `PortraitHero`,
+  each with two link-rendering branches), `services-hero.tsx`, `contact.tsx`.
+- **`resolveLinkHref` consumers** (section "view more" arrows): `about.tsx`, `services-teaser.tsx` (section
+  action + per-item links), `projects.tsx` (section action + both the `hairline` and default variant's
+  per-project case-study hrefs — these were raw `` `/projects/${slug}` `` template strings, not
+  `resolveLinkHref` calls, so fixed via `localizedHref` directly), `lab-teaser.tsx` (section action + the
+  static `galleryItems` hrefs it slices and passes to `LabTeaserCard`).
+- **Blog chain:** `ArticleCard` now takes `locale` and builds its own `/blog/:slug` href;
+  `page-sections/blog.tsx` passes it through (plus prefixes the CMS `blogUrl` "all articles" link);
+  `blog/page.tsx` → `BlogList` (client component, two `/blog/:slug` links); `blog/[slug]/page.tsx` →
+  `RelatedPosts`.
+- **Projects listing:** `projects/page.tsx`'s own `ProjectsList` (separate from the `projects` page-section
+  above — this is the standalone `/projects` route) now prefixes `caseStudyUrl`.
+- **CMS redirects:** [`payload-redirects.tsx`](../apps/frontend/src/components/payload-redirects.tsx) takes
+  `locale` and prefixes whichever redirect target it computes (external `to.url`, resolved-reference, or
+  resolved-value branch) before calling Next's `redirect()`. Updated its three call sites: the generic
+  `[slug]/page.tsx`, `blog/[slug]/page.tsx`, `projects/[slug]/page.tsx` (which renders it twice — the
+  not-found branch and the "redirects for valid pages too" branch).
+- **Lab gallery:** `lab/page.tsx` (the `/lab` listing route) now takes `params.locale` and maps
+  `getGalleryItems()`'s hrefs through `localizedHref` before handing them to `<Gallery>`. The four lab-item
+  hero components (`SvgCirclesHero`, `GrayScottHero`, `IcoReactionDiffusionHero`, `ImageToSvgHero`) each have
+  a hardcoded "back to /lab" link but are client components one level below the route's `params` — read the
+  locale via `useParams<{ locale: string }>()` instead of prop-threading. `reaction-sphere/page.tsx` (a
+  server component) has its own hardcoded cross-link to `/lab/gray-scott`, fixed via `params.locale` directly.
+- **Form confirmation redirect:** `PayloadForm.tsx`'s post-submit `confirmationType: 'redirect'` branch
+  (`router.push(redirect.url)`) now reads locale via `useParams()` (same reasoning as the lab heroes — it's
+  a client component with no clean prop path from the route) and prefixes the target before pushing.
+
+### Bonus fixes found during the audit
+- **`RelatedPosts` linked to a route that doesn't exist.** It built `` `/posts/${slug}` ``, but posts are
+  served at `/blog/:slug` (there is no `/posts` route in the frontend app — that path is only used
+  internally as the CMS collection-slug key when matching against the redirects plugin, e.g. in
+  `blog/[slug]/page.tsx`'s own `url` variable). Fixed to `/blog/${slug}` alongside the locale prefix; this
+  was broken before i18n touched it, not something Phase 3/4 introduced.
+- **`HeaderNav`'s brand logo linked to the bare root** (`href="/"`). On a prefixed site every click on the
+  logo would hit the middleware, get 302'd to `/${locale}`, and only then render — a needless redirect hop.
+  Now points straight at `/${locale}`.
+
+### Verification
+Per the working convention / `defer-checks-to-end` memory, **no build/type-check/lint/dev-server run was
+performed.** Recommended checkpoint before Phase 5: `pnpm dev` in `apps/frontend`, click the language
+switcher from several pages (home, a CMS page, a blog post, a project, `/lab`, a lab item) and confirm the
+URL swaps `/en/...` ↔ `/es/...` in place (same slug, same query string) rather than bouncing to the locale's
+home page; also spot-check that internal links found during the audit (nav, footer, hero/contact CTAs,
+project/blog cards, the lab back-link) all resolve under the current locale rather than dropping the prefix.
+
+### Files touched — Phase 4 (this session)
+**New**
+- [`components/LanguageSwitcher.tsx`](../apps/frontend/src/components/LanguageSwitcher.tsx)
+
+**Core helpers**
+- [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts) — `localizedHref()`, `localeLabels`.
+- [`lib/resolveLinkHref.ts`](../apps/frontend/src/lib/resolveLinkHref.ts) — optional `locale` param.
+- [`components/cms-link.tsx`](../apps/frontend/src/components/cms-link.tsx) — optional `locale` prop.
+
+**Header/switcher**
+- [`components/HeaderNav.tsx`](../apps/frontend/src/components/HeaderNav.tsx),
+  [`[locale]/layout.tsx`](../apps/frontend/src/app/(website)/[locale]/layout.tsx).
+
+**Page-sections (CMSLink/resolveLinkHref/raw-href threading)**
+- `page-sections/{hero,services-hero,contact,about,services-teaser,projects,lab-teaser,blog}.tsx`.
+
+**Blog chain**
+- `components/cards/ArticleCard.tsx`, `components/blog/blog-list.tsx`, `components/blog/related-posts.tsx`,
+  `[locale]/blog/page.tsx`, `[locale]/blog/[slug]/page.tsx`.
+
+**Projects listing**
+- `[locale]/projects/page.tsx`.
+
+**Redirects**
+- `components/payload-redirects.tsx`, `[locale]/[slug]/page.tsx`, `[locale]/blog/[slug]/page.tsx`,
+  `[locale]/projects/[slug]/page.tsx`.
+
+**Lab gallery**
+- `[locale]/lab/page.tsx`,
+  `[locale]/lab/(items)/{svg-circles/SvgCirclesHero,gray-scott/GrayScottHero,reaction-sphere/IcoReactionDiffusionHero,image-to-svg/ImageToSvgHero}.tsx`,
+  `[locale]/lab/(items)/reaction-sphere/page.tsx`.
+
+**Form**
+- `components/form/PayloadForm.tsx`.
+
+**Docs** — [`internationalization.md`](internationalization.md) (Phase 4 checkboxes, status, §4 redirects
+risk resolved), this file.
+
+### Suggested commit message
+```
+feat(i18n): Phase 4 — language switcher + full internal-link locale audit
+
+Add LanguageSwitcher (header, desktop + mobile) that swaps the locale
+segment on the current path while preserving slug and query string, and
+persists the NEXT_LOCALE cookie the middleware reads. Re-add the
+localizedHref(locale, href) helper Part A deferred; thread an optional
+locale through resolveLinkHref()/CMSLink and every consumer (hero,
+services-hero, contact, about, services-teaser, projects, lab-teaser,
+the blog chain, the projects listing, CMS redirects, the lab gallery
+including its four client-side hero back-links, and the form-builder
+post-submit redirect) so no internal href drops the locale prefix.
+Bonus fixes found while auditing: RelatedPosts linked to a nonexistent
+/posts/:slug route (posts live at /blog/:slug); HeaderNav's brand logo
+linked to the bare root instead of /{locale}, costing a needless
+middleware redirect on every click.
 ```
 
 ---

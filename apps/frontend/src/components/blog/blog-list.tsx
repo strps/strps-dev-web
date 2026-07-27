@@ -21,14 +21,16 @@ import {
     CardTitle
 } from "@/components/ui/card";
 import { Post } from "@strps-website/types"
+import { localizedHref, type Locale } from "@/i18n/config"
 
 interface BlogListProps {
     posts: Post[];
+    locale: Locale;
 }
 
 const ITEMS_PER_PAGE = 6;
 
-export function BlogList({ posts }: BlogListProps) {
+export function BlogList({ posts, locale }: BlogListProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTags, setSelectedTags] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -160,7 +162,7 @@ export function BlogList({ posts }: BlogListProps) {
                                     })}
                                 </div>
                                 <CardTitle className="leading-tight text-xl">
-                                    <Link href={`/blog/${post.slug}`} className="group-hover:text-primary transition-colors">
+                                    <Link href={localizedHref(locale, `/blog/${post.slug}`)} className="group-hover:text-primary transition-colors">
                                         {post.title}
                                     </Link>
                                 </CardTitle>
@@ -181,7 +183,7 @@ export function BlogList({ posts }: BlogListProps) {
 
                             <CardFooter className="mt-auto pt-0">
                                 <Button variant="ghost" className="p-0 h-auto hover:bg-transparent hover:text-primary" asChild>
-                                    <Link href={`/blog/${post.slug}`} className="flex items-center gap-1">
+                                    <Link href={localizedHref(locale, `/blog/${post.slug}`)} className="flex items-center gap-1">
                                         Read Article <ArrowRight className="h-4 w-4" />
                                     </Link>
                                 </Button>

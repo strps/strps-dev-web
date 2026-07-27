@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Eyebrow } from '@/components/primitives/Eyebrow'
 import { cn } from '@/lib/utils'
+import { localizedHref, type Locale } from '@/i18n/config'
 
 export interface ArticleCardProps {
     title: string
@@ -13,6 +14,7 @@ export interface ArticleCardProps {
     slug?: string | null
     authors?: { name?: string | null }[]
     className?: string
+    locale: Locale
 }
 
 export function ArticleCard({
@@ -24,8 +26,9 @@ export function ArticleCard({
     tags = [],
     slug,
     className,
+    locale,
 }: ArticleCardProps) {
-    const articleUrl = slug ? `/blog/${slug}` : undefined
+    const articleUrl = slug ? localizedHref(locale, `/blog/${slug}`) : undefined
     const formattedDate = publishedAt
         ? new Date(publishedAt).toLocaleDateString('en-US', {
             year: 'numeric',

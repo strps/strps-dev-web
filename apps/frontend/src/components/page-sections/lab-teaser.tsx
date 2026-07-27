@@ -6,9 +6,11 @@ import { LabTeaserCard } from '@/components/cards/LabTeaserCard'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
 import { getGalleryItems } from '@/app/(website)/[locale]/lab/data'
 import { GALLERY_CATEGORIES } from '@/app/(website)/[locale]/lab/types'
+import { localizedHref, type Locale } from '@/i18n/config'
 
 type LabTeaserProps = Omit<PageLabTeaserBlock, 'link'> & {
     labTeaserLink?: PageLabTeaserBlock['link']
+    locale: Locale
 }
 
 const LabTeaserSection: React.FC<LabTeaserProps> = ({
@@ -18,8 +20,9 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
     labTeaserLink: link,
     limit,
     section,
+    locale,
 }) => {
-    const actionHref = resolveLinkHref(link)
+    const actionHref = resolveLinkHref(link, locale)
     const items = getGalleryItems().slice(0, limit ?? 3)
 
     return (
@@ -46,7 +49,7 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
                 {items.map((item) => (
                     <LabTeaserCard
                         key={item.id}
-                        href={item.href}
+                        href={localizedHref(locale, item.href)}
                         tag={GALLERY_CATEGORIES.find((c) => c.value === item.category)?.label ?? item.category}
                         title={item.title}
                         note={item.description}

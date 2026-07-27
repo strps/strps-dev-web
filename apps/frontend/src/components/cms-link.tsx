@@ -5,12 +5,15 @@ import Link from 'next/link'
 import React from 'react'
 
 import type { Page, Post } from '@strps-website/types'
+import type { Locale } from '@/i18n/config'
 
 export type CMSLinkType = {
   appearance?: 'inline' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost' //TODO: Add size and variants types form button variants directly
   children?: React.ReactNode
   className?: string
   label?: string | null
+  /** Locale to prefix internal (reference/relative) hrefs with; omit for links that are always external (e.g. proofUrl). */
+  locale?: Locale
   newTab?: boolean | null
   reference?: {
     relationTo: 'pages' | 'posts' | 'projects'
@@ -28,13 +31,14 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     children,
     className,
     label,
+    locale,
     newTab,
     reference,
     size: sizeFromProps,
     url,
   } = props
 
-  const href = resolveLinkHref({ type, url, reference })
+  const href = resolveLinkHref({ type, url, reference }, locale)
 
   if (!href) return null
 

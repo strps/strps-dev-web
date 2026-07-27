@@ -40,7 +40,7 @@ export default async function PageRoute({ params: paramsPromise }: Args) {
     const page = await getPageBySlug(slug, locale)
 
     if (!page) {
-        return <PayloadRedirects url={url} />
+        return <PayloadRedirects url={url} locale={locale} />
     }
 
     return (

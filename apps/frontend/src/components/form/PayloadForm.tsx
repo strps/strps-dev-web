@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useCallback, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useForm, FormProvider, useFormContext, FieldValues } from 'react-hook-form'
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import type { Form as FormType } from '@strps-website/types'
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { fields } from '@/components/form/fields'
 import { RECAPTCHA_ACTION, RECAPTCHA_SITE_KEY, isRecaptchaConfigured } from '@/lib/recaptcha'
 import { cn } from '@/lib/utils'
+import { defaultLocale, isValidLocale, localizedHref } from '@/i18n/config'
 
 export interface PayloadFormProps {
     form: FormType
@@ -157,6 +158,8 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
     const [hasSubmitted, setHasSubmitted] = useState(false)
     const [error, setError] = useState<{ message: string; status?: string }>()
     const router = useRouter()
+    const routeParams = useParams<{ locale: string }>()
+    const locale = isValidLocale(routeParams.locale) ? routeParams.locale : defaultLocale
 
     // reCAPTCHA is only active when the editor enabled it AND the site key exists.
     // Without this the legend below would claim protection that isn't running.
@@ -221,7 +224,7 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
 
                     if (confirmationType === 'redirect' && redirect) {
                         const { url } = redirect
-                        if (url) router.push(url)
+                        if (url) router.push(localizedHref(locale, url))
                     }
                 } catch (err) {
                     console.warn(err)
@@ -232,7 +235,7 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
 
             void submitForm()
         },
-        [confirmationType, formID, redirect, router],
+        [confirmationType, formID, redirect, router, locale],
     )
 
     const formInner = (

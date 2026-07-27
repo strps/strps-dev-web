@@ -6,16 +6,18 @@ import { LinkArrow } from '@/components/primitives/LinkArrow';
 import { resolveLinkHref } from '@/lib/resolveLinkHref';
 import type { PageAboutBlock } from '@strps-website/types';
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical';
+import type { Locale } from '@/i18n/config';
 
 type AboutProps = Omit<PageAboutBlock, 'link'> & {
     aboutLink?: PageAboutBlock['link'];
+    locale: Locale;
 };
 
 const proseClassName =
     '[&_p]:text-[15px] [&_p]:leading-[1.7] [&_p]:text-muted-foreground [&_strong]:font-medium [&_strong]:text-foreground [&_b]:font-medium [&_b]:text-foreground';
 
-const AboutSection: React.FC<AboutProps> = ({ eyebrow, title, layout, summary, body, aboutLink: link, section }) => {
-    const actionHref = resolveLinkHref(link);
+const AboutSection: React.FC<AboutProps> = ({ eyebrow, title, layout, summary, body, aboutLink: link, section, locale }) => {
+    const actionHref = resolveLinkHref(link, locale);
     const isTwoColumn = layout === 'twoColumn';
 
     return (

@@ -59,6 +59,7 @@ export default async function RootLayout({
             theme={theme}
             // background={background}
             overlay={overlay}
+            locale={locale}
             brand={
               <span className="flex items-center gap-2 font-bold text-xl tracking-tighter">
                 <Logo className='w-48 fill-foreground' />

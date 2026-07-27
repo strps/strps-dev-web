@@ -44,7 +44,7 @@ export default async function BlogPage({
 
       {/* Blog List & Filters */}
       <div className="mx-auto w-full max-w-wrap px-6 py-16">
-        <BlogList posts={posts} />
+        <BlogList posts={posts} locale={locale} />
         <Pagination
           page={page}
           totalPages={pagination.totalPages}

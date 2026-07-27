@@ -28,7 +28,7 @@ export default async function ProjectPage({ params: paramsPromise }: Args) {
   const project = await getProjectBySlug({ slug, locale })
   const headerOverrides = project?.appearance?.headerOverrides
 
-  if (!project) return <PayloadRedirects url={url} />
+  if (!project) return <PayloadRedirects url={url} locale={locale} />
 
   console.log(project.heroImage)
 
@@ -36,7 +36,7 @@ export default async function ProjectPage({ params: paramsPromise }: Args) {
     <>
       <article className="pb-16">
         {/* Allows redirects for valid pages too */}
-        <PayloadRedirects disableNotFound url={url} />
+        <PayloadRedirects disableNotFound url={url} locale={locale} />
 
         {draft && <LivePreviewListener />}
 

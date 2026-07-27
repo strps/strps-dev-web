@@ -4,9 +4,11 @@ import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { NumberedRow } from '@/components/primitives/NumberedRow'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
+import type { Locale } from '@/i18n/config'
 
 type ServicesTeaserProps = Omit<PageServicesTeaserBlock, 'link'> & {
     teaserLink?: PageServicesTeaserBlock['link']
+    locale: Locale
 }
 
 const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
@@ -15,8 +17,9 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
     teaserLink: link,
     items,
     section,
+    locale,
 }) => {
-    const actionHref = resolveLinkHref(link)
+    const actionHref = resolveLinkHref(link, locale)
 
     return (
         <Section
@@ -38,7 +41,7 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
 
             <div>
                 {items?.map((item, i) => {
-                    const itemHref = resolveLinkHref(item.link)
+                    const itemHref = resolveLinkHref(item.link, locale)
                     return (
                         <NumberedRow
                             key={item.id || i}

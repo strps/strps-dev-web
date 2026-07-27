@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ArrowLeft, Download, ImageUp, Settings2, X } from "lucide-react";
+import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -71,6 +73,8 @@ function makeSampleImage(): Promise<HTMLImageElement> {
 }
 
 export function ImageToSvgHero() {
+    const routeParams = useParams<{ locale: string }>();
+    const locale = isValidLocale(routeParams.locale) ? routeParams.locale : defaultLocale;
     const [strategyId, setStrategyId] = useState(STRATEGIES[0].id);
     const [params, setParams] = useState<Record<string, number>>(() =>
         defaultParams(STRATEGIES[0]),
@@ -326,7 +330,7 @@ export function ImageToSvgHero() {
                         size="sm"
                         className="-ml-3 backdrop-blur-sm bg-background/40"
                     >
-                        <Link href="/lab" className="gap-2">
+                        <Link href={localizedHref(locale, "/lab")} className="gap-2">
                             <ArrowLeft className="h-4 w-4" /> Back to gallery
                         </Link>
                     </Button>

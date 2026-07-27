@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { ArrowLeft, MousePointer2, Settings2, X } from "lucide-react";
 import SVGCircles, { type MotionPattern } from "@/components/section/SVGCircles";
+import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { VerticalSlider } from "@/components/ui/vertical-slider";
@@ -11,6 +13,8 @@ import { VerticalSlider } from "@/components/ui/vertical-slider";
 const MOTION_PATTERNS: MotionPattern[] = ["spring", "ease", "direct"];
 
 export function SvgCirclesHero() {
+    const params = useParams<{ locale: string }>();
+    const locale = isValidLocale(params.locale) ? params.locale : defaultLocale;
     const [numCircles, setNumCircles] = useState(10);
     const [strokeWidth, setStrokeWidth] = useState(6);
     const [focalLength, setFocalLength] = useState(1000);
@@ -139,7 +143,7 @@ export function SvgCirclesHero() {
                         size="sm"
                         className="-ml-3 backdrop-blur-sm bg-background/40"
                     >
-                        <Link href="/lab" className="gap-2">
+                        <Link href={localizedHref(locale, "/lab")} className="gap-2">
                             <ArrowLeft className="h-4 w-4" /> Back to gallery
                         </Link>
                     </Button>

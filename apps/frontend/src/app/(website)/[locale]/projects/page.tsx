@@ -3,7 +3,7 @@ import { Pagination } from '@/components/pagination';
 import { ProjectCard } from '@/components/cards/ProjectCard'
 import Section from '@/components/section';
 import { Media, Project } from '@strps-website/types';
-import type { Locale } from '@/i18n/config';
+import { localizedHref, type Locale } from '@/i18n/config';
 
 export const metadata = {
   title: 'Projects | Cesar Jerez',
@@ -40,7 +40,7 @@ export default async function ProjectsPage({
       </Section>
 
       <div className="mx-auto w-full max-w-wrap px-6 py-16">
-        <ProjectsList projects={projects} />
+        <ProjectsList projects={projects} locale={locale} />
         <Pagination
           page={page}
           totalPages={pagination.totalPages}
@@ -50,7 +50,7 @@ export default async function ProjectsPage({
   );
 }
 
-const ProjectsList = ({ projects }: { projects: Array<Project> }) => {
+const ProjectsList = ({ projects, locale }: { projects: Array<Project>; locale: Locale }) => {
   return (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => {
@@ -63,7 +63,7 @@ const ProjectsList = ({ projects }: { projects: Array<Project> }) => {
             technologies={project.techStack?.filter((t): t is { name: string } => !!t.name)}
             liveUrl={project.links?.liveSite}
             repoUrl={project.links?.github}
-            caseStudyUrl={`/projects/${project.slug}`}
+            caseStudyUrl={localizedHref(locale, `/projects/${project.slug}`)}
           />
         )
       })}

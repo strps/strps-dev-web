@@ -2,10 +2,12 @@ import { Check } from 'lucide-react';
 import Section from '@/components/section';
 import { CMSLink } from '@/components/cms-link';
 import type { PageServicesHeroBlock, Media } from '@strps-website/types';
+import type { Locale } from '@/i18n/config';
 import SVGButton from '../SVGButton';
 
 type ServicesHeroProps = Omit<PageServicesHeroBlock, 'links'> & {
     servicesHeroLinks?: PageServicesHeroBlock['links'];
+    locale: Locale;
 };
 
 const ServicesHeroSection: React.FC<ServicesHeroProps> = ({
@@ -17,6 +19,7 @@ const ServicesHeroSection: React.FC<ServicesHeroProps> = ({
     highlights,
     backgroundImage,
     section,
+    locale,
 }) => {
     const bgImage = typeof backgroundImage === 'object' && backgroundImage ? backgroundImage as Media : null;
 
@@ -81,6 +84,7 @@ const ServicesHeroSection: React.FC<ServicesHeroProps> = ({
                                 {...link}
                                 appearance={link.appearance ?? undefined}
                                 size="lg"
+                                locale={locale}
                             />
                         )
                     })}

@@ -1,6 +1,6 @@
 # Internationalization (i18n) — Action Plan
 
-Status: **Phases 0–3 complete** · Owner: TBD · Last updated: 2026-07-26
+Status: **Phases 0–4 complete** · Owner: TBD · Last updated: 2026-07-26
 
 This document is the implementation plan for adding **English (`en`) + Spanish (`es`)** internationalization across the CMS schema (`apps/payload`) and the public site (`apps/frontend`). It is written to be executed in phases, each independently shippable and verifiable.
 
@@ -198,12 +198,14 @@ Introduce the `[locale]` segment and make locale flow through every data fetch.
 
 ---
 
-### Phase 4 — Language switcher & UI chrome (1 day)
-- [ ] **Language switcher** component in [`HeaderNav.tsx`](../apps/frontend/src/components/HeaderNav.tsx): swaps the locale prefix on the **current** path (preserve slug + query), sets the locale cookie. Model it after the existing `ThemeSwitch`.
-- [ ] Ensure all internal links are locale-aware — centralize with a `localizedHref(locale, href)` helper or a wrapped `<Link>`; audit `cms-link.tsx`, nav, footer, and card components so no link drops the prefix.
-- [ ] Accessible: `hreflang` on switcher options, `aria-current`.
+### Phase 4 — Language switcher & UI chrome (1 day) ✅ **DONE**
+- [x] **Language switcher** — new [`components/LanguageSwitcher.tsx`](../apps/frontend/src/components/LanguageSwitcher.tsx), modeled after `ThemeSwitch`: swaps the locale segment on the **current** `usePathname()` path, preserves `useSearchParams()` query string, persists the `NEXT_LOCALE` cookie on click (`path=/`, 1-year, `samesite=lax` — same shape middleware writes). Wired into [`HeaderNav.tsx`](../apps/frontend/src/components/HeaderNav.tsx) next to `ThemeSwitch` (desktop row + mobile row), each wrapped in its own `<Suspense>` since `useSearchParams()` requires one for statically-rendered routes.
+- [x] **Centralized helper** — `localizedHref(locale, href)` added to [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts) (the helper Part A deliberately deferred): prefixes a relative (`/...`) href with `/${locale}`, passes external/mailto/anchor hrefs through untouched. `resolveLinkHref()` ([`lib/resolveLinkHref.ts`](../apps/frontend/src/lib/resolveLinkHref.ts)) and `CMSLink` ([`components/cms-link.tsx`](../apps/frontend/src/components/cms-link.tsx)) both take an optional `locale` and apply it via this helper — backward compatible (omit `locale` to get the old unprefixed behavior, used for the one call site that's always external: `ServiceCard`'s `proofUrl`).
+- [x] **Full link audit** — every internal href-producing component now threads `locale` from its route down to the actual `<Link>`/`redirect()` call: the `resolveLinkHref`/`CMSLink` consumers (`hero`, `services-hero`, `contact`, `about`, `services-teaser`, `projects`, `lab-teaser` page-sections), the blog chain (`ArticleCard`, `blog-list`, `related-posts`, the `blog` page-section), the projects listing (`projects/page.tsx`), the lab gallery (`lab/page.tsx`'s static `galleryItems`, the 4 lab-item hero "back to lab" links via `useParams()`, the `reaction-sphere` cross-link), `payload-redirects.tsx` (CMS-configured redirects now resolve to the current locale), and `PayloadForm`'s post-submit `redirect.url` (locale read via `useParams()` since the form is a client component with no prop path to the route). See [i18n-handoff.md](i18n-handoff.md) for the full file list.
+- [x] **Bonus fixes found during the audit:** `RelatedPosts` linked to the non-existent `/posts/:slug` route (posts actually live at `/blog/:slug`) — fixed alongside the locale prefix. `HeaderNav`'s brand logo link (`href="/"`) now points at `/${locale}` instead of the bare root (avoids a needless middleware redirect hop on every logo click).
+- [x] Accessible: switcher options carry `hrefLang` per Payload's `en`/`es` locale codes and `aria-current="true"` on the active locale.
 
-**Exit:** users can switch language anywhere and stay on the equivalent page; all navigation preserves locale.
+**Exit:** ✅ users can switch language anywhere (header, desktop + mobile) and stay on the equivalent page; all internal navigation (nav, footer, cards, CMS links, redirects, form confirmations, lab back-links) preserves the current locale prefix.
 
 ---
 
@@ -237,7 +239,7 @@ Introduce the `[locale]` segment and make locale flow through every data fetch.
 - **`generateStaticParams` explosion.** Product of locales × slugs; fine at current scale, watch build time as content grows.
 - **Form-builder plugin.** Verify field-label localization support; may need overrides or a dictionary fallback.
 - **Live preview & draft mode** must thread locale or editors preview the wrong language.
-- **Redirects plugin** — ensure redirects account for the locale prefix.
+- **Redirects plugin** — ✅ resolved in Phase 4: `payload-redirects.tsx` now takes `locale` and prefixes the computed redirect target.
 
 ## 5. Rough sequencing / estimate
 | Phase | Scope | Est. |

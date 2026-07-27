@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Section from "@/components/section";
 import { IcoReactionDiffusionHero } from "./IcoReactionDiffusionHero";
+import { localizedHref, type Locale } from "@/i18n/config";
 
 export const metadata = {
     title: "Reaction-Diffusion on a Sphere | Gallery | Cesar Jerez",
@@ -8,7 +9,12 @@ export const metadata = {
         "A Gray-Scott reaction-diffusion simulation running over the surface of an icosphere with Three.js. Each vertex reacts and diffuses with its mesh neighbors on the GPU.",
 };
 
-export default function ReactionSpherePage() {
+export default async function ReactionSpherePage({
+    params,
+}: {
+    params: Promise<{ locale: Locale }>
+}) {
+    const { locale } = await params;
     return (
         <main className="min-h-screen">
             <IcoReactionDiffusionHero />
@@ -20,7 +26,7 @@ export default function ReactionSpherePage() {
                     <p className="text-muted-foreground leading-relaxed">
                         This is the same Gray-Scott model as the{" "}
                         <Link
-                            href="/lab/gray-scott"
+                            href={localizedHref(locale, "/lab/gray-scott")}
                             className="text-primary underline underline-offset-4 hover:no-underline"
                         >
                             flat reaction-diffusion field

@@ -1,10 +1,12 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
-import React, { type FC, useState } from 'react';
+import React, { type FC, Suspense, useState } from 'react';
 import Link from 'next/link';
 import { ThemeSwitch } from './ThemeSwitch';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { Button } from './ui/button';
+import type { Locale } from '@/i18n/config';
 
 
 
@@ -15,6 +17,7 @@ export interface HeaderClientProps {
     theme?: 'auto' | 'light' | 'dark' | 'inverted';
     brand: React.ReactNode;
     container?: boolean;
+    locale: Locale;
 }
 
 const BrandText: FC<{ brandName: string }> = ({ brandName }) => {
@@ -31,6 +34,7 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
     background = true,
     theme: themeOverwrite = 'auto',
     container = true,
+    locale,
 }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -48,7 +52,7 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
                     ${container ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' : ''}
                 `}
             >
-                <Link href="/" className="text-xl font-bold tracking-tight text-foreground">
+                <Link href={`/${locale}`} className="text-xl font-bold tracking-tight text-foreground">
                     {typeof (brand) === 'string' ? <BrandText brandName={brand} /> : brand}
                 </Link>
 
@@ -75,11 +79,17 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
                             </a>
                         ),
                     )}
+                    <Suspense fallback={null}>
+                        <LanguageSwitcher locale={locale} />
+                    </Suspense>
                     <ThemeSwitch />
                 </div>
 
                 {/* Mobile Menu Button */}
                 <div className="md:hidden flex items-center gap-4">
+                    <Suspense fallback={null}>
+                        <LanguageSwitcher locale={locale} />
+                    </Suspense>
                     <ThemeSwitch />
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}

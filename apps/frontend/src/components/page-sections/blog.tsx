@@ -4,7 +4,7 @@ import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { getBlogPosts } from '@/app/(website)/[locale]/blog/data'
 import type { PageBlogBlock, Post, Media, BlogTag } from '@strps-website/types'
-import type { Locale } from '@/i18n/config'
+import { localizedHref, type Locale } from '@/i18n/config'
 
 const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blogLimit?: number; locale: Locale }) => {
     const { eyebrow, title, selectedPosts, blogUrl, section, locale } = props
@@ -32,7 +32,7 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
             <SectionHeader
                 eyebrow={eyebrow || 'Writing'}
                 title={title}
-                action={blogUrl ? <LinkArrow href={blogUrl}>All articles →</LinkArrow> : undefined}
+                action={blogUrl ? <LinkArrow href={localizedHref(locale, blogUrl)}>All articles →</LinkArrow> : undefined}
             />
 
             <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3">
@@ -56,6 +56,7 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
                             publishedAt={post.publishedAt}
                             tags={tags}
                             slug={post.slug}
+                            locale={locale}
                         />
                     )
                 })}

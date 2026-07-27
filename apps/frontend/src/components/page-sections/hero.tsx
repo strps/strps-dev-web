@@ -5,11 +5,13 @@ import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { PlotLine } from '@/components/primitives/PlotLine';
 import type { PageHeroBlock, Media } from '@strps-website/types';
+import type { Locale } from '@/i18n/config';
 import SVGButton from '../SVGButton';
 
 type HeroProps = Omit<PageHeroBlock, 'links' | 'variant'> & {
     heroLinks?: PageHeroBlock['links'];
     heroVariant?: PageHeroBlock['variant'];
+    locale: Locale;
 };
 
 function composeStatus(status: PageHeroBlock['status']) {
@@ -50,6 +52,7 @@ const StatementHero: React.FC<HeroProps> = ({
     description,
     status,
     heroLinks,
+    locale,
 }) => {
     const statusText = composeStatus(status);
 
@@ -97,6 +100,7 @@ const StatementHero: React.FC<HeroProps> = ({
                             key={i}
                             {...link}
                             appearance={link.appearance ?? 'solid'}
+                            locale={locale}
                         />
                     );
                 })}
@@ -113,6 +117,7 @@ const PortraitHero: React.FC<HeroProps> = ({
     status,
     email,
     heroLinks,
+    locale,
 }) => {
     return (
         <div className="space-y-6 max-w-3xl px-4 animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -171,6 +176,7 @@ const PortraitHero: React.FC<HeroProps> = ({
                             {...link}
                             appearance={link.appearance ?? undefined}
                             size="lg"
+                            locale={locale}
                         />
                     );
                 })}

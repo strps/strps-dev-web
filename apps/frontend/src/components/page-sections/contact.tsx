@@ -6,10 +6,12 @@ import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { PayloadForm } from '@/components/form/PayloadForm';
 import type { PageContactBlock, Form as FormType } from '@strps-website/types';
+import type { Locale } from '@/i18n/config';
 
 type ContactProps = Omit<PageContactBlock, 'links' | 'form'> & {
     contactLinks?: PageContactBlock['links'];
     contactForm?: FormType | null;
+    locale: Locale;
 };
 
 const ContactSection: React.FC<ContactProps> = ({
@@ -22,6 +24,7 @@ const ContactSection: React.FC<ContactProps> = ({
     contactForm: form,
     contactLinks,
     section,
+    locale,
 }) => {
     return (
         <Section
@@ -75,7 +78,7 @@ const ContactSection: React.FC<ContactProps> = ({
                             </Button>
                         )}
                         {contactLinks?.map(({ link }, i) => (
-                            <CMSLink key={i} {...link} appearance={link.appearance ?? undefined} />
+                            <CMSLink key={i} {...link} appearance={link.appearance ?? undefined} locale={locale} />
                         ))}
                     </div>
                 )}

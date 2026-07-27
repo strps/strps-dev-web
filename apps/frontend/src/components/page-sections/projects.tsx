@@ -10,7 +10,7 @@ import { HairlineGrid } from '@/components/primitives/HairlineGrid';
 import { resolveLinkHref } from '@/lib/resolveLinkHref';
 import type { PageProjectsBlock, Project, Media } from '@strps-website/types';
 import { getProjects } from '@/app/(website)/[locale]/projects/data';
-import type { Locale } from '@/i18n/config';
+import { localizedHref, type Locale } from '@/i18n/config';
 
 type ProjectsProps = Omit<PageProjectsBlock, 'link' | 'variant'> & {
     projectsLink?: PageProjectsBlock['link'];
@@ -42,7 +42,7 @@ const ProjectsSection = async ({
     }
 
     if (variant === 'hairline') {
-        const actionHref = resolveLinkHref(link);
+        const actionHref = resolveLinkHref(link, locale);
 
         return (
             <Section
@@ -72,7 +72,7 @@ const ProjectsSection = async ({
                             problem={project.caseStudy?.problem}
                             contribution={project.caseStudy?.contribution}
                             stack={project.techStack?.map((t) => t.name || '').filter(Boolean) || []}
-                            caseStudyHref={project.slug ? `/projects/${project.slug}` : undefined}
+                            caseStudyHref={project.slug ? localizedHref(locale, `/projects/${project.slug}`) : undefined}
                         />
                     ))}
                 </HairlineGrid>
@@ -108,7 +108,7 @@ const ProjectsSection = async ({
                             technologies={project.techStack?.map((t) => ({ name: t.name || '' })) || []}
                             liveUrl={project.links?.liveSite}
                             repoUrl={project.links?.github}
-                            caseStudyUrl={project.slug ? `/projects/${project.slug}` : undefined}
+                            caseStudyUrl={project.slug ? localizedHref(locale, `/projects/${project.slug}`) : undefined}
                             orientation='horizontal'
                         />
                     );
