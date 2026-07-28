@@ -4,11 +4,13 @@ import { defaultLocale, isValidLocale, localizedHref, type Locale } from '@/i18n
 import { getDictionary } from '@/i18n/getDictionary'
 
 type Args = {
-    params: Promise<{ locale?: string }>
+    // Next.js does not pass `params` to `not-found.tsx` (it renders without route
+    // props), so this is effectively always undefined — hence the guarded reads below.
+    params?: Promise<{ locale?: string }>
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-    const { locale: rawLocale } = await paramsPromise
+    const { locale: rawLocale } = (await paramsPromise) ?? {}
     const locale: Locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
     const dictionary = getDictionary(locale)
 
@@ -16,7 +18,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 export default async function NotFound({ params: paramsPromise }: Args) {
-    const { locale: rawLocale } = await paramsPromise
+    const { locale: rawLocale } = (await paramsPromise) ?? {}
     const locale: Locale = isValidLocale(rawLocale) ? rawLocale : defaultLocale
     const dictionary = getDictionary(locale)
 

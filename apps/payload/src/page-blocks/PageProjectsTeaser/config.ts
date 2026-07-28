@@ -3,12 +3,12 @@ import { SectionConfig } from '@/fields/section'
 import { eyebrowField } from '@/fields/eyebrow'
 import { link } from '@/fields/link'
 
-export const PageProjects: Block = {
-    slug: 'pageProjects',
-    interfaceName: 'PageProjectsBlock',
+export const PageProjectsTeaser: Block = {
+    slug: 'pageProjectsTeaser',
+    interfaceName: 'PageProjectsTeaserBlock',
     labels: {
-        singular: 'Page Projects',
-        plural: 'Page Projects',
+        singular: 'Project Teaser',
+        plural: 'Project Teasers',
     },
     fields: [
         eyebrowField,
@@ -23,8 +23,9 @@ export const PageProjects: Block = {
         {
             name: 'variant',
             type: 'select',
-            defaultValue: 'cards',
+            defaultValue: 'teaser',
             options: [
+                { label: 'Teaser (image reveal)', value: 'teaser' },
                 { label: 'Cards', value: 'cards' },
                 { label: 'Hairline (mockup)', value: 'hairline' },
             ],

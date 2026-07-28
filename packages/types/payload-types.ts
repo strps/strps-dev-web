@@ -261,7 +261,7 @@ export interface Page {
     | PageServicesTeaserBlock
     | PageAboutBlock
     | PageSkillsBlock
-    | PageProjectsBlock
+    | PageProjectsTeaserBlock
     | PageLabTeaserBlock
     | PageExperienceBlock
     | PageServicesBlock
@@ -683,15 +683,15 @@ export interface PageSkillsBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "PageProjectsBlock".
+ * via the `definition` "PageProjectsTeaserBlock".
  */
-export interface PageProjectsBlock {
+export interface PageProjectsTeaserBlock {
   /**
    * Small mono label above the title, e.g. "Services"
    */
   eyebrow?: string | null;
   title: string;
-  variant?: ('cards' | 'hairline') | null;
+  variant?: ('teaser' | 'cards' | 'hairline') | null;
   /**
    * Optional action link, e.g. "All projects →" to /projects.
    */
@@ -721,7 +721,7 @@ export interface PageProjectsBlock {
   section: SectionConfig;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'pageProjects';
+  blockType: 'pageProjectsTeaser';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1609,7 +1609,7 @@ export interface PagesSelect<T extends boolean = true> {
         pageServicesTeaser?: T | PageServicesTeaserBlockSelect<T>;
         pageAbout?: T | PageAboutBlockSelect<T>;
         pageSkills?: T | PageSkillsBlockSelect<T>;
-        pageProjects?: T | PageProjectsBlockSelect<T>;
+        pageProjectsTeaser?: T | PageProjectsTeaserBlockSelect<T>;
         pageLabTeaser?: T | PageLabTeaserBlockSelect<T>;
         pageExperience?: T | PageExperienceBlockSelect<T>;
         pageServices?: T | PageServicesBlockSelect<T>;
@@ -1822,9 +1822,9 @@ export interface PageSkillsBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "PageProjectsBlock_select".
+ * via the `definition` "PageProjectsTeaserBlock_select".
  */
-export interface PageProjectsBlockSelect<T extends boolean = true> {
+export interface PageProjectsTeaserBlockSelect<T extends boolean = true> {
   eyebrow?: T;
   title?: T;
   variant?: T;

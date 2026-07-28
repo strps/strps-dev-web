@@ -153,7 +153,7 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
   }
 
-  fragment PageProjectsFields on PageProjectsBlock {
+  fragment PageProjectsTeaserFields on PageProjectsTeaserBlock {
     blockType
     eyebrow
     title
@@ -532,7 +532,7 @@ export const GET_PAGE_BY_SLUG = gql`
           ...PageServicesTeaserFields
           ...PageAboutFields
           ...PageSkillsFields
-          ...PageProjectsFields
+          ...PageProjectsTeaserFields
           ...PageLabTeaserFields
           ...PageExperienceFields
           ...PageServicesFields
@@ -572,7 +572,7 @@ export const GET_HOME_PAGE = gql`
           ...PageHeroFields
           ...PageAboutFields
           ...PageSkillsFields
-          ...PageProjectsFields
+          ...PageProjectsTeaserFields
           ...PageExperienceFields
           ...PageContactFields
           ...PageBlogFields

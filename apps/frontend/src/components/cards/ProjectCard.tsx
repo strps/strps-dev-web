@@ -65,7 +65,7 @@ export function ProjectCard({
                     : "aspect-video"
             )}>
                 <Image
-                    src={imageUrl || placeholderImage}
+                    src={imageUrl || '/placeholder_images/app_mockup_placeholder.png'}
                     alt={`${title} project screenshot`}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"

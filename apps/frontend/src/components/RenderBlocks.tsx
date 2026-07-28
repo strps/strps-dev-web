@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 import HeroSection from '@/components/page-sections/hero'
 import AboutSection from '@/components/page-sections/about'
 import SkillsSection from '@/components/page-sections/skills'
-import ProjectsSection from '@/components/page-sections/projects'
+import ProjectTeaserSection from '@/components/page-sections/projects-teaser'
 import ExperienceSection from '@/components/page-sections/experience'
 import ContactSection from '@/components/page-sections/contact'
 import BlogSection from '@/components/page-sections/blog'
@@ -21,7 +21,7 @@ const blockComponents: Record<string, React.FC<any>> = {
     pageHero: HeroSection,
     pageAbout: AboutSection,
     pageSkills: SkillsSection,
-    pageProjects: ProjectsSection,
+    pageProjectsTeaser: ProjectTeaserSection,
     pageExperience: ExperienceSection,
     pageContact: ContactSection,
     pageBlog: BlogSection,

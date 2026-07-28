@@ -3,23 +3,24 @@ import { ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Section from '../section';
 import { ProjectCard } from '../cards/ProjectCard';
+import { ProjectTeaserCard } from '../cards/ProjectTeaserCard';
 import { ProjectSummaryCard } from '../cards/ProjectSummaryCard';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { LinkArrow } from '@/components/primitives/LinkArrow';
 import { HairlineGrid } from '@/components/primitives/HairlineGrid';
 import { resolveLinkHref } from '@/lib/resolveLinkHref';
-import type { PageProjectsBlock, Project, Media } from '@strps-website/types';
+import type { PageProjectsTeaserBlock, Project, Media } from '@strps-website/types';
 import { getProjects } from '@/app/(website)/[locale]/projects/data';
 import { localizedHref, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/getDictionary';
 
-type ProjectsProps = Omit<PageProjectsBlock, 'link' | 'variant'> & {
-    projectsLink?: PageProjectsBlock['link'];
-    projectsVariant?: PageProjectsBlock['variant'];
+type ProjectTeaserProps = Omit<PageProjectsTeaserBlock, 'link' | 'variant'> & {
+    projectsLink?: PageProjectsTeaserBlock['link'];
+    projectsVariant?: PageProjectsTeaserBlock['variant'];
     locale: Locale;
 };
 
-const ProjectsSection = async ({
+const ProjectTeaserSection = async ({
     eyebrow,
     title,
     projectsVariant: variant,
@@ -30,7 +31,7 @@ const ProjectsSection = async ({
     githubUrl,
     section,
     locale,
-}: ProjectsProps) => {
+}: ProjectTeaserProps) => {
     const dictionary = getDictionary(locale);
     let projects: Project[] = [];
 
@@ -96,23 +97,48 @@ const ProjectsSection = async ({
                 )}
             </div>
 
-            <div className="grid grid-cols-1 auto-rows-fr gap-6">
+            <div
+                className={
+                    variant === 'cards'
+                        ? 'grid grid-cols-1 auto-rows-fr gap-6'
+                        : 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
+                }
+            >
                 {projects.map((project) => {
                     const metaImage = typeof project.meta?.image === 'object' && project.heroImage
                         ? (project.heroImage as Media)
                         : null;
+                    const imageUrl = metaImage?.url
+                        ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${metaImage.url}`
+                        : undefined;
+                    const technologies = project.techStack?.map((t) => ({ name: t.name || '' })) || [];
+                    const caseStudyUrl = project.slug
+                        ? localizedHref(locale, `/projects/${project.slug}`)
+                        : undefined;
 
-                    return (
+                    return variant === 'cards' ? (
                         <ProjectCard
                             key={project.id}
                             title={project.title}
                             description={project.meta?.description}
-                            imageUrl={metaImage?.url ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${metaImage.url}` : undefined}
-                            technologies={project.techStack?.map((t) => ({ name: t.name || '' })) || []}
+                            imageUrl={imageUrl}
+                            technologies={technologies}
                             liveUrl={project.links?.liveSite}
                             repoUrl={project.links?.github}
-                            caseStudyUrl={project.slug ? localizedHref(locale, `/projects/${project.slug}`) : undefined}
-                            orientation='horizontal'
+                            caseStudyUrl={caseStudyUrl}
+                            orientation="horizontal"
+                            locale={locale}
+                        />
+                    ) : (
+                        <ProjectTeaserCard
+                            key={project.id}
+                            title={project.title}
+                            description={project.meta?.description}
+                            imageUrl={imageUrl}
+                            technologies={technologies}
+                            liveUrl={project.links?.liveSite}
+                            repoUrl={project.links?.github}
+                            caseStudyUrl={caseStudyUrl}
                             locale={locale}
                         />
                     );
@@ -132,4 +158,4 @@ const ProjectsSection = async ({
     );
 };
 
-export default ProjectsSection;
+export default ProjectTeaserSection;

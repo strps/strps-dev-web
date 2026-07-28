@@ -139,7 +139,7 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
       },
     },
     {
-      blockType: 'pageProjects',
+      blockType: 'pageProjectsTeaser',
       eyebrow: 'Projects',
       title: 'Selected work',
       variant: 'hairline',
@@ -343,7 +343,7 @@ export const homePageDataES = {
         { title: 'Entrega', description: 'Todo el código y las credenciales: es tuyo.' },
       ],
     },
-    // pageProjects
+    // pageProjectsTeaser
     {
       eyebrow: 'Proyectos',
       title: 'Trabajo seleccionado',
