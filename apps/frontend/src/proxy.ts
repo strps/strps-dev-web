@@ -30,7 +30,7 @@ function negotiateLocale(request: NextRequest): Locale {
   return localeFromAcceptLanguage(request.headers.get('accept-language'))
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Already locale-prefixed (`/en/…`, `/es`) — let it through untouched.

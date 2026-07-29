@@ -6,8 +6,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "bun --filter '*' dev",
-    "build": "bun --filter '*' build"
+    "dev": "pnpm --filter '*' dev",
+    "build": "pnpm --filter '*' build"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
