@@ -37,7 +37,7 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
                             <ul className="mt-4 list-none">
                                 {group.keywords?.map((skill) => (
                                     <li
-                                        key={skill.id || skill.keyword}
+                                        key={skill.keyword}
                                         className="border-b border-border py-1.5 text-[15px] last:border-b-0"
                                     >
                                         {skill.keyword}
@@ -45,7 +45,8 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
                                 ))}
                             </ul>
                         </div>
-                    ))}
+                    )
+                    )}
                 </div>
             </Section>
         );

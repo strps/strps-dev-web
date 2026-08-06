@@ -142,6 +142,7 @@ export const PAGE_BLOCK_FIELDS = gql`
     skillsVariant: variant
     subtitle
     skillGroups {
+      id
       name
       icon
       keywords {
