@@ -82,7 +82,6 @@ interface CardHeaderProps {
 }
 
 const CardHeader2 = ({ title, iconName, accentColor = "#ff9009" }: CardHeaderProps) => {
-  console.log(iconName?.toLowerCase())
 
   const uniqueId = useId()
   const borderDiameter = 0.5 // px
