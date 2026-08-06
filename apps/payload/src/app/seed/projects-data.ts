@@ -42,8 +42,16 @@ const ul = (items: string[]) => ({
         version: 1,
     })),
 })
-const doc = (...children: object[]) => ({
-    root: { type: 'root', children, direction: 'ltr', format: '', indent: 0, version: 1 },
+type LexicalNode = { [k: string]: unknown; type: string; version: number }
+const doc = (...children: LexicalNode[]) => ({
+    root: {
+        type: 'root',
+        children,
+        direction: 'ltr' as const,
+        format: '' as const,
+        indent: 0,
+        version: 1,
+    },
 })
 
 export const projectsData: ProjectSeed[] = [
