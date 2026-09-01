@@ -14,6 +14,8 @@ import ProcessSection from '@/components/page-sections/process'
 import FaqSection from '@/components/page-sections/faq'
 import ServicesTeaserSection from '@/components/page-sections/services-teaser'
 import LabTeaserSection from '@/components/page-sections/lab-teaser'
+import { StageSection } from '@/components/backgrounds/particle-stage'
+import { SECTION_SHAPES } from '@/components/backgrounds/particle-stage/section-shapes'
 import type { Page } from '@strps-website/types'
 import type { Locale } from '@/i18n/config'
 
@@ -44,8 +46,16 @@ export const RenderBlocks: React.FC<{ blocks: Page['layout']; locale: Locale }> 
 
                 if (blockType && blockType in blockComponents) {
                     const Block = blockComponents[blockType]
+                    const stage = SECTION_SHAPES[blockType]
                     return (
-                        <div key={index}>
+                        <div key={index} className="relative">
+                            {/*
+                              * The marker is a sibling of the block, not a child of its
+                              * <section>, so it anchors to this wrapper — whose box is the
+                              * block's box. That keeps every section component free of any
+                              * knowledge of the stage.
+                              */}
+                            {stage && <StageSection anchor="parent" {...stage} />}
                             <Block {...block} locale={locale} />
                         </div>
                     )

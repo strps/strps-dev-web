@@ -82,6 +82,29 @@ Update `src/blocks/index.ts` to include your new block:
 export * from './YourBlock';
 ```
 
+### 7. Claim the particle stage (optional)
+
+A single point cloud sits behind the whole site and changes shape as you scroll
+between sections. A block opts in by adding an entry to
+`src/components/backgrounds/particle-stage/section-shapes.ts`, keyed by its
+`blockType`:
+
+```ts
+pageYourBlock: { shape: "torus", offset: { x: 0.28 }, opacity: 0.6 },
+```
+
+`RenderBlocks` applies it — your component needs no changes, and does not need
+to know the stage exists. A block absent from the table claims nothing, and the
+previous section keeps the cloud until the next one that does claim it.
+
+Conventions: push `offset` toward whichever side your layout leaves empty, and
+drop `opacity` well below 1 if the block is itself dense (card grids, forms) —
+a link mesh behind a card grid competes with it. Avoid reusing the shape a
+neighbouring block already uses, or that boundary gets no transition at all.
+
+See [particle-stage/README.md](../apps/frontend/src/components/backgrounds/particle-stage/README.md)
+for the full system, including why sections have minimum heights.
+
 ## Block Development Guidelines
 
 ### Required Files

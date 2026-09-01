@@ -1,4 +1,28 @@
-# ParticleOrb
+# Canvas backgrounds
+
+Two systems live here, and they are not alternatives to each other:
+
+| | scope | motion |
+| --- | --- | --- |
+| **`ParticleOrb`** (below) | one section, its own canvas | animates itself — tentacles sway, shell breathes |
+| **[`particle-stage/`](./particle-stage/README.md)** | the whole page, one canvas | one cloud that morphs shape as you scroll |
+
+Reach for `ParticleOrb` when a single section wants a self-contained orb and
+nothing needs to transition. Reach for `ParticleStage` when the background
+should carry you between sections — the price of that is that every shape has to
+be static geometry so it can be interpolated.
+
+`ParticleStage` is currently mounted site-wide in
+`app/(website)/[locale]/layout.tsx`, so `ParticleOrb` has **no call sites left**
+in this repo. It is kept because it does something the stage deliberately
+cannot: per-point animation. `ParticleField` and `ParticleOrbScreenLinks` are
+likewise unused, and `ParticleOrbScreenLinks` is superseded — it links particles
+in screen space, which produces exactly the false-projection artifacts described
+below.
+
+---
+
+## ParticleOrb
 
 A decorative canvas background: a sphere of particles with tentacles reaching
 out of it, perspective-projected onto a 2D canvas. Theme-aware, idle when
@@ -9,7 +33,7 @@ off-screen, and static under `prefers-reduced-motion`.
 ```
 
 It is `aria-hidden` and fills its parent (`h-full w-full`), so it wants a
-positioned container — in this repo it is passed as `Section`'s `backgroundLayer`.
+positioned container — pass it as `Section`'s `backgroundLayer`.
 
 ---
 

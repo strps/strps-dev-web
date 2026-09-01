@@ -6,6 +6,8 @@ import { HeaderNav } from '@/components/HeaderNav';
 import { getCachedHeaderData } from '@/data/data';
 import Footer from '@/components/Footer';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { SmoothScrollProvider } from '@/providers/smooth-scroll-provider';
+import { ParticleStage } from '@/components/backgrounds/particle-stage';
 import { Logo } from '@/components/logo';
 import { locales, isValidLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/getDictionary';
@@ -73,20 +75,28 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <HeaderNav
-            navItems={navItems}
-            theme={theme}
-            // background={background}
-            overlay={overlay}
-            locale={locale}
-            brand={
-              <span className="flex items-center gap-2 font-bold text-xl tracking-tighter">
-                <Logo className='w-48 fill-foreground' />
-              </span>
-            }
-          />
-          {children}
-          <Footer locale={locale} />
+          <SmoothScrollProvider>
+            {/*
+              * One canvas behind the whole page. Sections claim it through
+              * RenderBlocks' SECTION_SHAPES table; see
+              * components/backgrounds/particle-stage/README.md.
+              */}
+            <ParticleStage />
+            <HeaderNav
+              navItems={navItems}
+              theme={theme}
+              // background={background}
+              overlay={overlay}
+              locale={locale}
+              brand={
+                <span className="flex items-center gap-2 font-bold text-xl tracking-tighter">
+                  <Logo className='w-48 fill-foreground' />
+                </span>
+              }
+            />
+            {children}
+            <Footer locale={locale} />
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,0 +1,503 @@
+"use client"
+
+import * as React from "react"
+import gsap from "gsap"
+
+import { cn } from "@/lib/utils"
+import { scrollState, syncFromWindow } from "@/lib/scroll"
+import { cssColor, mixColor, readColorVar, type RGB } from "./color"
+import { getMesh, warmMesh, type Mesh } from "./mesh"
+import { morph, morphSize, planMorph } from "./morph"
+import { invalidate, onRegistryChange, registeredShapes, resolveStage } from "./registry"
+import { CLOUD_SIZE, getCloud, type ShapeId } from "./shapes"
+
+export interface ParticleStageProps {
+  className?: string
+  /** Cloud radius as a fraction of the viewport's smaller side. */
+  radius?: number
+  /** Full turns per minute around Y. */
+  spinSpeed?: number
+  /** Fixed tilt in radians. */
+  tilt?: number
+  /** Fraction of a viewport height the morph is spread over, centred on a seam. */
+  blend?: number
+  /**
+   * Fraction of the run between two seams held settled, so a short section
+   * still gets a moment where its shape simply is rather than being permanently
+   * mid-morph.
+   */
+  hold?: number
+  /**
+   * How much the cloud follows its section down the page, as a fraction of the
+   * page's own movement. 0 pins it to the viewport centre; 1 glues it to the
+   * section and it scrolls away with the content. Small values read as depth.
+   */
+  parallax?: number
+  /** Ceiling on the parallax drift, in fractions of the viewport height. */
+  parallaxLimit?: number
+  /** Neighbour radius in cloud units. 0 disables links. */
+  linkDistance?: number
+  /** Max edges kept per point. */
+  linkNeighbors?: number
+  /** Depth of the per-link pulse. 0 steady, 1 fades a link out at its trough. */
+  linkPulse?: number
+  /** Pulses per second for the fastest links. */
+  linkPulseSpeed?: number
+  /** How far the pointer tips the cloud, in radians. */
+  pointerTilt?: number
+  /** How fast the cloud chases the pointer, in units per second. */
+  pointerEase?: number
+  /** Base dot radius in CSS px, before perspective scaling. */
+  dotRadius?: number
+  dotOpacity?: number
+  linkOpacity?: number
+  /** CSS custom properties sampled off the owning section. */
+  dotColorVar?: string
+  linkColorVar?: string
+}
+
+const TWO_PI = Math.PI * 2
+/** Alpha quantisation for link batching: one Path2D + one stroke() per bucket. */
+const LINK_BUCKETS = 8
+
+interface Projected {
+  sx: number
+  sy: number
+  scale: number
+  depth: number
+  wx: number
+  wy: number
+  wz: number
+  /** 0 once a point has reached the near plane, 1 once it is safely past it. */
+  nearFade: number
+}
+
+/**
+ * One canvas behind the whole page, holding a single point cloud that morphs
+ * from section to section as you scroll.
+ *
+ * Mount it once, near the root, and let sections claim it with `<StageSection>`.
+ * The canvas is viewport-sized and `fixed` — never document-sized; see
+ * ./README.md § Why the canvas is only one viewport tall.
+ */
+export function ParticleStage({
+  className,
+  radius = 0.26,
+  spinSpeed = 0.1,
+  tilt = -0.32,
+  blend = 0.55,
+  hold = 0.5,
+  parallax = 0.18,
+  parallaxLimit = 0.35,
+  linkDistance = 0.34,
+  linkNeighbors = 3,
+  linkPulse = 0.9,
+  linkPulseSpeed = 0.5,
+  pointerTilt = 0.02,
+  pointerEase = 2.5,
+  dotRadius = 1.5,
+  dotOpacity = 0.72,
+  linkOpacity = 0.3,
+  dotColorVar = "--color-primary",
+  linkColorVar = "--color-muted-foreground",
+}: ParticleStageProps) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null)
+
+  // Live prop mirror: the loop starts once and reads the newest values from
+  // here, so tweaking a prop retunes the running stage instead of restarting it.
+  const props = {
+    radius, spinSpeed, tilt, blend, hold, parallax, parallaxLimit,
+    linkDistance, linkNeighbors, linkPulse, linkPulseSpeed,
+    pointerTilt, pointerEase,
+    dotRadius, dotOpacity, linkOpacity,
+    dotColorVar, linkColorVar,
+  }
+  const opts = React.useRef(props)
+  // Synced in an effect rather than during render: the loop reads `opts` on the
+  // next frame, which is always after commit.
+  React.useEffect(() => {
+    opts.current = props
+  })
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d", { alpha: true })
+    if (!ctx) return
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+    let width = 0
+    let height = 0
+    let time = 0
+    let lastTick = 0
+
+    // Working buffers, allocated once and rewritten every frame.
+    const world = new Float32Array(CLOUD_SIZE * 3)
+    const sizes = new Float32Array(CLOUD_SIZE)
+    const projected: Projected[] = Array.from({ length: CLOUD_SIZE }, () => ({
+      sx: 0, sy: 0, scale: 1, depth: 0, wx: 0, wy: 0, wz: 0, nearFade: 1,
+    }))
+
+    // Per-point breathing, rolled once. This is the one animated layer that is
+    // *not* a function of scroll: it integrates over wall-clock time, so it
+    // keeps the cloud alive while the page is still and is unaffected by
+    // scrolling backwards.
+    const breathPhase = new Float32Array(CLOUD_SIZE)
+    const breathAmp = new Float32Array(CLOUD_SIZE)
+    for (let i = 0; i < CLOUD_SIZE; i++) {
+      breathPhase[i] = Math.random() * TWO_PI
+      breathAmp[i] = 0.015 + Math.random() * 0.05
+    }
+
+    const pointer = { x: 0, y: 0 }
+    const eased = { x: 0, y: 0 }
+    let spin = 0
+
+    // Palette, crossfaded between the two sections in play.
+    const fallback: RGB = [136, 136, 136]
+    let colorKey = ""
+    let fromDot = fallback
+    let fromLink = fallback
+    let toDot = fallback
+    let toLink = fallback
+
+    let sampledFrom: HTMLElement | null = null
+    let sampledTo: HTMLElement | null = null
+
+    // Colours are read with getComputedStyle, which forces style resolution —
+    // far too expensive per frame. The owning pair only changes at a seam, so
+    // key on it and re-sample then.
+    const sampleColors = (fromEl: HTMLElement, toEl: HTMLElement) => {
+      const o = opts.current
+      const key = `${o.dotColorVar}|${o.linkColorVar}`
+      if (key === colorKey && sampledFrom === fromEl && sampledTo === toEl) return
+      colorKey = key
+      sampledFrom = fromEl
+      sampledTo = toEl
+      fromDot = readColorVar(fromEl, o.dotColorVar, fallback)
+      fromLink = readColorVar(fromEl, o.linkColorVar, fallback)
+      toDot = readColorVar(toEl, o.dotColorVar, fallback)
+      toLink = readColorVar(toEl, o.linkColorVar, fallback)
+    }
+
+    /** Force a re-sample: theme switch, or a section registering/leaving. */
+    const dropColors = () => {
+      sampledFrom = null
+      sampledTo = null
+      colorKey = ""
+    }
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) return
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      width = rect.width
+      height = rect.height
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    /**
+     * Draw one frame. Everything positional is derived from `resolveStage()`,
+     * which is a pure function of scroll offset; only `time` accumulates.
+     */
+    const draw = (dt: number) => {
+      const o = opts.current
+      time += dt
+      spin += (o.spinSpeed * TWO_PI * dt) / 60
+
+      const follow = Math.max(0, Math.min(1, dt * o.pointerEase))
+      eased.x += (pointer.x - eased.x) * follow
+      eased.y += (pointer.y - eased.y) * follow
+
+      ctx.clearRect(0, 0, width, height)
+      if (width === 0 || height === 0) return
+
+      const stage = resolveStage(o.blend, o.hold)
+      if (!stage) return
+
+      const fromCloud = getCloud(stage.from.shape)
+      const toCloud = getCloud(stage.to.shape)
+      // Under reduced motion the cloud snaps to whichever shape is closer
+      // rather than animating between them.
+      const t = reduced.matches ? (stage.t < 0.5 ? 0 : 1) : stage.t
+
+      const plan = planMorph(fromCloud, toCloud)
+      morph(plan, t, world)
+      morphSize(plan, t, sizes)
+
+      sampleColors(stage.from.el, stage.to.el)
+      const dotColor = cssColor(mixColor(fromDot, toDot, t))
+      const linkColor = cssColor(mixColor(fromLink, toLink, t))
+
+      // Per-section placement, blended alongside the shape.
+      const lerp = (a: number | undefined, b: number | undefined, d: number) =>
+        (a ?? d) + ((b ?? d) - (a ?? d)) * t
+      const offX = lerp(stage.from.offset?.x, stage.to.offset?.x, 0)
+      const offY = lerp(stage.from.offset?.y, stage.to.offset?.y, 0)
+      const scaleMul = lerp(stage.from.scale, stage.to.scale, 1)
+      const alphaMul = lerp(stage.from.opacity, stage.to.opacity, 1)
+      if (alphaMul <= 0.001) return
+
+      // Parallax: the cloud is anchored to its section's centre and follows it
+      // at a fraction of the page's own rate, so it reads as sitting behind the
+      // content rather than pinned to the glass. The anchor is blended across a
+      // transition alongside the shape, so handing the cloud from one section to
+      // the next is continuous for free.
+      const line = scrollState.y + scrollState.vh / 2
+      const limit = height * o.parallaxLimit
+      let drift = (stage.anchor - line) * o.parallax
+      if (drift > limit) drift = limit
+      else if (drift < -limit) drift = -limit
+
+      const cx = width / 2 + width * offX
+      const cy = height / 2 + drift + height * offY
+      const R = Math.min(width, height) * o.radius * scaleMul
+      const focal = R * 3.2
+      const nearPlane = focal * 0.25
+
+      const rotY = spin + eased.x * o.pointerTilt
+      const rotX = o.tilt + eased.y * o.pointerTilt
+      const cosY = Math.cos(rotY)
+      const sinY = Math.sin(rotY)
+      const cosX = Math.cos(rotX)
+      const sinX = Math.sin(rotX)
+
+      for (let i = 0; i < CLOUD_SIZE; i++) {
+        const breath = 1 + Math.sin(time * 0.9 + breathPhase[i]) * breathAmp[i]
+        const x = world[i * 3] * R * breath
+        const y = world[i * 3 + 1] * R * breath
+        const z = world[i * 3 + 2] * R * breath
+
+        const x1 = x * cosY + z * sinY
+        const z1 = -x * sinY + z * cosY
+        const y2 = y * cosX - z1 * sinX
+        const z2 = y * sinX + z1 * cosX
+
+        // A point can land on or behind the camera, where focal / (focal + z)
+        // blows up or flips sign and throws it across the canvas. Clamp the
+        // denominator at a near plane and fade the point as it approaches, so
+        // it leaves instead of streaking.
+        const denom = focal + z2
+        const p = projected[i]
+        const s = focal / (denom > nearPlane ? denom : nearPlane)
+        p.nearFade =
+          denom <= nearPlane
+            ? 0
+            : denom >= nearPlane * 2
+              ? 1
+              : (denom - nearPlane) / nearPlane
+        p.sx = cx + x1 * s
+        p.sy = cy + y2 * s
+        p.scale = s
+        p.depth = z2
+        p.wx = x
+        p.wy = y
+        p.wz = z
+      }
+
+      drawLinks(stage.from.shape, stage.to.shape, t, R, linkColor, alphaMul)
+      drawDots(dotColor, alphaMul)
+      ctx.globalAlpha = 1
+    }
+
+    /**
+     * Both meshes at once, crossfaded, each culled by live distance.
+     *
+     * A mesh is only valid for the shape it was built from: once the points
+     * start moving, its edges stretch, and a stretched edge drawn at full
+     * strength is a line across the canvas. So every edge is checked against
+     * its rest length and fades out as it is pulled apart — which is exactly
+     * the read you want, the old structure coming apart while the new one knits
+     * together. At t = 0 or 1 only one mesh is live and the cull never fires.
+     */
+    const drawLinks = (
+      fromShape: ShapeId,
+      toShape: ShapeId,
+      t: number,
+      R: number,
+      color: string,
+      alphaMul: number
+    ) => {
+      const o = opts.current
+      if (o.linkOpacity <= 0 || o.linkDistance <= 0) return
+
+      const meshOpts = { linkDistance: o.linkDistance, linkNeighbors: o.linkNeighbors }
+      const paths: Path2D[] = new Array(LINK_BUCKETS)
+      const used = new Uint8Array(LINK_BUCKETS)
+      for (let i = 0; i < LINK_BUCKETS; i++) paths[i] = new Path2D()
+
+      const pulseAmount = Math.max(0, Math.min(1, o.linkPulse))
+      const pulseRate = o.linkPulseSpeed * TWO_PI
+
+      const addMesh = (mesh: Mesh, weight: number) => {
+        if (weight <= 0.01) return
+        for (let e = 0; e < mesh.a.length; e++) {
+          const a = projected[mesh.a[e]]
+          const b = projected[mesh.b[e]]
+          const rest = mesh.rest[e] * R
+          if (rest <= 0) continue
+
+          const dx = a.wx - b.wx
+          const dy = a.wy - b.wy
+          const dz = a.wz - b.wz
+          const stretch = Math.sqrt(dx * dx + dy * dy + dz * dz) / rest
+          // Compressed edges brighten, stretched ones dim, and anything pulled
+          // past ~1.9x its rest length is gone.
+          let s = 1 - (stretch - 1) * 1.1
+          if (s <= 0) continue
+          if (s > 1) s = 1
+
+          // Fade by depth so the far side recedes instead of tangling with the
+          // near side. Perspective `scale` already encodes it.
+          let fade = ((a.scale + b.scale) / 2 - 0.7) / 0.6
+          fade = fade < 0.15 ? 0.15 : fade > 1 ? 1 : fade
+
+          const pulse =
+            pulseAmount <= 0
+              ? 1
+              : 1 -
+                pulseAmount *
+                  (0.5 +
+                    0.5 * Math.sin(time * pulseRate * mesh.pulse[e * 2 + 1] + mesh.pulse[e * 2]))
+
+          // A link is only as visible as its dimmest end.
+          const w = s * fade * pulse * weight * a.nearFade * b.nearFade
+          if (w <= 0.02) continue
+          let bucket = (w * LINK_BUCKETS) | 0
+          if (bucket >= LINK_BUCKETS) bucket = LINK_BUCKETS - 1
+          paths[bucket].moveTo(a.sx, a.sy)
+          paths[bucket].lineTo(b.sx, b.sy)
+          used[bucket] = 1
+        }
+      }
+
+      addMesh(getMesh(getCloud(fromShape), meshOpts), 1 - t)
+      if (toShape !== fromShape) addMesh(getMesh(getCloud(toShape), meshOpts), t)
+
+      ctx.strokeStyle = color
+      ctx.lineWidth = 1
+      for (let i = 0; i < LINK_BUCKETS; i++) {
+        if (!used[i]) continue
+        ctx.globalAlpha = ((i + 0.5) / LINK_BUCKETS) * o.linkOpacity * alphaMul
+        ctx.stroke(paths[i])
+      }
+    }
+
+    // Painter's algorithm needs back-to-front order. The index array is
+    // allocated once; only the sort runs per frame.
+    const order = new Array<number>(CLOUD_SIZE)
+    for (let i = 0; i < CLOUD_SIZE; i++) order[i] = i
+
+    const drawDots = (color: string, alphaMul: number) => {
+      const o = opts.current
+      order.sort((a, b) => projected[b].depth - projected[a].depth)
+      ctx.fillStyle = color
+      for (const i of order) {
+        const p = projected[i]
+        const fade = Math.max(0.12, Math.min(1, (p.scale - 0.68) / 0.55)) * p.nearFade
+        if (fade <= 0) continue
+        ctx.globalAlpha = o.dotOpacity * fade * alphaMul
+        ctx.beginPath()
+        ctx.arc(p.sx, p.sy, Math.max(0.3, o.dotRadius * sizes[i] * p.scale), 0, TWO_PI)
+        ctx.fill()
+      }
+    }
+
+    // --- driving ---------------------------------------------------------
+    // The stage draws from gsap.ticker, the same clock SmoothScrollProvider
+    // steps Lenis on. A separate requestAnimationFrame loop would be a frame
+    // behind the scroll offset it is reading, which reads as the background
+    // lagging the page.
+    const tick = (now: number) => {
+      // gsap.ticker reports seconds, not milliseconds.
+      if (document.hidden) {
+        lastTick = now
+        return
+      }
+      // Clamp dt so a backgrounded tab does not jump the animation on return,
+      // and freeze the time-based layers entirely under reduced motion — the
+      // scroll-driven morph still tracks, it just has nothing breathing on top.
+      const dt = reduced.matches ? 0 : Math.min(now - lastTick, 0.05)
+      lastTick = now
+      draw(dt)
+    }
+
+    const warmAll = () => {
+      const meshOpts = {
+        linkDistance: opts.current.linkDistance,
+        linkNeighbors: opts.current.linkNeighbors,
+      }
+      for (const id of new Set(registeredShapes())) warmMesh(getCloud(id), meshOpts)
+    }
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (width === 0 || height === 0) return
+      // Normalised to [-1, 1] across the viewport.
+      pointer.x = (e.clientX / width) * 2 - 1
+      pointer.y = (e.clientY / height) * 2 - 1
+    }
+    const onPointerLeave = () => {
+      pointer.x = 0
+      pointer.y = 0
+    }
+    const onResize = () => {
+      resize()
+      invalidate()
+    }
+
+    syncFromWindow()
+    resize()
+
+    const unsubscribe = onRegistryChange(() => {
+      dropColors()
+      warmAll()
+    })
+    warmAll()
+
+    // Sections move when anything above them reflows — an image loading, a font
+    // swapping, a CMS block hydrating — so the cached bounds have to be dropped
+    // on any document-size change, not just on resize.
+    const ro = new ResizeObserver(() => invalidate())
+    ro.observe(document.body)
+
+    const themeObserver = new MutationObserver(dropColors)
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class", "data-theme", "style"],
+    })
+
+    lastTick = gsap.ticker.time
+    gsap.ticker.add(tick)
+
+    window.addEventListener("resize", onResize)
+    window.addEventListener("pointermove", onPointerMove, { passive: true })
+    window.addEventListener("pointerleave", onPointerLeave)
+
+    return () => {
+      gsap.ticker.remove(tick)
+      unsubscribe()
+      ro.disconnect()
+      themeObserver.disconnect()
+      window.removeEventListener("resize", onResize)
+      window.removeEventListener("pointermove", onPointerMove)
+      window.removeEventListener("pointerleave", onPointerLeave)
+    }
+  }, [])
+
+  return (
+    <div
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none fixed inset-x-0 top-0 -z-10 h-[100dvh] select-none",
+        className
+      )}
+    >
+      <canvas ref={canvasRef} className="block h-full w-full" />
+    </div>
+  )
+}
+
+export default ParticleStage

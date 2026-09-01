@@ -7,7 +7,6 @@ import type { PageHeroBlock, Media } from '@strps-website/types';
 import type { Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/getDictionary';
 import SVGButton from '../SVGButton';
-import { ParticleOrb } from '@/components/backgrounds/ParticleOrb';
 
 type HeroProps = Omit<PageHeroBlock, 'links' | 'variant'> & {
     heroLinks?: PageHeroBlock['links'];
@@ -30,14 +29,12 @@ const HeroSection: React.FC<HeroProps> = (props) => {
             spacing={variant === 'statement' ? 'hero' : undefined}
             className={variant === 'statement' ? undefined : 'gap-8 py-32 md:py-48 text-center'}
             container={variant === 'statement' ? false : true}
-            containerClassName={variant === 'statement' ? 'mx-auto w-full max-w-wrap px-6' : 'items-center'}
-            backgroundLayer={
-                <ParticleOrb
-                    shellCount={190}
-                    tentacles={6}
-                    sphereRadius={0.26}
-                    className="opacity-90"
-                />
+            // The `hero` spacing variant already carries min-h-svh; this only
+            // centres the content in the room it creates.
+            containerClassName={
+                variant === 'statement'
+                    ? 'mx-auto w-full max-w-wrap px-6 justify-center'
+                    : 'items-center justify-center'
             }
             {...(bgImage?.url ? {
                 image: {

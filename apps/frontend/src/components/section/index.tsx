@@ -5,11 +5,22 @@ import { type SectionConfig, type Media } from "@strps-website/types"
 import SVGCircles from "./SVGCircles"
 
 
+/**
+ * Vertical rhythm. Each variant carries a minimum height as well as its
+ * padding: a section shorter than roughly two thirds of the viewport gives the
+ * ParticleStage no room to settle between morphs, so the cloud ends up
+ * permanently mid-transition. `svh` — the smallest viewport height — rather
+ * than `vh` or `dvh`, because it does not reflow when a mobile URL bar appears,
+ * and a reflow mid-scroll invalidates every cached section bound.
+ *
+ * These are minimums, not heights: content taller than them simply grows the
+ * section, and `className` overrides them (twMerge resolves `min-h-*`).
+ */
 const SPACING_VARIANTS = {
-  default: "py-16",
-  hero: "pt-[110px] pb-[90px]",
-  section: "pt-[90px] pb-0",
-  contact: "pt-[90px] pb-[110px]",
+  default: "py-16 min-h-[70svh]",
+  hero: "pt-[110px] pb-[90px] min-h-svh",
+  section: "pt-[90px] pb-0 min-h-[70svh]",
+  contact: "pt-[90px] pb-[110px] min-h-[80svh]",
 } as const
 
 type SectionSpacing = keyof typeof SPACING_VARIANTS
@@ -28,8 +39,13 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<Sectio
   overlayClassName?: string
   containerClassName?: string
   /**
-   * Optional decorative layer rendered behind the section content
-   * (e.g. `<ParticleField />`). Pointer-events are disabled for it.
+   * Optional decorative layer rendered behind this section's content, at
+   * `-z-10`. Pointer-events are disabled for it.
+   *
+   * Note that it will occlude the site-wide `ParticleStage`, which sits behind
+   * the whole page at the same depth. Sections normally claim the stage instead
+   * (see `backgrounds/particle-stage/section-shapes.ts`); use this only for a
+   * background that genuinely belongs to one section.
    */
   backgroundLayer?: React.ReactNode
   /**
