@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 
-import HeroSection from '@/components/page-sections/hero'
+import HeroSection from '@/components/page-sections/hero-exp'
 import AboutSection from '@/components/page-sections/about'
 import SkillsSection from '@/components/page-sections/skills'
 import ProjectTeaserSection from '@/components/page-sections/projects-teaser'

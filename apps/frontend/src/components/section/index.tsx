@@ -28,6 +28,11 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<Sectio
   overlayClassName?: string
   containerClassName?: string
   /**
+   * Optional decorative layer rendered behind the section content
+   * (e.g. `<ParticleField />`). Pointer-events are disabled for it.
+   */
+  backgroundLayer?: React.ReactNode
+  /**
    * Whether to wrap content in a centered container. Defaults to `true`.
    * No longer CMS-driven (the `section.container` field was removed) —
    * callers pass this directly.
@@ -57,6 +62,7 @@ export default function Section({
   image,
   overlayClassName,
   containerClassName,
+  backgroundLayer,
   children,
   spacing = "default",
   // SectionConfig props
@@ -94,6 +100,12 @@ export default function Section({
             {...resolvedImage}
             className={cn("object-cover opacity-60", resolvedImage.className)}
           />
+        </div>
+      )}
+
+      {backgroundLayer && (
+        <div className="absolute inset-0 -z-10 h-full w-full select-none pointer-events-none">
+          {backgroundLayer}
         </div>
       )}
 
