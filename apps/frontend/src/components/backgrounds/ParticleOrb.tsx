@@ -56,8 +56,18 @@ export interface ParticleOrbProps {
   linkPulseSpeed?: number
   /** Radius of the glowing pond at the centre, as a multiple of the sphere radius. */
   pondRadius?: number
-  /** How far the pointer tips the sphere, in radians. */
+  /** How far the pointer tips the sphere, in radians. Base for both axes. */
   pointerTilt?: number
+  /** Horizontal (yaw) pointer response, in radians. Defaults to `pointerTilt`. */
+  pointerTiltX?: number
+  /** Vertical (pitch) pointer response, in radians. Defaults to `pointerTilt`. */
+  pointerTiltY?: number
+  /**
+   * How fast the orb chases the pointer, in units per second. High values snap
+   * to the cursor, low ones let the orb drift after it. 0 pins the pointer
+   * influence at its current value.
+   */
+  pointerEase?: number
   /** Base dot radius in CSS px, before perspective scaling. */
   dotRadius?: number
   dotOpacity?: number
@@ -193,7 +203,7 @@ function makeTentacles(count: number): Tentacle[] {
 export function ParticleOrb({
   className,
   shellCount = 190,
-  sphereRadius = 0.26,
+  sphereRadius = 0.3,
   spinSpeed = 0.1,
   tilt = -0.32,
   tentacles = 6,
@@ -209,13 +219,16 @@ export function ParticleOrb({
   linkNeighbors = 3,
   linkArmsToShell = true,
   armLinkSpan = 2,
-  linkPulse = 0.7,
+  linkPulse = 0.9,
   linkPulseSpeed = 0.5,
   pondRadius = 0.72,
-  pointerTilt = 0.28,
+  pointerTilt = 0.02,
+  pointerTiltX,
+  pointerTiltY,
+  pointerEase = 2.5,
   dotRadius = 1.5,
   dotOpacity = 0.72,
-  linkOpacity = 0.1,
+  linkOpacity = 0.3,
   pondOpacity = 0.05,
   dotColorVar = "--color-primary",
   linkColorVar = "--color-muted-foreground",
@@ -246,7 +259,9 @@ export function ParticleOrb({
     linkPulse,
     linkPulseSpeed,
     pondRadius,
-    pointerTilt,
+    pointerTiltX: pointerTiltX ?? pointerTilt,
+    pointerTiltY: pointerTiltY ?? pointerTilt,
+    pointerEase,
     dotRadius,
     dotOpacity,
     linkOpacity,
@@ -318,6 +333,8 @@ export function ParticleOrb({
       wx: number
       wy: number
       wz: number
+      /** 0 once a point has reached the near plane, 1 once it is safely past it. */
+      nearFade: number
     }
     let projected: Projected[] = []
 
@@ -501,8 +518,9 @@ export function ParticleOrb({
         }
       }
 
-      eased.x += (pointer.x - eased.x) * Math.min(1, dt * 2.5)
-      eased.y += (pointer.y - eased.y) * Math.min(1, dt * 2.5)
+      const follow = Math.max(0, Math.min(1, dt * o.pointerEase))
+      eased.x += (pointer.x - eased.x) * follow
+      eased.y += (pointer.y - eased.y) * follow
     }
 
     const draw = () => {
@@ -514,9 +532,10 @@ export function ParticleOrb({
       const cy = height / 2
       const R = Math.min(width, height) * o.sphereRadius
       const focal = R * 3.2
+      const nearPlane = focal * 0.25
 
-      const rotY = spin + eased.x * o.pointerTilt
-      const rotX = o.tilt + eased.y * o.pointerTilt
+      const rotY = spin + eased.x * o.pointerTiltX
+      const rotX = o.tilt + eased.y * o.pointerTiltY
       const cosY = Math.cos(rotY)
       const sinY = Math.sin(rotY)
       const cosX = Math.cos(rotX)
@@ -528,7 +547,19 @@ export function ParticleOrb({
         const z1 = -x * sinY + z * cosY
         const y2 = y * cosX - z1 * sinX
         const z2 = y * sinX + z1 * cosX
-        const scale = focal / (focal + z2)
+        // Tentacles reach well past the focal length, so a point can land on or
+        // behind the camera, where focal / (focal + z2) blows up or flips sign
+        // and throws the point (and every link touching it) across the canvas.
+        // Clamp the denominator at a near plane and fade the point out as it
+        // approaches, so it leaves instead of streaking.
+        const denom = focal + z2
+        const scale = focal / (denom > nearPlane ? denom : nearPlane)
+        out.nearFade =
+          denom <= nearPlane
+            ? 0
+            : denom >= nearPlane * 2
+              ? 1
+              : (denom - nearPlane) / nearPlane
         out.sx = cx + x1 * scale
         out.sy = cy + y2 * scale
         out.scale = scale
@@ -545,6 +576,7 @@ export function ParticleOrb({
           projected[count] ??
           (projected[count] = {
             sx: 0, sy: 0, scale: 1, depth: 0, r: 0, wx: 0, wy: 0, wz: 0,
+            nearFade: 1,
           })
         project(x, y, z, p)
         p.r = r
@@ -637,7 +669,10 @@ export function ParticleOrb({
         const used = new Uint8Array(LINK_BUCKETS)
         for (let i = 0; i < LINK_BUCKETS; i++) paths[i] = new Path2D()
 
-        const addLink = (a: Projected, b: Projected, weight: number) => {
+        const addLink = (a: Projected, b: Projected, w: number) => {
+          // A link is only as visible as its dimmest end: one endpoint at the
+          // near plane kills the whole segment.
+          const weight = w * a.nearFade * b.nearFade
           if (weight <= 0.02) return
           let bucket = (weight * LINK_BUCKETS) | 0
           if (bucket >= LINK_BUCKETS) bucket = LINK_BUCKETS - 1
@@ -746,7 +781,9 @@ export function ParticleOrb({
       ctx.fillStyle = colors.dot
       for (const i of order) {
         const p = projected[i]
-        const fade = Math.max(0.12, Math.min(1, (p.scale - 0.68) / 0.55))
+        const fade =
+          Math.max(0.12, Math.min(1, (p.scale - 0.68) / 0.55)) * p.nearFade
+        if (fade <= 0) continue
         ctx.globalAlpha = o.dotOpacity * fade
         ctx.beginPath()
         ctx.arc(p.sx, p.sy, Math.max(0.3, p.r * p.scale), 0, TWO_PI)

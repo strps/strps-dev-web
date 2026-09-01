@@ -124,7 +124,10 @@ small, this — not the distance arithmetic — is the dominant cost, so raise
 | `sphereRadius` | `0.26` | Radius as a fraction of the canvas' smaller side. |
 | `spinSpeed` | `0.1` | Full turns per minute around Y. |
 | `tilt` | `-0.32` | Fixed tilt in radians. |
-| `pointerTilt` | `0.28` | How far the pointer tips the sphere, in radians. |
+| `pointerTilt` | `0.28` | How far the pointer tips the sphere, in radians. Base for both axes. |
+| `pointerTiltX` | `pointerTilt` | Horizontal (yaw) pointer response, in radians. |
+| `pointerTiltY` | `pointerTilt` | Vertical (pitch) pointer response, in radians. |
+| `pointerEase` | `2.5` | How fast the orb chases the pointer, per second. Lower drifts, `0` freezes it. |
 | `scatter` | `0.01` | Fixed random offset off the lattice, as a fraction of the radius. |
 
 ### Tentacles
