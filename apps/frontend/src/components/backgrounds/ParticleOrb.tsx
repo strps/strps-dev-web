@@ -28,6 +28,11 @@ export interface ParticleOrbProps {
   scatter?: number
   /** How irregularly beads sit along an arm: 0 evenly spaced, 1 fully random. */
   beadSpread?: number
+  /**
+   * How strongly beads bunch toward the base of an arm. 1 spreads them evenly
+   * over the reach; higher values crowd them around the sphere and thin the tip.
+   */
+  beadRootBias?: number
   /** Radius of the tube of beads around an arm's axis, as a fraction of the sphere radius. */
   tentacleThickness?: number
   /**
@@ -40,6 +45,15 @@ export interface ParticleOrbProps {
   linkNeighbors?: number
   /** Link the innermost beads of each arm into the shell they emerge from. */
   linkArmsToShell?: boolean
+  /**
+   * How many beads ahead each bead links to along its arm. 1 is a bare chain
+   * (each bead tied only to its predecessor and successor); 3 webs the tube.
+   */
+  armLinkSpan?: number
+  /** Depth of the per-link pulse, 0 steady, 1 fading fully out at the trough. */
+  linkPulse?: number
+  /** Pulses per second for the fastest links; each link picks its own rate below it. */
+  linkPulseSpeed?: number
   /** Radius of the glowing pond at the centre, as a multiple of the sphere radius. */
   pondRadius?: number
   /** How far the pointer tips the sphere, in radians. */
@@ -59,6 +73,12 @@ const TWO_PI = Math.PI * 2
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
 /** Alpha quantisation for link batching: one Path2D + one stroke() per bucket. */
 const LINK_BUCKETS = 8
+
+/** Deterministic [0, 1) noise from a pair of indices, for pulses on dynamic links. */
+function hash2(a: number, b: number) {
+  const h = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453
+  return h - Math.floor(h)
+}
 
 interface Vec3 {
   x: number
@@ -177,22 +197,26 @@ export function ParticleOrb({
   spinSpeed = 0.1,
   tilt = -0.32,
   tentacles = 6,
-  tentacleBeads = 34,
+  tentacleBeads = 46,
   tentacleLength = 4,
   tentacleSway = 0.1,
   flowSpeed = 0,
-  scatter = 0.09,
-  beadSpread = 0.0,
+  scatter = 0.15,
+  beadSpread = 0.1,
+  beadRootBias = 1.5,
   tentacleThickness = 0.2,
   linkDistance = 0.32,
-  linkNeighbors = 6,
+  linkNeighbors = 3,
   linkArmsToShell = true,
+  armLinkSpan = 2,
+  linkPulse = 0.7,
+  linkPulseSpeed = 0.5,
   pondRadius = 0.72,
   pointerTilt = 0.28,
   dotRadius = 1.5,
   dotOpacity = 0.72,
-  linkOpacity = 0.9,
-  pondOpacity = 0,
+  linkOpacity = 0.1,
+  pondOpacity = 0.05,
   dotColorVar = "--color-primary",
   linkColorVar = "--color-muted-foreground",
   pondColorVar = "--color-primary",
@@ -213,10 +237,14 @@ export function ParticleOrb({
     flowSpeed,
     scatter,
     beadSpread,
+    beadRootBias,
     tentacleThickness,
     linkDistance,
     linkNeighbors,
     linkArmsToShell,
+    armLinkSpan,
+    linkPulse,
+    linkPulseSpeed,
     pondRadius,
     pointerTilt,
     dotRadius,
@@ -259,11 +287,18 @@ export function ParticleOrb({
     let shellEdgeB = new Uint16Array(0)
     /** Distance at build time, in unit-sphere units. Multiply by R for px. */
     let shellEdgeRest = new Float32Array(0)
-    // Consecutive beads along one arm. The pair indices are static; the edge
-    // itself is distance-culled at draw time so the wrap-around bead (the one
-    // that just respawned at the tip) does not draw a line across the whole arm.
+    /** Per-edge pulse phase and rate, rolled once with the mesh. */
+    let shellEdgePulse = new Float32Array(0)
+    // Beads along one arm, each tied to the next few rather than only its
+    // immediate neighbour, so an arm reads as a woven tube instead of a chain.
+    // The pair indices are static; the edge itself is distance-culled at draw
+    // time so the wrap-around bead (the one that just respawned at the tip)
+    // does not draw a line across the whole arm.
     let armEdgeA = new Uint16Array(0)
     let armEdgeB = new Uint16Array(0)
+    /** Index gap of each arm edge, so the cull scales with how far apart the pair sits. */
+    let armEdgeGap = new Uint8Array(0)
+    let armEdgePulse = new Float32Array(0)
     /** Signature of the inputs the mesh was built from, to know when to rebuild. */
     let meshKey = ""
 
@@ -306,6 +341,7 @@ export function ParticleOrb({
         shellEdgeA = new Uint16Array(0)
         shellEdgeB = new Uint16Array(0)
         shellEdgeRest = new Float32Array(0)
+        shellEdgePulse = new Float32Array(0)
         return
       }
       // Positions as the draw loop will actually place them (minus breathing,
@@ -354,23 +390,50 @@ export function ParticleOrb({
       shellEdgeA = Uint16Array.from(a)
       shellEdgeB = Uint16Array.from(b)
       shellEdgeRest = Float32Array.from(rest)
+      shellEdgePulse = rollPulses(a.length)
     }
 
-    /** Consecutive-bead pairs, indexed into the same `projected` buffer. */
-    const buildArmEdges = () => {
+    /**
+     * Phase and rate for `n` links, interleaved as [phase, rate, phase, ...].
+     * Every link keeps its own pair, so the mesh flickers in no order at all
+     * rather than beating as one.
+     */
+    const rollPulses = (n: number) => {
+      const out = new Float32Array(n * 2)
+      for (let i = 0; i < n; i++) {
+        out[i * 2] = Math.random() * TWO_PI
+        out[i * 2 + 1] = 0.35 + Math.random() * 0.9
+      }
+      return out
+    }
+
+    /**
+     * Bead pairs within an arm, indexed into the same `projected` buffer. Each
+     * bead reaches `span` beads ahead, not just to the next one: the beads sit
+     * scattered around the arm's axis, so the longer hops cross the tube and
+     * web it together instead of tracing a single spine down it.
+     */
+    const buildArmEdges = (span: number) => {
       const base = shell.length
+      const reach = Math.max(1, Math.round(span))
       const a: number[] = []
       const b: number[] = []
+      const gap: number[] = []
       for (let t = 0; t < arms.length; t++) {
         const beads = arms[t].beads.length
         const off = base + t * beads
-        for (let i = 0; i + 1 < beads; i++) {
-          a.push(off + i)
-          b.push(off + i + 1)
+        for (let i = 0; i < beads; i++) {
+          for (let g = 1; g <= reach && i + g < beads; g++) {
+            a.push(off + i)
+            b.push(off + i + g)
+            gap.push(g)
+          }
         }
       }
       armEdgeA = Uint16Array.from(a)
       armEdgeB = Uint16Array.from(b)
+      armEdgeGap = Uint8Array.from(gap)
+      armEdgePulse = rollPulses(a.length)
     }
 
     const rebuild = () => {
@@ -404,11 +467,11 @@ export function ParticleOrb({
 
       // The mesh only depends on the lattice and the neighbourhood settings —
       // none of which change per frame — so rebuild it on signature change only.
-      const key = [n, t, b, o.linkDistance, o.linkNeighbors, o.scatter].join("|")
+      const key = [n, t, b, o.linkDistance, o.linkNeighbors, o.scatter, o.armLinkSpan].join("|")
       if (key !== meshKey) {
         meshKey = key
         buildShellEdges(o.linkDistance, o.linkNeighbors, o.scatter)
-        buildArmEdges()
+        buildArmEdges(o.armLinkSpan)
       }
     }
 
@@ -522,9 +585,15 @@ export function ParticleOrb({
         }
       }
 
+      // `beads` holds an evenly-flowing parameter in [0, 1]; the arc position
+      // is warped off it so the density profile stays put on the arm while the
+      // beads flow through it. Higher bias packs more of them near the base.
+      const armBias = Math.max(0.1, o.beadRootBias)
+      const armT = (u: number) => (armBias === 1 ? u : Math.pow(u, armBias))
+
       for (const arm of arms) {
         for (let i = 0; i < arm.beads.length; i++) {
-          const t = arm.beads[i]
+          const t = armT(arm.beads[i])
           const w = armPoint(arm, t)
           const j = arm.beadJitter[i]
           // Offset the bead inside a disc perpendicular to the arm, so the
@@ -580,6 +649,19 @@ export function ParticleOrb({
 
         // Fade by depth so the far side of the sphere recedes instead of
         // tangling with the near side. Perspective `scale` already encodes it.
+        // Each link fades in and out on its own phase and rate, so the mesh
+        // twinkles instead of pulsing in lockstep. `pulses` is the interleaved
+        // [phase, rate] buffer built with the mesh; dynamic links (arm roots)
+        // have no slot and hash their indices into one instead.
+        const pulseAmount = Math.max(0, Math.min(1, o.linkPulse))
+        const pulseRate = o.linkPulseSpeed * TWO_PI
+        const pulseOf = (phase: number, rate: number) => {
+          if (pulseAmount <= 0) return 1
+          return 1 - pulseAmount * (0.5 + 0.5 * Math.sin(time * pulseRate * rate + phase))
+        }
+        const edgePulse = (pulses: Float32Array, e: number) =>
+          pulseOf(pulses[e * 2], pulses[e * 2 + 1])
+
         const depthFade = (a: Projected, b: Projected) => {
           const f = ((a.scale + b.scale) / 2 - 0.7) / 0.6
           return f < 0.15 ? 0.15 : f > 1 ? 1 : f
@@ -604,19 +686,22 @@ export function ParticleOrb({
           let s = 1 - (stretch - 1) * 3
           if (s < 0.3) s = 0.3
           else if (s > 1) s = 1
-          addLink(a, b, s * depthFade(a, b))
+          addLink(a, b, s * depthFade(a, b) * edgePulse(shellEdgePulse, e))
         }
 
         // Arms: pairs are fixed but the spacing is not (flow + spread), so
         // cull by live distance. That also drops the wrap-around edge, where a
         // bead has just respawned at the tip behind its array neighbour.
+        // The cull scales with the index gap: a bead three along the arm sits
+        // about three spacings away, and a flat cut would drop every long hop.
         const armCut = o.linkDistance * R * 1.5
         for (let e = 0; e < armEdgeA.length; e++) {
           const a = projected[armEdgeA[e]]
           const b = projected[armEdgeB[e]]
+          const cut = armCut * (armEdgeGap[e] || 1)
           const d = dist3(a, b)
-          if (d > armCut) continue
-          addLink(a, b, (1 - d / armCut) * depthFade(a, b))
+          if (d > cut) continue
+          addLink(a, b, (1 - d / cut) * depthFade(a, b) * edgePulse(armEdgePulse, e))
         }
 
         // Arm roots into the shell: the only genuinely dynamic pass, and it is
@@ -629,7 +714,7 @@ export function ParticleOrb({
             const arm = arms[t]
             const off = shellEnd + t * beadsPer
             for (let i = 0; i < arm.beads.length; i++) {
-              if (arm.beads[i] > 0.15) continue
+              if (armT(arm.beads[i]) > 0.15) continue
               const a = projected[off + i]
               for (let j = 0; j < shellEnd; j++) {
                 const b = projected[j]
@@ -638,7 +723,8 @@ export function ParticleOrb({
                 const dz = a.wz - b.wz
                 const d2 = dx * dx + dy * dy + dz * dz
                 if (d2 > cut2) continue
-                addLink(a, b, (1 - Math.sqrt(d2) / cut) * depthFade(a, b))
+                const pulse = pulseOf(hash2(off + i, j) * TWO_PI, 0.35 + hash2(j, off + i))
+                addLink(a, b, (1 - Math.sqrt(d2) / cut) * depthFade(a, b) * pulse)
               }
             }
           }

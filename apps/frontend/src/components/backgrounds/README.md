@@ -31,7 +31,9 @@ Per frame the loop does `rebuild()` → `step(dt)` → `draw()`.
   orthonormal basis `u`/`v` spanning the plane it sways in. `tentacleBeads`
   beads sit at arc positions `t ∈ [0, 1]` (0 at the sphere surface, 1 at the
   tip) and are offset into a disc around the arm's spine so the stream has a
-  body rather than collapsing onto a line.
+  body rather than collapsing onto a line. The stored bead parameter is
+  uniform; `t = u ** beadRootBias` warps it at draw time, so the beads crowd
+  around the base while still flowing evenly through that profile.
 - **Projection** — world coordinates are already in px. They are rotated
   (`spin` around Y, `tilt` + pointer parallax around X) and then divided
   through by `focal / (focal + z)`.
@@ -75,10 +77,14 @@ visibly breathes instead of just pulsing. That ratio is multiplied by a
 
 Arms are handled in two more passes:
 
-- **Within an arm** — consecutive beads are a static pair list, but their
-  spacing is not fixed (`flowSpeed`, `beadSpread`), so each edge is culled by
-  live distance. That cull also silently drops the wrap-around edge, where a
-  bead has just respawned at the tip behind its array neighbour.
+- **Within an arm** — each bead pairs with the next `armLinkSpan` beads, not
+  only its immediate successor. Beads sit scattered around the arm's axis, so
+  the longer hops cross the tube and web it; a span of 1 collapses the arm back
+  into a single spine. Spacing is not fixed (`flowSpeed`, `beadSpread`), so
+  each edge is culled by live distance, with the cut scaled by the pair's index
+  gap — a flat cut would drop every long hop. That cull also silently drops the
+  wrap-around edge, where a bead has just respawned at the tip behind its array
+  neighbour.
 - **Arm roots into the shell** — the only genuinely dynamic pass. Restricted to
   beads with `t < 0.15`, so it stays a few thousand tests. Toggle with
   `linkArmsToShell`.
@@ -86,6 +92,16 @@ Arms are handled in two more passes:
 Cross-arm links are deliberately absent: arms are far apart in world space, and
 the cross-arm links you may remember from the screen-space version were the
 false-projection artifact.
+
+### Pulsing
+
+Every static edge is rolled a phase and a rate (`rollPulses`) alongside the
+mesh, and its alpha is scaled by `1 - linkPulse * (0.5 + 0.5 * sin(...))`. The
+rates are spread over roughly 0.35–1.25× `linkPulseSpeed`, so no two links beat
+together and the mesh twinkles rather than throbbing as one. The arm-root pass
+is dynamic and has no stored slot, so it hashes its index pair into a phase and
+rate instead — deterministic, so a root link does not flicker as the pass
+re-finds it. `linkPulse: 0` turns the whole thing off.
 
 ### Batching
 
@@ -116,11 +132,12 @@ small, this — not the distance arithmetic — is the dominant cost, so raise
 | Prop | Default | Meaning |
 | --- | --- | --- |
 | `tentacles` | `6` | Number of arms. |
-| `tentacleBeads` | `34` | Beads per arm. |
+| `tentacleBeads` | `46` | Beads per arm. |
 | `tentacleLength` | `4` | Reach, as a multiple of the sphere radius. |
 | `tentacleSway` | `0.1` | Tip sway off the base axis, as a multiple of the radius. |
 | `tentacleThickness` | `0.2` | Radius of the bead tube around the arm's axis. |
 | `beadSpread` | `0` | 0 evenly spaced, 1 fully random. |
+| `beadRootBias` | `2.4` | Bunching toward the base. 1 is even along the reach; higher crowds the root and thins the tip. |
 | `flowSpeed` | `0` | Arm-lengths travelled per second. 0 freezes the beads. |
 
 ### Links
@@ -130,6 +147,9 @@ small, this — not the distance arithmetic — is the dominant cost, so raise
 | `linkDistance` | `0.32` | **3D** neighbour radius, as a fraction of the sphere radius. 0 disables links. |
 | `linkNeighbors` | `6` | Max edges kept per shell particle. |
 | `linkArmsToShell` | `true` | Link the innermost beads of each arm into the shell. |
+| `armLinkSpan` | `3` | How many beads ahead each bead links to along its arm. 1 is a bare chain. |
+| `linkPulse` | `0.55` | Depth of the per-link opacity pulse. 0 is steady, 1 fades a link fully out at its trough. |
+| `linkPulseSpeed` | `0.5` | Pulses per second for the fastest links; each link picks its own rate below it. |
 
 > `linkDistance` used to be a screen-space distance in CSS px. It is now a
 > world-space fraction — `0.32`, not `30`. The natural lattice spacing is about
