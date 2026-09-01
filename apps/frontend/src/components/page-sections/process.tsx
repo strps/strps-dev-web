@@ -2,6 +2,7 @@ import Section from '../section'
 import type { PageProcessBlock } from '@strps-website/types'
 import { ProcessStepCard } from '../cards/ProcessStepCard'
 import { HairlineGrid } from '@/components/primitives/HairlineGrid'
+import { Reveal } from '@/components/primitives/Reveal'
 
 type ProcessProps = Omit<PageProcessBlock, 'variant'> & {
     processVariant?: PageProcessBlock['variant'];
@@ -20,13 +21,15 @@ const ProcessSection: React.FC<ProcessProps> = ({ processVariant: variant, title
             >
                 <HairlineGrid minItemWidth={190} cellClassName="px-5 py-[22px]">
                     {steps?.map((step, i) => (
-                        <div key={step.id || i}>
+                        // The reveal lives inside the cell, so the hairline grid
+                        // still sees its own opaque cells as the grid items.
+                        <Reveal key={step.id || i} delay={i * 0.07} distance={12}>
                             <span className="font-mono text-xs text-primary">{i + 1} / {total}</span>
                             <h4 className="mt-2.5 text-[15px] font-medium">{step.title}</h4>
                             <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
                                 {step.description}
                             </p>
-                        </div>
+                        </Reveal>
                     ))}
                 </HairlineGrid>
             </Section>

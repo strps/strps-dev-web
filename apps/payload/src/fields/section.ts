@@ -21,6 +21,17 @@ export const SectionConfig: Field = {
       type: 'checkbox',
     },
     theme('auto'),
+    /**
+     * Decorative backgrounds are no longer picked per section here. The site
+     * runs a single point cloud (`ParticleStage`) behind the whole page, and
+     * which shape it takes behind each block is decided in code, by block type
+     * — see `frontend/src/components/backgrounds/particle-stage/section-shapes.ts`.
+     * Only a per-section background *image* is still an editorial choice.
+     *
+     * The old 'svgCircles' option is gone with it; `SVGCircles` now lives only
+     * in the lab/experiment pages. Existing rows holding that value render as
+     * no background, so they need no data fix.
+     */
     {
       name: 'background',
       type: 'select',
@@ -29,7 +40,6 @@ export const SectionConfig: Field = {
       defaultValue: 'none',
       options: [
         { label: 'None', value: 'none' },
-        { label: 'SVG Circles', value: 'svgCircles' },
         { label: 'Image', value: 'image' },
       ],
     },

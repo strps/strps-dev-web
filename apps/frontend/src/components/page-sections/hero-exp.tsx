@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import Section from '@/components/section';
 import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { RevealGroup } from '@/components/primitives/Reveal';
 import type { PageHeroBlock, Media } from '@strps-website/types';
 import type { Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/getDictionary';
@@ -62,7 +63,9 @@ const StatementHero: React.FC<HeroProps> = ({
     const statusText = composeStatus(status);
 
     return (
-        <div>
+        // Above the fold: play on mount rather than on scroll, so the hero is
+        // already settling as the page paints instead of waiting on an observer.
+        <RevealGroup on="mount" stagger={0.09} delay={0.05} distance={18}>
             {eyebrow && (
                 <span className="mb-6 flex items-center gap-3 font-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
                     <span aria-hidden className="h-px w-8 bg-foreground/60" />
@@ -108,7 +111,7 @@ const StatementHero: React.FC<HeroProps> = ({
                     );
                 })}
             </div>
-        </div>
+        </RevealGroup>
     );
 };
 

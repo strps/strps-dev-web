@@ -2,6 +2,7 @@ import Section from '../section'
 import { ArticleCard } from '../cards/ArticleCard'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
+import { Reveal, RevealGroup } from '@/components/primitives/Reveal'
 import { getBlogPosts } from '@/app/(website)/[locale]/blog/data'
 import type { PageBlogBlock, Post, Media, BlogTag } from '@strps-website/types'
 import { localizedHref, type Locale } from '@/i18n/config'
@@ -31,13 +32,18 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
             container={false}
             containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
-            <SectionHeader
-                eyebrow={eyebrow || dictionary.eyebrowFallback.writing}
-                title={title}
-                action={blogUrl ? <LinkArrow href={localizedHref(locale, blogUrl)}>{dictionary.common.allArticles} →</LinkArrow> : undefined}
-            />
+            <Reveal>
+                <SectionHeader
+                    eyebrow={eyebrow || dictionary.eyebrowFallback.writing}
+                    title={title}
+                    action={blogUrl ? <LinkArrow href={localizedHref(locale, blogUrl)}>{dictionary.common.allArticles} →</LinkArrow> : undefined}
+                />
+            </Reveal>
 
-            <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3">
+            <RevealGroup
+                itemClassName="h-full"
+                className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3"
+            >
                 {posts.map((post) => {
                     const heroImage =
                         typeof post.heroImage === 'object' && post.heroImage
@@ -62,7 +68,7 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
                         />
                     )
                 })}
-            </div>
+            </RevealGroup>
         </Section>
     )
 }

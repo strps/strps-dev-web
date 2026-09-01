@@ -8,6 +8,7 @@ import { ProjectSummaryCard } from '../cards/ProjectSummaryCard';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { LinkArrow } from '@/components/primitives/LinkArrow';
 import { HairlineGrid } from '@/components/primitives/HairlineGrid';
+import { Reveal, RevealGroup } from '@/components/primitives/Reveal';
 import { resolveLinkHref } from '@/lib/resolveLinkHref';
 import type { PageProjectsTeaserBlock, Project, Media } from '@strps-website/types';
 import { getProjects } from '@/app/(website)/[locale]/projects/data';
@@ -55,29 +56,32 @@ const ProjectTeaserSection = async ({
                 container={false}
                 containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
             >
-                <SectionHeader
-                    eyebrow={eyebrow || dictionary.eyebrowFallback.projects}
-                    title={title}
-                    action={
-                        actionHref && link?.label ? (
-                            <LinkArrow href={actionHref}>{link.label}</LinkArrow>
-                        ) : undefined
-                    }
-                />
+                <Reveal>
+                    <SectionHeader
+                        eyebrow={eyebrow || dictionary.eyebrowFallback.projects}
+                        title={title}
+                        action={
+                            actionHref && link?.label ? (
+                                <LinkArrow href={actionHref}>{link.label}</LinkArrow>
+                            ) : undefined
+                        }
+                    />
+                </Reveal>
 
                 <HairlineGrid minItemWidth={280}>
                     {projects.map((project, i) => (
-                        <ProjectSummaryCard
-                            key={project.id}
-                            number={String(i + 1).padStart(2, '0')}
-                            tag={project.caseStudy?.tag}
-                            title={project.title}
-                            problem={project.caseStudy?.problem}
-                            contribution={project.caseStudy?.contribution}
-                            stack={project.techStack?.map((t) => t.name || '').filter(Boolean) || []}
-                            caseStudyHref={project.slug ? localizedHref(locale, `/projects/${project.slug}`) : undefined}
-                            locale={locale}
-                        />
+                        <Reveal key={project.id} delay={(i % 3) * 0.08} className="h-full">
+                            <ProjectSummaryCard
+                                number={String(i + 1).padStart(2, '0')}
+                                tag={project.caseStudy?.tag}
+                                title={project.title}
+                                problem={project.caseStudy?.problem}
+                                contribution={project.caseStudy?.contribution}
+                                stack={project.techStack?.map((t) => t.name || '').filter(Boolean) || []}
+                                caseStudyHref={project.slug ? localizedHref(locale, `/projects/${project.slug}`) : undefined}
+                                locale={locale}
+                            />
+                        </Reveal>
                     ))}
                 </HairlineGrid>
             </Section>
@@ -97,7 +101,8 @@ const ProjectTeaserSection = async ({
                 )}
             </div>
 
-            <div
+            <RevealGroup
+                itemClassName="h-full"
                 className={
                     variant === 'cards'
                         ? 'grid grid-cols-1 auto-rows-fr gap-6'
@@ -143,7 +148,7 @@ const ProjectTeaserSection = async ({
                         />
                     );
                 })}
-            </div>
+            </RevealGroup>
 
             {githubUrl && (
                 <div className="sm:hidden flex justify-center">

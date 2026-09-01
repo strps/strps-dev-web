@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import Section from '../section';
 import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Reveal } from '@/components/primitives/Reveal';
 import { PayloadForm } from '@/components/form/PayloadForm';
 import type { PageContactBlock, Form as FormType } from '@strps-website/types';
 import type { Locale } from '@/i18n/config';
@@ -38,7 +39,7 @@ const ContactSection: React.FC<ContactProps> = ({
             containerClassName="mx-auto w-full max-w-wrap px-6"
         >
             <div className="grid grid-cols-1 gap-11 min-[721px]:grid-cols-[1fr_1.2fr] min-[721px]:gap-15">
-                <div>
+                <Reveal>
                     <Eyebrow as="div">{eyebrow || dictionary.eyebrowFallback.contact}</Eyebrow>
                     <h2 className="mt-3.5 text-2xl font-medium">{title}</h2>
                     {description && (
@@ -60,19 +61,19 @@ const ContactSection: React.FC<ContactProps> = ({
                             </a>
                         </div>
                     )}
-                </div>
+                </Reveal>
 
                 {form ? (
-                    <div>
+                    <Reveal delay={0.12}>
                         <PayloadForm
                             form={form}
                             variant="mockup"
                             successClassName="border border-border-strong p-10 text-center"
                         />
                         {note && <p className="mt-3 text-xs text-muted-foreground">{note}</p>}
-                    </div>
+                    </Reveal>
                 ) : (
-                    <div className="flex flex-wrap items-start gap-4">
+                    <Reveal delay={0.12} className="flex flex-wrap items-start gap-4">
                         {email && (
                             <Button variant="solid" asChild>
                                 <Link href={`mailto:${email}`}>
@@ -83,7 +84,7 @@ const ContactSection: React.FC<ContactProps> = ({
                         {contactLinks?.map(({ link }, i) => (
                             <CMSLink key={i} {...link} appearance={link.appearance ?? undefined} locale={locale} />
                         ))}
-                    </div>
+                    </Reveal>
                 )}
             </div>
         </Section>

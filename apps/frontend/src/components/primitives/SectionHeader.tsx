@@ -19,15 +19,17 @@ export function SectionHeader({ eyebrow, title, action, className }: SectionHead
   return (
     <div
       className={cn(
-        "flex flex-wrap items-baseline justify-between gap-[18px] border-b border-border pb-[22px]",
+        "flex flex-wrap items-baseline justify-between gap-4.5 pb-5.5",
         className
       )}
     >
-      <div className="flex items-baseline gap-[18px]">
-        <Eyebrow>{eyebrow}</Eyebrow>
-        <h2 className="text-2xl font-medium tracking-[-0.01em]">{title}</h2>
+      <div className="w-full border-b border-border pb-2">
+        <h2 className="text-4xl font-medium tracking-[-0.01em]">{title}</h2>
       </div>
-      {action}
+      <div className=" w-full flex items-baseline gap-4.5 justify-between">
+        <Eyebrow>{eyebrow}</Eyebrow>
+        {action}
+      </div>
     </div>
   )
 }

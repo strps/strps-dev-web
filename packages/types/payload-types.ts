@@ -454,7 +454,7 @@ export interface SectionConfig {
   section_id?: string | null;
   backgroundContainer?: boolean | null;
   theme?: ('auto' | 'light' | 'dark' | 'inverted') | null;
-  background: 'none' | 'svgCircles' | 'image';
+  background: 'none' | 'image';
   backgroundImage?: (number | null) | Media;
 }
 /**

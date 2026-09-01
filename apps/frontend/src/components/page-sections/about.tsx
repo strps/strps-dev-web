@@ -3,6 +3,7 @@ import RichText from '@/components/RichText';
 import Section from '../section';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { LinkArrow } from '@/components/primitives/LinkArrow';
+import { Reveal } from '@/components/primitives/Reveal';
 import { resolveLinkHref } from '@/lib/resolveLinkHref';
 import type { PageAboutBlock } from '@strps-website/types';
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical';
@@ -30,29 +31,35 @@ const AboutSection: React.FC<AboutProps> = ({ eyebrow, title, layout, summary, b
             container={false}
             containerClassName="mx-auto w-full max-w-wrap px-6"
         >
-            <SectionHeader
-                eyebrow={eyebrow || dictionary.eyebrowFallback.about}
-                title={title}
-                action={
-                    actionHref && link?.label ? (
-                        <LinkArrow href={actionHref}>{link.label}</LinkArrow>
-                    ) : undefined
-                }
-            />
+            <Reveal>
+                <SectionHeader
+                    eyebrow={eyebrow || dictionary.eyebrowFallback.about}
+                    title={title}
+                    action={
+                        actionHref && link?.label ? (
+                            <LinkArrow href={actionHref}>{link.label}</LinkArrow>
+                        ) : undefined
+                    }
+                />
+            </Reveal>
 
             {body ? (
-                <RichText
-                    data={body as DefaultTypedEditorState}
-                    enableGutter={false}
-                    enableProse={false}
-                    className={cn(
-                        'mt-9',
-                        isTwoColumn ? 'grid items-start gap-12.5 md:grid-cols-2' : 'max-w-[60ch] space-y-4',
-                        proseClassName,
-                    )}
-                />
+                <Reveal delay={0.1}>
+                    <RichText
+                        data={body as DefaultTypedEditorState}
+                        enableGutter={false}
+                        enableProse={false}
+                        className={cn(
+                            'mt-9',
+                            isTwoColumn ? 'grid items-start gap-12.5 md:grid-cols-2' : 'max-w-[60ch] space-y-4',
+                            proseClassName,
+                        )}
+                    />
+                </Reveal>
             ) : summary ? (
-                <p className="mt-9 max-w-[60ch] text-[15px] leading-[1.7] text-muted-foreground">{summary}</p>
+                <Reveal delay={0.1}>
+                    <p className="mt-9 max-w-[60ch] text-[15px] leading-[1.7] text-muted-foreground">{summary}</p>
+                </Reveal>
             ) : null}
         </Section>
     );

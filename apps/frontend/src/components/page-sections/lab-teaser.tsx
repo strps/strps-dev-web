@@ -3,6 +3,7 @@ import type { PageLabTeaserBlock } from '@strps-website/types'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { LabTeaserCard } from '@/components/cards/LabTeaserCard'
+import { Reveal, RevealGroup } from '@/components/primitives/Reveal'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
 import { getLocalizedGalleryItems } from '@/app/(website)/[locale]/lab/data'
 import { localizedHref, type Locale } from '@/i18n/config'
@@ -34,19 +35,28 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
             container={false}
             containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
-            <SectionHeader
-                eyebrow={eyebrow || dictionary.eyebrowFallback.lab}
-                title={title}
-                action={
-                    actionHref && link?.label ? (
-                        <LinkArrow href={actionHref}>{link.label}</LinkArrow>
-                    ) : undefined
-                }
-            />
+            <Reveal>
+                <SectionHeader
+                    eyebrow={eyebrow || dictionary.eyebrowFallback.lab}
+                    title={title}
+                    action={
+                        actionHref && link?.label ? (
+                            <LinkArrow href={actionHref}>{link.label}</LinkArrow>
+                        ) : undefined
+                    }
+                />
+            </Reveal>
 
-            {intro && <p className="max-w-2xl text-muted-foreground">{intro}</p>}
+            {intro && (
+                <Reveal delay={0.08}>
+                    <p className="max-w-2xl text-muted-foreground">{intro}</p>
+                </Reveal>
+            )}
 
-            <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3">
+            <RevealGroup
+                itemClassName="h-full"
+                className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3"
+            >
                 {items.map((item) => (
                     <LabTeaserCard
                         key={item.id}
@@ -57,7 +67,7 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
                         imageUrl={typeof item.imageUrl === 'string' ? item.imageUrl : item.imageUrl?.src}
                     />
                 ))}
-            </div>
+            </RevealGroup>
         </Section>
     )
 }

@@ -3,6 +3,7 @@ import type { PageSkillsBlock } from '@strps-website/types';
 import { SkillsCard } from '../cards/SkillsCard';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Reveal, RevealGroup } from '@/components/primitives/Reveal';
 import { IconName } from 'lucide-react/dynamic';
 import type { Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/getDictionary';
@@ -25,9 +26,11 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
                 container={false}
                 containerClassName="mx-auto w-full max-w-wrap px-6"
             >
-                <SectionHeader eyebrow={eyebrow || dictionary.eyebrowFallback.skills} title={title} />
+                <Reveal>
+                    <SectionHeader eyebrow={eyebrow || dictionary.eyebrowFallback.skills} title={title} />
+                </Reveal>
 
-                <div
+                <RevealGroup
                     className="mt-9 grid gap-8.5"
                     style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}
                 >
@@ -47,7 +50,7 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
                         </div>
                     )
                     )}
-                </div>
+                </RevealGroup>
             </Section>
         );
     }
@@ -58,12 +61,12 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
             className="space-y-8 py-10 px-10"
             {...(section ?? {})}
         >
-            <div className="space-y-2">
+            <Reveal className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
                 {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
-            </div>
+            </Reveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            <RevealGroup itemClassName="h-full" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                 {skillGroups?.map((skillGroup) => (
                     <SkillsCard
                         key={skillGroup.id}
@@ -72,7 +75,7 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
                         skills={skillGroup.keywords?.map((skill) => ({ text: skill.keyword })) || []}
                     />
                 ))}
-            </div>
+            </RevealGroup>
         </Section>
     );
 };

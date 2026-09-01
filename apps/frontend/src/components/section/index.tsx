@@ -2,8 +2,6 @@ import * as React from "react"
 import Image, { type ImageProps } from "next/image"
 import { cn } from "@/lib/utils"
 import { type SectionConfig, type Media } from "@strps-website/types"
-import SVGCircles from "./SVGCircles"
-
 
 /**
  * Vertical rhythm. Each variant carries a minimum height as well as its
@@ -18,8 +16,8 @@ import SVGCircles from "./SVGCircles"
  */
 const SPACING_VARIANTS = {
   default: "py-16 min-h-[70svh]",
-  hero: "pt-[110px] pb-[90px] min-h-svh",
-  section: "pt-[90px] pb-0 min-h-[70svh]",
+  hero: "pt-[110px] pb-[90px] max-h-svh min-h-[80svh]",
+  section: "pt-[90px] pb-0 min-h-400px",
   contact: "pt-[90px] pb-[110px] min-h-[80svh]",
 } as const
 
@@ -122,24 +120,6 @@ export default function Section({
       {backgroundLayer && (
         <div className="absolute inset-0 -z-10 h-full w-full select-none pointer-events-none">
           {backgroundLayer}
-        </div>
-      )}
-
-      {background === "svgCircles" && (
-        <div className="absolute inset-0 -z-10 h-full w-full select-none pointer-events-none">
-          <SVGCircles
-            className="w-full h-full block stroke-svg"
-            width={1600}
-            height={900}
-            numCircles={8}
-            maxRadius={920}
-            focalLength={1000}
-            worldDepth={6667}
-            strokeWidth={10}
-            strokeDasharray="40 20"
-            // strokeColor="green"
-            style={{ opacity: 0.12 }}
-          />
         </div>
       )}
 

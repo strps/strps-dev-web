@@ -14,7 +14,7 @@ export function Eyebrow({
   return (
     <Tag
       className={cn(
-        "font-mono text-xs tracking-[0.08em] uppercase text-faint-foreground",
+        "font-mono text-sm tracking-[0.08em] uppercase text-faint-foreground",
         className
       )}
       {...props}

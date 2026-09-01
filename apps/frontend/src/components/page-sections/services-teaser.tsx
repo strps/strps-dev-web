@@ -3,6 +3,7 @@ import type { PageServicesTeaserBlock } from '@strps-website/types'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
 import { NumberedRow } from '@/components/primitives/NumberedRow'
+import { Reveal, RevealGroup } from '@/components/primitives/Reveal'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
 import type { Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/getDictionary'
@@ -31,17 +32,19 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
             container={false}
             containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
-            <SectionHeader
-                eyebrow={eyebrow || dictionary.eyebrowFallback.services}
-                title={title}
-                action={
-                    actionHref && link?.label ? (
-                        <LinkArrow href={actionHref}>{link.label}</LinkArrow>
-                    ) : undefined
-                }
-            />
+            <Reveal>
+                <SectionHeader
+                    eyebrow={eyebrow || dictionary.eyebrowFallback.services}
+                    title={title}
+                    action={
+                        actionHref && link?.label ? (
+                            <LinkArrow href={actionHref}>{link.label}</LinkArrow>
+                        ) : undefined
+                    }
+                />
+            </Reveal>
 
-            <div>
+            <RevealGroup stagger={0.07}>
                 {items?.map((item, i) => {
                     const itemHref = resolveLinkHref(item.link, locale)
                     return (
@@ -50,6 +53,10 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
                             number={String(i + 1).padStart(2, '0')}
                             title={item.name}
                             description={item.summary || undefined}
+                            // Each row now sits alone inside its reveal wrapper, so
+                            // `last:border-b-0` would match every row — drop the rule
+                            // explicitly on the real last item instead.
+                            className={i === (items?.length ?? 0) - 1 ? 'border-b-0' : undefined}
                             action={
                                 itemHref && item.link?.label ? (
                                     <LinkArrow href={itemHref}>{item.link.label}</LinkArrow>
@@ -58,7 +65,7 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
                         />
                     )
                 })}
-            </div>
+            </RevealGroup>
         </Section>
     )
 }
