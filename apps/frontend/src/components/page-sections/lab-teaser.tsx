@@ -1,4 +1,4 @@
-import Section from '.'
+import Section from './section'
 import type { PageLabTeaserBlock } from '@strps-website/types'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'

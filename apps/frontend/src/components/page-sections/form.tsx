@@ -1,7 +1,7 @@
 import type { FormBlock, Form as FormType } from '@strps-website/types'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import RichText from '@/components/RichText'
-import Section from '@/components/page-sections'
+import Section from '@/components/page-sections/section'
 import { Card } from '@/components/ui/card'
 import { PayloadForm } from '@/components/form/PayloadForm'
 
@@ -45,7 +45,7 @@ const FormSection: React.FC<FormSectionProps> = (props) => {
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'form'}
-            className="flex items-center justify-center py-16 md:py-24"
+            className="flex items-center justify-center"
             container={false}
             containerClassName="mx-auto w-full max-w-wrap px-6"
         >

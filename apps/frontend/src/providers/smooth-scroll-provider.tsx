@@ -20,10 +20,16 @@ export interface SmoothScrollProviderProps {
  *
  * Two things matter here beyond "new Lenis()":
  *
- * 1. **One clock.** Lenis is stepped from `gsap.ticker` rather than its own
- *    `requestAnimationFrame`, and `ParticleStage` draws from that same ticker.
- *    Separate loops would let the canvas read a scroll offset from the previous
- *    frame, which shows up as the background lagging the page by a frame.
+ * 1. **One clock, and Lenis first on it.** Lenis is stepped from `gsap.ticker`
+ *    rather than its own `requestAnimationFrame`, and `ParticleStage` draws from
+ *    that same ticker. Separate loops would let the canvas read a scroll offset
+ *    from the previous frame, which shows up as the background lagging the page.
+ *    Sharing the ticker is only half of it: callbacks fire in the order they
+ *    were added, and this provider *wraps* the canvas, so React runs the child's
+ *    effect first and the canvas would otherwise be registered ahead of Lenis —
+ *    drawing every frame from the offset Lenis computed on the last one. Hence
+ *    `prioritize`, which pins the scroll source to the head of the list however
+ *    the tree mounts.
  * 2. **Reduced motion opts out entirely.** Smooth scrolling is exactly the kind
  *    of motion the preference is about, so Lenis is never constructed; the
  *    native scroll position is mirrored instead and everything downstream keeps
@@ -65,7 +71,9 @@ export function SmoothScrollProvider({
     })
 
     const tick = (time: number) => lenis.raf(time * 1000)
-    gsap.ticker.add(tick)
+    // (callback, once, prioritize) — prioritize puts Lenis at the head of the
+    // ticker so every other subscriber reads this frame's offset, not the last.
+    gsap.ticker.add(tick, false, true)
     // GSAP throttles its own delta after a long frame, which desynchronises
     // Lenis from the real elapsed time; Lenis integrates its own dt anyway.
     gsap.ticker.lagSmoothing(0)

@@ -1,4 +1,4 @@
-import Section from '.';
+import Section from './section';
 import { ProjectCard } from '../cards/ProjectCard';
 import { ProjectTeaserCard } from '../cards/ProjectTeaserCard';
 import { ProjectSummaryCard } from '../cards/ProjectSummaryCard';
@@ -60,7 +60,7 @@ const ProjectTeaserSection = async ({
             {...(section ?? {})}
             id={section?.section_id || 'projects'}
             container={false}
-            containerClassName="min-h-[400px] mx-auto w-full max-w-wrap gap-[22px] px-6"
+            containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <Reveal>
                 <SectionHeader
@@ -137,6 +137,7 @@ const ProjectTeaserSection = async ({
                     })}
                 </RevealGroup>
             )}
+
         </Section>
     );
 };

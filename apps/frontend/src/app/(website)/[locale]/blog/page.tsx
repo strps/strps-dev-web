@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Section from '@/components/page-sections';
+import Section from '@/components/page-sections/section';
 import { BlogList } from '@/components/blog/blog-list';
 import { getBlogPosts } from './data';
 import { Pagination } from '@/components/pagination';

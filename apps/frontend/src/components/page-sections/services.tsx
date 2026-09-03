@@ -1,4 +1,4 @@
-import Section from '.'
+import Section from './section'
 import type { PageServicesBlock } from '@strps-website/types'
 import { ServiceCard } from '../cards/ServiceCard'
 import type { Locale } from '@/i18n/config'
@@ -8,7 +8,6 @@ const ServicesSection: React.FC<PageServicesBlock & { locale: Locale }> = ({ tit
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'services'}
-            className="py-8 md:py-14"
             container={false}
             containerClassName="mx-auto w-full max-w-wrap gap-10 px-6 md:gap-14"
         >

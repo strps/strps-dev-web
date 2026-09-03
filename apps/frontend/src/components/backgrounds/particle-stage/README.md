@@ -235,10 +235,19 @@ publishes its offset to `scrollState` (`@/lib/scroll`).
 
 Two things there matter beyond `new Lenis()`:
 
-- **One clock.** Lenis is stepped from `gsap.ticker`, and `ParticleStage` draws
-  from the same ticker. Separate `requestAnimationFrame` loops let the canvas
-  read the previous frame's scroll offset, which shows up as the background
-  lagging the page by a frame.
+- **One clock, and Lenis first on it.** Lenis is stepped from `gsap.ticker`, and
+  `ParticleStage` draws from the same ticker. Separate `requestAnimationFrame`
+  loops let the canvas read the previous frame's scroll offset, which shows up
+  as the background lagging the page by a frame.
+
+  Sharing the ticker is only half of it. Ticker callbacks fire in the order they
+  were added, `SmoothScrollProvider` *wraps* the stage, and React runs child
+  effects before parent ones — so the canvas registers first and draws from the
+  offset Lenis computed on the previous frame. Same one-frame lag, arrived at a
+  different way, and at 60fps during a fast flick it is tens of pixels of the
+  cloud trailing its section. The provider therefore adds Lenis with GSAP's
+  `prioritize` flag (`gsap.ticker.add(tick, false, true)`), which pins the
+  scroll source to the head of the list no matter how the tree mounts.
 - **Read `scrollState.y`, never `window.scrollY`.** Lenis animates a virtual
   offset and only lands on the native one when it settles; the two disagree for
   the entire duration of a smooth scroll.
@@ -328,22 +337,35 @@ changes, and by a `ResizeObserver` on `document.body` — sections move whenever
 anything above them reflows (an image loading, a font swapping, a CMS block
 hydrating), and that is not a window resize.
 
-### Parallax
+### Following the section
 
-The cloud does not sit pinned to the middle of the glass. Each section has a
-document-space centre, and `resolveStage` returns the one the cloud is anchored
-to; the stage turns the distance between that anchor and the viewport centre
-into a vertical drift at `parallax` of the page's own rate.
+The cloud does not sit pinned to the middle of the glass: it belongs to its
+section and travels with it. `resolveStage` returns the owning section's
+document-space centre and its box, and the cloud is placed at that centre in
+viewport space — moving with the page, at the page's own rate.
 
-The anchor is **blended across a transition alongside the shape**, using the same
-`t`. That is the whole trick: handing the cloud from one section's anchor to the
-next is continuous for free, so the parallax never jumps at a seam even though
-the thing it is following just changed.
+`PARALLAX_DRIFT` (0.12) then holds it back by a fraction of the section's
+distance from the viewport centre. It is a module const rather than a prop
+because it is a property of how the background reads, not something a caller
+should be choosing per mount. Keep it small: at 0 the cloud is glued to its
+section and moves exactly like content, which is correct but flat; the drift is
+what makes it read as sitting *behind* the page. Much past 0.5 the anchoring
+stops reading at all and it is just a background again.
 
-`parallaxLimit` caps the drift so a very tall section cannot walk the cloud off
-screen. Measured, the drift moves at most ~0.6px per pixel of scroll — always
-slower than the page, which is what makes it read as depth rather than as the
-background sliding.
+Both the anchor **and the box are blended across a transition alongside the
+shape**, using the same `t`. That is the whole trick: handing the cloud from one
+section to the next is continuous for free, so the position never jumps at a
+seam even though the thing it is following just changed.
+
+A section taller than the screen would carry the cloud off the top long before
+it stopped owning the stage, so the cloud is clamped into the part of its box
+that is actually on screen and **slides along the section** instead of leaving
+with it. `parallaxPad` is how much of the cloud radius is kept inside that band.
+
+The clamp is written so the pad never eats past the visible band's own centre.
+That matters: a pad that could cross itself makes the clamped position jump as
+the band shrinks, and it would jump at exactly the moment a short section enters
+or leaves the screen — the most visible moment there is.
 
 ### Colours
 
@@ -372,8 +394,7 @@ the owning pair changes or the theme mutates — never per frame, because
 | `tilt` | `-0.32` | Fixed tilt in radians. |
 | `blend` | `0.55` | Ceiling on the transition band, in viewport heights. Clamped down to the room between seams. |
 | `hold` | `0.5` | Fraction of each inter-seam run held settled. Raise it for more rest between morphs. |
-| `parallax` | `0.18` | How much the cloud follows its section down the page. 0 pins it to the viewport centre, 1 glues it to the section. |
-| `parallaxLimit` | `0.35` | Ceiling on the drift, in viewport heights, so a tall section cannot push the cloud off screen. |
+| `parallaxPad` | `0.9` | How much of the cloud is kept inside the section's on-screen box, as a fraction of its radius. |
 | `linkDistance` | `0.34` | Neighbour radius in cloud units. 0 disables links. |
 | `linkNeighbors` | `3` | Max edges per point. |
 | `linkPulse` | `0.9` | Depth of the per-link twinkle. |

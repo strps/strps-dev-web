@@ -1,4 +1,4 @@
-import Section from '.';
+import Section from './section';
 import type { PageSkillsBlock } from '@strps-website/types';
 import { SkillsCard } from '../cards/SkillsCard';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
@@ -23,7 +23,7 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
                 {...(section ?? {})}
                 id={section?.section_id || 'skills'}
                 container={false}
-                containerClassName="pt-[90px] pb-0 mx-auto w-full max-w-wrap px-6"
+                containerClassName="mx-auto w-full max-w-wrap px-6"
             >
                 <Reveal>
                     <SectionHeader eyebrow={eyebrow || dictionary.eyebrowFallback.skills} title={title} />
@@ -57,7 +57,7 @@ const SkillsSection: React.FC<SkillsProps> = ({ eyebrow, title, skillsVariant: v
     return (
         <Section
             id={section?.section_id || 'skills'}
-            className="space-y-8 py-10 px-10"
+            className="space-y-8 px-10"
             {...(section ?? {})}
         >
             <Reveal className="space-y-2">

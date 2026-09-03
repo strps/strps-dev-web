@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Section from '.';
+import Section from './section';
 import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Reveal } from '@/components/primitives/Reveal';

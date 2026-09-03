@@ -16,9 +16,10 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<Sectio
    */
   overlayClassName?: string
   /**
-   * Overrides the inner wrapper's default vertical rhythm (`py-16
-   * min-h-[70svh]`) as well as adding to it — it is merged last, so a caller
-   * passing its own `py-*` / `min-h-*` wins.
+   * Overrides the inner wrapper's default vertical rhythm (`my-24
+   * min-h-[400px]`) as well as adding to it — it is merged last, so a caller
+   * passing its own margin / `min-h-*` wins. Only the heroes should need to:
+   * every other section shares the default rhythm so the page keeps one cadence.
    */
   containerClassName?: string
   /**
@@ -103,17 +104,17 @@ export default function Section({
       )}
 
       {/*
-        The default vertical rhythm carries a minimum height as well as its
-        padding: a section shorter than roughly two thirds of the viewport gives
-        the ParticleStage no room to settle between morphs, so the cloud ends up
-        permanently mid-transition. `svh` — the smallest viewport height —
-        rather than `vh` or `dvh`, because it does not reflow when a mobile URL
-        bar appears, and a reflow mid-scroll invalidates every cached section
-        bound. It is a minimum, not a height: taller content simply grows the
-        section, and `containerClassName` overrides it.
+        The default vertical rhythm — one `my-24` above and below, one
+        `min-h-[400px]` floor — is shared by every section; only the heroes
+        override it. The floor is a fixed pixel value rather than a viewport
+        unit on purpose: a section sized off the screen reflows whenever a
+        mobile URL bar appears, and a reflow mid-scroll invalidates every cached
+        ParticleStage section bound. It is a minimum, not a height — taller
+        content simply grows the section — and it leaves the cloud room to
+        settle between morphs.
       */}
       <div className={cn(
-        "relative flex flex-col gap-8 z-20 h-full w-full py-16 min-h-300 justify-center",
+        "relative flex flex-col gap-8 z-20 h-full w-full my-24 min-h-[400px]",
         container && "container mx-auto",
         containerClassName
       )}>

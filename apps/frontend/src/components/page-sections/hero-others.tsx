@@ -1,6 +1,6 @@
 import { Mail, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import Section from '@/components/page-sections';
+import Section from '@/components/page-sections/section';
 import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { PlotLine } from '@/components/primitives/PlotLine';

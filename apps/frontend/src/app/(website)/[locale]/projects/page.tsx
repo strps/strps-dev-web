@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getProjects } from './data';
 import { Pagination } from '@/components/pagination';
 import { ProjectCard } from '@/components/cards/ProjectCard'
-import Section from '@/components/page-sections';
+import Section from '@/components/page-sections/section';
 import { Media, Project } from '@strps-website/types';
 import { localizedHref, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/getDictionary';

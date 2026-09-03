@@ -28,13 +28,11 @@ export interface ParticleStageProps {
    */
   hold?: number
   /**
-   * How much the cloud follows its section down the page, as a fraction of the
-   * page's own movement. 0 pins it to the viewport centre; 1 glues it to the
-   * section and it scrolls away with the content. Small values read as depth.
+   * How much of the cloud is kept inside the section's box and inside the
+   * viewport, as a fraction of the cloud radius. The cloud slides along a
+   * section taller than the screen rather than being carried off it.
    */
-  parallax?: number
-  /** Ceiling on the parallax drift, in fractions of the viewport height. */
-  parallaxLimit?: number
+  parallaxPad?: number
   /** Neighbour radius in cloud units. 0 disables links. */
   linkDistance?: number
   /** Max edges kept per point. */
@@ -57,6 +55,17 @@ export interface ParticleStageProps {
 }
 
 const TWO_PI = Math.PI * 2
+/**
+ * How far the cloud lags the section it is anchored to, as a fraction of that
+ * section's distance from the viewport centre.
+ *
+ * 0 glues the cloud to its section, which is correct but flat — it moves at
+ * exactly the page's rate and reads as content. 1 pins it to the middle of the
+ * glass and the section is forgotten. A small value keeps the cloud plainly
+ * attached to its section while letting it fall a little behind, which is the
+ * whole depth cue. Well under 0.5, or the anchoring stops reading at all.
+ */
+const PARALLAX_DRIFT = 0.1
 /** Alpha quantisation for link batching: one Path2D + one stroke() per bucket. */
 const LINK_BUCKETS = 8
 
@@ -83,12 +92,11 @@ interface Projected {
 export function ParticleStage({
   className,
   radius = 0.26,
-  spinSpeed = 0.1,
+  spinSpeed = 0.3,
   tilt = -0.32,
-  blend = 0.55,
-  hold = 0.5,
-  parallax = 0.18,
-  parallaxLimit = 0.35,
+  blend = 0.3,
+  hold = 0.2,
+  parallaxPad = 0.9,
   linkDistance = 0.34,
   linkNeighbors = 3,
   linkPulse = 0.9,
@@ -97,7 +105,7 @@ export function ParticleStage({
   pointerEase = 2.5,
   dotRadius = 1.5,
   dotOpacity = 0.72,
-  linkOpacity = 0.3,
+  linkOpacity = 0.5,
   dotColorVar = "--color-primary",
   linkColorVar = "--color-muted-foreground",
 }: ParticleStageProps) {
@@ -106,7 +114,7 @@ export function ParticleStage({
   // Live prop mirror: the loop starts once and reads the newest values from
   // here, so tweaking a prop retunes the running stage instead of restarting it.
   const props = {
-    radius, spinSpeed, tilt, blend, hold, parallax, parallaxLimit,
+    radius, spinSpeed, tilt, blend, hold, parallaxPad,
     linkDistance, linkNeighbors, linkPulse, linkPulseSpeed,
     pointerTilt, pointerEase,
     dotRadius, dotOpacity, linkOpacity,
@@ -241,20 +249,35 @@ export function ParticleStage({
       const alphaMul = lerp(stage.from.opacity, stage.to.opacity, 1)
       if (alphaMul <= 0.001) return
 
-      // Parallax: the cloud is anchored to its section's centre and follows it
-      // at a fraction of the page's own rate, so it reads as sitting behind the
-      // content rather than pinned to the glass. The anchor is blended across a
-      // transition alongside the shape, so handing the cloud from one section to
-      // the next is continuous for free.
-      const line = scrollState.y + scrollState.vh / 2
-      const limit = height * o.parallaxLimit
-      let drift = (stage.anchor - line) * o.parallax
-      if (drift > limit) drift = limit
-      else if (drift < -limit) drift = -limit
-
       const cx = width / 2 + width * offX
-      const cy = height / 2 + drift + height * offY
       const R = Math.min(width, height) * o.radius * scaleMul
+
+      // The cloud belongs to its section, not to the glass: it is anchored to
+      // the section's centre and travels with it, less PARALLAX_DRIFT of the
+      // distance to the viewport centre so it falls slightly behind the page.
+      // Both the anchor and the box are blended across a transition alongside
+      // the shape, so handing the cloud from one section to the next is
+      // continuous for free.
+      const line = scrollState.y + scrollState.vh / 2
+      let cy =
+        height / 2 + (stage.anchor - line) * (1 - PARALLAX_DRIFT) + height * offY
+
+      // A section taller than the screen would carry the cloud off the top
+      // long before it stops owning the stage, so the cloud slides along the
+      // section instead of leaving with it: keep it inside the part of the
+      // section box that is actually on screen. The pad never eats past that
+      // band's own centre, so the clamp stays continuous as the band shrinks —
+      // a jump here would be a visible snap at exactly the moment a short
+      // section enters or leaves.
+      const vTop = Math.max(stage.top - scrollState.y, 0)
+      const vBot = Math.min(stage.bottom - scrollState.y, height)
+      if (vBot > vTop) {
+        const pad = Math.min(R * o.parallaxPad, (vBot - vTop) / 2)
+        const lo = vTop + pad
+        const hi = vBot - pad
+        cy = cy < lo ? lo : cy > hi ? hi : cy
+      }
+
       const focal = R * 3.2
       const nearPlane = focal * 0.25
 
@@ -359,9 +382,9 @@ export function ParticleStage({
             pulseAmount <= 0
               ? 1
               : 1 -
-                pulseAmount *
-                  (0.5 +
-                    0.5 * Math.sin(time * pulseRate * mesh.pulse[e * 2 + 1] + mesh.pulse[e * 2]))
+              pulseAmount *
+              (0.5 +
+                0.5 * Math.sin(time * pulseRate * mesh.pulse[e * 2 + 1] + mesh.pulse[e * 2]))
 
           // A link is only as visible as its dimmest end.
           const w = s * fade * pulse * weight * a.nearFade * b.nearFade

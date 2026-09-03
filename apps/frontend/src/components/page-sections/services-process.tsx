@@ -1,4 +1,4 @@
-import Section from '.'
+import Section from './section'
 import type { PageServicesProcessBlock } from '@strps-website/types'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { Eyebrow } from '@/components/primitives/Eyebrow'
@@ -43,7 +43,7 @@ const ServicesProcessSection: React.FC<ServicesProcessProps> = ({
             {...(section ?? {})}
             id={section?.section_id || 'services'}
             container={false}
-            containerClassName="min-h-[400px] mx-auto w-full max-w-wrap gap-[22px] px-6"
+            containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <Reveal>
                 <SectionHeader

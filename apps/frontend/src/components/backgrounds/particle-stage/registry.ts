@@ -35,6 +35,9 @@ let ordered: StageSection[] = []
 let seams: number[] = []
 /** Document-space centre of each section, for the parallax anchor. */
 let centres: number[] = []
+/** Document-space box of each section, so the cloud can be kept inside it. */
+let tops: number[] = []
+let bottoms: number[] = []
 /** Document-space extent of the registered run, to bound the outer bands. */
 let firstTop = 0
 let lastBottom = 0
@@ -79,6 +82,8 @@ function measure() {
 
   ordered = measured.map((m) => m.section)
   centres = measured.map((m) => (m.top + m.bottom) / 2)
+  tops = measured.map((m) => m.top)
+  bottoms = measured.map((m) => m.bottom)
   firstTop = measured.length ? measured[0].top : 0
   lastBottom = measured.length ? measured[measured.length - 1].bottom : 0
   // A seam is the join between two consecutive sections; the transition is
@@ -101,6 +106,13 @@ export interface StageResolution {
    * turns the distance between this and the viewport centre into parallax.
    */
   anchor: number
+  /**
+   * Document-space box of the owning section, blended the same way. The stage
+   * keeps the cloud inside it, so the cloud travels with the section rather
+   * than sitting on the glass.
+   */
+  top: number
+  bottom: number
 }
 
 /**
@@ -128,7 +140,14 @@ export function resolveStage(blend = 0.55, hold = 0.5): StageResolution | null {
   if (boundsStale) measure()
   if (ordered.length === 0) return null
   if (ordered.length === 1) {
-    return { from: ordered[0], to: ordered[0], t: 0, anchor: centres[0] }
+    return {
+      from: ordered[0],
+      to: ordered[0],
+      t: 0,
+      anchor: centres[0],
+      top: tops[0],
+      bottom: bottoms[0],
+    }
   }
 
   const line = scrollState.y + scrollState.vh / 2
@@ -162,6 +181,8 @@ export function resolveStage(blend = 0.55, hold = 0.5): StageResolution | null {
         to: ordered[k + 1],
         t,
         anchor: centres[k] + (centres[k + 1] - centres[k]) * t,
+        top: tops[k] + (tops[k + 1] - tops[k]) * t,
+        bottom: bottoms[k] + (bottoms[k + 1] - bottoms[k]) * t,
       }
     }
   }
@@ -175,10 +196,19 @@ export function resolveStage(blend = 0.55, hold = 0.5): StageResolution | null {
         to: ordered[k],
         t,
         anchor: centres[k - 1] + (centres[k] - centres[k - 1]) * t,
+        top: tops[k - 1] + (tops[k] - tops[k - 1]) * t,
+        bottom: bottoms[k - 1] + (bottoms[k] - bottoms[k - 1]) * t,
       }
     }
   }
-  return { from: ordered[k], to: ordered[k], t: 0, anchor: centres[k] }
+  return {
+    from: ordered[k],
+    to: ordered[k],
+    t: 0,
+    anchor: centres[k],
+    top: tops[k],
+    bottom: bottoms[k],
+  }
 }
 
 /** Every registered shape, in document order. For mesh warming. */

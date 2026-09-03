@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import Link from 'next/link';
-import Section from '@/components/page-sections';
+import Section from '@/components/page-sections/section';
 import { localizedHref, type Locale } from '@/i18n/config';
 import type { LabSection, RichText as RichTextSegments } from '@/app/(website)/[locale]/lab/types';
 

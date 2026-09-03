@@ -1,4 +1,4 @@
-import Section from '.'
+import Section from './section'
 import type { PageFaqBlock } from '@strps-website/types'
 import { Accordion } from '@/components/ui/accordion'
 import { FaqItem } from '../cards/FaqItem'
@@ -8,7 +8,6 @@ const FaqSection: React.FC<PageFaqBlock> = ({ title, intro, questions, section }
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'faq'}
-            className="py-8 md:py-14"
             container={false}
             containerClassName="mx-auto w-full max-w-wrap gap-10 px-6 md:gap-12"
         >

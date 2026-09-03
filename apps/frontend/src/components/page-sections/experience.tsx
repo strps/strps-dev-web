@@ -1,4 +1,4 @@
-import Section from '.';
+import Section from './section';
 import type { PageExperienceBlock } from '@strps-website/types';
 
 const ExperienceSection: React.FC<PageExperienceBlock> = ({ title, positions, section }) => {
@@ -7,7 +7,7 @@ const ExperienceSection: React.FC<PageExperienceBlock> = ({ title, positions, se
             {...(section ?? {})}
             id={section?.section_id || 'experience'}
             container={false}
-            containerClassName="pt-[90px] pb-0 min-h-[400px] mx-auto w-full max-w-wrap px-6"
+            containerClassName="mx-auto w-full max-w-wrap px-6"
         >
             <h2 className="text-2xl font-medium tracking-[-0.01em]">{title}</h2>
 

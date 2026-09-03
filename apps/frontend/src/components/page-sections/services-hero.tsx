@@ -1,5 +1,5 @@
 import { Check } from 'lucide-react';
-import Section from '@/components/page-sections';
+import Section from '@/components/page-sections/section';
 import { CMSLink } from '@/components/cms-link';
 import type { PageServicesHeroBlock, Media } from '@strps-website/types';
 import type { Locale } from '@/i18n/config';
