@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import SVGCircles, { type MotionPattern } from "@/components/section/SVGCircles";
+import SVGCircles, { type MotionPattern } from "@/app/(website)/[locale]/lab/(items)/svg-circles/SVGCircles";
 import ControlPanel from "@/app/exp/(tracked)/components/ControlPanel";
 import AdjustableSlider from "@/app/exp/(tracked)/components/AdjustableSlider";
 

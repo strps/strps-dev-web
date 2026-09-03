@@ -1,6 +1,6 @@
 import { Mail, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import Section from '@/components/section';
+import Section from '@/components/page-sections';
 import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { PlotLine } from '@/components/primitives/PlotLine';
@@ -27,10 +27,13 @@ const HeroSection: React.FC<HeroProps> = (props) => {
     return (
         <Section
             {...(section ?? {})}
-            spacing={variant === 'statement' ? 'hero' : undefined}
             className={variant === 'statement' ? undefined : 'gap-8 py-32 md:py-48 text-center'}
             container={variant === 'statement' ? false : true}
-            containerClassName={variant === 'statement' ? 'mx-auto w-full max-w-wrap px-6' : 'items-center'}
+            containerClassName={
+                variant === 'statement'
+                    ? 'pt-[110px] pb-[90px] max-h-svh min-h-[80svh] mx-auto w-full max-w-wrap px-6'
+                    : 'items-center'
+            }
             {...(bgImage?.url ? {
                 image: {
                     src: `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${bgImage.url}`,

@@ -61,7 +61,7 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
       },
     },
     {
-      blockType: 'pageServicesTeaser',
+      blockType: 'pageServicesProcess',
       eyebrow: 'Services',
       title: 'What I can build for you',
       link: {
@@ -70,7 +70,7 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
         label: 'Full details →',
         newTab: false,
       },
-      items: [
+      rows: [
         {
           name: 'Websites & landing pages',
           summary: 'Fast, modern sites with a CMS you can edit yourself.',
@@ -102,37 +102,29 @@ export const getHomePageData = (formId: number): HomePageSeed => ({
           },
         },
       ],
+      process: {
+        label: 'How I work',
+        steps: [
+          {
+            title: 'Discovery',
+            description: 'Free call — we scope what you actually need.',
+          },
+          {
+            title: 'Proposal',
+            description: 'Fixed price for fixed scope, in writing.',
+          },
+          {
+            title: 'Build',
+            description: 'Weekly progress, no black-box silence.',
+          },
+          {
+            title: 'Handoff',
+            description: "All code and credentials — it's yours.",
+          },
+        ],
+      },
       section: {
         section_id: 'services',
-        backgroundContainer: false,
-        theme: 'auto',
-        background: 'none',
-      },
-    },
-    {
-      blockType: 'pageProcess',
-      variant: 'strip',
-      title: 'How I Work',
-      steps: [
-        {
-          title: 'Discovery',
-          description: 'Free call — we scope what you actually need.',
-        },
-        {
-          title: 'Proposal',
-          description: 'Fixed price for fixed scope, in writing.',
-        },
-        {
-          title: 'Build',
-          description: 'Weekly progress, no black-box silence.',
-        },
-        {
-          title: 'Handoff',
-          description: "All code and credentials — it's yours.",
-        },
-      ],
-      section: {
-        section_id: 'process',
         backgroundContainer: false,
         theme: 'auto',
         background: 'none',
@@ -310,12 +302,12 @@ export const homePageDataES = {
         { link: { label: 'Ver mi trabajo' } },
       ],
     },
-    // pageServicesTeaser
+    // pageServicesProcess
     {
       eyebrow: 'Servicios',
       title: 'Lo que puedo construir para vos',
       link: { label: 'Todos los detalles →' },
-      items: [
+      rows: [
         {
           name: 'Sitios web y landing pages',
           summary: 'Sitios rápidos y modernos con un CMS que podés editar vos mismo.',
@@ -332,16 +324,15 @@ export const homePageDataES = {
           link: { label: 'Saber más' },
         },
       ],
-    },
-    // pageProcess
-    {
-      title: 'Cómo trabajo',
-      steps: [
-        { title: 'Descubrimiento', description: 'Llamada gratuita: definimos lo que realmente necesitás.' },
-        { title: 'Propuesta', description: 'Precio fijo para alcance fijo, por escrito.' },
-        { title: 'Construcción', description: 'Avances semanales, sin silencios de caja negra.' },
-        { title: 'Entrega', description: 'Todo el código y las credenciales: es tuyo.' },
-      ],
+      process: {
+        label: 'Cómo trabajo',
+        steps: [
+          { title: 'Descubrimiento', description: 'Llamada gratuita: definimos lo que realmente necesitás.' },
+          { title: 'Propuesta', description: 'Precio fijo para alcance fijo, por escrito.' },
+          { title: 'Construcción', description: 'Avances semanales, sin silencios de caja negra.' },
+          { title: 'Entrega', description: 'Todo el código y las credenciales: es tuyo.' },
+        ],
+      },
     },
     // pageProjectsTeaser
     {

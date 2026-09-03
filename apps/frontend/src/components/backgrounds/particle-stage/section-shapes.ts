@@ -36,6 +36,9 @@ export const SECTION_SHAPES: Record<string, StageSectionConfig> = {
   pageSkills: { shape: "torus", offset: { y: 0.18 }, opacity: 0.5 },
   pageProjectsTeaser: { shape: "scatter", scale: 1.25, opacity: 0.35 },
   pageServicesTeaser: { shape: "grid", scale: 1.2, opacity: 0.4 },
+  // Rows plus the step strip below them: the same grid the teaser claims,
+  // dimmed a touch further because the block is denser than either half.
+  pageServicesProcess: { shape: "grid", scale: 1.2, opacity: 0.35 },
   pageLabTeaser: { shape: "torus", offset: { y: -0.2 }, opacity: 0.4 },
   pageBlog: { shape: "disc", offset: { y: 0.2 }, opacity: 0.4 },
   pageServices: { shape: "disc", offset: { y: 0.25 }, opacity: 0.5 },

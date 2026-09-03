@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Section from '../section';
+import Section from '.';
 import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Reveal } from '@/components/primitives/Reveal';
@@ -34,7 +34,6 @@ const ContactSection: React.FC<ContactProps> = ({
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'contact'}
-            spacing="contact"
             container={false}
             containerClassName="mx-auto w-full max-w-wrap px-6"
         >

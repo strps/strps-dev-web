@@ -1,4 +1,4 @@
-import Section from '../section'
+import Section from '.'
 import { ArticleCard } from '../cards/ArticleCard'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
@@ -28,9 +28,8 @@ const BlogSection = async (props: PageBlogBlock & { blogPopulateBy?: string; blo
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'blog'}
-            spacing="section"
             container={false}
-            containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
+            containerClassName="pt-[90px] pb-0 min-h-[400px] mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <Reveal>
                 <SectionHeader

@@ -1,4 +1,4 @@
-import Section from '../section'
+import Section from '.'
 import type { PageServicesTeaserBlock } from '@strps-website/types'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
@@ -28,9 +28,8 @@ const ServicesTeaserSection: React.FC<ServicesTeaserProps> = ({
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'services'}
-            spacing="section"
             container={false}
-            containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
+            containerClassName="pt-[90px] pb-0 min-h-[400px] mx-auto w-full max-w-wrap gap-[22px] px-6"
         >
             <Reveal>
                 <SectionHeader

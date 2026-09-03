@@ -13,6 +13,7 @@ import ServicesHeroSection from '@/components/page-sections/services-hero'
 import ProcessSection from '@/components/page-sections/process'
 import FaqSection from '@/components/page-sections/faq'
 import ServicesTeaserSection from '@/components/page-sections/services-teaser'
+import ServicesProcessSection from '@/components/page-sections/services-process'
 import LabTeaserSection from '@/components/page-sections/lab-teaser'
 import { StageSection } from '@/components/backgrounds/particle-stage'
 import { SECTION_SHAPES } from '@/components/backgrounds/particle-stage/section-shapes'
@@ -33,6 +34,7 @@ const blockComponents: Record<string, React.FC<any>> = {
     pageProcess: ProcessSection,
     pageFaq: FaqSection,
     pageServicesTeaser: ServicesTeaserSection,
+    pageServicesProcess: ServicesProcessSection,
     pageLabTeaser: LabTeaserSection,
 }
 

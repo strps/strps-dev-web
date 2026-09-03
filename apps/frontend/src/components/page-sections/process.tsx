@@ -1,4 +1,4 @@
-import Section from '../section'
+import Section from '.'
 import type { PageProcessBlock } from '@strps-website/types'
 import { ProcessStepCard } from '../cards/ProcessStepCard'
 import { HairlineGrid } from '@/components/primitives/HairlineGrid'
@@ -15,9 +15,8 @@ const ProcessSection: React.FC<ProcessProps> = ({ processVariant: variant, title
             <Section
                 {...(section ?? {})}
                 id={section?.section_id || 'process'}
-                spacing="section"
                 container={false}
-                containerClassName="mx-auto w-full max-w-wrap px-6 pt-9 pb-0"
+                containerClassName="min-h-[400px] mx-auto w-full max-w-wrap px-6 pt-9 pb-0"
             >
                 <HairlineGrid minItemWidth={190} cellClassName="px-5 py-[22px]">
                     {steps?.map((step, i) => (

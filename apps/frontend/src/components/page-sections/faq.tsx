@@ -1,4 +1,4 @@
-import Section from '../section'
+import Section from '.'
 import type { PageFaqBlock } from '@strps-website/types'
 import { Accordion } from '@/components/ui/accordion'
 import { FaqItem } from '../cards/FaqItem'

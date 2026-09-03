@@ -26,6 +26,7 @@ import {
   PageProcess,
   PageFaq,
   PageServicesTeaser,
+  PageServicesProcess,
   PageLabTeaser,
 } from '@/page-blocks'
 import { FormBlock } from '@/blocks/Form/config'
@@ -91,6 +92,7 @@ export const Pages: CollectionConfig<'pages'> = {
                 PageHero,
                 PageServicesHero,
                 PageServicesTeaser,
+                PageServicesProcess,
                 PageAbout,
                 PageSkills,
                 PageProjectsTeaser,

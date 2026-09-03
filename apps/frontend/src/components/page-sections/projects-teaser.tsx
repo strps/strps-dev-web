@@ -1,7 +1,4 @@
-import Link from 'next/link';
-import { ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Section from '../section';
+import Section from '.';
 import { ProjectCard } from '../cards/ProjectCard';
 import { ProjectTeaserCard } from '../cards/ProjectTeaserCard';
 import { ProjectSummaryCard } from '../cards/ProjectSummaryCard';
@@ -45,29 +42,35 @@ const ProjectTeaserSection = async ({
         );
     }
 
-    if (variant === 'hairline') {
-        const actionHref = resolveLinkHref(link, locale);
+    const actionHref = resolveLinkHref(link, locale);
+    // Every variant shares the same shell, header and measure as the other
+    // sections; only the grid below the header changes.
+    const action = actionHref && link?.label
+        ? <LinkArrow href={actionHref}>{link.label}</LinkArrow>
+        : githubUrl
+            ? (
+                <LinkArrow href={githubUrl} target="_blank" rel="noreferrer">
+                    {dictionary.common.viewAllOnGithub} →
+                </LinkArrow>
+            )
+            : undefined;
 
-        return (
-            <Section
-                {...(section ?? {})}
-                id={section?.section_id || 'projects'}
-                spacing="section"
-                container={false}
-                containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
-            >
-                <Reveal>
-                    <SectionHeader
-                        eyebrow={eyebrow || dictionary.eyebrowFallback.projects}
-                        title={title}
-                        action={
-                            actionHref && link?.label ? (
-                                <LinkArrow href={actionHref}>{link.label}</LinkArrow>
-                            ) : undefined
-                        }
-                    />
-                </Reveal>
+    return (
+        <Section
+            {...(section ?? {})}
+            id={section?.section_id || 'projects'}
+            container={false}
+            containerClassName="min-h-[400px] mx-auto w-full max-w-wrap gap-[22px] px-6"
+        >
+            <Reveal>
+                <SectionHeader
+                    eyebrow={eyebrow || dictionary.eyebrowFallback.projects}
+                    title={title}
+                    action={action}
+                />
+            </Reveal>
 
+            {variant === 'hairline' ? (
                 <HairlineGrid minItemWidth={280}>
                     {projects.map((project, i) => (
                         <Reveal key={project.id} delay={(i % 3) * 0.08} className="h-full">
@@ -84,80 +87,55 @@ const ProjectTeaserSection = async ({
                         </Reveal>
                     ))}
                 </HairlineGrid>
-            </Section>
-        );
-    }
+            ) : (
+                <RevealGroup
+                    itemClassName="h-full"
+                    className={
+                        variant === 'cards'
+                            ? 'grid grid-cols-1 auto-rows-fr gap-6'
+                            : 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
+                    }
+                >
+                    {projects.map((project) => {
+                        const metaImage = typeof project.meta?.image === 'object' && project.heroImage
+                            ? (project.heroImage as Media)
+                            : null;
+                        const imageUrl = metaImage?.url
+                            ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${metaImage.url}`
+                            : undefined;
+                        const technologies = project.techStack?.map((t) => ({ name: t.name || '' })) || [];
+                        const caseStudyUrl = project.slug
+                            ? localizedHref(locale, `/projects/${project.slug}`)
+                            : undefined;
 
-    return (
-        <Section {...(section ?? {})} id={section?.section_id || 'projects'} className="space-y-8 py-10">
-            <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-                {githubUrl && (
-                    <Button variant="ghost" asChild className="hidden sm:flex">
-                        <Link href={githubUrl} target="_blank">
-                            {dictionary.common.viewAllOnGithub} <ExternalLink className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                )}
-            </div>
-
-            <RevealGroup
-                itemClassName="h-full"
-                className={
-                    variant === 'cards'
-                        ? 'grid grid-cols-1 auto-rows-fr gap-6'
-                        : 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
-                }
-            >
-                {projects.map((project) => {
-                    const metaImage = typeof project.meta?.image === 'object' && project.heroImage
-                        ? (project.heroImage as Media)
-                        : null;
-                    const imageUrl = metaImage?.url
-                        ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${metaImage.url}`
-                        : undefined;
-                    const technologies = project.techStack?.map((t) => ({ name: t.name || '' })) || [];
-                    const caseStudyUrl = project.slug
-                        ? localizedHref(locale, `/projects/${project.slug}`)
-                        : undefined;
-
-                    return variant === 'cards' ? (
-                        <ProjectCard
-                            key={project.id}
-                            title={project.title}
-                            description={project.meta?.description}
-                            imageUrl={imageUrl}
-                            technologies={technologies}
-                            liveUrl={project.links?.liveSite}
-                            repoUrl={project.links?.github}
-                            caseStudyUrl={caseStudyUrl}
-                            orientation="horizontal"
-                            locale={locale}
-                        />
-                    ) : (
-                        <ProjectTeaserCard
-                            key={project.id}
-                            title={project.title}
-                            description={project.meta?.description}
-                            imageUrl={imageUrl}
-                            technologies={technologies}
-                            liveUrl={project.links?.liveSite}
-                            repoUrl={project.links?.github}
-                            caseStudyUrl={caseStudyUrl}
-                            locale={locale}
-                        />
-                    );
-                })}
-            </RevealGroup>
-
-            {githubUrl && (
-                <div className="sm:hidden flex justify-center">
-                    <Button variant="outline" asChild>
-                        <Link href={githubUrl} target="_blank">
-                            {dictionary.common.viewAllOnGithub} <ExternalLink className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
+                        return variant === 'cards' ? (
+                            <ProjectCard
+                                key={project.id}
+                                title={project.title}
+                                description={project.meta?.description}
+                                imageUrl={imageUrl}
+                                technologies={technologies}
+                                liveUrl={project.links?.liveSite}
+                                repoUrl={project.links?.github}
+                                caseStudyUrl={caseStudyUrl}
+                                orientation="horizontal"
+                                locale={locale}
+                            />
+                        ) : (
+                            <ProjectTeaserCard
+                                key={project.id}
+                                title={project.title}
+                                description={project.meta?.description}
+                                imageUrl={imageUrl}
+                                technologies={technologies}
+                                liveUrl={project.links?.liveSite}
+                                repoUrl={project.links?.github}
+                                caseStudyUrl={caseStudyUrl}
+                                locale={locale}
+                            />
+                        );
+                    })}
+                </RevealGroup>
             )}
         </Section>
     );

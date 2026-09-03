@@ -259,6 +259,7 @@ export interface Page {
     | PageHeroBlock
     | PageServicesHeroBlock
     | PageServicesTeaserBlock
+    | PageServicesProcessBlock
     | PageAboutBlock
     | PageSkillsBlock
     | PageProjectsTeaserBlock
@@ -586,6 +587,94 @@ export interface PageServicesTeaserBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'pageServicesTeaser';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesProcessBlock".
+ */
+export interface PageServicesProcessBlock {
+  /**
+   * Small mono label above the title, e.g. "Services"
+   */
+  eyebrow?: string | null;
+  title: string;
+  /**
+   * Action link, e.g. "Full details →" to /services.
+   */
+  link?: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label?: string | null;
+    /**
+     * Choose how the link should be rendered.
+     */
+    appearance?: ('default' | 'outline') | null;
+  };
+  /**
+   * Rows are numbered automatically from their position (01, 02, 03) — do not store the number.
+   */
+  rows?:
+    | {
+        name: string;
+        /**
+         * One line, roughly 48 characters or fewer.
+         */
+        summary?: string | null;
+        /**
+         * Row link, e.g. "Learn more" to /services#01.
+         */
+        link?: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: number | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: number | Post;
+              } | null);
+          url?: string | null;
+          label?: string | null;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The hairline step strip rendered under the service rows. Leave the steps empty to drop the strip entirely.
+   */
+  process?: {
+    /**
+     * Optional mono label above the strip, e.g. "How I work". Omitted when empty.
+     */
+    label?: string | null;
+    steps?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  section: SectionConfig;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pageServicesProcess';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1607,6 +1696,7 @@ export interface PagesSelect<T extends boolean = true> {
         pageHero?: T | PageHeroBlockSelect<T>;
         pageServicesHero?: T | PageServicesHeroBlockSelect<T>;
         pageServicesTeaser?: T | PageServicesTeaserBlockSelect<T>;
+        pageServicesProcess?: T | PageServicesProcessBlockSelect<T>;
         pageAbout?: T | PageAboutBlockSelect<T>;
         pageSkills?: T | PageSkillsBlockSelect<T>;
         pageProjectsTeaser?: T | PageProjectsTeaserBlockSelect<T>;
@@ -1764,6 +1854,56 @@ export interface PageServicesTeaserBlockSelect<T extends boolean = true> {
               appearance?: T;
             };
         id?: T;
+      };
+  section?: T | SectionConfigSelect<T>;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageServicesProcessBlock_select".
+ */
+export interface PageServicesProcessBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  link?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
+  rows?:
+    | T
+    | {
+        name?: T;
+        summary?: T;
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  process?:
+    | T
+    | {
+        label?: T;
+        steps?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
       };
   section?: T | SectionConfigSelect<T>;
   id?: T;

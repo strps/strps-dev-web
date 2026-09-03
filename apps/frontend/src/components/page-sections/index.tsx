@@ -3,26 +3,6 @@ import Image, { type ImageProps } from "next/image"
 import { cn } from "@/lib/utils"
 import { type SectionConfig, type Media } from "@strps-website/types"
 
-/**
- * Vertical rhythm. Each variant carries a minimum height as well as its
- * padding: a section shorter than roughly two thirds of the viewport gives the
- * ParticleStage no room to settle between morphs, so the cloud ends up
- * permanently mid-transition. `svh` — the smallest viewport height — rather
- * than `vh` or `dvh`, because it does not reflow when a mobile URL bar appears,
- * and a reflow mid-scroll invalidates every cached section bound.
- *
- * These are minimums, not heights: content taller than them simply grows the
- * section, and `className` overrides them (twMerge resolves `min-h-*`).
- */
-const SPACING_VARIANTS = {
-  default: "py-16 min-h-[70svh]",
-  hero: "pt-[110px] pb-[90px] max-h-svh min-h-[80svh]",
-  section: "pt-[90px] pb-0 min-h-400px",
-  contact: "pt-[90px] pb-[110px] min-h-[80svh]",
-} as const
-
-type SectionSpacing = keyof typeof SPACING_VARIANTS
-
 interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<SectionConfig> {
   /**
    * Optional background image configuration.
@@ -35,6 +15,11 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<Sectio
    * Defaults to "bg-background/85 backdrop-blur-[2px]"
    */
   overlayClassName?: string
+  /**
+   * Overrides the inner wrapper's default vertical rhythm (`py-16
+   * min-h-[70svh]`) as well as adding to it — it is merged last, so a caller
+   * passing its own `py-*` / `min-h-*` wins.
+   */
   containerClassName?: string
   /**
    * Optional decorative layer rendered behind this section's content, at
@@ -52,11 +37,6 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement>, Partial<Sectio
    * callers pass this directly.
    */
   container?: boolean
-  /**
-   * Vertical rhythm preset. Defaults to the existing `py-16`.
-   * `hero` / `section` / `contact` match the mockup's spacing scale (§4.3).
-   */
-  spacing?: SectionSpacing
 }
 
 function resolveImageProps(backgroundImage: (number | null) | Media | undefined): ImageProps | undefined {
@@ -78,7 +58,6 @@ export default function Section({
   containerClassName,
   backgroundLayer,
   children,
-  spacing = "default",
   // SectionConfig props
   section_id,
   theme,
@@ -123,9 +102,18 @@ export default function Section({
         </div>
       )}
 
+      {/*
+        The default vertical rhythm carries a minimum height as well as its
+        padding: a section shorter than roughly two thirds of the viewport gives
+        the ParticleStage no room to settle between morphs, so the cloud ends up
+        permanently mid-transition. `svh` — the smallest viewport height —
+        rather than `vh` or `dvh`, because it does not reflow when a mobile URL
+        bar appears, and a reflow mid-scroll invalidates every cached section
+        bound. It is a minimum, not a height: taller content simply grows the
+        section, and `containerClassName` overrides it.
+      */}
       <div className={cn(
-        "relative flex flex-col gap-8 z-20 h-full w-full",
-        SPACING_VARIANTS[spacing],
+        "relative flex flex-col gap-8 z-20 h-full w-full py-16 min-h-300 justify-center",
         container && "container mx-auto",
         containerClassName
       )}>

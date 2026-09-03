@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import RichText from '@/components/RichText';
-import Section from '../section';
+import Section from '.';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { LinkArrow } from '@/components/primitives/LinkArrow';
 import { Reveal } from '@/components/primitives/Reveal';
@@ -27,9 +27,8 @@ const AboutSection: React.FC<AboutProps> = ({ eyebrow, title, layout, summary, b
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'about'}
-            spacing="section"
             container={false}
-            containerClassName="mx-auto w-full max-w-wrap px-6"
+            containerClassName="pt-[90px] pb-0 mx-auto w-full max-w-wrap px-6"
         >
             <Reveal>
                 <SectionHeader

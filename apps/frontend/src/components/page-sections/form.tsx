@@ -1,7 +1,7 @@
 import type { FormBlock, Form as FormType } from '@strps-website/types'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import RichText from '@/components/RichText'
-import Section from '@/components/section'
+import Section from '@/components/page-sections'
 import { Card } from '@/components/ui/card'
 import { PayloadForm } from '@/components/form/PayloadForm'
 

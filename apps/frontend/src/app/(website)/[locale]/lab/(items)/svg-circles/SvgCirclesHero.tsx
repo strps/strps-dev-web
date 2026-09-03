@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, MousePointer2, Settings2, X } from "lucide-react";
-import SVGCircles, { type MotionPattern } from "@/components/section/SVGCircles";
+import SVGCircles, { type MotionPattern } from "@/app/(website)/[locale]/lab/(items)/svg-circles/SVGCircles";
 import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
 import { getDictionary } from "@/i18n/getDictionary";
 import { getLabContent } from "../../content";

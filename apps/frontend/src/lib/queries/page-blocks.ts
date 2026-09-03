@@ -389,6 +389,58 @@ export const PAGE_BLOCK_FIELDS = gql`
     }
   }
 
+  fragment PageServicesProcessFields on PageServicesProcessBlock {
+    blockType
+    eyebrow
+    title
+    servicesProcessLink: link {
+      type
+      newTab
+      url
+      label
+      appearance
+      reference {
+        relationTo
+        value {
+          ... on Page {
+            slug
+          }
+        }
+      }
+    }
+    servicesProcessRows: rows {
+      id
+      name
+      summary
+      link {
+        type
+        newTab
+        url
+        label
+        appearance
+        reference {
+          relationTo
+          value {
+            ... on Page {
+              slug
+            }
+          }
+        }
+      }
+    }
+    process {
+      label
+      steps {
+        id
+        title
+        description
+      }
+    }
+    section {
+      ...SectionConfigFields
+    }
+  }
+
   fragment PageLabTeaserFields on PageLabTeaserBlock {
     blockType
     eyebrow
@@ -531,6 +583,7 @@ export const GET_PAGE_BY_SLUG = gql`
           ...PageHeroFields
           ...PageServicesHeroFields
           ...PageServicesTeaserFields
+          ...PageServicesProcessFields
           ...PageAboutFields
           ...PageSkillsFields
           ...PageProjectsTeaserFields

@@ -1,4 +1,4 @@
-import Section from '../section'
+import Section from '.'
 import type { PageLabTeaserBlock } from '@strps-website/types'
 import { SectionHeader } from '@/components/primitives/SectionHeader'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
@@ -31,7 +31,6 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'lab'}
-            spacing="section"
             container={false}
             containerClassName="mx-auto w-full max-w-wrap gap-[22px] px-6"
         >

@@ -1,6 +1,6 @@
 import { Mail, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import Section from '@/components/section';
+import Section from '@/components/page-sections';
 import { CMSLink } from '@/components/cms-link';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { RevealGroup } from '@/components/primitives/Reveal';
@@ -27,14 +27,13 @@ const HeroSection: React.FC<HeroProps> = (props) => {
     return (
         <Section
             {...(section ?? {})}
-            spacing={variant === 'statement' ? 'hero' : undefined}
             className={variant === 'statement' ? undefined : 'gap-8 py-32 md:py-48 text-center'}
             container={variant === 'statement' ? false : true}
-            // The `hero` spacing variant already carries min-h-svh; this only
-            // centres the content in the room it creates.
+            // `min-h-[80svh]` (statement) / `min-h-[70svh]` (portrait) give the
+            // content room to settle; the rest just centres it.
             containerClassName={
                 variant === 'statement'
-                    ? 'mx-auto w-full max-w-wrap px-6 justify-center'
+                    ? 'pt-[110px] pb-[90px] max-h-svh min-h-[80svh] mx-auto w-full max-w-wrap px-6 justify-center'
                     : 'items-center justify-center'
             }
             {...(bgImage?.url ? {

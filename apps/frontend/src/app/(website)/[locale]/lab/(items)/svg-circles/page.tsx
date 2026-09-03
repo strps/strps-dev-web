@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import Section from "@/components/section";
-import SVGCircles from "@/components/section/SVGCircles";
+import Section from "@/components/page-sections";
+import SVGCircles from "@/app/(website)/[locale]/lab/(items)/svg-circles/SVGCircles";
 import { SvgCirclesHero } from "./SvgCirclesHero";
 import type { Locale } from '@/i18n/config';
 import { buildAlternates } from '@/lib/seo';

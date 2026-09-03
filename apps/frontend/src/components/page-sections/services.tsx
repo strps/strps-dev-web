@@ -1,4 +1,4 @@
-import Section from '../section'
+import Section from '.'
 import type { PageServicesBlock } from '@strps-website/types'
 import { ServiceCard } from '../cards/ServiceCard'
 import type { Locale } from '@/i18n/config'
