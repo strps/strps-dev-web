@@ -1,6 +1,6 @@
 import Section from './section';
 import { ProjectCard } from '../cards/ProjectCard';
-import { ProjectTeaserCard } from '../cards/ProjectTeaserCard';
+import { ProjectTeaserGrid, type ProjectTeaserGridItem } from './projects-teaser-grid';
 import { ProjectSummaryCard } from '../cards/ProjectSummaryCard';
 import { SectionHeader } from '@/components/primitives/SectionHeader';
 import { LinkArrow } from '@/components/primitives/LinkArrow';
@@ -41,6 +41,29 @@ const ProjectTeaserSection = async ({
             (p): p is Project => typeof p === 'object' && p !== null
         );
     }
+
+    // Both card variants read the same shape; only the component differs.
+    const items: ProjectTeaserGridItem[] = projects.map((project) => {
+        const metaImage = typeof project.meta?.image === 'object' && project.heroImage
+            ? (project.heroImage as Media)
+            : null;
+
+        return {
+            id: String(project.id),
+            title: project.title,
+            description: project.meta?.description,
+            imageUrl: metaImage?.url
+                ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${metaImage.url}`
+                : undefined,
+            technologies: project.techStack?.map((t) => ({ name: t.name || '' })) || [],
+            liveUrl: project.links?.liveSite,
+            repoUrl: project.links?.github,
+            caseStudyUrl: project.slug
+                ? localizedHref(locale, `/projects/${project.slug}`)
+                : undefined,
+            locale,
+        };
+    });
 
     const actionHref = resolveLinkHref(link, locale);
     // Every variant shares the same shell, header and measure as the other
@@ -87,55 +110,18 @@ const ProjectTeaserSection = async ({
                         </Reveal>
                     ))}
                 </HairlineGrid>
-            ) : (
+            ) : variant === 'cards' ? (
                 <RevealGroup
                     itemClassName="h-full"
-                    className={
-                        variant === 'cards'
-                            ? 'grid grid-cols-1 auto-rows-fr gap-6'
-                            : 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'
-                    }
+                    className="grid gap-6"
+                    style={{ display: 'grid', gridTemplateColumns: '1fr', gridAutoRows: 'fr' }}
                 >
-                    {projects.map((project) => {
-                        const metaImage = typeof project.meta?.image === 'object' && project.heroImage
-                            ? (project.heroImage as Media)
-                            : null;
-                        const imageUrl = metaImage?.url
-                            ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}${metaImage.url}`
-                            : undefined;
-                        const technologies = project.techStack?.map((t) => ({ name: t.name || '' })) || [];
-                        const caseStudyUrl = project.slug
-                            ? localizedHref(locale, `/projects/${project.slug}`)
-                            : undefined;
-
-                        return variant === 'cards' ? (
-                            <ProjectCard
-                                key={project.id}
-                                title={project.title}
-                                description={project.meta?.description}
-                                imageUrl={imageUrl}
-                                technologies={technologies}
-                                liveUrl={project.links?.liveSite}
-                                repoUrl={project.links?.github}
-                                caseStudyUrl={caseStudyUrl}
-                                orientation="horizontal"
-                                locale={locale}
-                            />
-                        ) : (
-                            <ProjectTeaserCard
-                                key={project.id}
-                                title={project.title}
-                                description={project.meta?.description}
-                                imageUrl={imageUrl}
-                                technologies={technologies}
-                                liveUrl={project.links?.liveSite}
-                                repoUrl={project.links?.github}
-                                caseStudyUrl={caseStudyUrl}
-                                locale={locale}
-                            />
-                        );
-                    })}
+                    {items.map(({ id, ...item }) => (
+                        <ProjectCard key={id} {...item} orientation="horizontal" />
+                    ))}
                 </RevealGroup>
+            ) : (
+                <ProjectTeaserGrid items={items} />
             )}
 
         </Section>

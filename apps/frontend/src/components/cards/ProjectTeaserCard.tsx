@@ -21,12 +21,19 @@ export interface ProjectTeaserCardProps {
     caseStudyUrl?: string
     className?: string
     locale?: Locale
+    /** Whether the info panel is open. Owned by the parent so only one card opens at a time. */
+    expanded: boolean
+    /** Asked to open (`true`) or close (`false`) — the parent decides what happens. */
+    onExpandedChange: (expanded: boolean) => void
 }
 
 /**
  * Image-first project teaser: by default it's just the artwork. Hovering grows it a
  * touch and surfaces the title; clicking flips a panel over the image with the
  * description, stack and links. All transitions run through `motion`.
+ *
+ * Fully controlled: the open panel lives in the parent grid, which keeps a single
+ * card expanded at a time.
  */
 export function ProjectTeaserCard({
     title,
@@ -38,12 +45,13 @@ export function ProjectTeaserCard({
     caseStudyUrl,
     className,
     locale = defaultLocale,
+    expanded,
+    onExpandedChange,
 }: ProjectTeaserCardProps) {
     const dictionary = getDictionary(locale)
     const [hovered, setHovered] = useState(false)
-    const [expanded, setExpanded] = useState(false)
 
-    const toggle = () => setExpanded((v) => !v)
+    const toggle = () => onExpandedChange(!expanded)
 
     return (
         <motion.article
