@@ -72,6 +72,7 @@ export const es: Dictionary = {
     heroSubtitle: 'Una selección curada de mi trabajo técnico, desde aplicaciones web hasta experimentos de hardware.',
   },
   lab: {
+    viewItem: 'Ver →',
     galleryTitle: 'Galería y experimentos',
     noMatches: 'Nada coincide con esos filtros',
     tryWidening: 'Intenta ampliar la búsqueda o quitar un filtro.',

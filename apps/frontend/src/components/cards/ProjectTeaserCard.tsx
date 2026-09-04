@@ -48,7 +48,7 @@ export function ProjectTeaserCard({
     return (
         <motion.article
             className={cn(
-                'group relative aspect-4/3 overflow-hidden rounded-xl border border-border bg-muted',
+                'group relative aspect-4/3 overflow-hidden border border-border bg-muted',
                 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
                 className,
             )}

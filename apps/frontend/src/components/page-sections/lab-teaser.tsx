@@ -64,6 +64,7 @@ const LabTeaserSection: React.FC<LabTeaserProps> = ({
                         title={item.title}
                         note={item.description}
                         imageUrl={typeof item.imageUrl === 'string' ? item.imageUrl : item.imageUrl?.src}
+                        linkLabel={dictionary.lab.viewItem}
                     />
                 ))}
             </RevealGroup>

@@ -70,6 +70,7 @@ export const en = {
     heroSubtitle: 'A curated selection of my technical work, from web applications to hardware experiments.',
   },
   lab: {
+    viewItem: 'View →',
     galleryTitle: 'Gallery & Tinkering',
     noMatches: 'Nothing matches those filters',
     tryWidening: 'Try widening the search or clearing a filter.',
