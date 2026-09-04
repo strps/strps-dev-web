@@ -18,7 +18,7 @@ const ServicesSection: React.FC<PageServicesBlock & { locale: Locale }> = ({ tit
                 )}
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="flex flex-col gap-6 md:gap-8">
                 {services?.map((service, i) => (
                     <ServiceCard
                         key={service.id || i}
@@ -32,6 +32,7 @@ const ServicesSection: React.FC<PageServicesBlock & { locale: Locale }> = ({ tit
                         proofLabel={service.proofLabel}
                         proofUrl={service.proofUrl}
                         locale={locale}
+                        variant='crystal'
                     />
                 ))}
             </div>

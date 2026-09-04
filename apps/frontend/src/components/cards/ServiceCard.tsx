@@ -18,6 +18,8 @@ export interface ServiceCardProps {
     proofUrl?: string | null
     className?: string
     locale?: Locale
+    /** `crystal` renders the card as liquid-crystal glass over the page background. */
+    variant?: 'default' | 'crystal'
 }
 
 const MicroLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -38,13 +40,18 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
     proofUrl,
     className,
     locale = defaultLocale,
+    variant = 'default',
 }) => {
     const dictionary = getDictionary(locale)
 
     return (
         <Card
+            variant={variant}
             className={cn(
-                'group h-full gap-0 rounded-2xl py-0 shadow-none transition-colors duration-300 hover:border-foreground/30',
+                'group h-full gap-0 py-0 transition-colors duration-300',
+                variant === 'crystal'
+                    ? 'hover:border-crystal-edge-hover'
+                    : 'shadow-none hover:border-foreground/30',
                 className,
             )}
         >

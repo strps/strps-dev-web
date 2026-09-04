@@ -13,6 +13,9 @@
   --font-mono: var(--font-ibm-plex-mono);
   --color-border-strong: var(--border-strong);
   --color-faint-foreground: var(--faint-foreground);
+  --color-crystal: var(--crystal);
+  --color-crystal-edge: var(--crystal-edge);
+  --color-crystal-edge-hover: var(--crystal-edge-hover);
   --radius-sharp: 2px;
   --container-wrap: 960px;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -75,7 +78,7 @@
 :root {
   --svg-circle-color: #000000;
   --radius: 0.625rem;
-  --background: oklch(98.205% 0.00411 91.446);
+  --background: oklch(93.705% 0.00011 271.152);
   --foreground: oklch(22.134% 0.00381 106.707);
   --card: oklch(95.502% 0.00826 91.484);
   --card-foreground: oklch(22.134% 0.00381 106.707);
@@ -112,6 +115,13 @@
   --shadow-outer: #00000041;
   --shadow-center: #0000001c;
   --shadow-light: #ffffffb9;
+  /* Liquid-crystal glass (Card variant="crystal") */
+  --crystal: rgb(255 255 255 / 0.12);
+  --crystal-edge: rgb(255 255 255 / 0.4);
+  --crystal-edge-hover: rgb(255 255 255 / 0.6);
+  --crystal-sheen-top: rgb(255 255 255 / 0.65);
+  --crystal-sheen-bottom: rgb(255 255 255 / 0.18);
+  --crystal-shadow: rgb(15 23 42 / 0.35);
 }
 
 .dark {
@@ -153,6 +163,13 @@
   --shadow-outer: #00000067;
   --shadow-center: #00000031;
   --shadow-light: #ffffff05;
+  /* Liquid-crystal glass (Card variant="crystal") */
+  --crystal: rgba(0, 0, 0, 0.1);
+  --crystal-edge: rgb(255 255 255 / 0.12);
+  --crystal-edge-hover: rgb(255 255 255 / 0.25);
+  --crystal-sheen-top: rgb(255 255 255 / 0.1);
+  --crystal-sheen-bottom: rgb(255 255 255 / 0.18);
+  --crystal-shadow: rgba(4, 6, 10, 0.71);
 }
 
 @layer base {
@@ -198,6 +215,17 @@
     46px 46px 92px var(--shadow-outer),
     0px 0px 30px 9px var(--shadow-center),
     -37px -37px 92px var(--shadow-light);
+}
+
+@utility shadow-crystal {
+  box-shadow: 0 10px 40px -12px var(--crystal-shadow);
+}
+
+/* The thin lit top and bottom edges of the glass. */
+@utility shadow-crystal-sheen {
+  box-shadow:
+    inset 0 1px 0 var(--crystal-sheen-top),
+    inset 0 -1px 0 var(--crystal-sheen-bottom);
 }
 
 /*
