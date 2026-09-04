@@ -24,7 +24,7 @@ import type { StageSectionConfig } from "./registry"
  */
 export const SECTION_SHAPES: Record<string, StageSectionConfig> = {
   // Opening statement: the signature orb, centred, at full strength.
-  pageHero: { shape: "orb" },
+  pageHero: { shape: "orb", size: "viewport", scale: 1.1, motion: "follow", drift: 0.2 },
   pageServicesHero: { shape: "orb", scale: 1.1 },
 
   // Prose blocks — room to one side, so the cloud takes it.
@@ -34,14 +34,14 @@ export const SECTION_SHAPES: Record<string, StageSectionConfig> = {
 
   // Full-width grids — the cloud sinks behind and dims out of the way.
   pageSkills: { shape: "torus", offset: { y: 0.18 }, opacity: 0.5 },
-  pageProjectsTeaser: { shape: "scatter", scale: 1.25, opacity: 0.35 },
+  pageProjectsTeaser: { shape: "scatter", scale: 1.25, opacity: 0.35, size: "section" },
   pageServicesTeaser: { shape: "grid", scale: 1.2, opacity: 0.4 },
   // Rows plus the step strip below them: the same grid the teaser claims,
   // dimmed a touch further because the block is denser than either half.
   pageServicesProcess: { shape: "grid", scale: 1.2, opacity: 0.35 },
   pageLabTeaser: { shape: "torus", offset: { y: -0.2 }, opacity: 0.4 },
   pageBlog: { shape: "disc", offset: { y: 0.2 }, opacity: 0.4 },
-  pageServices: { shape: "disc", offset: { y: 0.25 }, opacity: 0.5 },
+  pageServices: { shape: "grid", offset: { y: 0.2 }, opacity: 0.7, motion: "fixed", size: "viewport-height", spin: 0 },
   pageFaq: { shape: "torus", offset: { x: 0.3 }, opacity: 0.4 },
 
   // Closing: the cloud settles into a wide, flat pond under the contact form.

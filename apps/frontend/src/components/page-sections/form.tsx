@@ -3,6 +3,7 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import RichText from '@/components/RichText'
 import Section from '@/components/page-sections/section'
 import { Card } from '@/components/ui/card'
+import { Reveal } from '@/components/primitives/Reveal'
 import { PayloadForm } from '@/components/form/PayloadForm'
 
 type FormSectionProps = FormBlock & {
@@ -26,35 +27,52 @@ const FormSection: React.FC<FormSectionProps> = (props) => {
         variant = 'mockup',
     } = props
 
+    // The glass reads as glass over the ParticleStage behind the page, so the
+    // block keeps the makeover's left-aligned hairline rhythm rather than the
+    // centred headings the legacy version used.
     const intros: Record<string, React.ReactNode> = {
         titleAndText: (
             <>
-                {introTitle && (
-                    <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-                        {introTitle || form.title}
-                    </h2>
+                {(introTitle || form.title) && (
+                    <div className="border-b border-border pb-2">
+                        <h2 className="text-4xl font-medium tracking-[-0.01em]">
+                            {introTitle || form.title}
+                        </h2>
+                    </div>
                 )}
-                {introText && <p className="text-muted-foreground text-center">{introText}</p>}
+                {introText && (
+                    <p className="mt-4 max-w-[55ch] text-[15px] leading-[1.65] text-muted-foreground">
+                        {introText}
+                    </p>
+                )}
             </>
         ),
-        richText: introContent ? <RichText data={introContent as DefaultTypedEditorState} enableGutter={false} /> : null,
+        richText: introContent ? (
+            <RichText data={introContent as DefaultTypedEditorState} enableGutter={false} />
+        ) : null,
         none: null,
     }
+
+    const intro = intros[introType ?? 'none']
 
     return (
         <Section
             {...(section ?? {})}
             id={section?.section_id || 'form'}
-            className="flex items-center justify-center"
             container={false}
-            containerClassName="mx-auto w-full max-w-wrap px-6"
+            containerClassName="mx-auto w-full max-w-wrap gap-10 px-6"
         >
-            <div className="w-full">
-                {intros[introType ?? 'none']}
-                <Card className="p-6 md:p-12">
-                    <PayloadForm form={form} variant={variant} />
+            {intro && <Reveal>{intro}</Reveal>}
+            <Reveal delay={intro ? 0.12 : 0}>
+                <Card variant="crystal" className="rounded-sharp gap-0 p-7 md:p-11">
+                    <PayloadForm
+                        form={form}
+                        variant={variant}
+                        surface="crystal"
+                        successClassName="border border-crystal-edge p-10 text-center"
+                    />
                 </Card>
-            </div>
+            </Reveal>
         </Section>
     )
 }

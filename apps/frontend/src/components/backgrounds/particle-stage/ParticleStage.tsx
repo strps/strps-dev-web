@@ -14,6 +14,8 @@ import {
   ownerOf,
   registeredShapes,
   resolveOwner,
+  type StageOwner,
+  type StagePlacement,
   type StageSection as StageSectionEntry,
 } from "./registry"
 import { CLOUD_SIZE, getCloud, type ShapeId } from "./shapes"
@@ -66,7 +68,8 @@ export interface ParticleStageProps {
 const TWO_PI = Math.PI * 2
 /**
  * How far the cloud lags the section it is anchored to, as a fraction of that
- * section's distance from the viewport centre.
+ * section's distance from the viewport centre. The default for `motion:
+ * "follow"`; a section overrides it with `drift`.
  *
  * 0 glues the cloud to its section, which is correct but flat — it moves at
  * exactly the page's rate and reads as content. 1 pins it to the middle of the
@@ -231,9 +234,11 @@ export function ParticleStage({
       from: null as unknown as StageSectionEntry,
       to: null as unknown as StageSectionEntry,
       t: 1,
-      anchor: 0,
-      top: 0,
-      bottom: 0,
+      // The two live boxes, unblended. Each side is placed on its own terms —
+      // the sections can be using different motion modes — and it is the
+      // *results* that are interpolated. See `placeSide`.
+      fromBox: null as unknown as StageOwner,
+      toBox: null as unknown as StageOwner,
     }
 
     let easeKey = ""
@@ -249,10 +254,11 @@ export function ParticleStage({
     /**
      * Step the transition and report what should be on screen.
      *
-     * Returns null while nothing is registered. The section boxes are read live
-     * every frame — they move with the page — and blended by the same `t` as
-     * the shape, so handing the cloud from one section to the next is
-     * continuous for free.
+     * Returns null while nothing is registered. Both section boxes are read
+     * live every frame — they move with the page — and reported unblended: the
+     * caller places each side on its own terms and interpolates the results by
+     * the same `t` as the shape, so handing the cloud from one section to the
+     * next is continuous even when the two use different motion modes.
      */
     const advance = (dt: number) => {
       const o = opts.current
@@ -296,10 +302,109 @@ export function ParticleStage({
       stage.from = from
       stage.to = to
       stage.t = t
-      stage.anchor = fromBox.anchor + (toBox.anchor - fromBox.anchor) * t
-      stage.top = fromBox.top + (toBox.top - fromBox.top) * t
-      stage.bottom = fromBox.bottom + (toBox.bottom - fromBox.bottom) * t
+      stage.fromBox = fromBox
+      stage.toBox = toBox
       return stage
+    }
+
+    /**
+     * Where one section wants the cloud, in CSS px on the canvas.
+     *
+     * Placement is resolved per section rather than from blended inputs,
+     * because a mode is not a number: `follow` and `fixed` cannot be averaged,
+     * but their answers can. Each side gets its own `{cx, cy, R}` and `draw`
+     * interpolates those three — which, when both sides use the defaults,
+     * reduces to exactly the expression this replaced, every term in it being
+     * linear in the values that used to be blended.
+     */
+    const placeSide = (s: StageSectionEntry, box: StageOwner): StagePlacement => {
+      const o = opts.current
+      const offX = s.offset?.x ?? 0
+      const offY = s.offset?.y ?? 0
+      const scaleMul = s.scale ?? 1
+
+      // Document-space measurements of the element, which do not move…
+      const secH = box.bottom - box.top
+      // …and the same box in viewport space, which does.
+      const vTop = box.top - scrollState.y
+      const vBot = box.bottom - scrollState.y
+
+      // `section` sizes off the host's smaller side, the same way `viewport`
+      // sizes off the screen's — which for a full-width section is its height,
+      // and its *full* height, not the part currently on screen. Sizing off the
+      // visible band would shrink the cloud as the section scrolled away. The
+      // `-height` modes drop the width term, so a wide, short box is measured
+      // by its height rather than clamped by it.
+      const base =
+        s.size === "section"
+          ? Math.min(box.width, secH)
+          : s.size === "section-height"
+            ? secH
+            : s.size === "viewport-height"
+              ? height
+              : Math.min(width, height)
+      const R = base * o.radius * scaleMul
+
+      // How far the section has travelled through the viewport: 0 as its top
+      // edge reaches the bottom of the screen, 1 as its bottom edge leaves the
+      // top. The denominator is the full distance it covers, so the ramp is the
+      // same shape for a section of any height.
+      const progress = Math.max(0, Math.min(1, (height - vTop) / (height + secH)))
+
+      const cx = width / 2 + width * offX
+      let cy: number
+
+      if (s.motion === "fixed") {
+        // No scroll term at all: the cloud sits on the glass and stays there.
+        cy = height / 2 + height * offY
+      } else if (s.motion === "scrub") {
+        // Swept across the screen by the section's own progress through it.
+        // This one genuinely is scrubbed — it tracks the reader rather than
+        // running on the stage's clock — which is the point of asking for it.
+        const pad = Math.min(R * o.parallaxPad, height / 2)
+        cy = pad + (height - 2 * pad) * (1 - progress) + height * offY
+      } else {
+        // `follow`, the default: anchored to the section's centre and moving
+        // with it, less `drift` of the distance to the viewport centre so it
+        // falls slightly behind the page.
+        const drift = s.drift ?? PARALLAX_DRIFT
+        const line = scrollState.y + scrollState.vh / 2
+        cy = height / 2 + (box.anchor - line) * (1 - drift) + height * offY
+
+        // A section taller than the screen would carry the cloud off the top
+        // long before it stops owning the stage, so the cloud slides along the
+        // section instead of leaving with it: keep it inside the part of the
+        // section box that is actually on screen. The pad never eats past that
+        // band's own centre, so the clamp stays continuous as the band shrinks
+        // — a jump here would be a visible snap at exactly the moment a short
+        // section enters or leaves.
+        const cTop = Math.max(vTop, 0)
+        const cBot = Math.min(vBot, height)
+        if (cBot > cTop) {
+          const pad = Math.min(R * o.parallaxPad, (cBot - cTop) / 2)
+          const lo = cTop + pad
+          const hi = cBot - pad
+          cy = cy < lo ? lo : cy > hi ? hi : cy
+        }
+      }
+
+      if (!s.place) return { cx, cy, R }
+      // The escape hatch gets the mode's answer as its starting point, so a
+      // callback that only cares about one axis can return only that one.
+      const out = s.place({
+        width,
+        height,
+        box: { top: vTop, bottom: vBot, height: secH, width: box.width },
+        progress,
+        offset: { x: offX, y: offY },
+        scale: scaleMul,
+        default: { cx, cy, R },
+      })
+      return {
+        cx: out?.cx ?? cx,
+        cy: out?.cy ?? cy,
+        R: out?.R ?? R,
+      }
     }
 
     /**
@@ -309,17 +414,23 @@ export function ParticleStage({
     const draw = (dt: number) => {
       const o = opts.current
       time += dt
-      spin += (o.spinSpeed * TWO_PI * dt) / 60
 
-      const follow = Math.max(0, Math.min(1, dt * o.pointerEase))
-      eased.x += (pointer.x - eased.x) * follow
-      eased.y += (pointer.y - eased.y) * follow
+      const chase = Math.max(0, Math.min(1, dt * o.pointerEase))
+      eased.x += (pointer.x - eased.x) * chase
+      eased.y += (pointer.y - eased.y) * chase
 
       ctx.clearRect(0, 0, width, height)
       if (width === 0 || height === 0) return
 
+      // Spin is integrated *after* the stage resolves, because its rate is a
+      // per-section multiplier now: a section can hold the cloud still. The
+      // multiplier is blended like everything else, so the cloud spins down
+      // across the seam rather than stopping dead at it.
       const stage = advance(dt)
-      if (!stage) return
+      if (!stage) {
+        spin += (o.spinSpeed * TWO_PI * dt) / 60
+        return
+      }
       const t = stage.t
 
       const fromCloud = getCloud(stage.from.shape)
@@ -333,56 +444,38 @@ export function ParticleStage({
       const dotColor = cssColor(mixColor(fromDot, toDot, t))
       const linkColor = cssColor(mixColor(fromLink, toLink, t))
 
-      // Per-section placement, blended alongside the shape.
       const lerp = (a: number | undefined, b: number | undefined, d: number) =>
         (a ?? d) + ((b ?? d) - (a ?? d)) * t
-      const offX = lerp(stage.from.offset?.x, stage.to.offset?.x, 0)
-      const offY = lerp(stage.from.offset?.y, stage.to.offset?.y, 0)
-      const scaleMul = lerp(stage.from.scale, stage.to.scale, 1)
+
       const alphaMul = lerp(stage.from.opacity, stage.to.opacity, 1)
+      const spinMul = lerp(stage.from.spin, stage.to.spin, 1)
+      const breathMul = lerp(stage.from.breath, stage.to.breath, 1)
+      const tiltMul = lerp(stage.from.pointerTilt, stage.to.pointerTilt, 1)
+      spin += (o.spinSpeed * spinMul * TWO_PI * dt) / 60
       if (alphaMul <= 0.001) return
 
-      const cx = width / 2 + width * offX
-      const R = Math.min(width, height) * o.radius * scaleMul
-
-      // The cloud belongs to its section, not to the glass: it is anchored to
-      // the section's centre and travels with it, less PARALLAX_DRIFT of the
-      // distance to the viewport centre so it falls slightly behind the page.
-      // Both the anchor and the box are blended across a transition alongside
-      // the shape, so handing the cloud from one section to the next is
-      // continuous for free.
-      const line = scrollState.y + scrollState.vh / 2
-      let cy =
-        height / 2 + (stage.anchor - line) * (1 - PARALLAX_DRIFT) + height * offY
-
-      // A section taller than the screen would carry the cloud off the top
-      // long before it stops owning the stage, so the cloud slides along the
-      // section instead of leaving with it: keep it inside the part of the
-      // section box that is actually on screen. The pad never eats past that
-      // band's own centre, so the clamp stays continuous as the band shrinks —
-      // a jump here would be a visible snap at exactly the moment a short
-      // section enters or leaves.
-      const vTop = Math.max(stage.top - scrollState.y, 0)
-      const vBot = Math.min(stage.bottom - scrollState.y, height)
-      if (vBot > vTop) {
-        const pad = Math.min(R * o.parallaxPad, (vBot - vTop) / 2)
-        const lo = vTop + pad
-        const hi = vBot - pad
-        cy = cy < lo ? lo : cy > hi ? hi : cy
-      }
+      // Each section places the cloud on its own terms — they can be using
+      // different motion modes, or different sizing — and the *answers* are
+      // interpolated by the same `t` as the shape. That is what keeps a seam
+      // continuous between two sections that agree on nothing.
+      const fromAt = placeSide(stage.from, stage.fromBox)
+      const toAt = placeSide(stage.to, stage.toBox)
+      const cx = fromAt.cx + (toAt.cx - fromAt.cx) * t
+      const cy = fromAt.cy + (toAt.cy - fromAt.cy) * t
+      const R = fromAt.R + (toAt.R - fromAt.R) * t
 
       const focal = R * 3.2
       const nearPlane = focal * 0.25
 
-      const rotY = spin + eased.x * o.pointerTilt
-      const rotX = o.tilt + eased.y * o.pointerTilt
+      const rotY = spin + eased.x * o.pointerTilt * tiltMul
+      const rotX = o.tilt + eased.y * o.pointerTilt * tiltMul
       const cosY = Math.cos(rotY)
       const sinY = Math.sin(rotY)
       const cosX = Math.cos(rotX)
       const sinX = Math.sin(rotX)
 
       for (let i = 0; i < CLOUD_SIZE; i++) {
-        const breath = 1 + Math.sin(time * 0.9 + breathPhase[i]) * breathAmp[i]
+        const breath = 1 + Math.sin(time * 0.9 + breathPhase[i]) * breathAmp[i] * breathMul
         const x = world[i * 3] * R * breath
         const y = world[i * 3 + 1] * R * breath
         const z = world[i * 3 + 2] * R * breath

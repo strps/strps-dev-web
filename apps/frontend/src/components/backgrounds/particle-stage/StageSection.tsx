@@ -46,6 +46,13 @@ export function StageSection({
   offset,
   scale,
   opacity,
+  motion,
+  size,
+  drift,
+  spin,
+  breath,
+  pointerTilt,
+  place,
 }: StageSectionProps) {
   const markerRef = React.useRef<HTMLSpanElement>(null)
 
@@ -59,6 +66,13 @@ export function StageSection({
     offset,
     scale,
     opacity,
+    motion,
+    size,
+    drift,
+    spin,
+    breath,
+    pointerTilt,
+    place,
   })
   React.useEffect(() => {
     const entry = entryRef.current
@@ -66,6 +80,16 @@ export function StageSection({
     entry.offset = offset
     entry.scale = scale
     entry.opacity = opacity
+    entry.motion = motion
+    entry.size = size
+    entry.drift = drift
+    entry.spin = spin
+    entry.breath = breath
+    entry.pointerTilt = pointerTilt
+    // Mirrored like the rest: an inline arrow is a new function every render,
+    // and the loop reads the newest one on the next frame without the section
+    // re-registering and dropping its cached bounds.
+    entry.place = place
   })
 
   React.useEffect(() => {

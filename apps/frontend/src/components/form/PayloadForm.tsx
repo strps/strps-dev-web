@@ -18,6 +18,12 @@ export interface PayloadFormProps {
     form: FormType
     /** Field skin (§3.9): `default` is the pre-makeover shadcn look, `mockup` the hairline/mono skin. */
     variant?: 'default' | 'mockup'
+    /**
+     * What the form sits on. `crystal` swaps the fields' opaque `--card` fill for
+     * the translucent crystal field tokens, so a form inside a glass surface does
+     * not punch solid rectangles through it. See `docs/liquid-crystal.md`.
+     */
+    surface?: 'default' | 'crystal'
     className?: string
     /** Wraps the confirmation message when the form has submitted successfully. */
     successClassName?: string
@@ -29,6 +35,7 @@ type FormInnerProps = {
     submitButtonLabel?: string | null
     recaptchaActive: boolean
     variant: 'default' | 'mockup'
+    surface: 'default' | 'crystal'
     onSubmit: (data: FieldValues, recaptchaToken?: string) => void
     onRecaptchaError: () => void
 }
@@ -44,6 +51,7 @@ const FormInner: React.FC<FormInnerProps> = ({
     submitButtonLabel,
     recaptchaActive,
     variant,
+    surface,
     onSubmit,
     onRecaptchaError,
 }) => {
@@ -93,6 +101,7 @@ const FormInner: React.FC<FormInnerProps> = ({
         <form
             id={String(formID)}
             data-variant={variant}
+            data-surface={surface}
             onSubmit={handleSubmit(handleFormSubmit)}
         >
             <div className="mb-4 last:mb-0">
@@ -141,7 +150,13 @@ const FormInner: React.FC<FormInnerProps> = ({
  * (§3.9, embedded directly in the contact split layout with mockup success-box styling).
  * One implementation, two shells — see decision #4 in the makeover doc.
  */
-export function PayloadForm({ form: formFromProps, variant = 'mockup', className, successClassName }: PayloadFormProps) {
+export function PayloadForm({
+    form: formFromProps,
+    variant = 'mockup',
+    surface = 'default',
+    className,
+    successClassName,
+}: PayloadFormProps) {
     const {
         id: formID,
         confirmationMessage,
@@ -247,6 +262,7 @@ export function PayloadForm({ form: formFromProps, variant = 'mockup', className
             submitButtonLabel={submitButtonLabel}
             recaptchaActive={recaptchaActive}
             variant={variant}
+            surface={surface}
             onSubmit={onSubmit}
             onRecaptchaError={onRecaptchaError}
         />

@@ -1,10 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import {
-  LiquidCrystalFilter,
-  LIQUID_CRYSTAL_FILTER_ID,
-} from "../primitives/LiquidCrystalFilter"
+import { CrystalSurface } from "../primitives/CrystalSurface"
 import { cn } from "../../lib/utils"
 
 const cardVariants = cva(
@@ -38,28 +35,7 @@ function Card({
       className={cn(cardVariants({ variant }), className)}
       {...props}
     >
-      {variant === "crystal" && (
-        <>
-          <LiquidCrystalFilter />
-          {/* The glass itself: tint, blur and saturation, everywhere. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 bg-crystal backdrop-blur-[3px] backdrop-saturate-150"
-          />
-          {/* Refraction, on its own layer: browsers without url() in backdrop-filter
-              drop this declaration and keep the plain glass above. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10"
-            style={{ backdropFilter: `url(#${LIQUID_CRYSTAL_FILTER_ID})` }}
-          />
-          {/* The thin lit edge of the glass. */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 shadow-crystal-sheen"
-          />
-        </>
-      )}
+      {variant === "crystal" && <CrystalSurface />}
       {children}
     </div>
   )

@@ -14,6 +14,7 @@
   --color-border-strong: var(--border-strong);
   --color-faint-foreground: var(--faint-foreground);
   --color-crystal: var(--crystal);
+  --color-crystal-strong: var(--crystal-strong);
   --color-crystal-edge: var(--crystal-edge);
   --color-crystal-edge-hover: var(--crystal-edge-hover);
   --radius-sharp: 2px;
@@ -117,11 +118,14 @@
   --shadow-light: #ffffffb9;
   /* Liquid-crystal glass (Card variant="crystal") */
   --crystal: rgb(255 255 255 / 0.12);
+  --crystal-strong: rgb(250 249 246 / 0.72);
   --crystal-edge: rgb(255 255 255 / 0.4);
   --crystal-edge-hover: rgb(255 255 255 / 0.6);
   --crystal-sheen-top: rgb(255 255 255 / 0.65);
   --crystal-sheen-bottom: rgb(255 255 255 / 0.18);
   --crystal-shadow: rgb(15 23 42 / 0.35);
+  --crystal-field: rgb(255 255 255 / 0.22);
+  --crystal-field-border: rgb(255 255 255 / 0.45);
 }
 
 .dark {
@@ -165,11 +169,14 @@
   --shadow-light: #ffffff05;
   /* Liquid-crystal glass (Card variant="crystal") */
   --crystal: rgba(0, 0, 0, 0.1);
+  --crystal-strong: rgb(23 23 22 / 0.72);
   --crystal-edge: rgb(255 255 255 / 0.12);
   --crystal-edge-hover: rgb(255 255 255 / 0.25);
   --crystal-sheen-top: rgb(255 255 255 / 0.1);
   --crystal-sheen-bottom: rgb(255 255 255 / 0.18);
   --crystal-shadow: rgba(4, 6, 10, 0.71);
+  --crystal-field: rgb(0 0 0 / 0.22);
+  --crystal-field-border: rgb(255 255 255 / 0.18);
 }
 
 @layer base {
@@ -278,4 +285,28 @@ form[data-variant="mockup"] [data-slot="select-trigger"]:focus-visible {
   border-color: var(--primary);
   box-shadow: none;
   outline: none;
+}
+
+/*
+ * The same skin over a liquid-crystal surface (`surface="crystal"` on
+ * PayloadForm). `--card` is opaque, so the default fields would punch solid
+ * rectangles through the glass; these swap it for the translucent crystal field
+ * tokens and give each field a blur of its own, so it reads as a pane set into
+ * the pane rather than a sticker on it. See docs/liquid-crystal.md.
+ */
+form[data-variant="mockup"][data-surface="crystal"] [data-slot="input"],
+form[data-variant="mockup"][data-surface="crystal"] [data-slot="textarea"],
+form[data-variant="mockup"][data-surface="crystal"] [data-slot="select-trigger"] {
+  background: var(--crystal-field);
+  border-color: var(--crystal-field-border);
+  backdrop-filter: blur(3px) saturate(1.4);
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
+}
+
+form[data-variant="mockup"][data-surface="crystal"] [data-slot="input"]:hover,
+form[data-variant="mockup"][data-surface="crystal"] [data-slot="textarea"]:hover,
+form[data-variant="mockup"][data-surface="crystal"] [data-slot="select-trigger"]:hover {
+  border-color: var(--crystal-edge-hover);
 }

@@ -299,10 +299,13 @@ Two rules keep it from stacking up:
   towards whichever section holds the trigger line *at that moment*. So flinging
   the page skips the shapes it flew past rather than queueing a backlog of
   morphs that then play out long after the reader has stopped.
-- **The section boxes are blended by the same `t` as the shape.** `advance()`
-  reads both sections' live anchor and box every frame — they move with the page
-  — and interpolates them, so the cloud's position is continuous across a
-  handover even though the section it is following just changed.
+- **The two placements are blended by the same `t` as the shape.** `advance()`
+  reads both sections' live boxes every frame — they move with the page — and
+  each section is then placed on its own terms; it is the *results* that are
+  interpolated. So the cloud's position is continuous across a handover even
+  though the section it is following just changed, and even when the two
+  sections place the cloud by completely different rules. See
+  [Per-section motion](#per-section-motion).
 
 Under `prefers-reduced-motion` the duration is zero: the cloud is simply the
 owning section's shape, and it changes at the seam.
@@ -336,23 +339,23 @@ hydrating), and that is not a window resize.
 
 ### Following the section
 
+This is `motion="follow"`, the default and the one every section on the site
+uses. The alternatives are in [Per-section motion](#per-section-motion) below.
+
 The cloud does not sit pinned to the middle of the glass: it belongs to its
 section and travels with it. `resolveOwner` returns the owning section's
 document-space centre and its box, and the cloud is placed at that centre in
 viewport space — moving with the page, at the page's own rate.
 
-`PARALLAX_DRIFT` (0.12) then holds it back by a fraction of the section's
-distance from the viewport centre. It is a module const rather than a prop
+`PARALLAX_DRIFT` (0.1) then holds it back by a fraction of the section's
+distance from the viewport centre. It is a module const rather than a stage prop
 because it is a property of how the background reads, not something a caller
-should be choosing per mount. Keep it small: at 0 the cloud is glued to its
-section and moves exactly like content, which is correct but flat; the drift is
-what makes it read as sitting *behind* the page. Much past 0.5 the anchoring
-stops reading at all and it is just a background again.
-
-Both the anchor **and the box are blended across a transition alongside the
-shape**, using the same `t`. That is the whole trick: handing the cloud from one
-section to the next is continuous for free, so the position never jumps at a
-seam even though the thing it is following just changed.
+should be choosing per mount — a *section* can override it with `drift` when it
+wants a different depth, which is a different question from retuning the whole
+stage. Keep it small: at 0 the cloud is glued to its section and moves exactly
+like content, which is correct but flat; the drift is what makes it read as
+sitting *behind* the page. Much past 0.5 the anchoring stops reading at all and
+it is just a background again.
 
 A section taller than the screen would carry the cloud off the top long before
 it stopped owning the stage, so the cloud is clamped into the part of its box
@@ -363,6 +366,96 @@ The clamp is written so the pad never eats past the visible band's own centre.
 That matters: a pad that could cross itself makes the clamped position jump as
 the band shrinks, and it would jump at exactly the moment a short section enters
 or leaves the screen — the most visible moment there is.
+
+### Per-section motion
+
+`follow` is one law, not the law. A section can ask for a different one, size
+the cloud off its own box instead of the viewport, freeze the cloud's
+self-motion, or replace the placement outright.
+
+```tsx
+<StageSection shape="torus" motion="fixed" size="section" spin={0} breath={0} />
+```
+
+**How a mode survives a seam.** At a seam two sections are both partly in play,
+and a mode is not a number: you cannot average `follow` and `fixed`. So the
+stage does not blend the *inputs* — it places each section independently, in
+`placeSide`, and interpolates the two `{cx, cy, R}` answers by the same `t` as
+the shape. Modes are then free to be arbitrarily different from each other and
+the handover is still continuous, because what is crossfading is two positions.
+(With both sides on the defaults this reduces to exactly the pre-existing
+expression, every term in it being linear in the values that used to be blended.)
+
+#### `motion`
+
+| Mode | What the cloud does |
+| --- | --- |
+| `follow` | Default. Anchored to the section's centre, held back by `drift`, clamped into the on-screen part of the section box — the behaviour described above. |
+| `fixed` | Pinned to the viewport and ignoring the section box entirely. The cloud does not respond to scroll at all while this section owns it; combined with `spin={0} breath={0}` it is completely still. |
+| `scrub` | Position driven by the section's progress through the viewport: the cloud sweeps from the bottom of the screen to the top as the section passes, and stops when the reader stops. |
+
+`scrub` is the one place in this system where scroll drives an animation
+directly. That is deliberate and it is *placement only* — the morph stays a
+timed animation, for all the reasons in [Triggering](#triggering). Scrubbing a
+position is safe because position is a single continuous value with no notion of
+completing; scrubbing a morph leaves the shape permanently half-formed.
+
+#### `size`
+
+`viewport` (default) takes the cloud radius from the viewport's smaller side, so
+the cloud is the same size on every section. `section` takes it from the owning
+element's smaller side, so a short block gets a small cloud and a tall one gets a
+large one.
+
+`viewport-height` and `section-height` measure the same two boxes by their
+**height alone**, ignoring width. Use them when the box is wide and short and
+the cloud should be sized by how tall it is rather than clamped by it — a
+full-bleed banner under `section` gets its height as the smaller side anyway,
+but a narrow column does not, and `section-height` keeps the cloud the size the
+column is tall.
+
+Every mode reads the element's **full** height, not the part currently on
+screen — sizing off the visible band would shrink the cloud as the section
+scrolled away. `scale` still multiplies whichever base is chosen.
+
+#### Freezing the cloud
+
+`spin`, `breath` and `pointerTilt` are multipliers on the stage's own values,
+defaulting to 1. Zero any of them and that layer stops over this section. They
+are blended across a seam like everything else, so the cloud spins *down* into a
+still section rather than stopping dead at the boundary.
+
+Note that `spin` is a rate, not an angle: setting it to 0 holds the cloud at
+whatever bearing it had reached, it does not return it to a home position.
+
+#### `place`
+
+The escape hatch, for anything the modes do not cover:
+
+```tsx
+<StageSection
+  shape="torus"
+  place={({ box, progress }) => ({
+    cy: box.top + box.height * 0.25,
+    R: box.height * (0.2 + progress * 0.1),
+  })}
+/>
+```
+
+It runs once per side per frame — up to twice a frame — so keep it to
+arithmetic. No layout reads (`getBoundingClientRect` here would thrash style
+every frame; the box you are handed is already measured and cached), and no
+allocation beyond the object you return.
+
+It receives the mode's own answer as `default`, and anything it leaves out falls
+back to that, so a callback that only cares about `cy` returns only `cy`. The
+`box` it is handed is viewport-space `top`/`bottom` with the element's own
+`height`/`width`; `progress` is the same 0–1 ramp `scrub` uses.
+
+Because it is a function, `place` cannot live in the `section-shapes.ts` table —
+it has to go on a `<StageSection>` inside the component. That is the intended
+split: the table stays declarative and readable as a *sequence*, and a one-off
+that genuinely needs code sits with the thing that needs it.
 
 ### Colours
 
@@ -413,11 +506,24 @@ the owning pair changes or the theme mutates — never per frame, because
 | `offset` | `{x:0,y:0}` | Where the cloud parks, in fractions of the viewport from centre. |
 | `scale` | `1` | Cloud scale multiplier while this section owns the stage. |
 | `opacity` | `1` | Opacity multiplier. 0 hides the cloud over this section. |
+| `motion` | `follow` | How the cloud responds to scroll: `follow`, `fixed`, `scrub`. |
+| `size` | `viewport` | Where the radius is measured from: the screen or this element's own box, by its smaller side or (`-height`) its height alone. |
+| `drift` | `PARALLAX_DRIFT` | How far the cloud lags its section under `follow`. |
+| `spin` | `1` | Spin-rate multiplier. 0 stops the cloud turning here. |
+| `breath` | `1` | Per-point breathing multiplier. 0 holds the cloud still. |
+| `pointerTilt` | `1` | Pointer-parallax multiplier. 0 ignores the pointer here. |
+| `place` | — | Replace any of `{cx, cy, R}` outright. See [`place`](#place). |
 | `target` | nearest `<section>` | Override the tracked element. |
 
-`offset`, `scale`, and `opacity` are interpolated alongside the shape, on the
-same timed `t`, so a section can move the cloud aside for its own content and
-the move rides the same animation as the morph.
+Everything above except `shape`, `target` and `place` is interpolated alongside
+the shape on the same timed `t`, so a section can move the cloud aside for its
+own content, resize it, or wind its motion down, and the change rides the same
+animation as the morph. `motion`, `size` and `place` are not numbers, so what is
+blended for those is the placement each side produces — see
+[Per-section motion](#per-section-motion).
+
+All of them are optional and all of them default to today's behaviour, so
+`section-shapes.ts` needs no changes to keep working.
 
 ---
 
