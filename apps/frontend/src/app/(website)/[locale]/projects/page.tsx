@@ -66,7 +66,7 @@ export default async function ProjectsPage({
 
 const ProjectsList = ({ projects, locale }: { projects: Array<Project>; locale: Locale }) => {
   return (
-    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid auto-rows-fr gap-8 md:grid-cols-2 lg:grid-cols-3">
       {projects.map((project) => {
         return (
           <ProjectCard

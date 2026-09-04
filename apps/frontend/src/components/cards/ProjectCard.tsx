@@ -49,10 +49,10 @@ export function ProjectCard({
     return (
         <Card
             className={cn(
-                "group p-0 gap-4 relative overflow-hidden rounded-xl transition-all",
+                "group p-0 gap-4 relative h-full overflow-hidden transition-all",
                 isHorizontal
                     ? "flex flex-col sm:flex-row sm:max-w-none"
-                    : "max-w-96",
+                    : "w-full max-w-96",
                 // featured && "ring-2 ring-primary/40 ring-offset-2",
                 className
             )}
@@ -77,7 +77,7 @@ export function ProjectCard({
             </div>
             {/* Content */}
             <div className={cn(
-                "flex flex-col justify-between gap-6 grow",
+                "flex min-w-0 flex-col justify-between gap-6 grow",
                 isHorizontal && "sm:pt-6"
             )}>
                 <CardHeader className="">
