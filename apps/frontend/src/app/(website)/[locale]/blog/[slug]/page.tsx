@@ -2,7 +2,7 @@ import { RelatedPosts } from '@/components/blog/related-posts'
 import { PayloadRedirects } from '@/components/payload-redirects'
 import { draftMode } from 'next/headers'
 import RichText from '@/components/RichText'
-import { PostHero } from '@/components/blog/hero'
+import { ArticleHero } from '@/components/blog/article-hero'
 import { generateMeta } from '@/lib/generateMeta'
 import { LivePreviewListener } from '@/components/live-preview-listener'
 import type { Metadata } from 'next'
@@ -10,7 +10,6 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import type { Post } from '@strps-website/types'
 import { generateStaticParams, getPostBySlug } from '../data'
 import type { Locale } from '@/i18n/config'
-import { getDictionary } from '@/i18n/getDictionary'
 
 export { generateStaticParams }
 
@@ -31,37 +30,28 @@ export default async function Post({ params: paramsPromise }: Args) {
   }
   const { slug = '', locale } = await paramsPromise
   const url = `/posts/${slug}`
-  const dictionary = getDictionary(locale)
 
   const post = await getPostBySlug({ slug, locale })
 
   if (!post) return <PayloadRedirects url={url} locale={locale} />
 
   return (
-    <>
-      <article className="pb-16">
-        {/* <PayloadRedirects disableNotFound url={url} /> */}
+    <article className="mx-auto flex w-full max-w-wrap flex-col gap-14 px-6 pt-20 pb-28 md:pt-28">
+      {draft && <LivePreviewListener />}
 
-        {draft && <LivePreviewListener />}
+      <ArticleHero post={post} locale={locale} />
 
-        <div className="flex flex-col items-center gap-8">
-          <PostHero post={post} className="dark" locale={locale} />
-          <div className="container px-4">
-            <RichText className="max-w-3xl mx-auto" data={post.content as DefaultTypedEditorState} enableGutter={false} />
-            {post.relatedPosts && post.relatedPosts.length > 0 && (
-              <div className="my-12">
-                <h2>{dictionary.blog.relatedPosts}</h2>
-                <RelatedPosts
-                  className="mt-12 max-w-208 lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
-                  docs={post.relatedPosts.filter((p): p is Post => typeof p === 'object')}
-                  locale={locale}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </article>
-    </>
+      <RichText
+        className="max-w-3xl"
+        data={post.content as DefaultTypedEditorState}
+        enableGutter={false}
+      />
+
+      <RelatedPosts
+        docs={post.relatedPosts?.filter((p): p is Post => typeof p === 'object') ?? []}
+        locale={locale}
+      />
+    </article>
   )
 }
 

@@ -116,6 +116,8 @@ export const GET_POST_BY_SLUG = gql`
           id
           title
           slug
+          publishedAt
+          meta { description }
           heroImage { url alt }
         }
         appearance { headerOverrides { background } }

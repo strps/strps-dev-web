@@ -4,7 +4,8 @@ import type { ComponentProps } from 'react'
 import { PayloadRedirects } from '@/components/payload-redirects'
 import { draftMode } from 'next/headers'
 import RichText from '@/components/RichText'
-import { PostHero } from '@/components/blog/hero'
+import { ProjectHero } from '@/components/projects/project-hero'
+import { CaseStudy } from '@/components/projects/case-study'
 import { generateMeta } from '@/lib/generateMeta'
 import { LivePreviewListener } from '@/components/live-preview-listener'
 import { getProjectBySlug, generateStaticParams as generateProjectStaticParams } from '../data'
@@ -26,30 +27,26 @@ export default async function ProjectPage({ params: paramsPromise }: Args) {
   const { slug = '', locale } = await paramsPromise
   const url = '/projects/' + slug
   const project = await getProjectBySlug({ slug, locale })
-  const headerOverrides = project?.appearance?.headerOverrides
 
   if (!project) return <PayloadRedirects url={url} locale={locale} />
 
   return (
-    <>
-      <article className="pb-16">
-        {/* Allows redirects for valid pages too */}
-        <PayloadRedirects disableNotFound url={url} locale={locale} />
+    <article className="mx-auto flex w-full max-w-wrap flex-col gap-14 px-6 pt-20 pb-28 md:pt-28">
+      {/* Allows redirects for valid pages too */}
+      <PayloadRedirects disableNotFound url={url} locale={locale} />
 
-        {draft && <LivePreviewListener />}
+      {draft && <LivePreviewListener />}
 
-        <div className="flex flex-col items-center gap-4">
-          <PostHero post={project} className="dark" locale={locale} />
-          <div className="container px-4 pt-8">
-            <RichText
-              className="max-w-3xl mx-auto"
-              data={project.content as ComponentProps<typeof RichText>['data']}
-              enableGutter={false}
-            />
-          </div>
-        </div>
-      </article>
-    </>
+      <ProjectHero project={project} locale={locale} />
+
+      <CaseStudy caseStudy={project.caseStudy} locale={locale} />
+
+      <RichText
+        className="max-w-3xl"
+        data={project.content as ComponentProps<typeof RichText>['data']}
+        enableGutter={false}
+      />
+    </article>
   )
 }
 

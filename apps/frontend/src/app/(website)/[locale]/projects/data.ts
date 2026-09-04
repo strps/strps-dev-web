@@ -133,6 +133,15 @@ export const GET_PROJECT_BY_SLUG = gql`
         techStack {
           name
         }
+        caseStudy {
+          tag
+          year
+          problem
+          contribution
+          context
+          decisions
+          outcome
+        }
         appearance { headerOverrides { background } }
       }
     }

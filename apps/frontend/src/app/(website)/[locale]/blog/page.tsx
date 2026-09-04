@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
-import Section from '@/components/page-sections/section';
-import { BlogList } from '@/components/blog/blog-list';
+import { PageHeader } from '@/components/primitives/PageHeader';
+import { Pager } from '@/components/primitives/Pager';
+import { Reveal } from '@/components/primitives/Reveal';
+import { PostIndex, type PostIndexItem } from '@/components/blog/post-index';
 import { getBlogPosts } from './data';
-import { Pagination } from '@/components/pagination';
-import type { Locale } from '@/i18n/config';
+import { mediaUrl } from '@/lib/mediaUrl';
+import { localizedHref, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n/getDictionary';
 import { buildAlternates } from '@/lib/seo';
+import type { BlogTag } from '@strps-website/types';
 
 export async function generateMetadata({
   params,
@@ -35,35 +38,44 @@ export default async function BlogPage({
   const dictionary = getDictionary(locale)
   const { posts, pagination } = await getBlogPosts({ page, limit: 12, locale })
 
+  const items: PostIndexItem[] = posts.map((post) => ({
+    id: String(post.id),
+    title: post.title,
+    description: post.meta?.description,
+    imageUrl: mediaUrl(post.heroImage),
+    imageAlt: typeof post.heroImage === 'object' ? post.heroImage?.alt : null,
+    publishedAt: post.publishedAt,
+    tags: (post.tags || [])
+      .filter((tag): tag is BlogTag => typeof tag === 'object' && tag !== null)
+      .map((tag) => tag.tag)
+      .filter(Boolean),
+    slug: post.slug,
+  }))
 
-  const url = new URL(process.env.NEXT_PUBLIC_PAYLOAD_URL!)
-  url.port = ''
   return (
-    <main className="min-h-screen">
-      {/* Blog Header */}
-      <Section
-        className="py-20 md:py-32 bg-muted/30"
-        container={false}
-        containerClassName="mx-auto w-full max-w-wrap px-6"
-      >
-        <div className="mx-auto max-w-3xl text-center space-y-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-            {dictionary.blog.heroTitlePrefix} <span className="text-primary">{dictionary.blog.heroTitleHighlight}</span>
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            {dictionary.blog.heroSubtitle}
-          </p>
-        </div>
-      </Section>
-
-      {/* Blog List & Filters */}
-      <div className="mx-auto w-full max-w-wrap px-6 py-16">
-        <BlogList posts={posts} locale={locale} />
-        <Pagination
-          page={page}
-          totalPages={pagination.totalPages}
+    <main className="mx-auto flex w-full max-w-wrap flex-col gap-12 px-6 pt-20 pb-28 md:pt-28">
+      <Reveal on="mount">
+        <PageHeader
+          eyebrow={dictionary.blog.eyebrow}
+          title={
+            <>
+              {dictionary.blog.heroTitlePrefix}{' '}
+              <span className="text-primary">{dictionary.blog.heroTitleHighlight}</span>
+            </>
+          }
+          lead={dictionary.blog.heroSubtitle}
+          meta={dictionary.blog.countLabel(pagination.totalDocs)}
         />
-      </div>
+      </Reveal>
+
+      <PostIndex posts={items} locale={locale} />
+
+      <Pager
+        page={page}
+        totalPages={pagination.totalPages}
+        basePath={localizedHref(locale, '/blog')}
+        locale={locale}
+      />
     </main>
   );
 }
