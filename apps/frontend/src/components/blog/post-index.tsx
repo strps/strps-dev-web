@@ -4,20 +4,18 @@ import { useMemo, useState } from 'react'
 import { X } from 'lucide-react'
 
 import { Eyebrow } from '@/components/primitives/Eyebrow'
-import { PostIndexCard } from '@/components/cards/PostIndexCard'
+import { PostIndexCard, type PostIndexCardProps } from '@/components/cards/PostIndexCard'
 import { cn } from '@/lib/utils'
 import type { Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/getDictionary'
 
-export interface PostIndexItem {
+/**
+ * Derived from the card's own props so the two can't drift: the listing owns the
+ * `id` (React key, not a card concern) and supplies `locale`/`className` itself.
+ */
+export type PostIndexItem = Omit<PostIndexCardProps, 'locale' | 'className'> & {
   id: string
-  title: string
-  description?: string | null
-  imageUrl?: string
-  imageAlt?: string | null
-  publishedAt?: string | null
   tags: string[]
-  slug?: string | null
 }
 
 interface PostIndexProps {
@@ -119,18 +117,8 @@ export function PostIndex({ posts, locale }: PostIndexProps) {
       {filtered.length > 0 ? (
         <>
           <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((post) => (
-              <PostIndexCard
-                key={post.id}
-                title={post.title}
-                description={post.description}
-                imageUrl={post.imageUrl}
-                imageAlt={post.imageAlt}
-                publishedAt={post.publishedAt}
-                tags={post.tags}
-                slug={post.slug}
-                locale={locale}
-              />
+            {filtered.map(({ id, ...card }) => (
+              <PostIndexCard key={id} {...card} locale={locale} />
             ))}
           </div>
           {isFiltered && (

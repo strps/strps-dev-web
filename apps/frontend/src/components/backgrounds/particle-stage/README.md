@@ -59,7 +59,10 @@ the same time, or you will sort thousands of off-screen points every frame.
 `shapes.ts`. Every shape produces exactly `CLOUD_SIZE` (520) points as
 interleaved xyz in unit space, where radius 1 is the nominal sphere surface.
 
-Shipped: `orb`, `disc`, `torus`, `helix`, `grid`, `scatter`.
+Shipped: `orb`, `disc`, `torus`, `helix`, `grid`, `scatter`, and three built for
+one page each — `stack` (a deck of card outlines, `/projects`), `ribbon` (a
+curling sheet of ruled lines, `/blog`), `atom` (a nucleus in three tilted
+orbitals, `/lab`).
 
 **Every shape must have the same point count**, because the morph pairs point
 `i` in one cloud with point `i` in the next and there is nothing to interpolate
@@ -426,7 +429,22 @@ are blended across a seam like everything else, so the cloud spins *down* into a
 still section rather than stopping dead at the boundary.
 
 Note that `spin` is a rate, not an angle: setting it to 0 holds the cloud at
-whatever bearing it had reached, it does not return it to a home position.
+whatever bearing it had reached, it does not return it to a home position. Which
+means a still section has no fixed pose of its own — it inherits the accumulator,
+so the same section looks different depending on how long the reader took to
+reach it.
+
+`angle` is the answer when the pose matters: it pins yaw to a specific bearing,
+in turns, and `spin` then stops moving the cloud on that side.
+
+```tsx
+<StageSection shape="grid" motion="fixed" spin={0} angle={0} />
+```
+
+Angles survive a seam the same way modes do — resolved per side and the two
+*answers* interpolated, so a spinning section hands over to a pinned one by
+turning into the bearing rather than snapping to it, and it takes the short way
+round.
 
 #### `place`
 
@@ -510,6 +528,7 @@ the owning pair changes or the theme mutates — never per frame, because
 | `size` | `viewport` | Where the radius is measured from: the screen or this element's own box, by its smaller side or (`-height`) its height alone. |
 | `drift` | `PARALLAX_DRIFT` | How far the cloud lags its section under `follow`. |
 | `spin` | `1` | Spin-rate multiplier. 0 stops the cloud turning here. |
+| `angle` | — | Pins yaw to a bearing, in turns. Overrides `spin` on this side. |
 | `breath` | `1` | Per-point breathing multiplier. 0 holds the cloud still. |
 | `pointerTilt` | `1` | Pointer-parallax multiplier. 0 ignores the pointer here. |
 | `place` | — | Replace any of `{cx, cy, R}` outright. See [`place`](#place). |

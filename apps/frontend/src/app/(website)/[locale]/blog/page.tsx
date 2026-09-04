@@ -53,7 +53,7 @@ export default async function BlogPage({
   }))
 
   return (
-    <main className="mx-auto flex w-full max-w-wrap flex-col gap-12 px-6 pt-20 pb-28 md:pt-28">
+    <main className="flex w-full flex-col gap-12 pb-28">
       <Reveal on="mount">
         <PageHeader
           eyebrow={dictionary.blog.eyebrow}
@@ -68,14 +68,18 @@ export default async function BlogPage({
         />
       </Reveal>
 
-      <PostIndex posts={items} locale={locale} />
+      {/* `PageHeader` stays full-bleed for its background; everything below it
+          shares one wrapper so the grid and the pager align on the same gutter. */}
+      <div className="mx-auto flex w-full max-w-wrap flex-col gap-12 px-6">
+        <PostIndex posts={items} locale={locale} />
 
-      <Pager
-        page={page}
-        totalPages={pagination.totalPages}
-        basePath={localizedHref(locale, '/blog')}
-        locale={locale}
-      />
+        <Pager
+          page={page}
+          totalPages={pagination.totalPages}
+          basePath={localizedHref(locale, '/blog')}
+          locale={locale}
+        />
+      </div>
     </main>
   );
 }

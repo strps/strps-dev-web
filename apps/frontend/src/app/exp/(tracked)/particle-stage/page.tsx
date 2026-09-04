@@ -48,6 +48,26 @@ const PANELS: Panel[] = [
     align: "center",
   },
   {
+    shape: "stack",
+    title: "Shapes for one page",
+    copy: "Not every shape has to be generic. `stack` is a deck of card outlines built for the /projects header — the correspondence sort handles it like any other, so a purpose-built silhouette morphs out of an orb without special-casing.",
+    offset: { x: 0.24 },
+    align: "left",
+  },
+  {
+    shape: "ribbon",
+    title: "Ruled lines",
+    copy: "`ribbon` is a page of prose caught mid-air: flush left, ragged right, one slow wave across it. It opens /blog.",
+    offset: { x: -0.24 },
+    align: "right",
+  },
+  {
+    shape: "atom",
+    title: "Three orbitals",
+    copy: "`atom` is a nucleus inside three crossing rings, for /lab. Rings tilt about X and swing about Y, so they cross rather than nest.",
+    align: "center",
+  },
+  {
     shape: "disc",
     title: "Settle",
     copy: "Scroll back up. The morph is a pure function of scroll offset, so it retraces exactly — no drift, no springs left mid-flight.",

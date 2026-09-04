@@ -1,110 +1,129 @@
 "use client"
 
 import * as React from "react"
+import gsap from "gsap"
 
 import { cn } from "@/lib/utils"
-
-export type ParticleInteraction = "repel" | "attract" | "none"
+import { cssColor, readColorVar, type RGB } from "./particle-stage/color"
+import { getMesh, warmMesh, type Mesh } from "./particle-stage/mesh"
+import { CLOUD_SIZE, getCloud, type Cloud, type ShapeId } from "./particle-stage/shapes"
 
 export interface ParticleFieldProps {
+  /** Which cloud to draw. The shape library is shared with `ParticleStage`. */
+  shape?: ShapeId
   className?: string
-  /** Particles per 100k CSS pixels of canvas area. */
-  density?: number
-  /** Hard cap so huge viewports stay cheap. */
-  maxParticles?: number
-  /** Drift speed in CSS px per second. */
-  speed?: number
-  /** Radius range in CSS px. */
-  minRadius?: number
-  maxRadius?: number
-  /** Draw a line between particles closer than this (CSS px). 0 disables links. */
+  /** Cloud radius as a fraction of whichever side `sizeFrom` measures. */
+  radius?: number
+  /**
+   * Which side of the host box sets the scale. `height` is the useful default
+   * for a background band, which is as wide as the page and only as tall as the
+   * thing it sits behind — measuring the smaller side there would be measuring
+   * the height anyway, and measuring `min` on a narrow phone would shrink the
+   * cloud for no reason.
+   */
+  sizeFrom?: "min" | "height" | "width"
+  /** Where the cloud sits, in fractions of the host box measured from centre. */
+  offset?: { x?: number; y?: number }
+  /** Full turns per minute around Y. */
+  spinSpeed?: number
+  /** Fixed tilt in radians. */
+  tilt?: number
+  /** How far the pointer tips the cloud, in radians. */
+  pointerTilt?: number
+  /** How fast the cloud chases the pointer, in units per second. */
+  pointerEase?: number
+  /** Neighbour radius in cloud units. 0 disables links. */
   linkDistance?: number
-  /** How the pointer affects nearby particles. */
-  interaction?: ParticleInteraction
-  /** Pointer influence radius in CSS px. */
-  pointerRadius?: number
-  /** Pointer force strength (px/s² at the pointer centre). */
-  pointerStrength?: number
-  /** Opacity of the dots / of the link lines. */
+  /** Max edges kept per point. */
+  linkNeighbors?: number
+  /** Depth of the per-link pulse. 0 steady, 1 fades a link out at its trough. */
+  linkPulse?: number
+  /** Pulses per second for the fastest links. */
+  linkPulseSpeed?: number
+  /** Base dot radius in CSS px, before perspective scaling. */
+  dotRadius?: number
   dotOpacity?: number
   linkOpacity?: number
-  /** CSS custom property names to sample for the dot and link colours. */
+  /** CSS custom properties sampled off the canvas. */
   dotColorVar?: string
   linkColorVar?: string
 }
 
-interface Particle {
-  x: number
-  y: number
-  vx: number
-  vy: number
-  r: number
-}
-
 const TWO_PI = Math.PI * 2
+/** Alpha quantisation for link batching: one Path2D + one stroke() per bucket. */
+const LINK_BUCKETS = 8
 
-function readVar(el: Element, name: string, fallback: string) {
-  const value = getComputedStyle(el).getPropertyValue(name).trim()
-  return value || fallback
+interface Projected {
+  sx: number
+  sy: number
+  scale: number
+  depth: number
+  wx: number
+  wy: number
+  wz: number
+  /** 0 once a point has reached the near plane, 1 once it is safely past it. */
+  nearFade: number
 }
 
 /**
- * Decorative particle field on a 2D canvas.
+ * One particle cloud on its own canvas, filling whatever box it is given.
  *
- * Sizes itself to its parent (device-pixel aware), samples its colours from the
- * active theme's CSS variables, idles when scrolled out of view or the tab is
- * hidden, and renders a single static frame under `prefers-reduced-motion`.
+ * The standalone counterpart to `ParticleStage`: same shape library, same
+ * projection and link mesh, but it holds a single shape and answers to nothing
+ * outside itself. No registry, no scroll coupling, no morph — you hand it a
+ * `shape` and it draws that shape until it unmounts. Reach for it when one
+ * component wants a particle background of its own; reach for `ParticleStage`
+ * when the background should carry the reader *between* sections.
+ *
+ * It is `aria-hidden`, `pointer-events-none` and absolutely fills its nearest
+ * positioned ancestor, so the host needs `relative` (and `overflow-hidden` if
+ * the cloud should be clipped to it):
+ *
+ * ```tsx
+ * <header className="relative overflow-hidden">
+ *   <ParticleField shape="stack" />
+ *   …
+ * </header>
+ * ```
  */
 export function ParticleField({
+  shape = "orb",
   className,
-  density = 9,
-  maxParticles = 160,
-  speed = 14,
-  minRadius = 0.8,
-  maxRadius = 2.2,
-  linkDistance = 130,
-  interaction = "repel",
-  pointerRadius = 150,
-  pointerStrength = 900,
-  dotOpacity = 0.55,
-  linkOpacity = 0.14,
+  radius = 0.62,
+  sizeFrom = "height",
+  offset,
+  spinSpeed = 0.3,
+  tilt = -0.32,
+  pointerTilt = 0.02,
+  pointerEase = 2.5,
+  linkDistance = 0.34,
+  linkNeighbors = 3,
+  linkPulse = 0.9,
+  linkPulseSpeed = 0.5,
+  dotRadius = 1.5,
+  dotOpacity = 0.72,
+  linkOpacity = 0.5,
   dotColorVar = "--color-primary",
   linkColorVar = "--color-muted-foreground",
 }: ParticleFieldProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null)
 
-  // Live prop mirror: the animation loop starts once and reads the latest
-  // values from here, so tweaking props never restarts the simulation.
-  const opts = React.useRef({
-    density,
-    maxParticles,
-    speed,
-    minRadius,
-    maxRadius,
-    linkDistance,
-    interaction,
-    pointerRadius,
-    pointerStrength,
-    dotOpacity,
-    linkOpacity,
-    dotColorVar,
-    linkColorVar,
-  })
-  opts.current = {
-    density,
-    maxParticles,
-    speed,
-    minRadius,
-    maxRadius,
-    linkDistance,
-    interaction,
-    pointerRadius,
-    pointerStrength,
-    dotOpacity,
-    linkOpacity,
-    dotColorVar,
-    linkColorVar,
+  // Live prop mirror: the loop starts once and reads the newest values from
+  // here, so tweaking a prop retunes the running field instead of restarting
+  // it — the same arrangement `ParticleStage` uses.
+  const props = {
+    shape, radius, sizeFrom, offset,
+    spinSpeed, tilt, pointerTilt, pointerEase,
+    linkDistance, linkNeighbors, linkPulse, linkPulseSpeed,
+    dotRadius, dotOpacity, linkOpacity,
+    dotColorVar, linkColorVar,
   }
+  const opts = React.useRef(props)
+  // Synced in an effect rather than during render: the loop reads `opts` on the
+  // next frame, which is always after commit.
+  React.useEffect(() => {
+    opts.current = props
+  })
 
   React.useEffect(() => {
     const canvas = canvasRef.current
@@ -116,31 +135,49 @@ export function ParticleField({
 
     let width = 0
     let height = 0
-    let particles: Particle[] = []
-    let frame = 0
-    let last = 0
+    let time = 0
+    let lastTick = 0
+    // Off-screen and hidden-tab frames are skipped outright: this is decoration
+    // behind one component, and it is often scrolled past for the whole visit.
     let visible = true
-    const pointer = { x: 0, y: 0, active: false }
-    let colors = { dot: "#888", link: "#888" }
 
-    const sampleColors = () => {
-      colors = {
-        dot: readVar(canvas, opts.current.dotColorVar, "#888"),
-        link: readVar(canvas, opts.current.linkColorVar, "#888"),
-      }
+    // Working buffer, allocated once and rewritten every frame.
+    const projected: Projected[] = Array.from({ length: CLOUD_SIZE }, () => ({
+      sx: 0, sy: 0, scale: 1, depth: 0, wx: 0, wy: 0, wz: 0, nearFade: 1,
+    }))
+
+    // Per-point breathing, rolled once. Nothing here is a function of scroll,
+    // so this is the only thing keeping the cloud alive while the page is
+    // still — without it the field is a still image.
+    const breathPhase = new Float32Array(CLOUD_SIZE)
+    const breathAmp = new Float32Array(CLOUD_SIZE)
+    for (let i = 0; i < CLOUD_SIZE; i++) {
+      breathPhase[i] = Math.random() * TWO_PI
+      breathAmp[i] = 0.015 + Math.random() * 0.05
     }
 
-    const spawn = (p: Particle | undefined): Particle => {
-      const { speed: s, minRadius: min, maxRadius: max } = opts.current
-      const angle = Math.random() * TWO_PI
-      const magnitude = s * (0.4 + Math.random() * 0.6)
-      const next = p ?? ({} as Particle)
-      next.x = Math.random() * width
-      next.y = Math.random() * height
-      next.vx = Math.cos(angle) * magnitude
-      next.vy = Math.sin(angle) * magnitude
-      next.r = min + Math.random() * (max - min)
-      return next
+    const pointer = { x: 0, y: 0 }
+    const eased = { x: 0, y: 0 }
+    let spin = 0
+
+    const fallback: RGB = [136, 136, 136]
+    let colorKey = ""
+    let dot = fallback
+    let link = fallback
+
+    // getComputedStyle forces style resolution, far too expensive per frame.
+    // Nothing here changes the sampled element, so this re-reads only when the
+    // vars change or the theme observer drops the key.
+    const sampleColors = () => {
+      const o = opts.current
+      const key = `${o.dotColorVar}|${o.linkColorVar}`
+      if (key === colorKey) return
+      colorKey = key
+      dot = readColorVar(canvas, o.dotColorVar, fallback)
+      link = readColorVar(canvas, o.linkColorVar, fallback)
+    }
+    const dropColors = () => {
+      colorKey = ""
     }
 
     const resize = () => {
@@ -152,199 +189,228 @@ export function ParticleField({
       canvas.width = Math.round(width * dpr)
       canvas.height = Math.round(height * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-
-      const target = Math.min(
-        opts.current.maxParticles,
-        Math.max(12, Math.round((width * height) / 100_000 * opts.current.density))
-      )
-      if (particles.length > target) {
-        particles.length = target
-      } else {
-        while (particles.length < target) particles.push(spawn(undefined))
-      }
-      // Keep existing particles inside the new bounds.
-      for (const p of particles) {
-        if (p.x > width) p.x = Math.random() * width
-        if (p.y > height) p.y = Math.random() * height
-      }
     }
 
-    const step = (dt: number) => {
-      const {
-        speed: s,
-        interaction: mode,
-        pointerRadius: pr,
-        pointerStrength: ps,
-      } = opts.current
-      const maxSpeed = s * 2.5
-      const applyPointer = mode !== "none" && pointer.active
-      const pr2 = pr * pr
+    const draw = (dt: number) => {
+      const o = opts.current
+      time += dt
+      spin += (o.spinSpeed * TWO_PI * dt) / 60
 
-      for (const p of particles) {
-        if (applyPointer) {
-          const dx = p.x - pointer.x
-          const dy = p.y - pointer.y
-          const d2 = dx * dx + dy * dy
-          if (d2 < pr2 && d2 > 0.01) {
-            const d = Math.sqrt(d2)
-            // Linear falloff to zero at the influence radius.
-            const force = (1 - d / pr) * ps * (mode === "repel" ? 1 : -1)
-            p.vx += (dx / d) * force * dt
-            p.vy += (dy / d) * force * dt
-          }
-        }
+      const chase = Math.max(0, Math.min(1, dt * o.pointerEase))
+      eased.x += (pointer.x - eased.x) * chase
+      eased.y += (pointer.y - eased.y) * chase
 
-        // Gentle drag pulls the pointer-kicked particles back to drift speed.
-        const damping = Math.exp(-0.9 * dt)
-        p.vx *= damping
-        p.vy *= damping
-
-        const v = Math.hypot(p.vx, p.vy)
-        if (v > maxSpeed) {
-          p.vx = (p.vx / v) * maxSpeed
-          p.vy = (p.vy / v) * maxSpeed
-        }
-
-        p.x += p.vx * dt
-        p.y += p.vy * dt
-
-        // Wrap around the edges so the field never thins out.
-        const m = p.r + 2
-        if (p.x < -m) p.x = width + m
-        else if (p.x > width + m) p.x = -m
-        if (p.y < -m) p.y = height + m
-        else if (p.y > height + m) p.y = -m
-      }
-    }
-
-    const draw = () => {
-      const { linkDistance: link, dotOpacity: dotA, linkOpacity: linkA } = opts.current
       ctx.clearRect(0, 0, width, height)
+      if (width === 0 || height === 0) return
 
-      if (link > 0 && linkA > 0) {
-        const link2 = link * link
-        ctx.strokeStyle = colors.link
-        ctx.lineWidth = 1
-        for (let i = 0; i < particles.length; i++) {
-          const a = particles[i]
-          for (let j = i + 1; j < particles.length; j++) {
-            const b = particles[j]
-            const dx = a.x - b.x
-            const dy = a.y - b.y
-            const d2 = dx * dx + dy * dy
-            if (d2 > link2) continue
-            ctx.globalAlpha = (1 - Math.sqrt(d2) / link) * linkA
-            ctx.beginPath()
-            ctx.moveTo(a.x, a.y)
-            ctx.lineTo(b.x, b.y)
-            ctx.stroke()
-          }
-        }
+      const cloud = getCloud(o.shape)
+      const base =
+        o.sizeFrom === "width" ? width : o.sizeFrom === "min" ? Math.min(width, height) : height
+      const R = base * o.radius
+      const cx = width / 2 + width * (o.offset?.x ?? 0)
+      const cy = height / 2 + height * (o.offset?.y ?? 0)
+
+      const focal = R * 3.2
+      const nearPlane = focal * 0.25
+      const rotY = spin + eased.x * o.pointerTilt
+      const rotX = o.tilt + eased.y * o.pointerTilt
+      const cosY = Math.cos(rotY)
+      const sinY = Math.sin(rotY)
+      const cosX = Math.cos(rotX)
+      const sinX = Math.sin(rotX)
+
+      for (let i = 0; i < CLOUD_SIZE; i++) {
+        const breath = 1 + Math.sin(time * 0.9 + breathPhase[i]) * breathAmp[i]
+        const x = cloud.pos[i * 3] * R * breath
+        const y = cloud.pos[i * 3 + 1] * R * breath
+        const z = cloud.pos[i * 3 + 2] * R * breath
+
+        const x1 = x * cosY + z * sinY
+        const z1 = -x * sinY + z * cosY
+        const y2 = y * cosX - z1 * sinX
+        const z2 = y * sinX + z1 * cosX
+
+        // A point can land on or behind the camera, where focal / (focal + z)
+        // blows up or flips sign and throws it across the canvas. Clamp the
+        // denominator at a near plane and fade the point as it approaches, so
+        // it leaves instead of streaking.
+        const denom = focal + z2
+        const p = projected[i]
+        const s = focal / (denom > nearPlane ? denom : nearPlane)
+        p.nearFade =
+          denom <= nearPlane ? 0 : denom >= nearPlane * 2 ? 1 : (denom - nearPlane) / nearPlane
+        p.sx = cx + x1 * s
+        p.sy = cy + y2 * s
+        p.scale = s
+        p.depth = z2
+        p.wx = x
+        p.wy = y
+        p.wz = z
       }
 
-      ctx.globalAlpha = dotA
-      ctx.fillStyle = colors.dot
-      for (const p of particles) {
-        ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, TWO_PI)
-        ctx.fill()
-      }
+      sampleColors()
+      drawLinks(cloud.id, R, cssColor(link))
+      drawDots(cloud, cssColor(dot))
       ctx.globalAlpha = 1
     }
 
-    const loop = (now: number) => {
-      frame = requestAnimationFrame(loop)
-      if (!visible) {
-        last = now
+    /**
+     * The shape's own mesh, culled by live distance.
+     *
+     * Only one mesh is ever live — there is no morph here — so the crossfade
+     * and stretch-cull `ParticleStage` needs at a seam reduce to a single pass.
+     * The stretch test still earns its place: breathing moves the points.
+     */
+    const drawLinks = (id: ShapeId, R: number, color: string) => {
+      const o = opts.current
+      if (o.linkOpacity <= 0 || o.linkDistance <= 0) return
+
+      const mesh: Mesh = getMesh(getCloud(id), {
+        linkDistance: o.linkDistance,
+        linkNeighbors: o.linkNeighbors,
+      })
+      const paths: Path2D[] = new Array(LINK_BUCKETS)
+      const used = new Uint8Array(LINK_BUCKETS)
+      for (let i = 0; i < LINK_BUCKETS; i++) paths[i] = new Path2D()
+
+      const pulseAmount = Math.max(0, Math.min(1, o.linkPulse))
+      const pulseRate = o.linkPulseSpeed * TWO_PI
+
+      for (let e = 0; e < mesh.a.length; e++) {
+        const a = projected[mesh.a[e]]
+        const b = projected[mesh.b[e]]
+        const rest = mesh.rest[e] * R
+        if (rest <= 0) continue
+
+        const dx = a.wx - b.wx
+        const dy = a.wy - b.wy
+        const dz = a.wz - b.wz
+        const stretch = Math.sqrt(dx * dx + dy * dy + dz * dz) / rest
+        // Compressed edges brighten, stretched ones dim.
+        let s = 1 - (stretch - 1) * 1.1
+        if (s <= 0) continue
+        if (s > 1) s = 1
+
+        // Fade by depth so the far side recedes instead of tangling with the
+        // near side. Perspective `scale` already encodes it.
+        let fade = ((a.scale + b.scale) / 2 - 0.7) / 0.6
+        fade = fade < 0.15 ? 0.15 : fade > 1 ? 1 : fade
+
+        const pulse =
+          pulseAmount <= 0
+            ? 1
+            : 1 -
+              pulseAmount *
+                (0.5 + 0.5 * Math.sin(time * pulseRate * mesh.pulse[e * 2 + 1] + mesh.pulse[e * 2]))
+
+        // A link is only as visible as its dimmest end.
+        const w = s * fade * pulse * a.nearFade * b.nearFade
+        if (w <= 0.02) continue
+        let bucket = (w * LINK_BUCKETS) | 0
+        if (bucket >= LINK_BUCKETS) bucket = LINK_BUCKETS - 1
+        paths[bucket].moveTo(a.sx, a.sy)
+        paths[bucket].lineTo(b.sx, b.sy)
+        used[bucket] = 1
+      }
+
+      ctx.strokeStyle = color
+      ctx.lineWidth = 1
+      for (let i = 0; i < LINK_BUCKETS; i++) {
+        if (!used[i]) continue
+        ctx.globalAlpha = ((i + 0.5) / LINK_BUCKETS) * o.linkOpacity
+        ctx.stroke(paths[i])
+      }
+    }
+
+    // Painter's algorithm needs back-to-front order. The index array is
+    // allocated once; only the sort runs per frame.
+    const order = new Array<number>(CLOUD_SIZE)
+    for (let i = 0; i < CLOUD_SIZE; i++) order[i] = i
+
+    const drawDots = (cloud: Cloud, color: string) => {
+      const o = opts.current
+      order.sort((a, b) => projected[b].depth - projected[a].depth)
+      ctx.fillStyle = color
+      for (const i of order) {
+        const p = projected[i]
+        const fade = Math.max(0.12, Math.min(1, (p.scale - 0.68) / 0.55)) * p.nearFade
+        if (fade <= 0) continue
+        ctx.globalAlpha = o.dotOpacity * fade
+        ctx.beginPath()
+        ctx.arc(p.sx, p.sy, Math.max(0.3, o.dotRadius * cloud.size[i] * p.scale), 0, TWO_PI)
+        ctx.fill()
+      }
+    }
+
+    // One clock for every canvas on the page: gsap.ticker is already running
+    // for the stage and for SmoothScrollProvider, and a second requestAnimation
+    // Frame loop beside it would just interleave.
+    const tick = (now: number) => {
+      // gsap.ticker reports seconds, not milliseconds.
+      if (!visible || document.hidden) {
+        lastTick = now
         return
       }
-      // Clamp dt so a backgrounded tab doesn't teleport everything on return.
-      const dt = Math.min((now - last) / 1000, 0.05)
-      last = now
-      step(dt)
-      draw()
+      // Clamp dt so a backgrounded tab does not jump the animation on return,
+      // and freeze the motion entirely under reduced motion — the cloud is
+      // still drawn, it just stops breathing and turning.
+      const dt = reduced.matches ? 0 : Math.min(now - lastTick, 0.05)
+      lastTick = now
+      draw(dt)
     }
 
-    const start = () => {
-      if (frame) return
-      last = performance.now()
-      frame = requestAnimationFrame(loop)
-    }
-    const stop = () => {
-      if (!frame) return
-      cancelAnimationFrame(frame)
-      frame = 0
-    }
-
+    // The pointer is normalised against the viewport rather than this canvas:
+    // the tilt is a couple of hundredths of a radian, and reading the canvas'
+    // box per pointer event to place the cursor inside it would cost a layout
+    // for a difference nobody can see.
     const onPointerMove = (e: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      pointer.x = e.clientX - rect.left
-      pointer.y = e.clientY - rect.top
-      pointer.active =
-        pointer.x >= 0 && pointer.y >= 0 && pointer.x <= rect.width && pointer.y <= rect.height
+      pointer.x = (e.clientX / window.innerWidth) * 2 - 1
+      pointer.y = (e.clientY / window.innerHeight) * 2 - 1
     }
     const onPointerLeave = () => {
-      pointer.active = false
+      pointer.x = 0
+      pointer.y = 0
     }
 
-    const onVisibility = () => {
-      visible = !document.hidden
-    }
-
-    const onMotionChange = () => {
-      if (reduced.matches) {
-        stop()
-        draw()
-      } else {
-        start()
-      }
-    }
-
-    sampleColors()
-    resize()
-    draw()
-
-    const ro = new ResizeObserver(() => {
-      resize()
-      if (reduced.matches) draw()
+    warmMesh(getCloud(opts.current.shape), {
+      linkDistance: opts.current.linkDistance,
+      linkNeighbors: opts.current.linkNeighbors,
     })
+    resize()
+
+    // The host box is what sizes this canvas, and it can change without the
+    // window doing anything — a font swapping, a count arriving, the header's
+    // own text rewrapping. So observe the element, not `resize`.
+    const ro = new ResizeObserver(resize)
     ro.observe(canvas)
 
-    // Idle while off-screen; `visible` also tracks tab visibility.
     const io = new IntersectionObserver(
       ([entry]) => {
-        visible = entry.isIntersecting && !document.hidden
+        visible = entry.isIntersecting
       },
       { rootMargin: "100px" }
     )
     io.observe(canvas)
 
-    // Re-sample colours when the theme flips (class or data-theme swap).
-    const themeObserver = new MutationObserver(() => {
-      sampleColors()
-      if (reduced.matches) draw()
-    })
+    const themeObserver = new MutationObserver(dropColors)
     themeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class", "data-theme", "style"],
     })
 
+    lastTick = gsap.ticker.time
+    gsap.ticker.add(tick)
+
     window.addEventListener("pointermove", onPointerMove, { passive: true })
     window.addEventListener("pointerleave", onPointerLeave)
-    document.addEventListener("visibilitychange", onVisibility)
-    reduced.addEventListener("change", onMotionChange)
-
-    if (!reduced.matches) start()
 
     return () => {
-      stop()
+      gsap.ticker.remove(tick)
       ro.disconnect()
       io.disconnect()
       themeObserver.disconnect()
       window.removeEventListener("pointermove", onPointerMove)
       window.removeEventListener("pointerleave", onPointerLeave)
-      document.removeEventListener("visibilitychange", onVisibility)
-      reduced.removeEventListener("change", onMotionChange)
     }
   }, [])
 
@@ -352,7 +418,7 @@ export function ParticleField({
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className={cn("block h-full w-full", className)}
+      className={cn("pointer-events-none absolute inset-0 block h-full w-full select-none", className)}
     />
   )
 }

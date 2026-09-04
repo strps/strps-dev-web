@@ -95,6 +95,16 @@ export interface StageSectionConfig {
   drift?: number
   /** Spin rate multiplier. 0 stops the cloud turning over this section. */
   spin?: number
+  /**
+   * Pins the cloud's yaw to a specific angle, in turns — `0.25` is a quarter
+   * turn. Without it a section inherits whatever angle the spin accumulator
+   * happened to be at when it took the stage, which for a still section
+   * (`spin: 0`) means its resting pose depends on how the reader got there.
+   * Naming an angle makes that pose deterministic; the seam turns into it by
+   * the shorter way round. `spin` no longer moves the cloud on a side that
+   * sets one.
+   */
+  angle?: number
   /** Per-point breathing multiplier. 0 holds the cloud perfectly still. */
   breath?: number
   /** Pointer-parallax multiplier. 0 ignores the pointer here. */

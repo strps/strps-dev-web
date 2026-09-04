@@ -35,22 +35,25 @@ export default async function GalleryPage({
     }));
 
     return (
-        <main className="min-h-screen">
-            <div className=" mx-auto px-4 py-16 space-y-10">
-                <Reveal on="mount">
-                    <PageHeader
-                        eyebrow={dictionary.lab.eyebrow}
-                        title={
-                            <>
-                                {dictionary.lab.heroTitlePrefix}{' '}
-                                <span className="text-primary">{dictionary.lab.heroTitleHighlight}</span>
-                            </>
-                        }
-                        lead={dictionary.lab.heroSubtitle}
-                        meta={dictionary.lab.countLabel(items.length)}
-                    />
-                </Reveal>
+        <main className="flex w-full flex-col gap-12  pb-28">
+            <Reveal on="mount">
+                <PageHeader
+                    eyebrow={dictionary.lab.eyebrow}
+                    title={
+                        <>
+                            {dictionary.lab.heroTitlePrefix}{' '}
+                            <span className="text-primary">{dictionary.lab.heroTitleHighlight}</span>
+                        </>
+                    }
+                    lead={dictionary.lab.heroSubtitle}
+                    meta={dictionary.lab.countLabel(items.length)}
+                />
+            </Reveal>
 
+            {/* `PageHeader` stays full-bleed for its background. Unlike /blog and
+                /projects, the gallery grid is deliberately *not* capped at
+                `max-w-wrap` — it runs the full width and only takes the gutter. */}
+            <div className="w-full px-6">
                 <Gallery items={items} locale={locale} />
             </div>
         </main>

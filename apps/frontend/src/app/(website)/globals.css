@@ -185,6 +185,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Full-bleed backgrounds (PageHeaderBackground) break out of the wrap
+       column with `w-screen`, and 100vw counts the scrollbar — without this
+       they hand every such page a horizontal scrollbar a few px wide. `clip`
+       rather than `hidden`: hidden would make the body a scroll container,
+       which breaks `position: sticky` against the viewport and is the usual
+       reason this trick gets reverted. */
+    overflow-x: clip;
   }
 }
 

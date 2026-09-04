@@ -17,7 +17,7 @@ const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))
  */
 export const CLOUD_SIZE = 520
 
-export type ShapeId = "orb" | "disc" | "torus" | "helix" | "grid" | "scatter"
+export type ShapeId = "orb" | "disc" | "torus" | "helix" | "grid" | "scatter" | "stack" | "ribbon" | "atom"
 
 export interface Cloud {
   id: ShapeId
@@ -230,6 +230,145 @@ const scatter: Filler = (pos, size, n, rnd) => {
   }
 }
 
+/**
+ * A deck of card outlines receding in depth — the `/projects` index, which is
+ * exactly that: a stack of work, seen slightly from the side.
+ */
+const stack: Filler = (pos, size, n, rnd) => {
+  const cards = 5
+  const per = Math.floor(n / cards)
+  const used = per * cards
+
+  let k = 0
+  for (let c = 0; c < cards; c++) {
+    // -1 is the card nearest the camera, +1 the one furthest back.
+    const t = cards === 1 ? 0 : (c / (cards - 1)) * 2 - 1
+    const halfW = 1.15 - Math.abs(t) * 0.08
+    const halfH = 0.72 - Math.abs(t) * 0.05
+    const w = halfW * 2
+    const h = halfH * 2
+    const perim = (w + h) * 2
+
+    for (let i = 0; i < per; i++) {
+      // An even walk of the perimeter, phase-shifted per card so the corners of
+      // one deck member do not line up with the next and read as a moiré.
+      const d = (((i + 0.5) / per + c * 0.13) % 1) * perim
+      let x: number
+      let y: number
+      if (d < w) {
+        x = -halfW + d
+        y = -halfH
+      } else if (d < w + h) {
+        x = halfW
+        y = -halfH + (d - w)
+      } else if (d < w * 2 + h) {
+        x = halfW - (d - w - h)
+        y = halfH
+      } else {
+        x = -halfW
+        y = halfH - (d - w * 2 - h)
+      }
+
+      pos[k * 3] = x + t * 0.3 + (rnd() - 0.5) * 0.03
+      pos[k * 3 + 1] = y - t * 0.22 + (rnd() - 0.5) * 0.03
+      pos[k * 3 + 2] = t * 0.85 + (rnd() - 0.5) * 0.05
+      // Nearer cards read heavier, so the deck has a front.
+      size[k] = 0.95 - (t + 1) * 0.2
+      k++
+    }
+  }
+  for (let i = used; i < n; i++) {
+    pos[i * 3] = pos[i * 3 + 1] = pos[i * 3 + 2] = 0
+    size[i] = 0.6
+  }
+}
+
+/**
+ * A curling sheet of ruled lines — the `/blog` index as a page of prose caught
+ * mid-air. Left margin flush, right margin ragged, the way a paragraph is.
+ */
+const ribbon: Filler = (pos, size, n, rnd) => {
+  const rows = 9
+  const per = Math.floor(n / rows)
+  const used = per * rows
+
+  let k = 0
+  for (let r = 0; r < rows; r++) {
+    const v = rows === 1 ? 0 : r / (rows - 1)
+    const y = (0.5 - v) * 1.5
+    // Every line stops somewhere short of the margin; the last one, being the
+    // end of the paragraph, stops well short of it.
+    const reach = r === rows - 1 ? 0.45 : 0.74 + rnd() * 0.26
+
+    for (let i = 0; i < per; i++) {
+      const u = per === 1 ? 0 : i / (per - 1)
+      const x = -1.5 + u * 3 * reach
+      pos[k * 3] = x
+      pos[k * 3 + 1] = y + (rnd() - 0.5) * 0.03
+      // One slow wave across the sheet, so it curls rather than lying flat.
+      pos[k * 3 + 2] = Math.sin(x * 1.1 + v * 1.6) * 0.42
+      size[k] = 0.7 + rnd() * 0.35
+      k++
+    }
+  }
+  for (let i = used; i < n; i++) {
+    pos[i * 3] = pos[i * 3 + 1] = pos[i * 3 + 2] = 0
+    size[i] = 0.6
+  }
+}
+
+/**
+ * A nucleus inside three tilted orbitals — the `/lab` index, where the
+ * experiments live.
+ */
+const atom: Filler = (pos, size, n, rnd) => {
+  const rings = 3
+  const nucleus = Math.round(n * 0.22)
+  const per = Math.floor((n - nucleus) / rings)
+  const used = nucleus + per * rings
+
+  for (let i = 0; i < nucleus; i++) {
+    // Uniform in a small ball, the same construction `scatter` uses.
+    const u = rnd() * 2 - 1
+    const theta = rnd() * TWO_PI
+    const s = Math.sqrt(Math.max(0, 1 - u * u))
+    const r = Math.cbrt(rnd()) * 0.3
+    pos[i * 3] = Math.cos(theta) * s * r
+    pos[i * 3 + 1] = u * r
+    pos[i * 3 + 2] = Math.sin(theta) * s * r
+    size[i] = 0.85 + rnd() * 0.45
+  }
+
+  let k = nucleus
+  for (let g = 0; g < rings; g++) {
+    // Each orbital is the same circle, tilted about X and swung about Y so the
+    // three of them cross rather than nest.
+    const ca = Math.cos(g * (Math.PI / rings) + 0.3)
+    const sa = Math.sin(g * (Math.PI / rings) + 0.3)
+    const cb = Math.cos(g * (TWO_PI / rings))
+    const sb = Math.sin(g * (TWO_PI / rings))
+
+    for (let i = 0; i < per; i++) {
+      const ang = ((i + 0.5) / per) * TWO_PI
+      const rr = 1.25 + (rnd() - 0.5) * 0.06
+      const x0 = Math.cos(ang) * rr
+      const y0 = Math.sin(ang) * rr
+      const z0 = (rnd() - 0.5) * 0.05
+      const y1 = y0 * ca - z0 * sa
+      const z1 = y0 * sa + z0 * ca
+      pos[k * 3] = x0 * cb + z1 * sb
+      pos[k * 3 + 1] = y1
+      pos[k * 3 + 2] = -x0 * sb + z1 * cb
+      size[k] = 0.7 + rnd() * 0.35
+      k++
+    }
+  }
+  for (let i = used; i < n; i++) {
+    pos[i * 3] = pos[i * 3 + 1] = pos[i * 3 + 2] = 0
+    size[i] = 0.6
+  }
+}
+
 const FILLERS: Record<ShapeId, { fill: Filler; seed: number }> = {
   orb: { fill: orb, seed: 0x51ede5 },
   disc: { fill: disc, seed: 0x0d15c0 },
@@ -237,6 +376,9 @@ const FILLERS: Record<ShapeId, { fill: Filler; seed: number }> = {
   helix: { fill: helix, seed: 0x4e11c3 },
   grid: { fill: grid, seed: 0x62d1d5 },
   scatter: { fill: scatter, seed: 0x5ca77e },
+  stack: { fill: stack, seed: 0x57ac4b },
+  ribbon: { fill: ribbon, seed: 0x21bb0f },
+  atom: { fill: atom, seed: 0xa70115 },
 }
 
 const cache = new Map<ShapeId, Cloud>()

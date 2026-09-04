@@ -41,10 +41,24 @@ export const SECTION_SHAPES: Record<string, StageSectionConfig> = {
   pageServicesProcess: { shape: "grid", scale: 1.2, opacity: 0.35 },
   pageLabTeaser: { shape: "torus", offset: { y: -0.2 }, opacity: 0.4 },
   pageBlog: { shape: "disc", offset: { y: 0.2 }, opacity: 0.4 },
-  pageServices: { shape: "grid", offset: { y: 0.2 }, opacity: 0.7, motion: "fixed", size: "viewport-height", spin: 0 },
+  // Still *and* square-on: `spin: 0` alone would leave the grid at whatever
+  // bearing the reader's scroll happened to stop it at, so the angle is named.
+  pageServices: {
+    shape: "grid",
+    offset: { y: 0.2 },
+    opacity: 0.7,
+    motion: "fixed",
+    size: "viewport-height",
+    spin: 0,
+    angle: 0.2,
+  },
   pageFaq: { shape: "torus", offset: { x: 0.3 }, opacity: 0.4 },
 
-  // Closing: the cloud settles into a wide, flat pond under the contact form.
-  pageContact: { shape: "disc", scale: 1.35, opacity: 0.55 },
+  // Closing: the cloud settles into a wide, flat pond under a form.
+  //
+  // `pageContact` is deliberately absent. It is a form beside a column of prose
+  // — dense on both halves, and the last thing on the page — so whatever the
+  // section above it claimed simply carries through rather than the stage
+  // spending a morph on the footer.
   formBlock: { shape: "disc", scale: 1.2, opacity: 0.4 },
 }

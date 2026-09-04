@@ -467,7 +467,17 @@ export function ParticleStage({
       const focal = R * 3.2
       const nearPlane = focal * 0.25
 
-      const rotY = spin + eased.x * o.pointerTilt * tiltMul
+      // Yaw is resolved per side, like placement: a section that names an
+      // `angle` is pinned to it, and one that does not rides the free-running
+      // accumulator. Blending the two *answers* is what lets a spinning
+      // section hand over to a pinned one without the cloud jumping — and it
+      // takes the short way round, so the turn into the angle is never the
+      // long 350° version of the same rotation.
+      const fromYaw = stage.from.angle === undefined ? spin : stage.from.angle * TWO_PI
+      const toYaw = stage.to.angle === undefined ? spin : stage.to.angle * TWO_PI
+      let dYaw = toYaw - fromYaw
+      dYaw -= TWO_PI * Math.round(dYaw / TWO_PI)
+      const rotY = fromYaw + dYaw * t + eased.x * o.pointerTilt * tiltMul
       const rotX = o.tilt + eased.y * o.pointerTilt * tiltMul
       const cosY = Math.cos(rotY)
       const sinY = Math.sin(rotY)

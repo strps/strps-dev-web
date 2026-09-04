@@ -50,6 +50,7 @@ export function StageSection({
   size,
   drift,
   spin,
+  angle,
   breath,
   pointerTilt,
   place,
@@ -70,6 +71,7 @@ export function StageSection({
     size,
     drift,
     spin,
+    angle,
     breath,
     pointerTilt,
     place,
@@ -84,6 +86,7 @@ export function StageSection({
     entry.size = size
     entry.drift = drift
     entry.spin = spin
+    entry.angle = angle
     entry.breath = breath
     entry.pointerTilt = pointerTilt
     // Mirrored like the rest: an inline arrow is a new function every render,
