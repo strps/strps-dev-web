@@ -88,7 +88,11 @@ export const es: Dictionary = {
   },
   lab: {
     viewItem: 'Ver →',
-    galleryTitle: 'Galería y experimentos',
+    eyebrow: 'Galería y experimentos',
+    heroTitlePrefix: 'El',
+    heroTitleHighlight: 'Laboratorio',
+    heroSubtitle: 'Experimentos, herramientas y bocetos generativos — cosas creadas por el placer de crearlas.',
+    countLabel: (total: number) => (total === 1 ? '1 elemento' : `${total} elementos`),
     noMatches: 'Nada coincide con esos filtros',
     tryWidening: 'Intenta ampliar la búsqueda o quitar un filtro.',
     showingCount: (shown: number, total: number) => `Mostrando ${shown} de ${total}`,

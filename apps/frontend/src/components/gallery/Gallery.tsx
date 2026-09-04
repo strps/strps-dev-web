@@ -11,7 +11,6 @@ import { getDictionary } from "@/i18n/getDictionary";
 
 export interface GalleryProps {
     items: GalleryItem[];
-    title: string;
     locale?: Locale;
 }
 
@@ -24,7 +23,7 @@ const PRIORITY_SPAN: Record<GalleryPriority, string> = {
     low: "col-span-2 sm:col-span-1 lg:col-span-1 row-span-2",
 };
 
-export function Gallery({ items, title, locale = defaultLocale }: GalleryProps) {
+export function Gallery({ items, locale = defaultLocale }: GalleryProps) {
     const dictionary = getDictionary(locale);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<GalleryCategory[]>([]);
@@ -80,7 +79,6 @@ export function Gallery({ items, title, locale = defaultLocale }: GalleryProps) 
     return (
         <div className="space-y-10">
             <GalleryBar
-                title={title}
                 locale={locale}
                 searchQuery={searchQuery}
                 onSearchQueryChange={setSearchQuery}

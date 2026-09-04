@@ -86,7 +86,11 @@ export const en = {
   },
   lab: {
     viewItem: 'View →',
-    galleryTitle: 'Gallery & Tinkering',
+    eyebrow: 'Gallery & tinkering',
+    heroTitlePrefix: 'The',
+    heroTitleHighlight: 'Lab',
+    heroSubtitle: 'Experiments, tools, and generative sketches — the stuff built for its own sake.',
+    countLabel: (total: number) => (total === 1 ? '1 item' : `${total} items`),
     noMatches: 'Nothing matches those filters',
     tryWidening: 'Try widening the search or clearing a filter.',
     showingCount: (shown: number, total: number) => `Showing ${shown} of ${total}`,

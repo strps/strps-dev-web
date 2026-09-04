@@ -12,7 +12,6 @@ import { getDictionary } from "@/i18n/getDictionary";
 // import { GALLERY_CATEGORIES, type GalleryCategory } from "@/app/gallery/types";
 
 export interface GalleryBarProps {
-    title: string;
     searchQuery: string;
     onSearchQueryChange: (value: string) => void;
     selectedCategories: GalleryCategory[];
@@ -26,7 +25,6 @@ export interface GalleryBarProps {
 }
 
 export function GalleryBar({
-    title,
     searchQuery,
     onSearchQueryChange,
     selectedCategories,
@@ -48,12 +46,8 @@ export function GalleryBar({
     const hasActiveFilters = activeFilterCount > 0;
 
     return (
-        <div className={cn("space-y-4 container mx-auto", className)}>
-            <div className="flex items-center justify-between gap-4">
-                <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-                    {title}
-                </h1>
-
+        <div className={cn("space-y-4", className)}>
+            <div className="flex items-center justify-end gap-4">
                 <Button
                     variant={filtersOpen ? "default" : "outline"}
                     size="sm"

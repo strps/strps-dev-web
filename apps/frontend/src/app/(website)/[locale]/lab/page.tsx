@@ -4,6 +4,8 @@ import { getLocalizedGalleryItems } from "./data";
 import { localizedHref, type Locale } from "@/i18n/config";
 import { getDictionary } from '@/i18n/getDictionary';
 import { buildAlternates } from '@/lib/seo';
+import { PageHeader } from '@/components/primitives/PageHeader';
+import { Reveal } from '@/components/primitives/Reveal';
 
 export async function generateMetadata({
     params,
@@ -34,8 +36,22 @@ export default async function GalleryPage({
 
     return (
         <main className="min-h-screen">
-            <div className=" mx-auto px-4 py-16">
-                <Gallery items={items} title={dictionary.lab.galleryTitle} locale={locale} />
+            <div className=" mx-auto px-4 py-16 space-y-10">
+                <Reveal on="mount">
+                    <PageHeader
+                        eyebrow={dictionary.lab.eyebrow}
+                        title={
+                            <>
+                                {dictionary.lab.heroTitlePrefix}{' '}
+                                <span className="text-primary">{dictionary.lab.heroTitleHighlight}</span>
+                            </>
+                        }
+                        lead={dictionary.lab.heroSubtitle}
+                        meta={dictionary.lab.countLabel(items.length)}
+                    />
+                </Reveal>
+
+                <Gallery items={items} locale={locale} />
             </div>
         </main>
     );
