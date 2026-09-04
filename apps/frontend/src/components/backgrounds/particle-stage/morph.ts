@@ -2,10 +2,10 @@
  * The morph: given two clouds and a progress value, where is every point?
  *
  * The one rule this file obeys is that `morph()` is a **pure function of `t`**.
- * No integration, no velocity, no state carried between frames. Progress comes
- * from scroll position, and scroll runs backwards as readily as forwards; an
- * integrated animation would drift on the way back up and settle somewhere it
- * has never been. A pure function retraces exactly. See ./README.md § Morphing.
+ * No integration, no velocity, no state carried between frames. Progress is
+ * integrated in exactly one place — `advance()` in ParticleStage, which runs the
+ * timed morph a seam triggers — so everything here is cacheable per shape pair
+ * and there is only one clock to reason about. See ./README.md § Morphing.
  */
 
 import type { Cloud } from "./shapes"
@@ -35,7 +35,7 @@ export interface MorphPlan {
   angle: Float32Array
 }
 
-/** Smootherstep: C2 continuous, so a scrubbed morph has no visible kink. */
+/** Smootherstep: C2 continuous, so the staggered arrival has no visible kink. */
 function ease(x: number) {
   return x * x * x * (x * (x * 6 - 15) + 10)
 }

@@ -1,8 +1,9 @@
 /**
- * Which shape the stage should be showing, and how far between two of them.
+ * Which section owns the stage right now.
  *
- * Sections register themselves here on mount. The stage reads the registry
- * every frame and resolves scroll position into a `{ from, to, t }` triple.
+ * Sections register themselves here on mount. The stage asks, every frame,
+ * which one holds the trigger line, and animates towards that section's shape
+ * on its own clock — the registry answers *who*, never *how far along*.
  * Deliberately outside React: a re-render per scroll frame would be far more
  * expensive than the canvas work it is feeding. See ./README.md § Wiring.
  */
@@ -38,9 +39,6 @@ let centres: number[] = []
 /** Document-space box of each section, so the cloud can be kept inside it. */
 let tops: number[] = []
 let bottoms: number[] = []
-/** Document-space extent of the registered run, to bound the outer bands. */
-let firstTop = 0
-let lastBottom = 0
 let boundsStale = true
 
 export function registerSection(section: StageSection) {
@@ -84,10 +82,8 @@ function measure() {
   centres = measured.map((m) => (m.top + m.bottom) / 2)
   tops = measured.map((m) => m.top)
   bottoms = measured.map((m) => m.bottom)
-  firstTop = measured.length ? measured[0].top : 0
-  lastBottom = measured.length ? measured[measured.length - 1].bottom : 0
-  // A seam is the join between two consecutive sections; the transition is
-  // centred on it.
+  // A seam is the join between two consecutive sections: the point where the
+  // stage is handed over and a new morph is triggered.
   seams = []
   for (let i = 0; i < measured.length - 1; i++) {
     seams.push((measured[i].bottom + measured[i + 1].top) / 2)
@@ -95,120 +91,58 @@ function measure() {
   boundsStale = false
 }
 
-export interface StageResolution {
-  from: StageSection
-  to: StageSection
-  /** Progress from `from` to `to`, in [0, 1]. */
-  t: number
+export interface StageOwner {
+  section: StageSection
   /**
-   * Document-space Y the cloud is anchored to: the centre of the owning
-   * section, blended across a transition the same way the shape is. The stage
-   * turns the distance between this and the viewport centre into parallax.
+   * Document-space Y the cloud is anchored to: the centre of the section. The
+   * stage turns the distance between this and the viewport centre into
+   * parallax.
    */
   anchor: number
   /**
-   * Document-space box of the owning section, blended the same way. The stage
-   * keeps the cloud inside it, so the cloud travels with the section rather
-   * than sitting on the glass.
+   * Document-space box of the section. The stage keeps the cloud inside it, so
+   * the cloud travels with the section rather than sitting on the glass.
    */
   top: number
   bottom: number
 }
 
+function ownerAt(i: number): StageOwner {
+  return { section: ordered[i], anchor: centres[i], top: tops[i], bottom: bottoms[i] }
+}
+
 /**
- * Resolve the current scroll offset into a transition.
+ * Which section owns the stage at the current scroll offset.
  *
- * The reference is the **viewport centre line**: whichever section contains it
- * owns the stage. A *seam* is the join between two consecutive sections, and
- * `t` ramps 0 -> 1 across a band centred on that seam.
+ * The reference is a horizontal line across the viewport, at `trigger` of its
+ * height. Whichever section that line sits in owns the stage; the handover
+ * happens at the *seam*, the midpoint between two consecutive sections. Before
+ * the first section and after the last, the nearest one owns it.
  *
- * The band is not simply `blend * vh`. It is clamped to the room actually
- * available between neighbouring seams, because a section shorter than the band
- * makes two bands overlap — and an overlap means the pair changes while the
- * previous morph is still running, which the cloud shows as a snap. Clamping
- * guarantees bands never touch, so every transition finishes before the next
- * one starts, at any section height.
- *
- * `hold` then reserves a fraction of each run as settled time, so a short
- * section still gets a moment where its shape simply *is* rather than being
- * permanently mid-morph.
- *
- * Pure in scroll position — no hysteresis, no "current section" state — which
- * is what makes scrolling back up retrace the transition exactly.
+ * This is a pure lookup — it says who, not how far along. The morph itself is
+ * a timed animation the stage starts when this answer changes, so a transition
+ * always runs at the same speed and always finishes, whether the reader crept
+ * over the seam or flung the page past it.
  */
-export function resolveStage(blend = 0.55, hold = 0.5): StageResolution | null {
+export function resolveOwner(trigger = 0.5): StageOwner | null {
   if (boundsStale) measure()
   if (ordered.length === 0) return null
-  if (ordered.length === 1) {
-    return {
-      from: ordered[0],
-      to: ordered[0],
-      t: 0,
-      anchor: centres[0],
-      top: tops[0],
-      bottom: bottoms[0],
-    }
-  }
 
-  const line = scrollState.y + scrollState.vh / 2
-  const maxBand = Math.max(1, scrollState.vh * blend)
-  const keep = Math.max(0, Math.min(0.9, hold))
-
-  /** Half-width of the transition band around seam `k`. */
-  const halfBandAt = (k: number) => {
-    // The outer seams have no neighbouring seam on one side, so the top and
-    // bottom of the registered run stand in — otherwise a two-section page gets
-    // an unbounded band and never settles at all.
-    const prev = k > 0 ? seams[k] - seams[k - 1] : seams[k] - firstTop
-    const next = k < seams.length - 1 ? seams[k + 1] - seams[k] : lastBottom - seams[k]
-    // Two adjacent bands share the gap between their seams, so capping each at
-    // the gap (less the hold) leaves them exactly touching at worst.
-    const room = Math.min(prev, next) * (1 - keep)
-    return Math.max(0.5, Math.min(maxBand, room)) / 2
-  }
-
-  // Sections fully passed: the index of the section the line currently sits in.
+  const line = scrollState.y + scrollState.vh * trigger
   let k = 0
   while (k < seams.length && seams[k] <= line) k++
+  return ownerAt(k)
+}
 
-  // Entering the seam ahead.
-  if (k < seams.length) {
-    const half = halfBandAt(k)
-    if (line > seams[k] - half) {
-      const t = (line - seams[k] + half) / (half * 2)
-      return {
-        from: ordered[k],
-        to: ordered[k + 1],
-        t,
-        anchor: centres[k] + (centres[k + 1] - centres[k]) * t,
-        top: tops[k] + (tops[k + 1] - tops[k]) * t,
-        bottom: bottoms[k] + (bottoms[k + 1] - bottoms[k]) * t,
-      }
-    }
-  }
-  // Still leaving the seam behind.
-  if (k > 0) {
-    const half = halfBandAt(k - 1)
-    if (line < seams[k - 1] + half) {
-      const t = (line - seams[k - 1] + half) / (half * 2)
-      return {
-        from: ordered[k - 1],
-        to: ordered[k],
-        t,
-        anchor: centres[k - 1] + (centres[k] - centres[k - 1]) * t,
-        top: tops[k - 1] + (tops[k] - tops[k - 1]) * t,
-        bottom: bottoms[k - 1] + (bottoms[k] - bottoms[k - 1]) * t,
-      }
-    }
-  }
-  return {
-    from: ordered[k],
-    to: ordered[k],
-    t: 0,
-    anchor: centres[k],
-    top: tops[k],
-    bottom: bottoms[k],
-  }
+/**
+ * Live measurements for a section the stage is still drawing — the one it is
+ * morphing *from*, which may no longer own the stage. Null once that section
+ * has unregistered, which is the stage's cue to drop it.
+ */
+export function ownerOf(section: StageSection): StageOwner | null {
+  if (boundsStale) measure()
+  const i = ordered.indexOf(section)
+  return i < 0 ? null : ownerAt(i)
 }
 
 /** Every registered shape, in document order. For mesh warming. */

@@ -8,7 +8,14 @@ import { scrollState, syncFromWindow } from "@/lib/scroll"
 import { cssColor, mixColor, readColorVar, type RGB } from "./color"
 import { getMesh, warmMesh, type Mesh } from "./mesh"
 import { morph, morphSize, planMorph } from "./morph"
-import { invalidate, onRegistryChange, registeredShapes, resolveStage } from "./registry"
+import {
+  invalidate,
+  onRegistryChange,
+  ownerOf,
+  registeredShapes,
+  resolveOwner,
+  type StageSection as StageSectionEntry,
+} from "./registry"
 import { CLOUD_SIZE, getCloud, type ShapeId } from "./shapes"
 
 export interface ParticleStageProps {
@@ -19,14 +26,16 @@ export interface ParticleStageProps {
   spinSpeed?: number
   /** Fixed tilt in radians. */
   tilt?: number
-  /** Fraction of a viewport height the morph is spread over, centred on a seam. */
-  blend?: number
+  /** How long one shape-to-shape morph takes, in seconds. */
+  duration?: number
+  /** GSAP ease the morph runs on. */
+  ease?: string
   /**
-   * Fraction of the run between two seams held settled, so a short section
-   * still gets a moment where its shape simply is rather than being permanently
-   * mid-morph.
+   * Where the trigger line sits, as a fraction of viewport height. A section
+   * takes the stage — and starts the morph towards its shape — once this line
+   * crosses into it. 0.5 is the middle of the screen.
    */
-  hold?: number
+  trigger?: number
   /**
    * How much of the cloud is kept inside the section's box and inside the
    * viewport, as a fraction of the cloud radius. The cloud slides along a
@@ -94,8 +103,9 @@ export function ParticleStage({
   radius = 0.26,
   spinSpeed = 0.3,
   tilt = -0.32,
-  blend = 0.3,
-  hold = 0.2,
+  duration = 1.2,
+  ease = "power2.inOut",
+  trigger = 0.5,
   parallaxPad = 0.9,
   linkDistance = 0.34,
   linkNeighbors = 3,
@@ -114,7 +124,7 @@ export function ParticleStage({
   // Live prop mirror: the loop starts once and reads the newest values from
   // here, so tweaking a prop retunes the running stage instead of restarting it.
   const props = {
-    radius, spinSpeed, tilt, blend, hold, parallaxPad,
+    radius, spinSpeed, tilt, duration, ease, trigger, parallaxPad,
     linkDistance, linkNeighbors, linkPulse, linkPulseSpeed,
     pointerTilt, pointerEase,
     dotRadius, dotOpacity, linkOpacity,
@@ -207,9 +217,94 @@ export function ParticleStage({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
+    // --- the transition ---------------------------------------------------
+    // `t` is integrated over wall-clock time, not read off the scroll offset:
+    // crossing a seam *starts* a morph, and that morph then runs to completion
+    // at its own speed whether the reader keeps scrolling, stops dead, or turns
+    // around. See ./README.md § Triggering.
+    let from: StageSectionEntry | null = null
+    let to: StageSectionEntry | null = null
+    /** Seconds since the running morph began. */
+    let elapsed = 0
+    // Reused rather than reallocated: this object is rebuilt every frame.
+    const stage = {
+      from: null as unknown as StageSectionEntry,
+      to: null as unknown as StageSectionEntry,
+      t: 1,
+      anchor: 0,
+      top: 0,
+      bottom: 0,
+    }
+
+    let easeKey = ""
+    let easeFn: (x: number) => number = (x) => x
+    const resolveEase = (name: string) => {
+      if (name !== easeKey) {
+        easeKey = name
+        easeFn = gsap.parseEase(name) ?? ((x: number) => x)
+      }
+      return easeFn
+    }
+
     /**
-     * Draw one frame. Everything positional is derived from `resolveStage()`,
-     * which is a pure function of scroll offset; only `time` accumulates.
+     * Step the transition and report what should be on screen.
+     *
+     * Returns null while nothing is registered. The section boxes are read live
+     * every frame — they move with the page — and blended by the same `t` as
+     * the shape, so handing the cloud from one section to the next is
+     * continuous for free.
+     */
+    const advance = (dt: number) => {
+      const o = opts.current
+      const owner = resolveOwner(o.trigger)
+      if (!owner) return null
+
+      // Reduced motion gets the destination shape, never the journey.
+      const dur = reduced.matches ? 0 : Math.max(0, o.duration)
+
+      // First frame, or everything we were drawing has unregistered.
+      if (!from || !to || !ownerOf(to)) {
+        from = owner.section
+        to = owner.section
+        elapsed = dur
+      }
+
+      elapsed += dt
+      // A seam crossed mid-morph does not interrupt it: the running morph lands
+      // first, and only then does the stage set off towards whichever section
+      // holds the trigger line by that point. Flinging the page therefore skips
+      // the shapes it flew past instead of queueing a backlog of morphs.
+      if (owner.section !== to && elapsed >= dur) {
+        from = to
+        to = owner.section
+        elapsed = 0
+      }
+
+      const raw = dur > 0 ? Math.min(elapsed / dur, 1) : 1
+      const t = raw >= 1 ? 1 : resolveEase(o.ease)(raw)
+
+      // The section being morphed away from can unregister mid-flight — a CMS
+      // block swapping out, a route change tearing the old page down. Drop it
+      // and finish where we are rather than reading a stale box.
+      const toBox = ownerOf(to)!
+      let fromBox = ownerOf(from)
+      if (!fromBox) {
+        from = to
+        fromBox = toBox
+      }
+
+      stage.from = from
+      stage.to = to
+      stage.t = t
+      stage.anchor = fromBox.anchor + (toBox.anchor - fromBox.anchor) * t
+      stage.top = fromBox.top + (toBox.top - fromBox.top) * t
+      stage.bottom = fromBox.bottom + (toBox.bottom - fromBox.bottom) * t
+      return stage
+    }
+
+    /**
+     * Draw one frame. The shape comes from `advance()`, which owns the timed
+     * morph; placement is derived from the live section boxes it reports.
      */
     const draw = (dt: number) => {
       const o = opts.current
@@ -223,14 +318,12 @@ export function ParticleStage({
       ctx.clearRect(0, 0, width, height)
       if (width === 0 || height === 0) return
 
-      const stage = resolveStage(o.blend, o.hold)
+      const stage = advance(dt)
       if (!stage) return
+      const t = stage.t
 
       const fromCloud = getCloud(stage.from.shape)
       const toCloud = getCloud(stage.to.shape)
-      // Under reduced motion the cloud snaps to whichever shape is closer
-      // rather than animating between them.
-      const t = reduced.matches ? (stage.t < 0.5 ? 0 : 1) : stage.t
 
       const plan = planMorph(fromCloud, toCloud)
       morph(plan, t, world)
@@ -397,8 +490,14 @@ export function ParticleStage({
         }
       }
 
-      addMesh(getMesh(getCloud(fromShape), meshOpts), 1 - t)
-      if (toShape !== fromShape) addMesh(getMesh(getCloud(toShape), meshOpts), t)
+      // Settled on one shape: draw its mesh outright. Crossfading it against
+      // itself would fade the links out entirely at the ends of the morph.
+      if (fromShape === toShape) {
+        addMesh(getMesh(getCloud(fromShape), meshOpts), 1)
+      } else {
+        addMesh(getMesh(getCloud(fromShape), meshOpts), 1 - t)
+        addMesh(getMesh(getCloud(toShape), meshOpts), t)
+      }
 
       ctx.strokeStyle = color
       ctx.lineWidth = 1

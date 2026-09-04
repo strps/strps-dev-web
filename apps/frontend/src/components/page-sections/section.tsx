@@ -114,7 +114,7 @@ export default function Section({
         settle between morphs.
       */}
       <div className={cn(
-        "relative flex flex-col gap-8 z-20 h-full w-full my-24 min-h-[400px]",
+        "relative flex flex-col gap-8 z-20 h-full w-full my-50 min-h-100",
         container && "container mx-auto",
         containerClassName
       )}>

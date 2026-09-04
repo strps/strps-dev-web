@@ -1,9 +1,9 @@
 # ParticleStage
 
-One point cloud, one canvas, behind the whole page. As you scroll, the cloud
-morphs from the shape one section asked for into the shape the next one asks
-for. Nothing is created or destroyed at a section boundary — the same points
-rearrange.
+One point cloud, one canvas, behind the whole page. Scrolling a new section past
+the trigger line starts a timed morph from the shape the last section asked for
+into the shape this one asks for. Nothing is created or destroyed at a section
+boundary — the same points rearrange.
 
 ```tsx
 // once, near the root
@@ -119,13 +119,15 @@ a 400px radius, and it shows.
 `morph()` takes progress and returns positions. No integration, no velocity, no
 state carried between frames.
 
-Progress comes from scroll, and scroll runs backwards as readily as forwards. An
-integrated animation — a spring, a damped chase — drifts on the way back up and
-settles somewhere it has never been. A pure function retraces exactly.
+Progress is integrated in exactly one place — `advance()` in `ParticleStage`,
+which owns a single scalar and a single clock. Everything downstream is a
+function of that scalar, so there is only ever one thing to reason about when a
+morph looks wrong, and a plan is cacheable per shape *pair* rather than per
+frame.
 
 Anything that *should* keep moving while the page is still is an additive layer
 driven by wall-clock `time`, not by `t`: the per-point breathing and the link
-pulse. Those are unaffected by scroll direction, so they compose cleanly.
+pulse. Those run whether or not a morph is in flight, so they compose cleanly.
 
 ### Polar paths
 
@@ -265,60 +267,55 @@ mirrored instead. Everything downstream keeps working.
 `registry.ts` is a module-level list, deliberately outside React: a re-render
 per scroll frame would cost far more than the canvas work it feeds.
 
-`resolveStage()` turns scroll offset into `{ from, to, t }`. The reference is the
-**viewport centre line**; whichever section contains it owns the stage. A *seam*
-is the join between two consecutive sections, and `t` ramps 0 → 1 across a band
-centred on that seam — so the morph runs while the join crosses the middle of
-the screen and is settled everywhere else.
+`resolveOwner(trigger)` answers one question — **which section owns the stage** —
+and nothing else. The reference is a horizontal line at `trigger` of the
+viewport height (0.5, the middle of the screen, by default); whichever section
+that line sits in owns the stage, and the handover happens at the *seam*, the
+midpoint between two consecutive sections. Before the first section and after
+the last, the nearest one owns it.
 
-It is a pure function of scroll position: no hysteresis, no "current section"
-state, so scrolling back up retraces exactly.
+It is a pure lookup: no hysteresis, no "current section" state. Scrolling back
+across a seam hands the stage back, and the stage animates back.
 
-### Why the band is clamped
+### Triggering
 
-The band is **not** simply `blend * vh`, and this is the one piece of the
-resolver worth understanding.
+The morph is **not** scrubbed by scroll. Crossing a seam *starts* an animation,
+and `advance()` runs it to completion on wall-clock time — `duration` seconds on
+the `ease` curve — whether the reader keeps scrolling, stops dead in the middle,
+or turns around. Stop halfway across a seam and the shape still arrives; that is
+the whole point of the change.
 
-Sections on this site run 300–900px tall. At a 900px viewport, `blend: 0.55` is
-a 495px band — wider than several of them. Two bands then overlap, and in the
-overlap the *pair* changes while the previous morph is still running:
+This is what a scrubbed `t` could not give you. Scrubbing ties the speed of the
+transition to the speed of the reader: a slow scroll leaves the cloud smeared
+permanently mid-morph, a flick fires the entire morph in three frames, and the
+band it runs over has to be clamped against every neighbouring band or two
+morphs overlap and the cloud visibly snaps. A timed animation has one speed, the
+designed one, at any section height and any scroll velocity.
 
-```
-JUMP at y=953: s1->s2 t=0.969  =>  s2->s3 t=0.001
-```
+Two rules keep it from stacking up:
 
-The cloud snaps the last 3% of one morph and restarts on another. That is what
-choppy transitions actually were.
+- **A morph in flight is never interrupted.** A seam crossed mid-morph is
+  noticed but not acted on; when the running morph lands, the stage sets off
+  towards whichever section holds the trigger line *at that moment*. So flinging
+  the page skips the shapes it flew past rather than queueing a backlog of
+  morphs that then play out long after the reader has stopped.
+- **The section boxes are blended by the same `t` as the shape.** `advance()`
+  reads both sections' live anchor and box every frame — they move with the page
+  — and interpolates them, so the cloud's position is continuous across a
+  handover even though the section it is following just changed.
 
-So each seam's band is clamped to the room between its neighbouring seams. Two
-adjacent bands share the gap between them, so capping each at that gap leaves
-them exactly touching at worst — never overlapping, at any section height.
+Under `prefers-reduced-motion` the duration is zero: the cloud is simply the
+owning section's shape, and it changes at the seam.
 
-`hold` (default `0.5`) then reserves half of each run as settled time, so every
-section gets a stretch where its shape simply *is*. Without it, a page of
-uniform sections is permanently mid-morph, which reads as busy rather than as
-designed — and uniform sections are exactly what minimum heights produce, so the
-two changes had to land together.
-
-The outer seams have no neighbouring seam on one side, so the top and bottom of
-the registered run stand in. Otherwise a two-section page gets an unbounded band
-and never settles at all.
-
-Measured over simulated pages, no discontinuities anywhere and:
-
-| layout | settled scroll |
-| --- | --- |
-| the real page (900 hero, ~700 body) | 50% |
-| uniform 630px minimums | 51% |
-| a 2000px section among short ones | 69% |
-| two sections only | 13% |
-| uniform 300px (no minimums) | 54% |
+Section height no longer bounds the transition, so `hold`, `blend`, and the band
+clamping they needed are gone. Height still matters for a different reason,
+below.
 
 ### Section height
 
-The resolver copes with short sections but cannot invent room: a section much
-shorter than a viewport gets a proportionally short band, and the transition is
-over before you have registered it.
+A short section no longer truncates its morph, but it does cut short the time
+the cloud spends *settled* in that shape: seams that are 200px apart fire a new
+1.2s morph every 200px of scroll, and the cloud never rests.
 
 So the minimums live in `Section`'s `SPACING_VARIANTS` — `min-h-svh` for `hero`,
 `min-h-[80svh]` for `contact`, `min-h-[70svh]` for everything else. They are
@@ -329,8 +326,8 @@ overrides them because `twMerge` resolves `min-h-*`.
 reflow when a mobile URL bar appears, and a reflow mid-scroll invalidates every
 cached section bound.
 
-If a transition still feels rushed, more height is the fix; raising `blend` is
-not, because the clamp discards the extra.
+If the cloud feels permanently in motion, more section height is one fix and a
+shorter `duration` is the other.
 
 Bounds are measured once and cached. They are invalidated on resize, on registry
 changes, and by a `ResizeObserver` on `document.body` — sections move whenever
@@ -340,7 +337,7 @@ hydrating), and that is not a window resize.
 ### Following the section
 
 The cloud does not sit pinned to the middle of the glass: it belongs to its
-section and travels with it. `resolveStage` returns the owning section's
+section and travels with it. `resolveOwner` returns the owning section's
 document-space centre and its box, and the cloud is placed at that centre in
 viewport space — moving with the page, at the page's own rate.
 
@@ -392,8 +389,9 @@ the owning pair changes or the theme mutates — never per frame, because
 | `radius` | `0.26` | Cloud radius as a fraction of the viewport's smaller side. |
 | `spinSpeed` | `0.1` | Full turns per minute around Y. |
 | `tilt` | `-0.32` | Fixed tilt in radians. |
-| `blend` | `0.55` | Ceiling on the transition band, in viewport heights. Clamped down to the room between seams. |
-| `hold` | `0.5` | Fraction of each inter-seam run held settled. Raise it for more rest between morphs. |
+| `duration` | `1.2` | Seconds one shape-to-shape morph takes. |
+| `ease` | `power2.inOut` | GSAP ease the morph runs on. |
+| `trigger` | `0.5` | Where the trigger line sits, as a fraction of viewport height. |
 | `parallaxPad` | `0.9` | How much of the cloud is kept inside the section's on-screen box, as a fraction of its radius. |
 | `linkDistance` | `0.34` | Neighbour radius in cloud units. 0 disables links. |
 | `linkNeighbors` | `3` | Max edges per point. |
@@ -417,9 +415,9 @@ the owning pair changes or the theme mutates — never per frame, because
 | `opacity` | `1` | Opacity multiplier. 0 hides the cloud over this section. |
 | `target` | nearest `<section>` | Override the tracked element. |
 
-`offset`, `scale`, and `opacity` are interpolated alongside the shape, so a
-section can move the cloud aside for its own content and the move happens over
-the same seam as the morph.
+`offset`, `scale`, and `opacity` are interpolated alongside the shape, on the
+same timed `t`, so a section can move the cloud aside for its own content and
+the move rides the same animation as the morph.
 
 ---
 
@@ -482,7 +480,7 @@ Three conventions in that table:
 - A block type absent from the table claims nothing, and the previous section
   keeps the stage until the next one that does claim it. That is how pages
   outside the block system (blog, projects, lab) behave: no sections register,
-  `resolveStage()` returns null, and the canvas draws nothing at all.
+  `resolveOwner()` returns null, and the canvas draws nothing at all.
 
 ### The anchor
 
