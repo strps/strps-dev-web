@@ -68,7 +68,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${archivo.variable} ${ibmPlexMono.variable} min-h-screen bg-background font-sans text-foreground antialiased`}>
+      <body className={`${archivo.variable} ${ibmPlexMono.variable} flex min-h-screen flex-col bg-background font-sans text-foreground antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -94,7 +94,7 @@ export default async function RootLayout({
                 </span>
               }
             />
-            {children}
+            <div className="flex flex-1 flex-col">{children}</div>
             <Footer locale={locale} />
           </SmoothScrollProvider>
         </ThemeProvider>
