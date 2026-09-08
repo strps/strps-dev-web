@@ -95,8 +95,8 @@ export const en = {
     tryWidening: 'Try widening the search or clearing a filter.',
     showingCount: (shown: number, total: number) => `Showing ${shown} of ${total}`,
     filters: 'Filters',
+    search: 'Search',
     searchPlaceholder: 'Search the gallery…',
-    clearSearch: 'Clear search',
     tags: 'Tags',
     reset: 'Reset',
     categories: {

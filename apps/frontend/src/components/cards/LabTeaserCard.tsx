@@ -15,9 +15,9 @@ export interface LabTeaserCardProps {
 
 /**
  * The home lab-teaser card (§3.5): a slimmer sibling to `GalleryCard` rather than
- * a restyle of it — `GalleryCard` also serves the /lab page's own (out-of-scope,
- * §10) gradient-overlay design, so reusing it here would have carried that look
- * into the makeover, or forced a premature /lab redesign onto this phase.
+ * a restyle of it. The two now share a skin — /lab was converted off its
+ * gradient-overlay look — but not a shape: `GalleryCard` is a mostly-image bento
+ * tile sized by `priority`, this one a fixed teaser in a three-up row.
  *
  * The card itself is not clickable: the affordance is the `LinkArrow` pinned to
  * the bottom, so every card in a row ends on the same line whatever its copy

@@ -5,7 +5,8 @@ import { SvgCirclesHero } from "./SvgCirclesHero";
 import type { Locale } from '@/i18n/config';
 import { buildAlternates } from '@/lib/seo';
 import { getLabContent } from "../../content";
-import { LabSections, RichText } from "@/components/lab/lab-content";
+import { ItemSections, RichText } from "@/components/gallery/item-content";
+import { Eyebrow } from "@/components/primitives/Eyebrow";
 
 export async function generateMetadata({
     params,
@@ -32,19 +33,19 @@ export default async function SvgCirclesPage({
         <main className="min-h-screen">
             <SvgCirclesHero />
 
-            <LabSections sections={sections} locale={locale} />
+            <ItemSections sections={sections} locale={locale} />
 
             {/* Variants — live SVG tiles; text comes from localized content. */}
             {variants && (
-                <Section className="py-16 bg-muted/30" containerClassName="container mx-auto px-4 space-y-8">
-                    <div className="space-y-2 max-w-2xl">
-                        <h2 className="text-2xl font-bold">{variants.heading}</h2>
-                        <p className="text-muted-foreground">
+                <Section container={false} containerClassName="mx-auto w-full max-w-wrap gap-8 px-6">
+                    <div className="max-w-[55ch] space-y-2">
+                        <h2 className="text-2xl font-medium tracking-[-0.01em]">{variants.heading}</h2>
+                        <p className="text-[15px] leading-[1.65] text-muted-foreground">
                             <RichText segments={variants.intro} locale={locale} />
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 gap-4 min-[721px]:grid-cols-3">
                         <VariantTile label={variants.tileLabels[0]}>
                             <SVGCircles
                                 className="absolute inset-0 h-full w-full stroke-svg"
@@ -104,10 +105,10 @@ function VariantTile({
     children: React.ReactNode;
 }) {
     return (
-        <div className="relative aspect-square overflow-hidden rounded-2xl border border-border bg-background">
+        <div className="relative aspect-square overflow-hidden rounded-sharp border border-border bg-background">
             {children}
-            <div className="absolute inset-x-0 bottom-0 p-3 bg-linear-to-t from-background/90 to-transparent">
-                <span className="text-sm font-medium">{label}</span>
+            <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-background/90 to-transparent p-3">
+                <Eyebrow>{label}</Eyebrow>
             </div>
         </div>
     );

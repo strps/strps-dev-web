@@ -18,7 +18,7 @@ export const galleryItems: GalleryItem[] = [
     imageUrl: svgCirclesImage,
     href: '/lab/svg-circles',
     year: 2025,
-    priority: 'high',
+    priority: 'low',
   },
   {
     id: 'gray-scott',

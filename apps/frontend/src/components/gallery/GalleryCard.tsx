@@ -1,86 +1,89 @@
-import Link from "next/link";
-import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import type { GalleryItem, GalleryPriority } from "@/app/(website)/[locale]/lab/types";
-import { defaultLocale, type Locale } from "@/i18n/config";
-import { getDictionary } from "@/i18n/getDictionary";
+import Link from 'next/link'
+import Image from 'next/image'
 
-const placeholderGradient: Record<GalleryItem["category"], string> = {
-    art: "from-fuchsia-600 via-purple-600 to-indigo-700",
-    experiment: "from-amber-500 via-orange-600 to-red-700",
-    project: "from-emerald-500 via-teal-600 to-sky-700",
-};
+import { Eyebrow } from '@/components/primitives/Eyebrow'
+import { StackChip } from '@/components/primitives/StackChip'
+import { cn } from '@/lib/utils'
+import type { GalleryItem, GalleryPriority } from '@/app/(website)/[locale]/lab/types'
+import { defaultLocale, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export interface GalleryCardProps {
-    item: GalleryItem;
-    className?: string;
-    locale?: Locale;
+    item: GalleryItem
+    className?: string
+    locale?: Locale
 }
 
+/**
+ * One tile in the /lab bento grid.
+ *
+ * The grid's bento rhythm (`priority` driving the span) is the gallery's own
+ * identity and stays; the *skin* is the site's — hairline border, sharp radius,
+ * weight-500 heading, `<StackChip>` tags, palette tokens. It used to draw a
+ * per-category Tailwind rainbow gradient and a black overlay with white text,
+ * which belonged to no theme and read the same in light and dark.
+ *
+ * Unlike `PostIndexCard` this one *is* clickable as a whole: the tile is mostly
+ * image, so there is no body copy for a pinned `<LinkArrow>` to sit under.
+ */
 export function GalleryCard({ item, className, locale = defaultLocale }: GalleryCardProps) {
-    const categoryLabel = getDictionary(locale).lab.categories;
-    const priority: GalleryPriority = item.priority ?? "low";
-    const isHigh = priority === "high";
+    const categoryLabel = getDictionary(locale).lab.categories
+    const priority: GalleryPriority = item.priority ?? 'low'
+    const isHigh = priority === 'high'
 
     return (
         <Link
             href={item.href}
             className={cn(
-                "group relative block h-full w-full overflow-hidden",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                "transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl",
-                className
+                'group relative block h-full w-full overflow-hidden rounded-sharp border border-border',
+                'transition-colors duration-150 hover:border-primary',
+                'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
+                className,
             )}
         >
-            {item.imageUrl ? (
+            {/* The tile ground: the same `--card`→`--border` ramp every card image well uses. */}
+            <div aria-hidden className="absolute inset-0 bg-linear-to-br from-card to-border" />
+
+            {item.imageUrl && (
                 <Image
                     src={item.imageUrl}
-                    alt={item.title}
+                    alt=""
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover"
+                    sizes="(max-width: 720px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-            ) : (
-                <GalleryPlaceholder item={item} />
             )}
 
-            <div
-                aria-hidden
-                className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-black/10 transition-opacity duration-300 group-hover:from-black/90"
-            />
-
-            <Badge className="absolute top-3 left-3 backdrop-blur-sm bg-background/70 text-foreground border border-border">
-                {categoryLabel[item.category]}
-            </Badge>
-
-            <ArrowUpRight
-                className="absolute top-3 right-3 h-5 w-5 text-white/80 transition-all duration-300 group-hover:text-white group-hover:rotate-12"
-            />
+            {/* Scrim: only over an image, and only enough to hold the copy legible. */}
+            {item.imageUrl && (
+                <div
+                    aria-hidden
+                    className="absolute inset-0 bg-linear-to-t from-background via-background/70 to-transparent"
+                />
+            )}
 
             <div
                 className={cn(
-                    "absolute inset-x-0 bottom-0 flex flex-col gap-2 text-white",
-                    isHigh ? "p-6 md:p-7" : "p-4 md:p-5"
+                    'absolute inset-x-0 bottom-0 flex flex-col gap-2',
+                    isHigh ? 'p-6' : 'p-5',
                 )}
             >
                 <div className="flex items-baseline justify-between gap-3">
-                    <h3
-                        className={cn(
-                            "font-bold leading-tight tracking-tight",
-                            isHigh ? "text-2xl md:text-3xl" : "text-lg md:text-xl"
-                        )}
-                    >
-                        {item.title}
-                    </h3>
-                    {item.year && (
-                        <span className="text-xs text-white/70 shrink-0">{item.year}</span>
-                    )}
+                    <Eyebrow className="text-xs">{categoryLabel[item.category]}</Eyebrow>
+                    {item.year && <Eyebrow className="shrink-0 text-xs">{item.year}</Eyebrow>}
                 </div>
 
+                <h3
+                    className={cn(
+                        'font-medium leading-tight text-foreground transition-colors duration-150 group-hover:text-primary',
+                        isHigh ? 'text-2xl tracking-[-0.02em] md:text-3xl' : 'text-[17px]',
+                    )}
+                >
+                    {item.title}
+                </h3>
+
                 {isHigh && (
-                    <p className="text-sm text-white/80 line-clamp-3 leading-relaxed max-w-prose">
+                    <p className="line-clamp-3 max-w-[55ch] text-sm leading-[1.65] text-muted-foreground">
                         {item.description}
                     </p>
                 )}
@@ -88,42 +91,13 @@ export function GalleryCard({ item, className, locale = defaultLocale }: Gallery
                 {item.tags && item.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
                         {item.tags.slice(0, isHigh ? 4 : 2).map((tag) => (
-                            <Badge
-                                key={tag}
-                                variant="outline"
-                                className="text-[10px] font-normal text-white/90 border-white/30 bg-white/5 backdrop-blur-sm"
-                            >
-                                {tag}
-                            </Badge>
+                            <StackChip key={tag}>{tag}</StackChip>
                         ))}
                     </div>
                 )}
             </div>
         </Link>
-    );
+    )
 }
 
-function GalleryPlaceholder({ item }: { item: GalleryItem }) {
-    const initials = item.title
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .slice(0, 3)
-        .toUpperCase();
-    return (
-        <div
-            className={cn(
-                "absolute inset-0 bg-linear-to-br",
-                placeholderGradient[item.category]
-            )}
-        >
-            <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-7xl font-black tracking-tighter text-white/15 select-none">
-                    {initials}
-                </span>
-            </div>
-        </div>
-    );
-}
-
-export default GalleryCard;
+export default GalleryCard

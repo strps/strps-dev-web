@@ -67,14 +67,15 @@ export function GrayScottHero() {
                             <span className="text-xs uppercase tracking-wider text-muted-foreground">
                                 {chrome.heading}
                             </span>
-                            <button
+                            <Button
                                 type="button"
                                 aria-label={chrome.close}
                                 onClick={() => setControlsOpen(false)}
-                                className="text-muted-foreground hover:text-foreground"
+                                variant={"ghost"}
+                                size={"icon-xs"}
                             >
                                 <X className="h-4 w-4" />
-                            </button>
+                            </Button>
                         </div>
 
                         <div className="flex justify-between gap-2 mb-4">

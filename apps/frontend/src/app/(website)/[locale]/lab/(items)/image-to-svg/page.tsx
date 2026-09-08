@@ -3,7 +3,7 @@ import { ImageToSvgHero } from "./ImageToSvgHero";
 import type { Locale } from '@/i18n/config';
 import { buildAlternates } from '@/lib/seo';
 import { getLabContent } from "../../content";
-import { LabSections } from "@/components/lab/lab-content";
+import { ItemSections } from "@/components/gallery/item-content";
 
 export async function generateMetadata({
     params,
@@ -29,7 +29,7 @@ export default async function ImageToSvgPage({
     return (
         <main className="min-h-screen">
             <ImageToSvgHero />
-            <LabSections sections={sections} locale={locale} />
+            <ItemSections sections={sections} locale={locale} />
         </main>
     );
 }
