@@ -3,22 +3,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Download, ImageUp, Settings2, X } from "lucide-react";
+import { ArrowLeft, Download, ImageUp } from "lucide-react";
 import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
 import { getDictionary } from "@/i18n/getDictionary";
 import { getLabContent } from "../../content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { VerticalSlider } from "@/components/ui/vertical-slider";
+    LabControlSelect,
+    LabControlSliders,
+    LabControlToggle,
+    LabHeroControls,
+    type SliderConfig,
+} from "@/components/lab/LabHeroControls";
 import { ImageToSvgCanvas } from "./ImageToSvgCanvas";
 import { STRATEGIES, defaultParams, getStrategy } from "./strategies";
 
@@ -187,143 +184,99 @@ export function ImageToSvgHero() {
             )}
 
             <div className="absolute right-4 top-4 z-20 md:right-6 md:top-6">
-                {controlsOpen ? (
-                    <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-[300px] md:w-[340px] max-h-[calc(80vh-2rem)] overflow-y-auto">
-                        <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                                {chrome.heading}
-                            </span>
-                            <button
-                                type="button"
-                                aria-label={chrome.close}
-                                onClick={() => setControlsOpen(false)}
-                                className="text-muted-foreground hover:text-foreground"
-                            >
-                                <X className="h-4 w-4" />
-                            </button>
-                        </div>
+                <LabHeroControls
+                    open={controlsOpen}
+                    onOpenChange={setControlsOpen}
+                    heading={chrome.heading}
+                    closeLabel={chrome.close}
+                    className="w-[300px] md:w-[340px] max-h-[calc(80vh-2rem)] overflow-y-auto"
+                >
+                    <LabControlSelect
+                        label={chrome.strategy}
+                        value={strategyId}
+                        onValueChange={handleStrategyChange}
+                        options={STRATEGIES.map((s) => ({ value: s.id, label: s.label }))}
+                        className="mb-4"
+                    />
 
-                        <div className="space-y-1.5 mb-4">
-                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                {chrome.strategy}
-                            </span>
-                            <Select value={strategyId} onValueChange={handleStrategyChange}>
-                                <SelectTrigger className="w-full" size="sm">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {STRATEGIES.map((s) => (
-                                        <SelectItem key={s.id} value={s.id}>
-                                            {s.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                    {strategy.controls
+                        .filter((c) => c.kind === "select")
+                        .map((c) => (
+                            <LabControlSelect
+                                key={c.key}
+                                label={c.label}
+                                value={String(Math.round(params[c.key]))}
+                                onValueChange={(v) => setParam(c.key, Number(v))}
+                                options={(c.options ?? []).map((label, i) => ({
+                                    value: String(i),
+                                    label,
+                                }))}
+                                className="mb-4"
+                            />
+                        ))}
 
-                        {strategy.controls
-                            .filter((c) => c.kind === "select")
-                            .map((c) => (
-                                <div key={c.key} className="space-y-1.5 mb-4">
-                                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                        {c.label}
-                                    </span>
-                                    <Select
-                                        value={String(Math.round(params[c.key]))}
-                                        onValueChange={(v) => setParam(c.key, Number(v))}
-                                    >
-                                        <SelectTrigger className="w-full" size="sm">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {(c.options ?? []).map((label, i) => (
-                                                <SelectItem key={label} value={String(i)}>
-                                                    {label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            ))}
+                    <LabControlSliders
+                        sliders={strategy.controls
+                            .filter((c) => c.kind === "slider")
+                            .map<SliderConfig>((c) => ({
+                                key: c.key,
+                                label: c.label,
+                                value: params[c.key],
+                                onChange: (v) => setParam(c.key, v),
+                                min: c.min,
+                                max: c.max,
+                                step: c.step,
+                                formatValue: c.format,
+                            }))}
+                        className="flex-wrap justify-between gap-y-3 mb-4"
+                    />
 
-                        <div className="flex flex-wrap justify-between gap-y-3 gap-x-2 mb-4">
-                            {strategy.controls
-                                .filter((c) => c.kind === "slider")
-                                .map((c) => (
-                                    <VerticalSlider
-                                        key={c.key}
-                                        label={c.label}
-                                        value={params[c.key]}
-                                        onChange={(v) => setParam(c.key, v)}
-                                        min={c.min}
-                                        max={c.max}
-                                        step={c.step}
-                                        formatValue={c.format}
-                                    />
-                                ))}
-                        </div>
+                    {strategy.controls
+                        .filter((c) => c.kind === "toggle")
+                        .map((c) => (
+                            <LabControlToggle
+                                key={c.key}
+                                id={`ctrl-${c.key}`}
+                                label={c.label}
+                                checked={params[c.key] > 0.5}
+                                onCheckedChange={(checked) => setParam(c.key, checked ? 1 : 0)}
+                                className="mb-3"
+                            />
+                        ))}
 
-                        {strategy.controls
-                            .filter((c) => c.kind === "toggle")
-                            .map((c) => (
-                                <div key={c.key} className="flex items-center gap-2 mb-3">
-                                    <Checkbox
-                                        id={`ctrl-${c.key}`}
-                                        checked={params[c.key] > 0.5}
-                                        onCheckedChange={(checked) =>
-                                            setParam(c.key, checked ? 1 : 0)
-                                        }
-                                    />
-                                    <Label htmlFor={`ctrl-${c.key}`} className="text-xs">
-                                        {c.label}
-                                    </Label>
-                                </div>
-                            ))}
-
-                        <div className="flex flex-col gap-2 pt-1">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full gap-1.5"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                <ImageUp className="h-3.5 w-3.5" /> {chrome.uploadImage}
-                            </Button>
-                            <Button
-                                size="sm"
-                                className="w-full gap-1.5"
-                                onClick={handleDownload}
-                            >
-                                <Download className="h-3.5 w-3.5" /> {chrome.downloadSvg}
-                            </Button>
-                            {error && (
-                                <span className="text-xs text-destructive">{error}</span>
-                            )}
-                        </div>
-
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) loadFile(file);
-                                e.target.value = "";
-                            }}
-                        />
+                    <div className="flex flex-col gap-2 pt-1">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full gap-1.5"
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            <ImageUp className="h-3.5 w-3.5" /> {chrome.uploadImage}
+                        </Button>
+                        <Button
+                            size="sm"
+                            className="w-full gap-1.5"
+                            onClick={handleDownload}
+                        >
+                            <Download className="h-3.5 w-3.5" /> {chrome.downloadSvg}
+                        </Button>
+                        {error && (
+                            <span className="text-xs text-destructive">{error}</span>
+                        )}
                     </div>
-                ) : (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setControlsOpen(true)}
-                        className="backdrop-blur-md bg-background/60"
-                    >
-                        <Settings2 className="h-4 w-4" />
-                        {chrome.heading}
-                    </Button>
-                )}
+
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) loadFile(file);
+                            e.target.value = "";
+                        }}
+                    />
+                </LabHeroControls>
             </div>
 
             <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-end pb-12 md:pb-16 pointer-events-none">

@@ -645,7 +645,7 @@ follow-ups listed in §8.
   [projects](apps/frontend/src/app/exp/(mockup)/projects/page.tsx) ·
   [lab](apps/frontend/src/app/exp/(mockup)/lab/page.tsx)
 - Precedent — the `/services` page was built with this same mockup → copy doc → seed data flow:
-  [services-mockup.jsx](docs/services-mockup.jsx), [services-page-copy.md](docs/services-page-copy.md),
+  [services-mockup.jsx](docs/dev/services-mockup.jsx), [services-page-copy.md](docs/dev/services-page-copy.md),
   [services-data.ts](apps/payload/src/app/seed/services-data.ts)
 - [creating-blocks.md](docs/creating-blocks.md) — how to add a Payload block
 - [COMPONENTS.md](docs/COMPONENTS.md) · [architecture.md](docs/architecture.md)

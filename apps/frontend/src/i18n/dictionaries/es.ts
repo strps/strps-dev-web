@@ -97,8 +97,8 @@ export const es: Dictionary = {
     tryWidening: 'Intenta ampliar la búsqueda o quitar un filtro.',
     showingCount: (shown: number, total: number) => `Mostrando ${shown} de ${total}`,
     filters: 'Filtros',
+    search: 'Buscar',
     searchPlaceholder: 'Buscar en la galería…',
-    clearSearch: 'Borrar búsqueda',
     tags: 'Etiquetas',
     reset: 'Restablecer',
     categories: {

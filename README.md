@@ -87,7 +87,7 @@ Public-facing website built with Next.js 16. Fetches data from Payload via Apoll
 | [Creating Blocks](docs/creating-blocks.md) | Guide to building new PayloadCMS blocks |
 | [Components](docs/COMPONENTS.md) | Component status tracker and specifications |
 | [Deployment](docs/deployment.md) | Environment setup and deployment process |
-| [Roadmap](docs/ROADMAP.md) | Project phases and progress |
+| [Roadmap](docs/dev/ROADMAP.md) | Project phases and progress |
 
 ## Environment Variables
 

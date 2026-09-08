@@ -1,29 +1,58 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Filter, Search, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { GALLERY_CATEGORIES, GalleryCategory } from "@/app/(website)/[locale]/lab/types";
-import { defaultLocale, type Locale } from "@/i18n/config";
-import { getDictionary } from "@/i18n/getDictionary";
-// import { GALLERY_CATEGORIES, type GalleryCategory } from "@/app/gallery/types";
+import * as React from 'react'
+import { useState } from 'react'
+import { X } from 'lucide-react'
+
+import { Eyebrow } from '@/components/primitives/Eyebrow'
+import { cn } from '@/lib/utils'
+import { GALLERY_CATEGORIES, type GalleryCategory } from '@/app/(website)/[locale]/lab/types'
+import { defaultLocale, type Locale } from '@/i18n/config'
+import { getDictionary } from '@/i18n/getDictionary'
 
 export interface GalleryBarProps {
-    searchQuery: string;
-    onSearchQueryChange: (value: string) => void;
-    selectedCategories: GalleryCategory[];
-    onToggleCategory: (category: GalleryCategory) => void;
-    availableTags: string[];
-    selectedTags: string[];
-    onToggleTag: (tag: string) => void;
-    onReset: () => void;
-    className?: string;
-    locale?: Locale;
+    searchQuery: string
+    onSearchQueryChange: (value: string) => void
+    selectedCategories: GalleryCategory[]
+    onToggleCategory: (category: GalleryCategory) => void
+    availableTags: string[]
+    selectedTags: string[]
+    onToggleTag: (tag: string) => void
+    onReset: () => void
+    className?: string
+    locale?: Locale
 }
 
+/** The mono chip both the category and the tag filters toggle. */
+function FilterChip({
+    active,
+    className,
+    ...props
+}: React.ComponentProps<'button'> & { active: boolean }) {
+    return (
+        <button
+            type="button"
+            aria-pressed={active}
+            className={cn(
+                'cursor-pointer rounded-sharp border px-2 py-1 font-mono text-[11px] transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2',
+                active
+                    ? 'border-primary text-primary'
+                    : 'border-border-strong text-faint-foreground hover:border-primary hover:text-primary',
+                className,
+            )}
+            {...props}
+        />
+    )
+}
+
+/**
+ * The /lab filter row. Same controls as `post-index`'s — a hairline search
+ * field and mono chips — kept behind a disclosure because the gallery adds a
+ * second (category) axis on top of the tags.
+ *
+ * The chips are real `<button aria-pressed>`s: they used to be `<Badge>`s with
+ * an `onClick`, i.e. unreachable by keyboard and unannounced as toggles.
+ */
 export function GalleryBar({
     searchQuery,
     onSearchQueryChange,
@@ -36,113 +65,87 @@ export function GalleryBar({
     className,
     locale = defaultLocale,
 }: GalleryBarProps) {
-    const dictionary = getDictionary(locale);
-    const [filtersOpen, setFiltersOpen] = useState(false);
+    const dictionary = getDictionary(locale)
+    const [filtersOpen, setFiltersOpen] = useState(false)
 
     const activeFilterCount =
-        (searchQuery.length > 0 ? 1 : 0) +
-        selectedCategories.length +
-        selectedTags.length;
-    const hasActiveFilters = activeFilterCount > 0;
+        (searchQuery.length > 0 ? 1 : 0) + selectedCategories.length + selectedTags.length
+    const hasActiveFilters = activeFilterCount > 0
 
     return (
-        <div className={cn("space-y-4", className)}>
-            <div className="flex items-center justify-end gap-4">
-                <Button
-                    variant={filtersOpen ? "default" : "outline"}
-                    size="sm"
+        <div className={cn('flex flex-col gap-4', className)}>
+            <div className="flex items-center justify-end">
+                <button
+                    type="button"
                     onClick={() => setFiltersOpen((v) => !v)}
                     aria-expanded={filtersOpen}
                     aria-controls="gallery-filters"
+                    className="cursor-pointer border-b border-border-strong text-sm text-muted-foreground transition-colors duration-150 hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
                 >
-                    <Filter className="h-4 w-4" />
                     {dictionary.lab.filters}
                     {hasActiveFilters && (
-                        <Badge
-                            variant="secondary"
-                            className="ml-1 h-5 px-1.5 text-xs"
-                        >
+                        <span className="ml-1.5 font-mono text-[11px] text-primary">
                             {activeFilterCount}
-                        </Badge>
+                        </span>
                     )}
-                </Button>
+                </button>
             </div>
 
             {filtersOpen && (
-                <div id="gallery-filters" className="space-y-4">
-                    <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-                        <div className="relative w-full md:max-w-sm">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder={dictionary.lab.searchPlaceholder}
+                <div id="gallery-filters" className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3 min-[721px]:flex-row min-[721px]:items-end min-[721px]:justify-between">
+                        <label className="flex w-full flex-col gap-1.5 min-[721px]:max-w-sm">
+                            <Eyebrow>{dictionary.lab.search}</Eyebrow>
+                            <input
+                                type="search"
                                 value={searchQuery}
                                 onChange={(e) => onSearchQueryChange(e.target.value)}
-                                className="pl-9"
+                                placeholder={dictionary.lab.searchPlaceholder}
+                                className="w-full rounded-sharp border border-border bg-transparent px-3 py-2 text-[15px] transition-colors duration-150 placeholder:text-faint-foreground focus:border-primary focus:outline-none"
                             />
-                            {searchQuery && (
-                                <button
-                                    type="button"
-                                    aria-label={dictionary.lab.clearSearch}
-                                    onClick={() => onSearchQueryChange("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                >
-                                    <X className="h-3 w-3" />
-                                </button>
-                            )}
-                        </div>
+                        </label>
 
                         <div className="flex flex-wrap items-center gap-2">
-                            {GALLERY_CATEGORIES.map(({ value }) => {
-                                const active = selectedCategories.includes(value);
-                                return (
-                                    <Badge
-                                        key={value}
-                                        variant={active ? "default" : "outline"}
-                                        onClick={() => onToggleCategory(value)}
-                                        className="cursor-pointer select-none px-3 py-1 text-xs transition-colors"
-                                    >
-                                        {dictionary.lab.categories[value]}
-                                    </Badge>
-                                );
-                            })}
+                            {GALLERY_CATEGORIES.map(({ value }) => (
+                                <FilterChip
+                                    key={value}
+                                    active={selectedCategories.includes(value)}
+                                    onClick={() => onToggleCategory(value)}
+                                >
+                                    {dictionary.lab.categories[value]}
+                                </FilterChip>
+                            ))}
                         </div>
                     </div>
 
                     {availableTags.length > 0 && (
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs uppercase tracking-wider text-muted-foreground mr-1">
-                                {dictionary.lab.tags}
-                            </span>
-                            {availableTags.map((tag) => {
-                                const active = selectedTags.includes(tag);
-                                return (
-                                    <Badge
-                                        key={tag}
-                                        variant={active ? "secondary" : "ghost"}
-                                        onClick={() => onToggleTag(tag)}
-                                        className="cursor-pointer select-none transition-colors"
-                                    >
-                                        {tag}
-                                    </Badge>
-                                );
-                            })}
+                            <Eyebrow className="mr-1">{dictionary.lab.tags}</Eyebrow>
+                            {availableTags.map((tag) => (
+                                <FilterChip
+                                    key={tag}
+                                    active={selectedTags.includes(tag)}
+                                    onClick={() => onToggleTag(tag)}
+                                >
+                                    {tag}
+                                </FilterChip>
+                            ))}
                             {hasActiveFilters && (
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
+                                <button
+                                    type="button"
                                     onClick={onReset}
-                                    className="h-6 px-2 text-xs ml-auto"
+                                    className="ml-auto flex cursor-pointer items-center gap-1 border-b border-border-strong text-sm text-muted-foreground transition-colors duration-150 hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
                                 >
                                     {dictionary.lab.reset}
-                                    <X className="ml-1 h-3 w-3" />
-                                </Button>
+                                    <X className="h-3 w-3" />
+                                </button>
                             )}
                         </div>
                     )}
                 </div>
             )}
         </div>
-    );
+    )
 }
 
-export default GalleryBar;
+export default GalleryBar
