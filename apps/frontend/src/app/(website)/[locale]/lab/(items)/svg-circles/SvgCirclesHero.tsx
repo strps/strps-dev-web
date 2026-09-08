@@ -3,14 +3,19 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, MousePointer2, Settings2, X } from "lucide-react";
+import { ArrowLeft, MousePointer2 } from "lucide-react";
 import SVGCircles, { type MotionPattern } from "@/app/(website)/[locale]/lab/(items)/svg-circles/SVGCircles";
 import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
 import { getDictionary } from "@/i18n/getDictionary";
 import { getLabContent } from "../../content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { VerticalSlider } from "@/components/ui/vertical-slider";
+import {
+    LabControlPillGroup,
+    LabControlSliders,
+    LabHeroControls,
+    type SliderConfig,
+} from "@/components/lab/LabHeroControls";
 
 const MOTION_PATTERNS: MotionPattern[] = ["spring", "ease", "direct"];
 
@@ -27,6 +32,54 @@ export function SvgCirclesHero() {
     const worldDepth = 6667;
     const [pattern, setPattern] = useState<MotionPattern>("spring");
     const [controlsOpen, setControlsOpen] = useState(true);
+
+    const sliders: SliderConfig[] = [
+        {
+            key: "circles",
+            label: controls?.sliders?.circles ?? "Circles",
+            value: numCircles,
+            onChange: setNumCircles,
+            min: 2,
+            max: 24,
+            step: 1,
+        },
+        {
+            key: "stroke",
+            label: controls?.sliders?.stroke ?? "Stroke",
+            value: strokeWidth,
+            onChange: setStrokeWidth,
+            min: 1,
+            max: 50,
+            step: 1,
+        },
+        {
+            key: "focal",
+            label: controls?.sliders?.focal ?? "Focal",
+            value: focalLength,
+            onChange: setFocalLength,
+            min: 200,
+            max: 8000,
+            step: 100,
+        },
+        {
+            key: "maxR",
+            label: controls?.sliders?.maxR ?? "Max R",
+            value: maxRadius,
+            onChange: setMaxRadius,
+            min: 300,
+            max: 1400,
+            step: 20,
+        },
+        {
+            key: "dash",
+            label: controls?.sliders?.dash ?? "Dash",
+            value: dashOn,
+            onChange: setDashOn,
+            min: 2,
+            max: 120,
+            step: 2,
+        },
+    ];
 
     return (
         <section className="relative h-[80vh] min-h-[520px] w-full overflow-hidden bg-background">
@@ -46,97 +99,24 @@ export function SvgCirclesHero() {
             <div className="absolute inset-0 bg-linear-to-b from-background/60 via-transparent to-background pointer-events-none" />
 
             <div className="absolute right-4 top-4 z-20 md:right-6 md:top-6">
-                {controlsOpen ? (
-                    <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-[280px] md:w-[320px]">
-                        <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                                {chrome.heading}
-                            </span>
-                            <button
-                                type="button"
-                                aria-label={chrome.close}
-                                onClick={() => setControlsOpen(false)}
-                                className="text-muted-foreground hover:text-foreground"
-                            >
-                                <X className="h-4 w-4" />
-                            </button>
-                        </div>
+                <LabHeroControls
+                    open={controlsOpen}
+                    onOpenChange={setControlsOpen}
+                    heading={chrome.heading}
+                    closeLabel={chrome.close}
+                >
+                    <LabControlSliders sliders={sliders} className="mb-4" />
 
-                        <div className="flex justify-between gap-2 mb-4">
-                            <VerticalSlider
-                                label={controls?.sliders?.circles ?? "Circles"}
-                                value={numCircles}
-                                onChange={setNumCircles}
-                                min={2}
-                                max={24}
-                                step={1}
-                            />
-                            <VerticalSlider
-                                label={controls?.sliders?.stroke ?? "Stroke"}
-                                value={strokeWidth}
-                                onChange={setStrokeWidth}
-                                min={1}
-                                max={50}
-                                step={1}
-                            />
-                            <VerticalSlider
-                                label={controls?.sliders?.focal ?? "Focal"}
-                                value={focalLength}
-                                onChange={setFocalLength}
-                                min={200}
-                                max={8000}
-                                step={100}
-                            />
-                            <VerticalSlider
-                                label={controls?.sliders?.maxR ?? "Max R"}
-                                value={maxRadius}
-                                onChange={setMaxRadius}
-                                min={300}
-                                max={1400}
-                                step={20}
-                            />
-                            <VerticalSlider
-                                label={controls?.sliders?.dash ?? "Dash"}
-                                value={dashOn}
-                                onChange={setDashOn}
-                                min={2}
-                                max={120}
-                                step={2}
-                            />
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                {chrome.motion}
-                            </span>
-                            <div className="flex gap-1">
-                                {MOTION_PATTERNS.map((p) => (
-                                    <button
-                                        key={p}
-                                        type="button"
-                                        onClick={() => setPattern(p)}
-                                        className={`flex-1 rounded-md px-2 py-1 text-xs capitalize transition-colors ${pattern === p
-                                            ? "bg-primary text-primary-foreground"
-                                            : "bg-muted text-muted-foreground hover:text-foreground"
-                                            }`}
-                                    >
-                                        {controls?.motion?.[p] ?? p}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                ) : (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setControlsOpen(true)}
-                        className="backdrop-blur-md bg-background/60"
-                    >
-                        <Settings2 className="h-4 w-4" />
-                        {chrome.heading}
-                    </Button>
-                )}
+                    <LabControlPillGroup
+                        label={chrome.motion}
+                        value={pattern}
+                        onChange={(v) => setPattern(v as MotionPattern)}
+                        options={MOTION_PATTERNS.map((p) => ({
+                            value: p,
+                            label: controls?.motion?.[p] ?? p,
+                        }))}
+                    />
+                </LabHeroControls>
             </div>
 
             <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-end pb-12 md:pb-16 pointer-events-none">

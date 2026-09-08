@@ -3,10 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, MousePointer2, RotateCcw, Settings2, X } from "lucide-react";
+import { ArrowLeft, MousePointer2, RotateCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { VerticalSlider } from "@/components/ui/vertical-slider";
+import {
+    LabControlPillGroup,
+    LabControlSliders,
+    LabHeroControls,
+    type SliderConfig,
+} from "@/components/lab/LabHeroControls";
 import { GrayScottCanvas } from "./GrayScottCanvas";
 import { defaultLocale, isValidLocale, localizedHref } from "@/i18n/config";
 import { getDictionary } from "@/i18n/getDictionary";
@@ -47,6 +52,49 @@ export function GrayScottHero() {
         setSeedKey((k) => k + 1);
     }
 
+    const sliders: SliderConfig[] = [
+        {
+            key: "feed",
+            label: controls?.sliders?.feed ?? "Feed",
+            value: feed,
+            onChange: setFeed,
+            min: 0.01,
+            max: 0.09,
+            step: 0.0005,
+            formatValue: (v) => v.toFixed(4),
+        },
+        {
+            key: "kill",
+            label: controls?.sliders?.kill ?? "Kill",
+            value: kill,
+            onChange: setKill,
+            min: 0.045,
+            max: 0.07,
+            step: 0.0005,
+            formatValue: (v) => v.toFixed(4),
+        },
+        {
+            key: "diffA",
+            label: controls?.sliders?.diffA ?? "Diff A",
+            value: dA,
+            onChange: setDA,
+            min: 0.6,
+            max: 1.2,
+            step: 0.02,
+            formatValue: (v) => v.toFixed(2),
+        },
+        {
+            key: "diffB",
+            label: controls?.sliders?.diffB ?? "Diff B",
+            value: dB,
+            onChange: setDB,
+            min: 0.3,
+            max: 0.7,
+            step: 0.02,
+            formatValue: (v) => v.toFixed(2),
+        },
+    ];
+
     return (
         <section className="relative h-[80vh] min-h-[520px] w-full overflow-hidden bg-background">
             <GrayScottCanvas
@@ -61,102 +109,35 @@ export function GrayScottHero() {
             <div className="absolute inset-0 bg-linear-to-b from-background/60 via-transparent to-background pointer-events-none" />
 
             <div className="absolute right-4 top-4 z-20 md:right-6 md:top-6">
-                {controlsOpen ? (
-                    <div className="rounded-2xl border border-border bg-background/70 backdrop-blur-md p-4 shadow-lg w-[280px] md:w-[320px]">
-                        <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs uppercase tracking-wider text-muted-foreground">
-                                {chrome.heading}
-                            </span>
-                            <Button
-                                type="button"
-                                aria-label={chrome.close}
-                                onClick={() => setControlsOpen(false)}
-                                variant={"ghost"}
-                                size={"icon-xs"}
-                            >
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
+                <LabHeroControls
+                    open={controlsOpen}
+                    onOpenChange={setControlsOpen}
+                    heading={chrome.heading}
+                    closeLabel={chrome.close}
+                >
+                    <LabControlSliders sliders={sliders} className="mb-4" />
 
-                        <div className="flex justify-between gap-2 mb-4">
-                            <VerticalSlider
-                                label={controls?.sliders?.feed ?? "Feed"}
-                                value={feed}
-                                onChange={setFeed}
-                                min={0.01}
-                                max={0.09}
-                                step={0.0005}
-                                formatValue={(v) => v.toFixed(4)}
-                            />
-                            <VerticalSlider
-                                label={controls?.sliders?.kill ?? "Kill"}
-                                value={kill}
-                                onChange={setKill}
-                                min={0.045}
-                                max={0.07}
-                                step={0.0005}
-                                formatValue={(v) => v.toFixed(4)}
-                            />
-                            <VerticalSlider
-                                label={controls?.sliders?.diffA ?? "Diff A"}
-                                value={dA}
-                                onChange={setDA}
-                                min={0.6}
-                                max={1.2}
-                                step={0.02}
-                                formatValue={(v) => v.toFixed(2)}
-                            />
-                            <VerticalSlider
-                                label={controls?.sliders?.diffB ?? "Diff B"}
-                                value={dB}
-                                onChange={setDB}
-                                min={0.3}
-                                max={0.7}
-                                step={0.02}
-                                formatValue={(v) => v.toFixed(2)}
-                            />
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                                {chrome.presets}
-                            </span>
-                            <div className="flex flex-wrap gap-1">
-                                {PRESETS.map((p) => (
-                                    <button
-                                        key={p.name}
-                                        type="button"
-                                        onClick={() => applyPreset(p)}
-                                        className={`flex-1 rounded-md px-2 py-1 text-xs capitalize transition-colors ${activePreset === p.name
-                                            ? "bg-primary text-primary-foreground"
-                                            : "bg-muted text-muted-foreground hover:text-foreground"
-                                            }`}
-                                    >
-                                        {controls?.presets?.[p.name] ?? p.name}
-                                    </button>
-                                ))}
-                            </div>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="w-full mt-2 gap-1.5"
-                                onClick={() => setSeedKey((k) => k + 1)}
-                            >
-                                <RotateCcw className="h-3.5 w-3.5" /> {chrome.reset}
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
+                    <LabControlPillGroup
+                        label={chrome.presets}
+                        value={activePreset}
+                        onChange={(name) => {
+                            const preset = PRESETS.find((p) => p.name === name);
+                            if (preset) applyPreset(preset);
+                        }}
+                        options={PRESETS.map((p) => ({
+                            value: p.name,
+                            label: controls?.presets?.[p.name] ?? p.name,
+                        }))}
+                    />
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => setControlsOpen(true)}
-                        className="backdrop-blur-md bg-background/60"
+                        className="w-full mt-2 gap-1.5"
+                        onClick={() => setSeedKey((k) => k + 1)}
                     >
-                        <Settings2 className="h-4 w-4" />
-                        {chrome.heading}
+                        <RotateCcw className="h-3.5 w-3.5" /> {chrome.reset}
                     </Button>
-                )}
+                </LabHeroControls>
             </div>
 
             <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-end pb-12 md:pb-16 pointer-events-none">
