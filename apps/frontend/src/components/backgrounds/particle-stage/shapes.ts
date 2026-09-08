@@ -242,7 +242,7 @@ const stack: Filler = (pos, size, n, rnd) => {
   let k = 0
   for (let c = 0; c < cards; c++) {
     // -1 is the card nearest the camera, +1 the one furthest back.
-    const t = cards === 1 ? 0 : (c / (cards - 1)) * 2 - 1
+    const t = (c / (cards - 1)) * 2 - 1
     const halfW = 1.15 - Math.abs(t) * 0.08
     const halfH = 0.72 - Math.abs(t) * 0.05
     const w = halfW * 2
