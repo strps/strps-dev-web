@@ -294,7 +294,7 @@ const ribbon: Filler = (pos, size, n, rnd) => {
 
   let k = 0
   for (let r = 0; r < rows; r++) {
-    const v = rows === 1 ? 0 : r / (rows - 1)
+    const v = r / (rows - 1)
     const y = (0.5 - v) * 1.5
     // Every line stops somewhere short of the margin; the last one, being the
     // end of the paragraph, stops well short of it.
