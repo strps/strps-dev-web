@@ -53,8 +53,9 @@ sitting on top of it. Every token is defined twice — once in `:root`, once in
 Rules that keep the two themes honest:
 
 - **`--muted-foreground` carries real prose** and must clear 4.5:1 on
-  `--background`. **`--faint-foreground` is 11–13px non-essential labels only**,
-  floor 3:1 — never put anything a reader must read in it.
+  `--background`. **`--faint-foreground` is 11–14px non-essential labels only**
+  (chips at 11px, row numbers at 13px, `<Eyebrow>` at 14px), floor 3:1 — never
+  put anything a reader must read in it.
 - **The accent is not the same value in both themes.** Amber that reads at 7:1
   on the dark ground is ~2:1 on the light one. As a *button background* it takes
   `--background` as its foreground in both.
@@ -86,10 +87,10 @@ Scale as built:
 
 | Element | Style |
 |---|---|
-| Page `h1` | `text-4xl md:text-5xl font-medium tracking-[-0.02em]` (`<PageHeader>`) |
+| Page `h1` | `text-4xl md:text-5xl font-medium tracking-[-0.02em]` — `<PageHeader>` on the indexes, repeated inline by `blog/article-hero.tsx` and `projects/project-hero.tsx` for the detail pages |
 | Section `h2` | `text-4xl font-medium tracking-[-0.01em]` (`<SectionHeader>`) |
 | Body | 15–17px, `leading-[1.65]`, `text-muted-foreground`, measure capped (`max-w-[40ch]`…`[55ch]`) |
-| Eyebrow | `<Eyebrow>`: mono, uppercase, `tracking-[0.08em]`, `text-faint-foreground` |
+| Eyebrow | `<Eyebrow>`: mono, `text-sm`, uppercase, `tracking-[0.08em]`, `text-faint-foreground` |
 | Form label | the same treatment at 12px, from CSS rather than the component |
 
 Headings are **weight 500, not bold**. That single choice accounts for most of
@@ -112,9 +113,11 @@ the tonal difference between the two languages.
   `my-50` above and below, a `min-h-100` floor. Only heroes override it. The
   floor is fixed px, not a viewport unit, so a mobile URL bar cannot reflow the
   page and invalidate the `ParticleStage`'s cached section bounds.
-- **Breakpoints:** the mockups break at **720px** (home, lab) and **640px**
-  (projects), which is why you will see `min-[721px]:` alongside Tailwind's
-  `sm:`.
+- **Breakpoints:** the mockups break at **720px**, not at one of Tailwind's
+  stops, which is why `min-[721px]:` is the site's one custom breakpoint —
+  `NumberedRow`, the contact split, the case-study rows and every card grid use
+  it (grids then go three-up at `lg:`). Reach for it rather than `sm:` when
+  converting a mockup.
 - **Hairline grids** use the 1px-gap-over-border-background technique, wrapped
   in [`<HairlineGrid>`](../apps/frontend/src/components/primitives/HairlineGrid.tsx) —
   don't hand-roll it.
@@ -153,11 +156,12 @@ Deliberately sparse. Three tiers, and nothing else:
 |---|---|---|
 | Hover / focus | `0.15s`, color and border-color only | links, buttons, form fields |
 | State change | `500ms ease-out` | the header's glass fade |
-| Entrance | `<Reveal>` — 16px travel on a soft out-expo | section content, staggered by `delay` |
+| Entrance | `<Reveal>` / `<RevealGroup>` — 16px travel on a soft out-expo | section content; `<Reveal delay>` for a handful of elements, `<RevealGroup stagger>` for a grid or list (one observer for the whole row) |
 
-- `<Reveal>` is the only entrance animation; it honours
-  `prefers-reduced-motion` through `useReducedMotion`. Do not hand-roll
-  `animate-in fade-in slide-in-from-bottom` on a section.
+- `<Reveal>` is the only entrance animation; it and `<RevealGroup>` honour
+  `prefers-reduced-motion` through `useReducedMotion`, rendering the content
+  statically. Do not hand-roll `animate-in fade-in slide-in-from-bottom` on a
+  section.
 - Smooth scrolling (Lenis, via `SmoothScrollProvider`) is **not constructed at
   all** under reduced motion; the native offset is mirrored instead and
   everything downstream keeps working.
@@ -175,14 +179,15 @@ because each appears across several pages.
 |---|---|
 | `<Eyebrow>` | The mono/uppercase/tracked label, ~20× across the site |
 | `<SectionHeader>` | Section `h2` + bottom hairline + eyebrow/action row |
-| `<PageHeader>` | The `h1` counterpart for a listing page, rule at the bottom carrying meta/action |
-| `<LinkArrow>` | Muted link, hairline underline, accent on hover, `→` appended |
+| `<PageHeader>` | The `h1` counterpart for a listing page, rule at the bottom carrying meta/action; brings its own particle cloud |
+| `<PageHeaderBackground>` | That cloud: a full-bleed `ParticleField` clipped to the header, shape picked from the route |
+| `<LinkArrow>` | Muted link, hairline underline, accent on hover. The arrow is **not** appended by the component — it lives in the copy (CMS labels, `← back to index`), so either direction works |
 | `<HairlineGrid>` | The 1px-gap grid technique |
 | `<StackChip>` | Mono 11px chip on a `--border-strong` rim |
 | `<NumberedRow>` | The `70px 1fr 90px` service row, one column ≤720px |
 | `<PlotLine>` | The hero's animated stroke path, with its reduced-motion bail-out |
 | `<Pager>` | Listing pagination |
-| `<Reveal>` | The shared entrance |
+| `<Reveal>` / `<RevealGroup>` | The shared entrance, and its staggering wrapper |
 | `<LiquidCrystalFilter>` / `<CrystalSurface>` | The glass — see [liquid-crystal.md](./liquid-crystal.md) |
 
 Buttons are **variants, not new components**: `solid` and `outlineGhost` live in
@@ -201,8 +206,8 @@ avoid; the looks are two independent props instead:
 
 | Prop | Values | Meaning |
 |---|---|---|
-| `variant` | `default` \| `mockup` | **How** fields are drawn: shadcn vs. the hairline/mono skin |
-| `surface` | `default` \| `crystal` | **What** they are drawn on: opaque `--card` vs. translucent glass |
+| `variant` | `default` \| `mockup` (default) | **How** fields are drawn: shadcn vs. the hairline/mono skin |
+| `surface` | `default` (default) \| `crystal` | **What** they are drawn on: opaque `--card` vs. translucent glass |
 
 Both land on the `<form>` as `data-variant` / `data-surface`, and the skins are
 plain CSS in `globals.css` keyed off those attributes. That CSS is
