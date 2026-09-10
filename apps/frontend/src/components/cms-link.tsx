@@ -4,7 +4,7 @@ import { resolveLinkHref } from '@/lib/resolveLinkHref'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Page, Post } from '@strps-website/types'
+import type { Doc, Page, Post } from '@strps-website/types'
 import type { Locale } from '@/i18n/config'
 
 export type CMSLinkType = {
@@ -16,8 +16,8 @@ export type CMSLinkType = {
   locale?: Locale
   newTab?: boolean | null
   reference?: {
-    relationTo: 'pages' | 'posts' | 'projects'
-    value: Page | Post | string | number
+    relationTo: 'pages' | 'posts' | 'projects' | 'docs'
+    value: Page | Post | Doc | string | number
   } | null
   size?: 'default' | 'xs' | 'sm' | 'lg' | 'icon' | null //TODO: Add size and variants types form button variants directly
   type?: 'custom' | 'reference' | null

@@ -1,58 +1,8 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
 
-type ProjectSeed = Omit<RequiredDataFromCollectionSlug<'projects'>, 'createdAt' | 'updatedAt' | 'id'>
+import { doc, h2, p, ul } from './lexical'
 
-/* -------------------------------------------------------------------------- */
-/*  Minimal Lexical node builders — used for both en `content` and es patches. */
-/*  Rich-text values are replaced wholesale on the es write (see localize.ts). */
-/* -------------------------------------------------------------------------- */
-const h2 = (text: string) => ({
-    type: 'heading',
-    tag: 'h2',
-    children: [{ type: 'text', text, version: 1 }],
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    version: 1,
-})
-const p = (text: string) => ({
-    type: 'paragraph',
-    children: [{ type: 'text', text, version: 1 }],
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    version: 1,
-})
-const ul = (items: string[]) => ({
-    type: 'list',
-    listType: 'bullet',
-    start: 1,
-    tag: 'ul',
-    direction: 'ltr',
-    format: '',
-    indent: 0,
-    version: 1,
-    children: items.map((text, i) => ({
-        type: 'listitem',
-        children: [{ type: 'text', text, version: 1 }],
-        direction: 'ltr',
-        format: '',
-        indent: 0,
-        value: i + 1,
-        version: 1,
-    })),
-})
-type LexicalNode = { [k: string]: unknown; type: string; version: number }
-const doc = (...children: LexicalNode[]) => ({
-    root: {
-        type: 'root',
-        children,
-        direction: 'ltr' as const,
-        format: '' as const,
-        indent: 0,
-        version: 1,
-    },
-})
+type ProjectSeed = Omit<RequiredDataFromCollectionSlug<'projects'>, 'createdAt' | 'updatedAt' | 'id'>
 
 export const projectsData: ProjectSeed[] = [
     {

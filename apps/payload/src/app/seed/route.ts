@@ -5,7 +5,7 @@ import { getHomePageData, homePageDataES } from './home-data'
 import { getAboutPageData, aboutPageDataES } from './about-data'
 import {
     headerData,
-    footerData,
+    getFooterData,
     copyrightData,
     headerDataES,
     footerDataES,
@@ -14,6 +14,7 @@ import {
 import { projectsData, projectsDataES } from './projects-data'
 import { servicesFormData, servicesFormDataES } from './forms-data'
 import { getServicesPageData, servicesPageDataES } from './services-data'
+import { docsData, docsDataES } from './docs-data'
 import { seedLocalizedDoc, seedLocalizedGlobal } from './localize'
 
 export async function POST(): Promise<Response> {
@@ -28,6 +29,31 @@ export async function POST(): Promise<Response> {
 
     try {
         payload.logger.info('— Seeding database (en + es)...')
+
+        // Legal documents run first: the footer links two of them by reference,
+        // so their ids have to exist before the globals are written.
+        const docIdBySlug: Record<string, number | string> = {}
+
+        for (const [i, legalDoc] of docsData.entries()) {
+            const existing = await payload.find({
+                collection: 'docs',
+                where: { slug: { equals: legalDoc.slug } },
+                limit: 1,
+            })
+
+            if (existing.docs.length > 0) {
+                docIdBySlug[legalDoc.slug!] = existing.docs[0]!.id
+            } else {
+                const created = await seedLocalizedDoc(payload, 'docs', legalDoc, docsDataES[i])
+                docIdBySlug[legalDoc.slug!] = created.id
+            }
+        }
+        payload.logger.info('— Legal documents seeded.')
+
+        const footerData = getFooterData({
+            privacy: docIdBySlug['privacy-policy']!,
+            terms: docIdBySlug['terms-of-service']!,
+        })
 
         // Seed globals — en write, then es translation onto the same doc.
         await Promise.all([

@@ -56,7 +56,7 @@ const stripManaged = (doc: Json): Json => {
 }
 
 /** Create a collection doc in `en`, then write its Spanish translation at `locale: 'es'`. */
-export async function seedLocalizedDoc<TSlug extends 'pages' | 'projects' | 'forms'>(
+export async function seedLocalizedDoc<TSlug extends 'pages' | 'projects' | 'forms' | 'docs'>(
   payload: Payload,
   collection: TSlug,
   enData: Json,

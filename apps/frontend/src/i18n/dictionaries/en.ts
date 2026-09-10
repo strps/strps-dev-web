@@ -127,6 +127,17 @@ export const en = {
     description: "The page you're looking for doesn't exist or has been moved.",
     backHome: 'Back to home',
   },
+  docs: {
+    eyebrow: 'Legal',
+    heroTitlePrefix: 'Policies &',
+    heroTitleHighlight: 'Terms',
+    heroSubtitle: 'The legal documents governing the use of this site and its services.',
+    effectiveDate: 'Effective date',
+    version: 'Version',
+    backToIndex: 'All documents',
+    none: 'No documents published yet.',
+    countLabel: (total: number) => (total === 1 ? '1 document' : `${total} documents`),
+  },
   seo: {
     defaultTitle: 'Cesar Jerez | Full Stack Developer',
     defaultDescription: 'Portfolio of Cesar Jerez, a Multidisciplinary Developer based in Costa Rica.',
@@ -137,6 +148,8 @@ export const en = {
     labTitle: 'Gallery | Cesar Jerez',
     labDescription:
       'A small gallery of personal projects, experiments, and art — most pieces live as their own pages.',
+    docsTitle: 'Legal | Cesar Jerez',
+    docsDescription: 'Privacy policy, terms of service, and other legal documents for this site.',
   },
 }
 

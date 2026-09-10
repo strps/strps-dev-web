@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import type { Media, Page, Post, Config } from '@strps-website/types'
+import type { Doc, Media, Page, Post, Config } from '@strps-website/types'
 import type { Locale } from '@/i18n/config'
 import { locales } from '@/i18n/config'
 import { getDictionary } from '@/i18n/getDictionary'
@@ -28,7 +28,7 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
 }
 
 export const generateMeta = async (args: {
-  doc: Partial<Page> | Partial<Post> | null
+  doc: Partial<Page> | Partial<Post> | Partial<Doc> | null
   /** Current locale, plus its locale-less path (`/`, `/about`, `/blog/my-post`, …) for hreflang/canonical. */
   locale: Locale
   path: string

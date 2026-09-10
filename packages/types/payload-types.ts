@@ -74,6 +74,7 @@ export interface Config {
     projects: Project;
     projectTags: ProjectTag;
     blogTags: BlogTag;
+    docs: Doc;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -91,6 +92,7 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     projectTags: ProjectTagsSelect<false> | ProjectTagsSelect<true>;
     blogTags: BlogTagsSelect<false> | BlogTagsSelect<true>;
+    docs: DocsSelect<false> | DocsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -337,6 +339,10 @@ export interface PageHeroBlock {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'docs';
+                value: number | Doc;
               } | null);
           url?: string | null;
           label: string;
@@ -449,6 +455,54 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "docs".
+ */
+export interface Doc {
+  id: number;
+  title: string;
+  /**
+   * Machine value — not translated. Used for grouping and icons.
+   */
+  docType?: ('privacy' | 'terms' | 'cookies' | 'other') | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * Date this version takes effect — shown on the page.
+   */
+  effectiveDate?: string | null;
+  /**
+   * Optional version label, e.g. "1.2".
+   */
+  version?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "SectionConfig".
  */
 export interface SectionConfig {
@@ -490,6 +544,10 @@ export interface PageServicesHeroBlock {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'docs';
+                value: number | Doc;
               } | null);
           url?: string | null;
           label: string;
@@ -540,6 +598,10 @@ export interface PageServicesTeaserBlock {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'docs';
+          value: number | Doc;
         } | null);
     url?: string | null;
     label?: string | null;
@@ -572,6 +634,10 @@ export interface PageServicesTeaserBlock {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'docs';
+                value: number | Doc;
               } | null);
           url?: string | null;
           label?: string | null;
@@ -612,6 +678,10 @@ export interface PageServicesProcessBlock {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'docs';
+          value: number | Doc;
         } | null);
     url?: string | null;
     label?: string | null;
@@ -644,6 +714,10 @@ export interface PageServicesProcessBlock {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'docs';
+                value: number | Doc;
               } | null);
           url?: string | null;
           label?: string | null;
@@ -724,6 +798,10 @@ export interface PageAboutBlock {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'docs';
+          value: number | Doc;
         } | null);
     url?: string | null;
     label?: string | null;
@@ -795,6 +873,10 @@ export interface PageProjectsTeaserBlock {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'docs';
+          value: number | Doc;
         } | null);
     url?: string | null;
     label?: string | null;
@@ -922,6 +1004,10 @@ export interface PageLabTeaserBlock {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'docs';
+          value: number | Doc;
         } | null);
     url?: string | null;
     label?: string | null;
@@ -1089,6 +1175,10 @@ export interface PageContactBlock {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'docs';
+                value: number | Doc;
               } | null);
           url?: string | null;
           label: string;
@@ -1521,6 +1611,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'blogTags';
         value: number | BlogTag;
+      } | null)
+    | ({
+        relationTo: 'docs';
+        value: number | Doc;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2322,6 +2416,29 @@ export interface BlogTagsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "docs_select".
+ */
+export interface DocsSelect<T extends boolean = true> {
+  title?: T;
+  docType?: T;
+  content?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  effectiveDate?: T;
+  version?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -2584,6 +2701,10 @@ export interface Footer {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'docs';
+                value: number | Doc;
               } | null);
           url?: string | null;
           label: string;
@@ -2613,6 +2734,10 @@ export interface Header {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'docs';
+                value: number | Doc;
               } | null);
           url?: string | null;
           label: string;
@@ -2777,6 +2902,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'projects';
           value: number | Project;
+        } | null)
+      | ({
+          relationTo: 'docs';
+          value: number | Doc;
         } | null);
     global?: string | null;
     user?: (number | null) | User;

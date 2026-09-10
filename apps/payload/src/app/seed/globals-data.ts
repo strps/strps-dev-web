@@ -53,7 +53,14 @@ export const headerData: HeaderSeed = {
     overlay: false,
 }
 
-export const footerData: FooterSeed = {
+/**
+ * The footer nav links the two headline legal documents as *internal references*
+ * rather than hardcoded URLs, so the slugs stay resolvable if they are ever
+ * renamed. The ids come from the `docs` seed, which therefore has to run first
+ * (see `route.ts`). The Cookie Policy is deliberately left out — `navItems` caps
+ * at 6 rows, and it is reachable from `/docs` and from within the privacy policy.
+ */
+export const getFooterData = (docIds: { privacy: number | string; terms: number | string }): FooterSeed => ({
     navItems: [
         {
             link: {
@@ -79,8 +86,24 @@ export const footerData: FooterSeed = {
                 newTab: true,
             },
         },
+        {
+            link: {
+                type: 'reference',
+                reference: { relationTo: 'docs', value: docIds.privacy },
+                label: 'Privacy Policy',
+                newTab: false,
+            },
+        },
+        {
+            link: {
+                type: 'reference',
+                reference: { relationTo: 'docs', value: docIds.terms },
+                label: 'Terms of Service',
+                newTab: false,
+            },
+        },
     ],
-}
+})
 
 export const copyrightData: CopyrightSeed = {
     name: 'CESAR JEREZ',
@@ -109,6 +132,8 @@ export const footerDataES = {
         { link: { label: 'Sobre mí' } },
         { link: { label: 'GitHub' } },
         { link: { label: 'LinkedIn' } },
+        { link: { label: 'Política de Privacidad' } },
+        { link: { label: 'Términos de Servicio' } },
     ],
 }
 

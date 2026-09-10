@@ -23,6 +23,9 @@ export const GET_HEADER = gql`
               ... on Post {
                 slug
               }
+              ... on Doc {
+                slug
+              }
             }
           }
         }
@@ -112,6 +115,9 @@ export const GET_FOOTER = gql`
                 slug
               }
               ... on Post {
+                slug
+              }
+              ... on Doc {
                 slug
               }
             }
