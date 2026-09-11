@@ -86,7 +86,7 @@ Each phase ends in a shippable, verifiable state. Phases 1–2 are backend; 3–
     ],
   }
   ```
-- [x] Create a tracking issue/checklist mirroring this doc. — see [`i18n-handoff.md`](dev/i18n-handoff.md) (living handoff/checklist; a GitHub issue can be opened from it if desired).
+- [x] Create a tracking issue/checklist mirroring this doc. — see [`i18n/handoff.md`](handoff.md) (living handoff/checklist; a GitHub issue can be opened from it if desired).
 
 **Exit:** decisions signed off; config shape agreed. ✅
 
@@ -115,7 +115,7 @@ Add `localized: true` to **user-facing content fields only**. Do **not** localiz
 
 > **Tip:** Prefer editing the shared field factories (`eyebrow`, `link`, SEO) so a single change localizes many blocks consistently. (`SectionConfig`/`headerOverrides` are structural — intentionally left shared.)
 
-**Exit:** ✅ `pnpm generate:types` runs clean (unchanged output — localized fields keep the same TS shape); dev schema pushed to the localized shape (76 `_locales` tables). Push required a clean `DROP SCHEMA` + re-push per §2.5 — dev DB is now empty pending the Phase 2 reseed. See [i18n-handoff.md](dev/i18n-handoff.md) for the push notes (data-loss prompt + `42P16` recovery).
+**Exit:** ✅ `pnpm generate:types` runs clean (unchanged output — localized fields keep the same TS shape); dev schema pushed to the localized shape (76 `_locales` tables). Push required a clean `DROP SCHEMA` + re-push per §2.5 — dev DB is now empty pending the Phase 2 reseed. See [i18n/handoff.md](handoff.md) for the push notes (data-loss prompt + `42P16` recovery).
 
 ---
 
@@ -177,14 +177,14 @@ The seed route ([`apps/payload/src/app/seed/route.ts`](../apps/payload/src/app/s
 
 Introduce the `[locale]` segment and make locale flow through every data fetch.
 
-**Part A — routing scaffold (✅ done, see [i18n-handoff.md](dev/i18n-handoff.md) Phase 3):**
+**Part A — routing scaffold (✅ done, see [i18n/handoff.md](handoff.md) Phase 3):**
 - [x] **Route restructure:** all page routes moved under `app/(website)/[locale]/…` (home, `[slug]`, `blog`, `projects`, `lab`; git-tracked as renames). Route handlers (`(sitemaps)`, `api/revalidate`) stay at the `(website)` group root; `exp/` left un-localized.
 - [x] **Middleware** ([`apps/frontend/src/middleware.ts`](../apps/frontend/src/middleware.ts)): locale from path → cookie (`NEXT_LOCALE`) → `Accept-Language` → default; redirect `/` and unprefixed paths to the negotiated locale, set the cookie. Matcher excludes `api`, `admin`, `exp`, `_next/*`, and any dotted path (favicon, `*-sitemap.xml`, assets).
 - [x] **Locale validation:** shared [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts) (`locales`, `defaultLocale`, `Locale`, `isValidLocale`); layout `notFound()`s on unknown locale.
 - [x] **Dynamic `<html lang>`** from the route locale (was hardcoded `"en"`).
 - [x] **`generateStaticParams` locale set:** `[locale]/layout.tsx` emits `{en, es}`; child `[slug]`/blog/projects generators inherit it (Next takes the cartesian with their existing slug params). *Content is not yet locale-aware — both prefixes render `en` until Part B.*
 
-**Part B — locale data plumbing (✅ done, see [i18n-handoff.md](dev/i18n-handoff.md)):**
+**Part B — locale data plumbing (✅ done, see [i18n/handoff.md](handoff.md)):**
 - [x] **Pass `locale` to GraphQL.** Payload's GraphQL accepts a `locale: LocaleInputType` argument on find queries + globals (confirmed enum values `en`/`es`). Updated:
   - [x] [`lib/queries/page-blocks.ts`](../apps/frontend/src/lib/queries/page-blocks.ts) — `GET_PAGE_BY_SLUG`, `GET_HOME_PAGE` gain `$locale` variable/arg; threaded through `[locale]/page.tsx` + `[locale]/[slug]/page.tsx` + `RenderBlocks` (→ `BlogSection`/`ProjectsSection` for `populateBy: 'collection'`).
   - [x] [`data/data.ts`](../apps/frontend/src/data/data.ts) — `GET_HEADER`, `GET_FOOTER`, `GET_COPYRIGHT`; take `locale` and prefix resolved nav hrefs with it (`resolveHref` prefixes reference-based and relative custom URLs; external URLs untouched).
@@ -201,7 +201,7 @@ Introduce the `[locale]` segment and make locale flow through every data fetch.
 ### Phase 4 — Language switcher & UI chrome (1 day) ✅ **DONE**
 - [x] **Language switcher** — new [`components/LanguageSwitcher.tsx`](../apps/frontend/src/components/LanguageSwitcher.tsx), modeled after `ThemeSwitch`: swaps the locale segment on the **current** `usePathname()` path, preserves `useSearchParams()` query string, persists the `NEXT_LOCALE` cookie on click (`path=/`, 1-year, `samesite=lax` — same shape middleware writes). Wired into [`HeaderNav.tsx`](../apps/frontend/src/components/HeaderNav.tsx) next to `ThemeSwitch` (desktop row + mobile row), each wrapped in its own `<Suspense>` since `useSearchParams()` requires one for statically-rendered routes.
 - [x] **Centralized helper** — `localizedHref(locale, href)` added to [`i18n/config.ts`](../apps/frontend/src/i18n/config.ts) (the helper Part A deliberately deferred): prefixes a relative (`/...`) href with `/${locale}`, passes external/mailto/anchor hrefs through untouched. `resolveLinkHref()` ([`lib/resolveLinkHref.ts`](../apps/frontend/src/lib/resolveLinkHref.ts)) and `CMSLink` ([`components/cms-link.tsx`](../apps/frontend/src/components/cms-link.tsx)) both take an optional `locale` and apply it via this helper — backward compatible (omit `locale` to get the old unprefixed behavior, used for the one call site that's always external: `ServiceCard`'s `proofUrl`).
-- [x] **Full link audit** — every internal href-producing component now threads `locale` from its route down to the actual `<Link>`/`redirect()` call: the `resolveLinkHref`/`CMSLink` consumers (`hero`, `services-hero`, `contact`, `about`, `services-teaser`, `projects`, `lab-teaser` page-sections), the blog chain (`ArticleCard`, `blog-list`, `related-posts`, the `blog` page-section), the projects listing (`projects/page.tsx`), the lab gallery (`lab/page.tsx`'s static `galleryItems`, the 4 lab-item hero "back to lab" links via `useParams()`, the `reaction-sphere` cross-link), `payload-redirects.tsx` (CMS-configured redirects now resolve to the current locale), and `PayloadForm`'s post-submit `redirect.url` (locale read via `useParams()` since the form is a client component with no prop path to the route). See [i18n-handoff.md](dev/i18n-handoff.md) for the full file list.
+- [x] **Full link audit** — every internal href-producing component now threads `locale` from its route down to the actual `<Link>`/`redirect()` call: the `resolveLinkHref`/`CMSLink` consumers (`hero`, `services-hero`, `contact`, `about`, `services-teaser`, `projects`, `lab-teaser` page-sections), the blog chain (`ArticleCard`, `blog-list`, `related-posts`, the `blog` page-section), the projects listing (`projects/page.tsx`), the lab gallery (`lab/page.tsx`'s static `galleryItems`, the 4 lab-item hero "back to lab" links via `useParams()`, the `reaction-sphere` cross-link), `payload-redirects.tsx` (CMS-configured redirects now resolve to the current locale), and `PayloadForm`'s post-submit `redirect.url` (locale read via `useParams()` since the form is a client component with no prop path to the route). See [i18n/handoff.md](handoff.md) for the full file list.
 - [x] **Bonus fixes found during the audit:** `RelatedPosts` linked to the non-existent `/posts/:slug` route (posts actually live at `/blog/:slug`) — fixed alongside the locale prefix. `HeaderNav`'s brand logo link (`href="/"`) now points at `/${locale}` instead of the bare root (avoids a needless middleware redirect hop on every logo click).
 - [x] Accessible: switcher options carry `hrefLang` per Payload's `en`/`es` locale codes and `aria-current="true"` on the active locale.
 
@@ -230,7 +230,7 @@ Introduce the `[locale]` segment and make locale flow through every data fetch.
 
 **Exit:** ✅ met. Localized titles/descriptions, correct hreflang + sitemaps, no hardcoded English left in reachable UI chrome (verified by
 a repo-wide grep sweep — remaining hits are the intentionally-excluded lab narrative pages and one pre-existing dead file, see
-[i18n-handoff.md](dev/i18n-handoff.md)).
+[i18n/handoff.md](handoff.md)).
 
 #### Scope note: what "static UI strings" did *not* include
 The 4 lab experiment detail pages (`/lab/gray-scott`, `/lab/svg-circles`, `/lab/reaction-sphere`, `/lab/image-to-svg`) contain
@@ -250,7 +250,7 @@ copy can lean on the same `getDictionary`/CMS patterns established here.
 - [ ] QA matrix: each route × `{en, es}` × {draft, published} × {switcher, direct URL, cookie, Accept-Language}.
 - [ ] Verify no cross-locale cache bleed after revalidation ([`api/revalidate`](../apps/frontend/src/app/(website)/api/revalidate) tags must be locale-aware).
 - [ ] Lighthouse/SEO check for hreflang correctness (Search Console "International Targeting").
-- [ ] Update [`docs/architecture.md`](./architecture.md) and [`docs/COMPONENTS.md`](./COMPONENTS.md) with the i18n conventions.
+- [ ] Update [`docs/architecture.md`](../../architecture.md) and [`docs/COMPONENTS.md`](../../COMPONENTS.md) with the i18n conventions.
 
 **Exit:** both locales live, verified, documented.
 

@@ -3,7 +3,7 @@
 The as-built reference for how the site looks: the tokens, the primitives, and
 the rules that keep them consistent. It describes what is in the code today —
 the *plan* that produced it lives in
-[home-page-makeover.md](./dev/home-page-makeover.md) (§4 look and feel, §5
+[home-page-makeover/plan.md](./dev/home-page-makeover/plan.md) (§4 look and feel, §5
 primitives), which stays as the rationale and is not updated as things ship.
 
 Everything visual is defined in one file,

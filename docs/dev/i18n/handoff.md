@@ -1,7 +1,7 @@
 # Internationalization (i18n) — Handoff
 
 > **For:** whoever picks this up next (another chat, another model, future me).
-> **Full spec:** [internationalization.md](../internationalization.md) — read that first, this doc is just
+> **Full spec:** [internationalization.md](plan.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) and phase numbers refer to it.
 > **Branch:** `dev`. **As of:** 2026-07-26, **Phases 0–5 are done** (Phase 1 = all schema fields marked
 > `localized`; Phase 2 = committed migration + locale-aware bilingual seed; Phase 3 = `[locale]` routing
@@ -83,7 +83,7 @@ Notes on this change:
 ### Tracking checklist
 This document **is** the tracking checklist mirroring the plan (per the Phase 0 task). If a GitHub issue
 is wanted, open one from the status table above; otherwise this file is the living source of truth
-alongside the phase checkboxes in [internationalization.md](../internationalization.md).
+alongside the phase checkboxes in [internationalization.md](plan.md).
 
 ### Verification
 Per the doc's working convention (§ intro) and the `defer-checks-to-end` memory, **no build / type-check
@@ -357,7 +357,7 @@ which is expected, not a bug.
   validation, `<html lang>`, `generateStaticParams`, `'../globals.css'` import).
 - **Reverted (kept unchanged):** `data/data.ts`, `lib/queries/page-blocks.ts`, `components/Footer.tsx` — the
   Part B draft was rolled back so this scope is Part A only.
-- **Docs:** [`internationalization.md`](../internationalization.md) (Phase 3 split into Part A/B), this file.
+- **Docs:** [`internationalization.md`](plan.md) (Phase 3 split into Part A/B), this file.
 
 ### Files touched — Phase 3 Part B (this session)
 **Locale threaded into GraphQL + caches**
@@ -379,7 +379,7 @@ which is expected, not a bug.
   `components/page-sections/lab-teaser.tsx`, `components/gallery/{GalleryCard,Gallery,GalleryBar}.tsx`,
   `app/exp/(tracked)/{gray-scott,reaction-sphere}/page.tsx`.
 
-**Docs** — [`internationalization.md`](../internationalization.md) (Phase 3 Part B checked off), this file.
+**Docs** — [`internationalization.md`](plan.md) (Phase 3 Part B checked off), this file.
 
 ### Suggested commit message
 ```
@@ -510,7 +510,7 @@ project/blog cards, the lab back-link) all resolve under the current locale rath
 **Form**
 - `components/form/PayloadForm.tsx`.
 
-**Docs** — [`internationalization.md`](../internationalization.md) (Phase 4 checkboxes, status, §4 redirects
+**Docs** — [`internationalization.md`](plan.md) (Phase 4 checkboxes, status, §4 redirects
 risk resolved), this file.
 
 ### Suggested commit message
@@ -551,7 +551,7 @@ A full repo grep swept every `>Capitalized text<` JSX child plus `placeholder=`/
 `eyebrow || 'Projects'` (7 page-sections — the fallback only fires when a CMS editor leaves the field blank, but it's still reachable
 English), a hardcoded `'en-US'` in `ArticleCard.tsx`'s date formatting that would have shown English-formatted dates on `/es/...` forever,
 and `formatDateTime.ts`'s hand-rolled `MM/DD/YYYY` string-concat replaced with `Intl.DateTimeFormat(locale, {...})`. See
-[internationalization.md §Phase 5](../internationalization.md#scope-note-what-static-ui-strings-did-not-include) for what was **deliberately
+[internationalization.md §Phase 5](plan.md#scope-note-what-static-ui-strings-did-not-include) for what was **deliberately
 excluded** (the 4 lab items' bespoke narrative content) and why. ✅ **That exclusion has since been addressed** — see
 [§Lab-item content localization](#whats-done--lab-item-content-localization-phase-5-follow-up) below.
 
@@ -625,7 +625,7 @@ required-field/error copy in Spanish), `/es/some-bad-slug` (404 page), and viewi
   services}.tsx`.
 - Chrome: `components/ThemeSwitch.tsx`.
 
-**Docs** — this file, [`internationalization.md`](../internationalization.md) (Phase 5 checkboxes, status, scope note).
+**Docs** — this file, [`internationalization.md`](plan.md) (Phase 5 checkboxes, status, scope note).
 
 ### Suggested commit message
 ```
@@ -708,7 +708,7 @@ from tone buffer to SVG"), and threading a locale through them is a distinct ref
 in `content/en.ts`. Everything else on that page (Controls, Strategy heading, Upload/Download, drop + error text, hero) **is** localized.
 
 ### Follow-up for whoever adds a new lab item
-[`CREATING_GALLERY_ITEMS.md`](../apps/frontend/src/app/(website)/[locale]/lab/CREATING_GALLERY_ITEMS.md) predates this and still shows
+[`CREATING_GALLERY_ITEMS.md`](../../apps/frontend/src/app/(website)/[locale]/lab/CREATING_GALLERY_ITEMS.md) predates this and still shows
 the old hardcoded-copy pattern — a new item now also needs a `LabSlug` entry + an `en`/`es` `LabItemContent` block (that doc wasn't
 updated in this pass).
 
@@ -790,8 +790,8 @@ overrides), [`Blog-Tags.ts`](../apps/payload/src/collections/Blog-Tags.ts),
 PageServicesHero, PageAbout, PageSkills, PageProjects, PageExperience, PageContact, PageBlog, PageServices,
 PageProcess, PageFaq, PageServicesTeaser, PageLabTeaser.
 
-**Docs** — [`docs/internationalization.md`](../internationalization.md) (Phase 1 checkboxes + status),
-[`docs/i18n-handoff.md`](i18n-handoff.md) (this file).
+**Docs** — [`docs/internationalization.md`](plan.md) (Phase 1 checkboxes + status),
+[`docs/dev/i18n/handoff.md`](handoff.md) (this file).
 
 > Not touched: `Header`/`Footer` configs (localize via the `link` factory), `blog-page.ts` /
 > `projects-page.ts` (no localizable content), the form-builder plugin (already localized upstream).
@@ -832,8 +832,8 @@ or seed changes yet — that's Phase 2.
 - [`seed/about-narrative.ts`](../apps/payload/src/app/seed/about-narrative.ts) — `aboutNarrativeBodyES`.
 - [`seed/forms-data.ts`](../apps/payload/src/app/seed/forms-data.ts) — `servicesFormDataES`.
 
-**Docs** — [`docs/internationalization.md`](../internationalization.md) (Phase 2 + §3.1 checkboxes, status),
-[`docs/i18n-handoff.md`](i18n-handoff.md) (this file).
+**Docs** — [`docs/internationalization.md`](plan.md) (Phase 2 + §3.1 checkboxes, status),
+[`docs/dev/i18n/handoff.md`](handoff.md) (this file).
 
 ### Suggested commit message
 ```
