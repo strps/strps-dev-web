@@ -47,6 +47,7 @@ over imagery, a gradient, or the site's `ParticleStage`.
 | Surface | How |
 |---|---|
 | [`ServiceCard`](../apps/frontend/src/components/cards/ServiceCard.tsx) | `page-sections/services.tsx` renders it with `variant='crystal'` |
+| [`LabTeaserCard`](../apps/frontend/src/components/cards/LabTeaserCard.tsx) | Always crystal — sits over the site-wide `ParticleStage`, not a local image |
 | [`HeaderNav`](../apps/frontend/src/components/HeaderNav.tsx) | `CrystalSurface` faded in past the scroll threshold — see [The header](#the-header) |
 | [`page-sections/form.tsx`](../apps/frontend/src/components/page-sections/form.tsx) | `Card variant="crystal"` around `PayloadForm surface="crystal"` — see [Forms on glass](#forms-on-glass) |
 

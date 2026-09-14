@@ -1,5 +1,6 @@
 import { Eyebrow } from '@/components/primitives/Eyebrow'
 import { LinkArrow } from '@/components/primitives/LinkArrow'
+import { Card } from '@/components/ui/card'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
@@ -33,9 +34,10 @@ export function LabTeaserCard({
     className,
 }: LabTeaserCardProps) {
     return (
-        <article
+        <Card
+            variant="crystal"
             className={cn(
-                'flex h-full flex-col border border-border p-5 transition-colors duration-150 hover:border-border-strong',
+                'h-full flex-col gap-0 p-5 transition-colors duration-150 hover:border-crystal-edge-hover',
                 className,
             )}
         >
@@ -56,6 +58,6 @@ export function LabTeaserCard({
             <LinkArrow href={href} aria-label={`${linkLabel} — ${title}`} className="mt-auto self-start pt-4">
                 {linkLabel}
             </LinkArrow>
-        </article>
+        </Card>
     )
 }
