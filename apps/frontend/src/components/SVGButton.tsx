@@ -88,27 +88,35 @@ const ICONS: Record<SVGButtonIcon, { d: string; transform: string }> = {
     },
 }
 
+/** Deeper, denser tone of `c`: pulled toward the page foreground, for the hover sweep. */
+// const deep = (c: string, amount = 65) => `color-mix(in oklab, ${c} ${amount}%, var(--foreground))`
+// const deep = (c: string, amount = 65) => `oklab(from ${c} calc(l - 0.15) a b)`
+const deep = (c: string, amount = 0.08) => `oklch(from ${c} calc(l - 0.1) calc(c + ${amount}) h)`
+// const deep = (c: string, amount = 0) => `oklab(from ${c} calc(l - 0.39) calc(a + ${amount}) calc(b + ${amount}))`
+
 /**
- * Color presets. `base` is the resting pill, `mainColor` sweeps in on hover and `iconColor`
- * is the mark that fades in on top of it. The non-brand presets mirror the `variant` colors
- * of the shadcn Button (see components/ui/button.tsx) so a CMS `appearance` value renders
- * consistently whichever of the two buttons it lands on.
+ * Color presets. Each variant stays inside one hue family: `base` is the full color at rest,
+ * `mainColor` is a deeper, more intense tone of it that sweeps in on hover, and `iconColor`
+ * is the resting tone again so the mark reads back out of that deeper sweep. The non-brand
+ * presets take their hue from the matching `variant` of the shadcn Button (see
+ * components/ui/button.tsx) so a CMS `appearance` value renders consistently whichever of the
+ * two buttons it lands on.
  */
 const GRAPHICS: Record<
     SVGButtonVariant,
     { base: string; mainColor: string; iconColor: string; textColor: string; icon?: SVGButtonIcon }
 > = {
-    send: { base: 'var(--primary)', mainColor: '#F47B16', iconColor: '#CD5308', textColor: 'var(--primary-foreground)', icon: 'send' },
-    github: { base: 'var(--primary)', mainColor: '#0FBF3E', iconColor: '#08872B', textColor: 'var(--primary-foreground)', icon: 'github' },
-    linkedin: { base: 'var(--primary)', mainColor: '#0077B5', iconColor: '#004471', textColor: 'var(--primary-foreground)', icon: 'linkedin' },
+    send: { base: '#F47B16', mainColor: deep('#F47B16', 0.03), iconColor: '#F9A45C', textColor: 'var(--primary-foreground)', icon: 'send' },
+    github: { base: '#0FBF3E', mainColor: deep('#0FBF3E'), iconColor: '#5BE382', textColor: 'var(--primary-foreground)', icon: 'github' },
+    linkedin: { base: '#0077B5', mainColor: deep('#0077B5'), iconColor: '#4FB3E8', textColor: 'var(--primary-foreground)', icon: 'linkedin' },
 
-    default: { base: 'var(--primary)', mainColor: 'var(--foreground)', iconColor: 'var(--background)', textColor: 'var(--primary-foreground)' },
-    destructive: { base: 'var(--destructive)', mainColor: 'var(--foreground)', iconColor: 'var(--background)', textColor: '#fff' },
-    secondary: { base: 'var(--secondary)', mainColor: 'var(--muted-foreground)', iconColor: 'var(--secondary)', textColor: 'var(--secondary-foreground)' },
-    outline: { base: 'var(--background)', mainColor: 'var(--accent)', iconColor: 'var(--accent-foreground)', textColor: 'var(--foreground)' },
-    ghost: { base: 'transparent', mainColor: 'var(--accent)', iconColor: 'var(--accent-foreground)', textColor: 'var(--foreground)' },
-    solid: { base: 'var(--foreground)', mainColor: 'var(--primary)', iconColor: 'var(--primary-foreground)', textColor: 'var(--background)' },
-    outlineGhost: { base: 'transparent', mainColor: 'var(--muted)', iconColor: 'var(--foreground)', textColor: 'var(--muted-foreground)' },
+    default: { base: 'var(--primary)', mainColor: deep('var(--primary)'), iconColor: 'var(--primary)', textColor: 'var(--primary-foreground)' },
+    destructive: { base: 'var(--destructive)', mainColor: deep('var(--destructive)'), iconColor: 'var(--destructive)', textColor: '#fff' },
+    secondary: { base: 'var(--secondary)', mainColor: deep('var(--secondary)'), iconColor: 'var(--muted-foreground)', textColor: 'var(--secondary-foreground)' },
+    outline: { base: 'var(--background)', mainColor: deep('var(--accent)'), iconColor: 'var(--accent)', textColor: 'var(--foreground)' },
+    ghost: { base: 'transparent', mainColor: deep('var(--accent)'), iconColor: 'var(--accent)', textColor: 'var(--foreground)' },
+    solid: { base: 'var(--foreground)', mainColor: deep('var(--primary)'), iconColor: 'var(--muted-foreground)', textColor: 'var(--background)' },
+    outlineGhost: { base: 'transparent', mainColor: deep('var(--muted)'), iconColor: 'var(--muted)', textColor: 'var(--muted-foreground)' },
 }
 
 export const SVG_BUTTON_VARIANTS = Object.keys(GRAPHICS) as SVGButtonVariant[]
