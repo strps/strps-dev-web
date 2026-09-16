@@ -14,6 +14,7 @@ export const GET_HEADER = gql`
           url
           label
           appearance
+          variant
           reference {
             relationTo
             value {
@@ -43,7 +44,8 @@ interface HeaderLink {
     newTab?: boolean | null
     url?: string | null
     label: string
-    appearance?: 'default' | 'outlineGhost' | null
+    appearance?: 'default' | 'svgButton' | null
+    variant?: 'default' | 'outlineGhost' | null
     reference?: {
       relationTo: string
       value: { slug: string }
@@ -82,6 +84,7 @@ async function getHeaderData(locale: Locale) {
     name: item.link.label,
     href: resolveHref(item.link, locale),
     appearance: item.link.appearance ?? 'default',
+    variant: item.link.variant ?? 'default',
   }))
 
   return {

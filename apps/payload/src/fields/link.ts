@@ -3,41 +3,67 @@ import type { Field, GroupField } from 'payload'
 import deepMerge from '@/utilities/deepMerge'
 import crypto from 'crypto'
 
-export type LinkAppearances = string
+/**
+ * Which component renders the link on the frontend. Each appearance carries its own
+ * variant set, kept in sync with the component it maps to:
+ *   `default`   → <Button>    (apps/frontend/src/components/ui/button.tsx)
+ *   `svgButton` → <SVGButton> (apps/frontend/src/components/SVGButton.tsx)
+ */
+export type LinkAppearances = 'default' | 'svgButton'
 
-export const appearanceOptions: Record<string, { label: string; value: string }> = {
+export const appearanceOptions: Record<LinkAppearances, { label: string; value: string }> = {
   default: {
-    label: 'Default',
+    label: 'Button',
     value: 'default',
   },
-  outline: {
-    label: 'Outline',
-    value: 'outline',
-  },
-  solid: {
-    label: 'Solid',
-    value: 'solid',
-  },
-  outlineGhost: {
-    label: 'Outline Ghost',
-    value: 'outlineGhost',
-  },
-  send: {
-    label: 'Send',
-    value: 'send',
-  },
-  github: {
-    label: 'GitHub',
-    value: 'github',
-  },
-  linkedin: {
-    label: 'LinkedIn',
-    value: 'linkedin',
+  svgButton: {
+    label: 'SVG Button',
+    value: 'svgButton',
   },
 }
 
+/** Mirrors `buttonVariants` in apps/frontend/src/components/ui/button.tsx. */
+export const buttonVariantOptions: Record<string, { label: string; value: string }> = {
+  default: { label: 'Default', value: 'default' },
+  destructive: { label: 'Destructive', value: 'destructive' },
+  outline: { label: 'Outline', value: 'outline' },
+  secondary: { label: 'Secondary', value: 'secondary' },
+  ghost: { label: 'Ghost', value: 'ghost' },
+  link: { label: 'Link', value: 'link' },
+  solid: { label: 'Solid', value: 'solid' },
+  outlineGhost: { label: 'Outline Ghost', value: 'outlineGhost' },
+}
+
+/** Mirrors `GRAPHICS` in apps/frontend/src/components/SVGButton.tsx. */
+export const svgButtonVariantOptions: Record<string, { label: string; value: string }> = {
+  default: { label: 'Default', value: 'default' },
+  destructive: { label: 'Destructive', value: 'destructive' },
+  secondary: { label: 'Secondary', value: 'secondary' },
+  outline: { label: 'Outline', value: 'outline' },
+  ghost: { label: 'Ghost', value: 'ghost' },
+  solid: { label: 'Solid', value: 'solid' },
+  outlineGhost: { label: 'Outline Ghost', value: 'outlineGhost' },
+  send: { label: 'Send', value: 'send' },
+  github: { label: 'GitHub', value: 'github' },
+  linkedin: { label: 'LinkedIn', value: 'linkedin' },
+}
+
+const toOptions = (
+  registry: Record<string, { label: string; value: string }>,
+  keys?: string[],
+): { label: string; value: string }[] =>
+  (keys ?? Object.keys(registry)).map((key) => registry[key] ?? { label: key, value: key })
+
 type LinkType = (options?: {
-  appearances?: string[] | false
+  /**
+   * Which appearances the editor may choose from. Defaults to both. `false` drops the
+   * appearance/variant controls entirely (plain link).
+   */
+  appearances?: LinkAppearances[] | false
+  /** Restrict the `default` (Button) appearance to these variants. Defaults to all. */
+  variants?: string[]
+  /** Restrict the `svgButton` appearance to these variants. Defaults to all. */
+  svgVariants?: string[]
   disableLabel?: boolean
   overrides?: Partial<GroupField>
   hashEnumName?: boolean
@@ -53,11 +79,33 @@ type LinkType = (options?: {
 
 export const link: LinkType = ({
   appearances,
+  variants,
+  svgVariants,
   disableLabel = false,
   overrides = {},
   hashEnumName,
   required = true,
 } = {}) => {
+  /**
+   * Payload derives enum type names from the table name plus the column path, which can
+   * overflow Postgres' 63-character cap on deeply nested blocks. Reproduce the generated
+   * name when it fits — so existing enums keep their readable names — and fall back to a
+   * hash of the table name otherwise.
+   * ref: https://github.com/payloadcms/payload/discussions/8544
+   */
+  const enumNameFor =
+    (column: string) =>
+    ({ tableName }: { tableName?: string }) => {
+      const generated = `enum_${tableName}_${column}`
+      if (!hashEnumName && generated.length <= 63) return generated
+      return (
+        crypto
+          .createHash('md5')
+          .update(tableName || '')
+          .digest('hex') + `_${column}`
+      )
+    }
+
   const linkResult: GroupField = {
     name: 'link',
     type: 'group',
@@ -157,47 +205,60 @@ export const link: LinkType = ({
   }
 
   if (appearances !== false) {
-    let appearanceOptionsToUse: { label: string; value: string }[] = [
-      appearanceOptions.default!,
-      appearanceOptions.outline!,
+    const appearancesToUse: LinkAppearances[] = appearances ?? ['default', 'svgButton']
+
+    const appearanceFields: Field[] = [
+      {
+        name: 'appearance',
+        type: 'select',
+        enumName: enumNameFor('appearance'),
+        admin: {
+          description: 'Which button component renders this link.',
+          width: '34%',
+        },
+        defaultValue: appearancesToUse[0] ?? 'default',
+        options: appearancesToUse.map(
+          (appearance) => appearanceOptions[appearance] ?? { label: appearance, value: appearance },
+        ),
+      },
     ]
 
-    if (appearances) {
-      appearanceOptionsToUse = appearances.map(
-        (appearance) => appearanceOptions[appearance] ?? { label: appearance, value: appearance },
-      )
+    if (appearancesToUse.includes('default')) {
+      appearanceFields.push({
+        name: 'variant',
+        type: 'select',
+        enumName: enumNameFor('variant'),
+        admin: {
+          condition: (_, siblingData) => (siblingData?.appearance ?? 'default') === 'default',
+          description: 'Button style.',
+          width: '66%',
+        },
+        defaultValue: 'default',
+        label: 'Variant',
+        options: toOptions(buttonVariantOptions, variants),
+      })
     }
 
-    if (hashEnumName) {
-      //Enum type name is based on the table name and hashed if true, offering a shorter way to name the enum types, and avoid name retriction (Error Exceeded max identifier length for table or enum name of 63 characters. ref: https://github.com/payloadcms/payload/discussions/8544).
-      linkResult.fields.push({
-        name: 'appearance',
-        enumName: ({ tableName }) => {
-          return (
-            crypto
-              .createHash('md5')
-              .update(tableName || '')
-              .digest('hex') + 'LinkAppearances'
-          )
-        },
+    if (appearancesToUse.includes('svgButton')) {
+      appearanceFields.push({
+        name: 'svgVariant',
         type: 'select',
+        enumName: enumNameFor('svg_variant'),
         admin: {
-          description: 'Choose how the link should be rendered.',
+          condition: (_, siblingData) => siblingData?.appearance === 'svgButton',
+          description: 'SVG button color/icon preset.',
+          width: '66%',
         },
-        defaultValue: 'default',
-        options: appearanceOptionsToUse,
-      })
-    } else {
-      linkResult.fields.push({
-        name: 'appearance',
-        type: 'select',
-        admin: {
-          description: 'Choose how the link should be rendered.',
-        },
-        defaultValue: 'default',
-        options: appearanceOptionsToUse,
+        defaultValue: svgVariants?.[0] ?? 'default',
+        label: 'SVG Variant',
+        options: toOptions(svgButtonVariantOptions, svgVariants),
       })
     }
+
+    linkResult.fields.push({
+      type: 'row',
+      fields: appearanceFields,
+    })
   }
 
   return deepMerge(linkResult, overrides)

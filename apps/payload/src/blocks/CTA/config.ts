@@ -29,7 +29,8 @@ export const CallToAction: Block = {
             label: false,
         },
         linkGroup({
-            appearances: ['default', 'outline'],
+            appearances: ['default'],
+            variants: ['default', 'outline'],
             overrides: {
                 maxRows: 2,
             },

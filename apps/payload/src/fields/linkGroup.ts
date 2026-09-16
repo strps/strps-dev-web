@@ -6,18 +6,28 @@ import deepMerge from '@/utilities/deepMerge'
 import { link } from './link'
 
 type LinkGroupType = (options?: {
-  appearances?: string[] | false
+  appearances?: LinkAppearances[] | false
+  variants?: string[]
+  svgVariants?: string[]
   overrides?: Partial<ArrayField>
   hashEnumName?: boolean
 }) => Field
 
-export const linkGroup: LinkGroupType = ({ appearances, overrides = {}, hashEnumName } = {}) => {
+export const linkGroup: LinkGroupType = ({
+  appearances,
+  variants,
+  svgVariants,
+  overrides = {},
+  hashEnumName,
+} = {}) => {
   const generatedLinkGroup: Field = {
     name: 'links',
     type: 'array',
     fields: [
       link({
         appearances,
+        variants,
+        svgVariants,
         hashEnumName: hashEnumName,
       }),
     ],

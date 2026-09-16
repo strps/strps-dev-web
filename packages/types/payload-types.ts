@@ -347,9 +347,17 @@ export interface PageHeroBlock {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Which button component renders this link.
            */
-          appearance?: ('default' | 'outline' | 'solid' | 'outlineGhost' | 'send' | 'github' | 'linkedin') | null;
+          appearance?: ('default' | 'svgButton') | null;
+          /**
+           * Button style.
+           */
+          variant?: ('default' | 'outline' | 'solid' | 'outlineGhost') | null;
+          /**
+           * SVG button color/icon preset.
+           */
+          svgVariant?: ('default' | 'send' | 'github' | 'linkedin' | 'solid' | 'outlineGhost') | null;
         };
         id?: string | null;
       }[]
@@ -552,9 +560,17 @@ export interface PageServicesHeroBlock {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Which button component renders this link.
            */
-          appearance?: ('default' | 'outline' | 'send' | 'github' | 'linkedin') | null;
+          appearance?: ('default' | 'svgButton') | null;
+          /**
+           * Button style.
+           */
+          variant?: ('default' | 'outline') | null;
+          /**
+           * SVG button color/icon preset.
+           */
+          svgVariant?: ('default' | 'send' | 'github' | 'linkedin') | null;
         };
         id?: string | null;
       }[]
@@ -606,9 +622,32 @@ export interface PageServicesTeaserBlock {
     url?: string | null;
     label?: string | null;
     /**
-     * Choose how the link should be rendered.
+     * Which button component renders this link.
      */
-    appearance?: ('default' | 'outline') | null;
+    appearance?: ('default' | 'svgButton') | null;
+    /**
+     * Button style.
+     */
+    variant?:
+      | ('default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost')
+      | null;
+    /**
+     * SVG button color/icon preset.
+     */
+    svgVariant?:
+      | (
+          | 'default'
+          | 'destructive'
+          | 'secondary'
+          | 'outline'
+          | 'ghost'
+          | 'solid'
+          | 'outlineGhost'
+          | 'send'
+          | 'github'
+          | 'linkedin'
+        )
+      | null;
   };
   /**
    * Rows are numbered automatically from their position (01, 02, 03) — do not store the number.
@@ -642,9 +681,32 @@ export interface PageServicesTeaserBlock {
           url?: string | null;
           label?: string | null;
           /**
-           * Choose how the link should be rendered.
+           * Which button component renders this link.
            */
-          appearance?: ('default' | 'outline') | null;
+          appearance?: ('default' | 'svgButton') | null;
+          /**
+           * Button style.
+           */
+          variant?:
+            | ('default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost')
+            | null;
+          /**
+           * SVG button color/icon preset.
+           */
+          svgVariant?:
+            | (
+                | 'default'
+                | 'destructive'
+                | 'secondary'
+                | 'outline'
+                | 'ghost'
+                | 'solid'
+                | 'outlineGhost'
+                | 'send'
+                | 'github'
+                | 'linkedin'
+              )
+            | null;
         };
         id?: string | null;
       }[]
@@ -686,9 +748,32 @@ export interface PageServicesProcessBlock {
     url?: string | null;
     label?: string | null;
     /**
-     * Choose how the link should be rendered.
+     * Which button component renders this link.
      */
-    appearance?: ('default' | 'outline') | null;
+    appearance?: ('default' | 'svgButton') | null;
+    /**
+     * Button style.
+     */
+    variant?:
+      | ('default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost')
+      | null;
+    /**
+     * SVG button color/icon preset.
+     */
+    svgVariant?:
+      | (
+          | 'default'
+          | 'destructive'
+          | 'secondary'
+          | 'outline'
+          | 'ghost'
+          | 'solid'
+          | 'outlineGhost'
+          | 'send'
+          | 'github'
+          | 'linkedin'
+        )
+      | null;
   };
   /**
    * Rows are numbered automatically from their position (01, 02, 03) — do not store the number.
@@ -722,9 +807,32 @@ export interface PageServicesProcessBlock {
           url?: string | null;
           label?: string | null;
           /**
-           * Choose how the link should be rendered.
+           * Which button component renders this link.
            */
-          appearance?: ('default' | 'outline') | null;
+          appearance?: ('default' | 'svgButton') | null;
+          /**
+           * Button style.
+           */
+          variant?:
+            | ('default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost')
+            | null;
+          /**
+           * SVG button color/icon preset.
+           */
+          svgVariant?:
+            | (
+                | 'default'
+                | 'destructive'
+                | 'secondary'
+                | 'outline'
+                | 'ghost'
+                | 'solid'
+                | 'outlineGhost'
+                | 'send'
+                | 'github'
+                | 'linkedin'
+              )
+            | null;
         };
         id?: string | null;
       }[]
@@ -806,9 +914,32 @@ export interface PageAboutBlock {
     url?: string | null;
     label?: string | null;
     /**
-     * Choose how the link should be rendered.
+     * Which button component renders this link.
      */
-    appearance?: ('default' | 'outline') | null;
+    appearance?: ('default' | 'svgButton') | null;
+    /**
+     * Button style.
+     */
+    variant?:
+      | ('default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost')
+      | null;
+    /**
+     * SVG button color/icon preset.
+     */
+    svgVariant?:
+      | (
+          | 'default'
+          | 'destructive'
+          | 'secondary'
+          | 'outline'
+          | 'ghost'
+          | 'solid'
+          | 'outlineGhost'
+          | 'send'
+          | 'github'
+          | 'linkedin'
+        )
+      | null;
   };
   section: SectionConfig;
   id?: string | null;
@@ -881,9 +1012,32 @@ export interface PageProjectsTeaserBlock {
     url?: string | null;
     label?: string | null;
     /**
-     * Choose how the link should be rendered.
+     * Which button component renders this link.
      */
-    appearance?: ('default' | 'outline') | null;
+    appearance?: ('default' | 'svgButton') | null;
+    /**
+     * Button style.
+     */
+    variant?:
+      | ('default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost')
+      | null;
+    /**
+     * SVG button color/icon preset.
+     */
+    svgVariant?:
+      | (
+          | 'default'
+          | 'destructive'
+          | 'secondary'
+          | 'outline'
+          | 'ghost'
+          | 'solid'
+          | 'outlineGhost'
+          | 'send'
+          | 'github'
+          | 'linkedin'
+        )
+      | null;
   };
   populateBy?: ('collection' | 'selection') | null;
   limit?: number | null;
@@ -1012,9 +1166,32 @@ export interface PageLabTeaserBlock {
     url?: string | null;
     label?: string | null;
     /**
-     * Choose how the link should be rendered.
+     * Which button component renders this link.
      */
-    appearance?: ('default' | 'outline') | null;
+    appearance?: ('default' | 'svgButton') | null;
+    /**
+     * Button style.
+     */
+    variant?:
+      | ('default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost')
+      | null;
+    /**
+     * SVG button color/icon preset.
+     */
+    svgVariant?:
+      | (
+          | 'default'
+          | 'destructive'
+          | 'secondary'
+          | 'outline'
+          | 'ghost'
+          | 'solid'
+          | 'outlineGhost'
+          | 'send'
+          | 'github'
+          | 'linkedin'
+        )
+      | null;
   };
   /**
    * Number of lab items to show. Lab items are code, not CMS content — see src/app/(website)/lab/data.ts.
@@ -1183,9 +1360,13 @@ export interface PageContactBlock {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Which button component renders this link.
            */
-          appearance?: ('default' | 'outline') | null;
+          appearance?: 'default' | null;
+          /**
+           * Button style.
+           */
+          variant?: ('default' | 'outline') | null;
         };
         id?: string | null;
       }[]
@@ -1855,6 +2036,8 @@ export interface PageHeroBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+              variant?: T;
+              svgVariant?: T;
             };
         id?: T;
       };
@@ -1901,6 +2084,8 @@ export interface PageServicesHeroBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+              variant?: T;
+              svgVariant?: T;
             };
         id?: T;
       };
@@ -1931,6 +2116,8 @@ export interface PageServicesTeaserBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
         appearance?: T;
+        variant?: T;
+        svgVariant?: T;
       };
   items?:
     | T
@@ -1946,6 +2133,8 @@ export interface PageServicesTeaserBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+              variant?: T;
+              svgVariant?: T;
             };
         id?: T;
       };
@@ -1969,6 +2158,8 @@ export interface PageServicesProcessBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
         appearance?: T;
+        variant?: T;
+        svgVariant?: T;
       };
   rows?:
     | T
@@ -1984,6 +2175,8 @@ export interface PageServicesProcessBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+              variant?: T;
+              svgVariant?: T;
             };
         id?: T;
       };
@@ -2023,6 +2216,8 @@ export interface PageAboutBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
         appearance?: T;
+        variant?: T;
+        svgVariant?: T;
       };
   section?: T | SectionConfigSelect<T>;
   id?: T;
@@ -2071,6 +2266,8 @@ export interface PageProjectsTeaserBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
         appearance?: T;
+        variant?: T;
+        svgVariant?: T;
       };
   populateBy?: T;
   limit?: T;
@@ -2097,6 +2294,8 @@ export interface PageLabTeaserBlockSelect<T extends boolean = true> {
         url?: T;
         label?: T;
         appearance?: T;
+        variant?: T;
+        svgVariant?: T;
       };
   limit?: T;
   section?: T | SectionConfigSelect<T>;
@@ -2224,6 +2423,7 @@ export interface PageContactBlockSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+              variant?: T;
             };
         id?: T;
       };
@@ -2742,9 +2942,13 @@ export interface Header {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Which button component renders this link.
            */
-          appearance?: ('default' | 'outlineGhost') | null;
+          appearance?: 'default' | null;
+          /**
+           * Button style.
+           */
+          variant?: ('default' | 'outlineGhost') | null;
         };
         id?: string | null;
       }[]
@@ -2838,6 +3042,7 @@ export interface HeaderSelect<T extends boolean = true> {
               url?: T;
               label?: T;
               appearance?: T;
+              variant?: T;
             };
         id?: T;
       };

@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import SVGButton, { type SVGButtonVariant } from '@/components/SVGButton'
 import { cn } from '@/lib/utils'
 import { resolveLinkHref } from '@/lib/resolveLinkHref'
 import Link from 'next/link'
@@ -8,7 +9,25 @@ import type { Doc, Page, Post } from '@strps-website/types'
 import type { Locale } from '@/i18n/config'
 
 export type CMSLinkType = {
-  appearance?: 'inline' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'solid' | 'outlineGhost' //TODO: Add size and variants types form button variants directly
+  /**
+   * Which component renders the link, matching the CMS `link.appearance` field
+   * (apps/payload/src/fields/link.ts). `inline` is the extra frontend-only case for
+   * links inside rich text. Each appearance reads its own variant prop.
+   */
+  appearance?: 'inline' | 'default' | 'svgButton'
+  /** Button variant, used when `appearance` is `default`. */
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'solid'
+    | 'outlineGhost'
+    | null //TODO: Add variant types from button variants directly
+  /** SVGButton variant, used when `appearance` is `svgButton`. */
+  svgVariant?: SVGButtonVariant | null
   children?: React.ReactNode
   className?: string
   label?: string | null
@@ -28,6 +47,8 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const {
     type,
     appearance = 'inline',
+    variant = 'default',
+    svgVariant,
     children,
     className,
     label,
@@ -42,7 +63,7 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
 
   if (!href) return null
 
-  const size = appearance === 'link' ? null : sizeFromProps
+  const size = variant === 'link' ? null : sizeFromProps
   const newTabProps = newTab ? { rel: 'noopener noreferrer', target: '_blank' } : {}
 
   /* Ensure we don't break any styles set by richText */
@@ -55,8 +76,17 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     )
   }
 
+  if (appearance === 'svgButton') {
+    return (
+      <SVGButton className={className} href={href} variant={svgVariant ?? 'default'}>
+        {label && label}
+        {children && children}
+      </SVGButton>
+    )
+  }
+
   return (
-    <Button asChild className={className} size={size} variant={appearance}>
+    <Button asChild className={className} size={size} variant={variant ?? 'default'}>
       <Link className={cn(className)} href={href} {...newTabProps}>
         {label && label}
         {children && children}
