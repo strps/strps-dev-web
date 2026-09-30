@@ -12,7 +12,8 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 // import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@strps-website/types'
-import { isRecaptchaConfigured, verifyRecaptchaToken } from '@/utilities/verify-recaptcha'
+import { guardFormSubmission } from '@/hooks/guardFormSubmission'
+import { isRecaptchaConfigured } from '@/utilities/verify-recaptcha'
 
 // Evaluated once, server-side, when the Payload config is built. It must be a plain
 // string by the time it reaches the admin bundle: an `admin.description` *function*
@@ -104,66 +105,7 @@ export const plugins: Plugin[] = [
     },
     formSubmissionOverrides: {
       hooks: {
-        beforeOperation: [
-          async ({ args, operation, req }) => {
-            const payload = req.payload
-            const body = req?.data
-
-            //if operation is create, check if recaptcha is enabled
-            if (operation === 'create') {
-              //check if form id has the recaptcha enabled
-              const recaptchaEnabled = (
-                await payload.findByID({
-                  collection: 'forms',
-                  id: body?.form,
-                  select: {
-                    enableRecaptcha: true,
-                  },
-                })
-              ).enableRecaptcha
-
-              //if recaptcha is enabled, verify the token
-              if (recaptchaEnabled) {
-                // Fail open when the key is absent: that is a deployment mistake, and
-                // breaking every form over it punishes visitors for it. The frontend
-                // hides the reCAPTCHA notice in this case, so nothing claims protection
-                // that isn't running.
-                if (!isRecaptchaConfigured()) {
-                  payload.logger.warn(
-                    `Form ${body?.form} has reCAPTCHA enabled but RECAPTCHA_SECRET_KEY is not set — ` +
-                      `accepting the submission WITHOUT verification. Set the key or untick "Enable Recaptcha".`,
-                  )
-                  return args
-                }
-
-                const recaptchaToken = body?.recaptchaToken
-                if (!recaptchaToken) {
-                  throw new Error('Recaptcha verification failed')
-                }
-
-                const result = await verifyRecaptchaToken(recaptchaToken)
-                if (!result.ok) {
-                  // Detail stays server-side: telling a bot why it was rejected, or what
-                  // score it earned, only helps it tune.
-                  payload.logger.warn(
-                    { formID: body?.form, ...result },
-                    'reCAPTCHA verification failed',
-                  )
-                  throw new Error('Recaptcha verification failed')
-                }
-
-                payload.logger.debug(
-                  { formID: body?.form, score: result.score },
-                  'reCAPTCHA verification passed',
-                )
-                return args
-              }
-            }
-
-            //recaptcha not enabled for this form, continue as normal
-            return args
-          },
-        ],
+        beforeOperation: [guardFormSubmission],
       },
     },
   }),

@@ -42,6 +42,7 @@ export const en = {
     fieldRequired: 'This field is required',
     recaptchaFailed: 'Recaptcha verification failed',
     internalServerError: 'Internal Server Error',
+    tooManyRequests: 'Too many submissions right now. Please try again in a few minutes.',
     somethingWentWrong: 'Something went wrong.',
     recaptchaNoticePrefix: 'This site is protected by reCAPTCHA and the Google',
     privacyPolicy: 'Privacy Policy',

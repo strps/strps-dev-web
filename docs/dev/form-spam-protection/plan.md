@@ -1,6 +1,6 @@
 # Form Spam Protection — Implementation Plan
 
-> **Status:** Work plan — not started · **Owner:** César · **Created:** 2026-09-30
+> **Status:** In progress — Phases 1–2 done · **Owner:** César · **Created:** 2026-09-30
 >
 > **Goal:** close the gaps found in the reCAPTCHA audit (2026-09-30). Every Payload form
 > gets baseline bot protection that needs no third party, reCAPTCHA stays available per
@@ -74,33 +74,33 @@ key check. That one source of truth fixes findings #2 and #3.
 ## 3. Phase 1 — Baseline protection (no third party)
 
 **Payload**
-- [ ] New [`apps/payload/src/hooks/guardFormSubmission.ts`](../../../apps/payload/src/hooks/guardFormSubmission.ts):
+- [x] New [`apps/payload/src/hooks/guardFormSubmission.ts`](../../../apps/payload/src/hooks/guardFormSubmission.ts):
       move the whole `beforeOperation` body out of `plugins/index.ts` into this hook, so all
       checks live in one ordered function. `plugins/index.ts` just references it.
-- [ ] Order of checks on `create`: honeypot → time trap → rate limit → reCAPTCHA (cheapest first;
+- [x] Order of checks on `create`: honeypot → time trap → rate limit → reCAPTCHA (cheapest first;
       reCAPTCHA last so bots never cost a Google call).
-- [ ] **Honeypot:** reject when top-level `hp` is a non-empty string.
-- [ ] **Time trap:** reject when top-level `elapsedMs` is missing, not a number, or below
+- [x] **Honeypot:** reject when top-level `hp` is a non-empty string.
+- [x] **Time trap:** reject when top-level `elapsedMs` is missing, not a number, or below
       `FORM_MIN_FILL_MS` (default `3000`).
-- [ ] **Rate limit:** `payload.count({ collection: 'form-submissions', where: { form: { equals: formID }, createdAt: { greater_than: <now − window> } } })`;
+- [x] **Rate limit:** `payload.count({ collection: 'form-submissions', where: { form: { equals: formID }, createdAt: { greater_than: <now − window> } } })`;
       reject with status 429 when ≥ `FORM_RATE_LIMIT_MAX` (default `20`) within
       `FORM_RATE_LIMIT_WINDOW_MIN` (default `10`).
-- [ ] Log each rejection at `warn` with `formID` and reason only, matching the current
+- [x] Log each rejection at `warn` with `formID` and reason only, matching the current
       reCAPTCHA logging.
-- [ ] Make sure `hp` and `elapsedMs` never land in the stored document (they are top-level,
+- [x] Make sure `hp` and `elapsedMs` never land in the stored document (they are top-level,
       not in `submissionData`; confirm the plugin drops unknown keys, else strip them from
       `args.data`).
 
 **Frontend — [PayloadForm.tsx](../../../apps/frontend/src/components/form/PayloadForm.tsx)**
-- [ ] Honeypot input rendered **outside** react-hook-form (plain `<input>` with a ref), so it
+- [x] Honeypot input rendered **outside** react-hook-form (plain `<input>` with a ref), so it
       never enters `submissionData`: `name="website"`, `tabIndex={-1}`, `autoComplete="off"`,
       `aria-hidden="true"`, visually hidden with an off-screen class (not `display:none`,
       which some bots skip).
-- [ ] Record the mount time in a ref; send `elapsedMs = Date.now() − mountedAt` with the body.
-- [ ] Add `hp` and `elapsedMs` to the `fetch` body next to `recaptchaToken`.
+- [x] Record the mount time in a ref; send `elapsedMs = Date.now() − mountedAt` with the body.
+- [x] Add `hp` and `elapsedMs` to the `fetch` body next to `recaptchaToken`.
 
 **Env**
-- [ ] Add `FORM_MIN_FILL_MS`, `FORM_RATE_LIMIT_MAX`, `FORM_RATE_LIMIT_WINDOW_MIN` to
+- [x] Add `FORM_MIN_FILL_MS`, `FORM_RATE_LIMIT_MAX`, `FORM_RATE_LIMIT_WINDOW_MIN` to
       `apps/payload/.env.example` and `docs/deployment.md`, all optional with the defaults above.
 
 **Exit:** a form with reCAPTCHA off rejects a filled honeypot, a sub-3 s submit and the 21st
@@ -110,17 +110,17 @@ submit in 10 minutes; a normal human submit still succeeds.
 
 ## 4. Phase 2 — Hook correctness
 
-- [ ] Read `form`, `recaptchaToken`, `hp`, `elapsedMs` from `args.data`, falling back to
+- [x] Read `form`, `recaptchaToken`, `hp`, `elapsedMs` from `args.data`, falling back to
       `req.data` (finding #5).
-- [ ] Guard a missing or invalid `form` id with a 400 instead of letting `findByID` throw.
-- [ ] Replace every `throw new Error(...)` with Payload's `APIError`, marked public:
+- [x] Guard a missing or invalid `form` id with a 400 instead of letting `findByID` throw.
+- [x] Replace every `throw new Error(...)` with Payload's `APIError`, marked public:
     - captcha missing/failed → `403`
     - honeypot / time trap / bad input → `400`
     - rate limit → `429`
-- [ ] Hostname check in [verify-recaptcha.ts](../../../apps/payload/src/utilities/verify-recaptcha.ts):
+- [x] Hostname check in [verify-recaptcha.ts](../../../apps/payload/src/utilities/verify-recaptcha.ts):
       new failure reason `'hostname-mismatch'` when `data.hostname` ≠ hostname of
       `FRONTEND_URL` (finding #6). Skip the check when `FRONTEND_URL` is unset, with a warning.
-- [ ] Frontend: stop showing `res.errors[0].message`. Map by status to the dictionary instead
+- [x] Frontend: stop showing `res.errors[0].message`. Map by status to the dictionary instead
       (finding #4):
 
       | Status | Message key |
@@ -129,7 +129,7 @@ submit in 10 minutes; a normal human submit still succeeds.
       | 429 | `form.tooManyRequests` (new, EN + ES) |
       | other ≥ 400 | `form.internalServerError` |
 
-- [ ] Add `tooManyRequests` to [en.ts](../../../apps/frontend/src/i18n/dictionaries/en.ts)
+- [x] Add `tooManyRequests` to [en.ts](../../../apps/frontend/src/i18n/dictionaries/en.ts)
       and [es.ts](../../../apps/frontend/src/i18n/dictionaries/es.ts).
 
 ---

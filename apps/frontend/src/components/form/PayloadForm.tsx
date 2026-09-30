@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useForm, FormProvider, useFormContext, FieldValues } from 'react-hook-form'
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3'
@@ -34,6 +34,7 @@ type FormInnerProps = {
     formID: string | number
     submitButtonLabel?: string | null
     recaptchaActive: boolean
+    honeypotRef: React.RefObject<HTMLInputElement | null>
     variant: 'default' | 'mockup'
     surface: 'default' | 'crystal'
     onSubmit: (data: FieldValues, recaptchaToken?: string) => void
@@ -50,6 +51,7 @@ const FormInner: React.FC<FormInnerProps> = ({
     formID,
     submitButtonLabel,
     recaptchaActive,
+    honeypotRef,
     variant,
     surface,
     onSubmit,
@@ -104,6 +106,19 @@ const FormInner: React.FC<FormInnerProps> = ({
             data-surface={surface}
             onSubmit={handleSubmit(handleFormSubmit)}
         >
+            {/* Honeypot: off-screen rather than `display:none`, which some bots skip. Kept
+                outside react-hook-form so it never enters `submissionData`; the server
+                rejects any submission where it is filled. */}
+            <input
+                ref={honeypotRef}
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                defaultValue=""
+                className="absolute -left-[10000px] h-px w-px overflow-hidden"
+            />
             <div className="mb-4 last:mb-0">
                 {form?.fields?.map((field, index) => {
                     const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
@@ -178,6 +193,14 @@ export function PayloadForm({
     const locale = isValidLocale(routeParams.locale) ? routeParams.locale : defaultLocale
     const dictionary = getDictionary(locale)
 
+    // Spam signals checked by the server: a hidden field only bots fill, and how long the
+    // form was on screen before submitting.
+    const honeypotRef = useRef<HTMLInputElement>(null)
+    const mountedAtRef = useRef<number | null>(null)
+    useEffect(() => {
+        mountedAtRef.current = Date.now()
+    }, [])
+
     // reCAPTCHA is only active when the editor enabled it AND the site key exists.
     // Without this the legend below would claim protection that isn't running.
     const recaptchaActive = Boolean(enableRecaptcha) && isRecaptchaConfigured
@@ -218,20 +241,31 @@ export function PayloadForm({
                                 form: formID,
                                 submissionData: dataToSend,
                                 recaptchaToken,
+                                hp: honeypotRef.current?.value ?? '',
+                                elapsedMs:
+                                    mountedAtRef.current === null
+                                        ? 0
+                                        : Date.now() - mountedAtRef.current,
                             }),
                             headers: { 'Content-Type': 'application/json' },
                             method: 'POST',
                         },
                     )
 
-                    const res = await req.json()
                     clearTimeout(loadingTimerID)
 
+                    // Map by status, never echo the server's text: it is English-only and
+                    // deliberately vague about which spam check fired.
                     if (req.status >= 400) {
                         setIsLoading(false)
                         setError({
-                            message: res.errors?.[0]?.message || dictionary.form.internalServerError,
-                            status: res.status,
+                            message:
+                                req.status === 403
+                                    ? dictionary.form.recaptchaFailed
+                                    : req.status === 429
+                                      ? dictionary.form.tooManyRequests
+                                      : dictionary.form.internalServerError,
+                            status: String(req.status),
                         })
                         return
                     }
@@ -261,6 +295,7 @@ export function PayloadForm({
             formID={formID as string | number}
             submitButtonLabel={submitButtonLabel}
             recaptchaActive={recaptchaActive}
+            honeypotRef={honeypotRef}
             variant={variant}
             surface={surface}
             onSubmit={onSubmit}
