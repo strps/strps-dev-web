@@ -9,6 +9,9 @@ marked throughout:
 - ✅ **Verified in code** — a file reference is given; treat as fact.
 - ❓ **Needs a decision** — the code cannot answer it; the site owner must supply it.
 
+> 📋 Decisions, implementation status, and open items now live in
+> [compliance-tracker.md](compliance-tracker.md). This file stays as the 2026-09-11 evidence snapshot.
+
 > ⚠️ Nothing here is legal advice. The existing published copy (see §7) is developer-written
 > boilerplate that has never been reviewed by a lawyer.
 

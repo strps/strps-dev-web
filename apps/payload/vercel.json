@@ -2,7 +2,7 @@
   "buildCommand": "pnpm payload migrate && pnpm build",
   "crons": [
     {
-      "path": "/api/payload-jobs/run",
+      "path": "/api/cron/daily",
       "schedule": "0 0 * * *"
     }
   ]

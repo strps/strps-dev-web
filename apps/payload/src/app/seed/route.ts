@@ -14,8 +14,8 @@ import {
 import { projectsData, projectsDataES } from './projects-data'
 import { servicesFormData, servicesFormDataES } from './forms-data'
 import { getServicesPageData, servicesPageDataES } from './services-data'
-import { docsData, docsDataES } from './docs-data'
-import { seedLocalizedDoc, seedLocalizedGlobal } from './localize'
+import { legalDocs } from './docs'
+import { seedLocalizedDoc, seedLocalizedGlobal, updateLocalizedDoc } from './localize'
 
 export async function POST(): Promise<Response> {
     const payload = await getPayload({ config })
@@ -34,18 +34,27 @@ export async function POST(): Promise<Response> {
         // so their ids have to exist before the globals are written.
         const docIdBySlug: Record<string, number | string> = {}
 
-        for (const [i, legalDoc] of docsData.entries()) {
-            const existing = await payload.find({
-                collection: 'docs',
-                where: { slug: { equals: legalDoc.slug } },
-                limit: 1,
-            })
+        // Unlike pages, existing legal docs are rewritten when the seeded `version`
+        // differs — that is how revised legal copy reaches an already-seeded database.
+        for (const { en, es } of legalDocs) {
+            const existing = (
+                await payload.find({
+                    collection: 'docs',
+                    where: { slug: { equals: en.slug } },
+                    limit: 1,
+                })
+            ).docs[0]
 
-            if (existing.docs.length > 0) {
-                docIdBySlug[legalDoc.slug!] = existing.docs[0]!.id
-            } else {
-                const created = await seedLocalizedDoc(payload, 'docs', legalDoc, docsDataES[i])
-                docIdBySlug[legalDoc.slug!] = created.id
+            if (!existing) {
+                const created = await seedLocalizedDoc(payload, 'docs', en, es)
+                docIdBySlug[en.slug!] = created.id
+                continue
+            }
+
+            docIdBySlug[en.slug!] = existing.id
+            if (existing.version !== en.version) {
+                await updateLocalizedDoc(payload, 'docs', existing.id, en, es)
+                payload.logger.info(`— ${en.slug}: ${existing.version ?? '—'} → ${en.version}.`)
             }
         }
         payload.logger.info('— Legal documents seeded.')

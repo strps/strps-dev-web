@@ -36,6 +36,29 @@ export const p = (text: string) => ({
     version: 1,
 })
 
+/** An inline link for `pl` — `url` is used as-is, so pass a locale-prefixed path for internal pages. */
+export const link = (text: string, url: string) => ({
+    type: 'link',
+    fields: { linkType: 'custom', url, newTab: !url.startsWith('/') },
+    children: [{ type: 'text', text, version: 1 }],
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 3,
+})
+
+/** A paragraph mixing plain text and `link(...)` nodes. */
+export const pl = (...parts: (string | ReturnType<typeof link>)[]) => ({
+    type: 'paragraph',
+    children: parts.map((part) =>
+        typeof part === 'string' ? { type: 'text', text: part, version: 1 } : part,
+    ),
+    direction: 'ltr',
+    format: '',
+    indent: 0,
+    version: 1,
+})
+
 export const ul = (items: string[]) => ({
     type: 'list',
     listType: 'bullet',

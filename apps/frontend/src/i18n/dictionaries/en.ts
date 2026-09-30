@@ -48,6 +48,9 @@ export const en = {
     and: 'and',
     termsOfService: 'Terms of Service',
     recaptchaNoticeSuffix: 'apply.',
+    privacyNoticePrefix: 'By sending this form, you agree to your details being used to reply to you, as described in the',
+    privacyNoticeLink: 'Privacy Policy',
+    privacyNoticeSuffix: '.',
   },
   blog: {
     heroTitlePrefix: 'Writing &',

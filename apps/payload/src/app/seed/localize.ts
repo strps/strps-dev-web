@@ -68,6 +68,20 @@ export async function seedLocalizedDoc<TSlug extends 'pages' | 'projects' | 'for
   return created
 }
 
+/** Overwrite an existing collection doc in `en`, then its Spanish translation at `locale: 'es'`. */
+export async function updateLocalizedDoc<TSlug extends 'docs'>(
+  payload: Payload,
+  collection: TSlug,
+  id: number | string,
+  enData: Json,
+  esPatch: Json,
+) {
+  const en = await payload.update({ collection, id, data: enData, depth: 0 })
+  const esData = deepMergeLocalized(stripManaged(en), esPatch)
+  await payload.update({ collection, id, data: esData, locale: 'es', depth: 0 })
+  return en
+}
+
 /** Update a global in `en`, then write its Spanish translation at `locale: 'es'`. */
 export async function seedLocalizedGlobal(
   payload: Payload,

@@ -50,6 +50,9 @@ export const es: Dictionary = {
     and: 'y los',
     termsOfService: 'Términos de Servicio',
     recaptchaNoticeSuffix: 'de Google.',
+    privacyNoticePrefix: 'Al enviar este formulario, aceptas que tus datos se usen para responderte, según se describe en la',
+    privacyNoticeLink: 'Política de Privacidad',
+    privacyNoticeSuffix: '.',
   },
   blog: {
     heroTitlePrefix: 'Escritos y',
