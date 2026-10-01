@@ -119,9 +119,9 @@ export const guardFormSubmission: CollectionBeforeOperationHook = async ({
 
   if (form.enableRecaptcha) {
     // Fail open when the key is absent: that is a deployment mistake, and
-    // breaking every form over it punishes visitors for it. The frontend
-    // hides the reCAPTCHA notice in this case, so nothing claims protection
-    // that isn't running.
+    // breaking every form over it punishes visitors for it. The form's virtual
+    // `recaptchaActive` is false in this case, so the frontend sends no token
+    // and shows no notice — nothing claims protection that isn't running.
     if (!isRecaptchaConfigured()) {
       payload.logger.warn(
         `Form ${formID} has reCAPTCHA enabled but RECAPTCHA_SECRET_KEY is not set — ` +

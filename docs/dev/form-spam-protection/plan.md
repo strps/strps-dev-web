@@ -1,6 +1,6 @@
 # Form Spam Protection — Implementation Plan
 
-> **Status:** In progress — Phases 1–2 done · **Owner:** César · **Created:** 2026-09-30
+> **Status:** In progress — Phases 1–4 done · **Owner:** César · **Created:** 2026-09-30
 >
 > **Goal:** close the gaps found in the reCAPTCHA audit (2026-09-30). Every Payload form
 > gets baseline bot protection that needs no third party, reCAPTCHA stays available per
@@ -136,13 +136,13 @@ submit in 10 minutes; a normal human submit still succeeds.
 
 ## 5. Phase 3 — Honest reCAPTCHA configuration
 
-- [ ] Add a virtual field on forms in `formOverrides.fields`, next to `enableRecaptcha`:
+- [x] Add a virtual field on forms in `formOverrides.fields`, next to `enableRecaptcha`:
       `name: 'recaptchaActive'`, `type: 'checkbox'`, `virtual: true`,
       `admin: { hidden: true }`, `hooks.afterRead: [({ siblingData }) => Boolean(siblingData.enableRecaptcha) && isRecaptchaConfigured()]`.
       Virtual → no column, no migration.
-- [ ] Add `recaptchaActive` to the `FormDetailFields` fragment in
+- [x] Add `recaptchaActive` to the `FormDetailFields` fragment in
       [page-blocks.ts](../../../apps/frontend/src/lib/queries/page-blocks.ts).
-- [ ] In `PayloadForm.tsx`, replace
+- [x] In `PayloadForm.tsx`, replace
       `Boolean(enableRecaptcha) && isRecaptchaConfigured` with the server's `recaptchaActive`:
     - `recaptchaActive` and site key set → current behaviour (token + notice).
     - `recaptchaActive` but site key **missing** → the server will reject every submit, so
@@ -150,7 +150,7 @@ submit in 10 minutes; a normal human submit still succeeds.
       missing `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`. Broken is shown, not hidden (finding #3).
     - `recaptchaActive` false → no provider, no notice, no token, even if the site key is
       set (finding #2).
-- [ ] Remove the now-wrong comment in the hook ("The frontend hides the reCAPTCHA notice in
+- [x] Remove the now-wrong comment in the hook ("The frontend hides the reCAPTCHA notice in
       this case") or rewrite it to describe the new flag.
 
 > **Checkpoint (recommended):** regenerate types (`generate:types`) after this phase — the
@@ -170,10 +170,10 @@ submit in 10 minutes; a normal human submit still succeeds.
 
 ## 6. Phase 4 — reCAPTCHA polish
 
-- [ ] Lazy-load the Google script (finding #7): mount `GoogleReCaptchaProvider` only after the
+- [x] Lazy-load the Google script (finding #7): mount `GoogleReCaptchaProvider` only after the
       first `focusin` inside the form. Submit waits for `executeRecaptcha` to be ready; the
       existing "no `executeRecaptcha` → error" path still covers a blocked script.
-- [ ] Hide the floating badge (finding #8) in the website `globals.css`:
+- [x] Hide the floating badge (finding #8) in the website `globals.css`:
       `.grecaptcha-badge { visibility: hidden; }`. The text notice under the form already
       meets Google's disclosure requirement.
 

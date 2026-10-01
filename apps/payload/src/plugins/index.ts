@@ -100,6 +100,22 @@ export const plugins: Plugin[] = [
           },
         })
 
+        // What the frontend follows instead of its own key check: reCAPTCHA only runs when
+        // the box is ticked AND this server can verify tokens. Virtual, so no column.
+        fields.splice(1, 0, {
+          name: 'recaptchaActive',
+          type: 'checkbox',
+          virtual: true,
+          admin: {
+            hidden: true,
+          },
+          hooks: {
+            afterRead: [
+              ({ siblingData }) => Boolean(siblingData?.enableRecaptcha) && isRecaptchaConfigured(),
+            ],
+          },
+        })
+
         return fields
       },
     },

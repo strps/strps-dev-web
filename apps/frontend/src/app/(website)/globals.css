@@ -195,6 +195,15 @@
   }
 }
 
+/*
+ * reCAPTCHA v3's floating badge. Google allows hiding it when the text notice
+ * under each protected form (PayloadForm) is shown instead, which it is.
+ * `visibility` rather than `display:none`, which breaks the v3 widget.
+ */
+.grecaptcha-badge {
+  visibility: hidden;
+}
+
 @utility shadow-lv1 {
   box-shadow:
     4px 4px 7px var(--shadow-outer),

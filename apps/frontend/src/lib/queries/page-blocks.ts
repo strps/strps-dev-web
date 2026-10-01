@@ -489,6 +489,7 @@ export const PAGE_BLOCK_FIELDS = gql`
   fragment FormDetailFields on Form {
     id
     enableRecaptcha
+    recaptchaActive
     title
     fields {
       ... on Checkbox {
