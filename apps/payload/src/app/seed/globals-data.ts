@@ -61,7 +61,7 @@ export const headerData: HeaderSeed = {
  * (see `route.ts`). The Cookie Policy is deliberately left out — `navItems` caps
  * at 6 rows, and it is reachable from `/docs` and from within the privacy policy.
  */
-export const getFooterData = (docIds: { privacy: number | string; terms: number | string }): FooterSeed => ({
+export const getFooterData = (docIds: { privacy: number; terms: number }): FooterSeed => ({
     navItems: [
         {
             link: {

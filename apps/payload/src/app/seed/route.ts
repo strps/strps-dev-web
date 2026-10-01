@@ -32,7 +32,7 @@ export async function POST(): Promise<Response> {
 
         // Legal documents run first: the footer links two of them by reference,
         // so their ids have to exist before the globals are written.
-        const docIdBySlug: Record<string, number | string> = {}
+        const docIdBySlug: Record<string, number> = {}
 
         // Unlike pages, existing legal docs are rewritten when the seeded `version`
         // differs — that is how revised legal copy reaches an already-seeded database.
