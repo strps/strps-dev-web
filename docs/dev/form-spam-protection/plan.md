@@ -1,6 +1,6 @@
 # Form Spam Protection — Implementation Plan
 
-> **Status:** In progress — Phases 1–4 done · **Owner:** César · **Created:** 2026-09-30
+> **Status:** In progress — Phases 1–5 done; final verification pending · **Owner:** César · **Created:** 2026-09-30
 >
 > **Goal:** close the gaps found in the reCAPTCHA audit (2026-09-30). Every Payload form
 > gets baseline bot protection that needs no third party, reCAPTCHA stays available per
@@ -181,13 +181,13 @@ submit in 10 minutes; a normal human submit still succeeds.
 
 ## 7. Phase 5 — Docs
 
-- [ ] [deployment.md](../../deployment.md): fix the "if either is missing, forms still work"
+- [x] [deployment.md](../../deployment.md): fix the "if either is missing, forms still work"
       text using the matrix in §5; add the Phase 1 env vars.
-- [ ] Both `.env.example` files: same fix to the reCAPTCHA comments.
-- [ ] [apps/payload/README.md](../../../apps/payload/README.md): drop "all forms", move
+- [x] Both `.env.example` files: same fix to the reCAPTCHA comments.
+- [x] [apps/payload/README.md](../../../apps/payload/README.md): drop "all forms", move
       `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` to the frontend section, describe the baseline checks.
-- [ ] [COMPONENTS.md](../../COMPONENTS.md): tick "Form submission handling" and "Error states".
-- [ ] [compliance-tracker.md](../legal/compliance-tracker.md): note the honeypot/time trap and
+- [x] [COMPONENTS.md](../../COMPONENTS.md): tick "Form submission handling" and "Error states".
+- [x] [compliance-tracker.md](../legal/compliance-tracker.md): note the honeypot/time trap and
       that no IPs are stored for rate limiting. No privacy-policy change needed.
 
 **Turnstile later:** if spam gets through with reCAPTCHA on, the swap touches only
@@ -198,7 +198,10 @@ the env var names and the processor line in the privacy policy. Nothing in Phase
 
 ## 8. Final verification (end of work)
 
-- [ ] `generate:types`, `tsc` and lint in both apps.
+- [x] `generate:types`, `tsc` and lint in both apps (2026-10-01). Clean for every file this
+      plan touched. Remaining errors are outside it: `sharp` type in `payload.config.ts`,
+      `particle-stage/shapes.ts` and the `payload` augmentation in the frontend `tsc`, and older
+      `any`s in frontend lint. Payload's `pnpm lint` (`next lint`) is broken; `eslint src` is clean.
 - [ ] Manual, reCAPTCHA off: normal submit OK; honeypot filled → 400; submit under 3 s → 400;
       burst past the cap → 429 with the localized message in EN and ES.
 - [ ] Manual, reCAPTCHA on with test keys: normal submit OK, score logged at `debug`; script

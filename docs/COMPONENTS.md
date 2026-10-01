@@ -282,8 +282,8 @@ Each block must include:
 - **Features**:
   - [x] Client-side validation
   - [x] reCAPTCHA integration
-  - [ ] Form submission handling
-  - [ ] Error states
+  - [x] Form submission handling
+  - [x] Error states
   - [ ] Success states
 - **Fields**:
   - [ ] Text/Textarea

@@ -26,10 +26,14 @@ RESEND_DEFAULT_FROM_EMAIL=noreply@yourdomain.com
 
 # reCAPTCHA v3 (optional)
 # Site key belongs to the frontend app, secret key to the payload app.
-# If either is missing, forms still work but run without reCAPTCHA, and the
-# "protected by reCAPTCHA" notice is hidden rather than claiming protection
-# that isn't running. The Payload admin flags the misconfiguration on the
-# form's "Enable Recaptcha" checkbox.
+# reCAPTCHA runs only on forms with "Enable Recaptcha" ticked AND the secret set;
+# Payload decides and the frontend follows. With the box ticked:
+#   site key + secret  -> token sent and verified, notice shown
+#   secret missing     -> no token, no notice; baseline checks only, server logs
+#                         a warning, the admin flags it on the checkbox
+#   site key missing   -> the form is disabled with an error (the server would
+#                         reject every submit) and the browser console names the key
+# Unticked forms skip reCAPTCHA whatever the keys; baseline checks still apply.
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
 RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
 # Minimum v3 score to accept, 0.0-1.0. Defaults to 0.5.
