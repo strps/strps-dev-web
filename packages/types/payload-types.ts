@@ -1387,6 +1387,7 @@ export interface Form {
    * ⚠ reCAPTCHA is not configured on this server (RECAPTCHA_SECRET_KEY is missing). This setting will have no effect and no reCAPTCHA notice will be shown to visitors.
    */
   enableRecaptcha?: boolean | null;
+  recaptchaActive?: boolean | null;
   title: string;
   fields?:
     | (
@@ -2660,6 +2661,7 @@ export interface RedirectsSelect<T extends boolean = true> {
  */
 export interface FormsSelect<T extends boolean = true> {
   enableRecaptcha?: T;
+  recaptchaActive?: T;
   title?: T;
   fields?:
     | T
