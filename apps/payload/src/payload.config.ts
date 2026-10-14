@@ -3,7 +3,7 @@ import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import sharp from 'sharp'
 import path from 'path'
-import { buildConfig } from 'payload'
+import { buildConfig, defaultLoggerOptions } from 'payload'
 import { fileURLToPath } from 'url'
 import { Users } from './collections/Users'
 import { plugins } from './plugins'
@@ -97,6 +97,12 @@ export default buildConfig({
       clientUploads: true,
     }),
   ],
+  // Payload's default logger is fixed at `info`; this keeps its pretty output but lets
+  // PAYLOAD_LOG_LEVEL lower it (e.g. `debug` to see reCAPTCHA scores locally).
+  logger: {
+    options: { level: process.env.PAYLOAD_LOG_LEVEL || 'info' },
+    destination: defaultLoggerOptions,
+  },
   secret: process.env.PAYLOAD_SECRET,
   sharp,
   typescript: {

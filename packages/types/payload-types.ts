@@ -124,6 +124,7 @@ export interface Config {
   };
   jobs: {
     tasks: {
+      purgeFormSubmissions: TaskPurgeFormSubmissions;
       schedulePublish: TaskSchedulePublish;
       inline: {
         input: unknown;
@@ -1386,6 +1387,7 @@ export interface Form {
    * ⚠ reCAPTCHA is not configured on this server (RECAPTCHA_SECRET_KEY is missing). This setting will have no effect and no reCAPTCHA notice will be shown to visitors.
    */
   enableRecaptcha?: boolean | null;
+  recaptchaActive?: boolean | null;
   title: string;
   fields?:
     | (
@@ -1718,7 +1720,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'schedulePublish';
+        taskSlug: 'inline' | 'purgeFormSubmissions' | 'schedulePublish';
         taskID: string;
         input?:
           | {
@@ -1751,7 +1753,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'schedulePublish') | null;
+  taskSlug?: ('inline' | 'purgeFormSubmissions' | 'schedulePublish') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -2659,6 +2661,7 @@ export interface RedirectsSelect<T extends boolean = true> {
  */
 export interface FormsSelect<T extends boolean = true> {
   enableRecaptcha?: T;
+  recaptchaActive?: T;
   title?: T;
   fields?:
     | T
@@ -3086,6 +3089,17 @@ export interface ProjectsPageSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TaskPurgeFormSubmissions".
+ */
+export interface TaskPurgeFormSubmissions {
+  input?: unknown;
+  output: {
+    deleted: number;
+    cutoff: string;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

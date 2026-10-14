@@ -38,7 +38,7 @@ A modern, performance-optimized website built with Next.js and PayloadCMS. The s
 The form block includes:
 
 - Client-side validation using React Hook Form
-- Server-side reCAPTCHA verification to prevent spam
+- Server-side spam checks on every form (honeypot, time trap, rate limit), plus optional reCAPTCHA v3 per form
 - Customizable confirmation messages and redirects
 - Multiple introduction styles (rich text, title/text, or none)
 - Form field customization in the admin panel
@@ -93,9 +93,18 @@ RESEND_API_KEY=your_resend_api_key
 RESEND_DEFAULT_FROM_ADDRESS=site@example.com
 RESEND_DEFAULT_FROM_NAME=SITE_NAME
 
-# reCAPTCHA integration
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
+# Optional. reCAPTCHA v3 secret key and minimum score
+RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key
+RECAPTCHA_MIN_SCORE=0.5
+
+# Optional. Form spam checks, defaults shown
+FORM_MIN_FILL_MS=3000
+FORM_RATE_LIMIT_MAX=20
+FORM_RATE_LIMIT_WINDOW_MIN=10
 ```
+
+The reCAPTCHA **site key** (`NEXT_PUBLIC_RECAPTCHA_SITE_KEY`) belongs to the frontend app
+(`apps/frontend/.env`), not this one. See `.env.example` for what each variable does.
 
 ### Development
 
@@ -121,11 +130,21 @@ npm start
 
 ### Form Security
 
-All forms implement server-side reCAPTCHA verification to protect against spam and abuse:
+Every submission goes through one `beforeOperation` hook,
+[guardFormSubmission.ts](src/hooks/guardFormSubmission.ts), cheapest check first:
 
-1. Client-side: Token generation when user submits a form
-2. Server-side: Token verification before processing form submission
-3. Configuration through PayloadCMS admin panel
+1. **Form id**: missing or unknown → 400.
+2. **Honeypot**: an off-screen `website` input; any value → 400.
+3. **Time trap**: submitted under `FORM_MIN_FILL_MS` (default 3 s) after the form mounted → 400.
+4. **Rate limit**: more than `FORM_RATE_LIMIT_MAX` submissions per form in
+   `FORM_RATE_LIMIT_WINDOW_MIN` minutes (default 20 per 10) → 429. A global cap per form,
+   counted from stored submissions, so it works on serverless and stores no IPs.
+5. **reCAPTCHA v3**: only on forms with "Enable Recaptcha" ticked *and*
+   `RECAPTCHA_SECRET_KEY` set. Missing or failed token (score, action or hostname) → 403.
+
+Checks 1–4 apply to every form. Payload exposes the result of check 5's condition as the
+virtual `recaptchaActive` field, and the frontend follows it: it only loads Google's script
+(on first focus) and shows the reCAPTCHA notice when the server will actually verify.
 
 ### Authentication Security
 
@@ -141,7 +160,7 @@ All forms implement server-side reCAPTCHA verification to protect against spam a
 - Vercel account
 - Neon (PostgreSQL) database
 - Vercel Blob Storage for media files
-- reCAPTCHA site key and secret key
+- reCAPTCHA v3 site key and secret key (optional)
 
 ### Deployment Steps
 
