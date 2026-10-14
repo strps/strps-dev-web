@@ -50,6 +50,9 @@ export const es: Dictionary = {
     and: 'y los',
     termsOfService: 'Términos de Servicio',
     recaptchaNoticeSuffix: 'de Google.',
+    privacyNoticePrefix: 'Al enviar este formulario, aceptas que tus datos se usen para responderte, según se describe en la',
+    privacyNoticeLink: 'Política de Privacidad',
+    privacyNoticeSuffix: '.',
   },
   blog: {
     heroTitlePrefix: 'Escritos y',
@@ -126,6 +129,17 @@ export const es: Dictionary = {
     description: 'La página que buscas no existe o fue movida.',
     backHome: 'Volver al inicio',
   },
+  docs: {
+    eyebrow: 'Legal',
+    heroTitlePrefix: 'Políticas y',
+    heroTitleHighlight: 'Términos',
+    heroSubtitle: 'Los documentos legales que rigen el uso de este sitio y sus servicios.',
+    effectiveDate: 'Fecha de vigencia',
+    version: 'Versión',
+    backToIndex: 'Todos los documentos',
+    none: 'Aún no hay documentos publicados.',
+    countLabel: (total: number) => (total === 1 ? '1 documento' : `${total} documentos`),
+  },
   seo: {
     defaultTitle: 'Cesar Jerez | Desarrollador Full Stack',
     defaultDescription: 'Portafolio de Cesar Jerez, desarrollador multidisciplinario en Costa Rica.',
@@ -136,5 +150,7 @@ export const es: Dictionary = {
     labTitle: 'Galería | Cesar Jerez',
     labDescription:
       'Una pequeña galería de proyectos personales, experimentos y arte — la mayoría de las piezas viven en su propia página.',
+    docsTitle: 'Legal | Cesar Jerez',
+    docsDescription: 'Política de privacidad, términos de servicio y otros documentos legales de este sitio.',
   },
 }

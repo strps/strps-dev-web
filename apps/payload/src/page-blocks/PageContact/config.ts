@@ -59,7 +59,8 @@ export const PageContact: Block = {
             },
         },
         linkGroup({
-            appearances: ['default', 'outline'],
+            appearances: ['default'],
+            variants: ['default', 'outline'],
         }),
         SectionConfig,
     ],

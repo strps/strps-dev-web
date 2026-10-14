@@ -5,7 +5,7 @@ import { getHomePageData, homePageDataES } from './home-data'
 import { getAboutPageData, aboutPageDataES } from './about-data'
 import {
     headerData,
-    footerData,
+    getFooterData,
     copyrightData,
     headerDataES,
     footerDataES,
@@ -14,7 +14,8 @@ import {
 import { projectsData, projectsDataES } from './projects-data'
 import { servicesFormData, servicesFormDataES } from './forms-data'
 import { getServicesPageData, servicesPageDataES } from './services-data'
-import { seedLocalizedDoc, seedLocalizedGlobal } from './localize'
+import { legalDocs } from './docs'
+import { seedLocalizedDoc, seedLocalizedGlobal, updateLocalizedDoc } from './localize'
 
 export async function POST(): Promise<Response> {
     const payload = await getPayload({ config })
@@ -28,6 +29,40 @@ export async function POST(): Promise<Response> {
 
     try {
         payload.logger.info('— Seeding database (en + es)...')
+
+        // Legal documents run first: the footer links two of them by reference,
+        // so their ids have to exist before the globals are written.
+        const docIdBySlug: Record<string, number | string> = {}
+
+        // Unlike pages, existing legal docs are rewritten when the seeded `version`
+        // differs — that is how revised legal copy reaches an already-seeded database.
+        for (const { en, es } of legalDocs) {
+            const existing = (
+                await payload.find({
+                    collection: 'docs',
+                    where: { slug: { equals: en.slug } },
+                    limit: 1,
+                })
+            ).docs[0]
+
+            if (!existing) {
+                const created = await seedLocalizedDoc(payload, 'docs', en, es)
+                docIdBySlug[en.slug!] = created.id
+                continue
+            }
+
+            docIdBySlug[en.slug!] = existing.id
+            if (existing.version !== en.version) {
+                await updateLocalizedDoc(payload, 'docs', existing.id, en, es)
+                payload.logger.info(`— ${en.slug}: ${existing.version ?? '—'} → ${en.version}.`)
+            }
+        }
+        payload.logger.info('— Legal documents seeded.')
+
+        const footerData = getFooterData({
+            privacy: docIdBySlug['privacy-policy']!,
+            terms: docIdBySlug['terms-of-service']!,
+        })
 
         // Seed globals — en write, then es translation onto the same doc.
         await Promise.all([

@@ -105,7 +105,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
                         type="custom"
                         url={proofUrl}
                         label={proofLabel}
-                        appearance="link"
+                        appearance="default"
+                        variant="link"
                         className="h-auto w-fit gap-1 p-0 text-sm font-medium"
                     >
                         <ArrowUpRight className="h-3.5 w-3.5" />

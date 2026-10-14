@@ -294,6 +294,25 @@ export function PayloadForm({
                     ) : (
                         formInner
                     ))}
+                {/* Point-of-collection privacy notice (GDPR Art. 13 / CR Ley 8968). The slug is
+                    fixed by the legal-docs seed; see docs/dev/legal/compliance-tracker.md. */}
+                {!hasSubmitted && (
+                    <p
+                        className={cn(
+                            'text-xs text-muted-foreground mt-6',
+                            variant !== 'mockup' && 'text-center',
+                        )}
+                    >
+                        {dictionary.form.privacyNoticePrefix}{' '}
+                        <a
+                            className="underline hover:text-primary"
+                            href={localizedHref(locale, '/docs/privacy-policy')}
+                        >
+                            {dictionary.form.privacyNoticeLink}
+                        </a>
+                        {dictionary.form.privacyNoticeSuffix}
+                    </p>
+                )}
                 {recaptchaActive && (
                     <p
                         className={cn(

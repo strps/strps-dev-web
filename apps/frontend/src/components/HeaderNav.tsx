@@ -18,7 +18,7 @@ import type { Locale } from '@/i18n/config';
 const GLASS_AT = 8;
 
 export interface HeaderClientProps {
-    navItems: { name: string; href?: string; appearance?: string }[];
+    navItems: { name: string; href?: string; appearance?: string; variant?: string }[];
     overlay?: boolean;
     /** Set false to keep the header transparent at every scroll offset. */
     background?: boolean;
@@ -100,7 +100,7 @@ export const HeaderNav: React.FC<HeaderClientProps> = ({
                 {/* Desktop Nav */}
                 <div className="hidden md:flex items-center gap-7">
                     {navItems.map((item) =>
-                        item.appearance === 'outlineGhost' ? (
+                        item.variant === 'outlineGhost' ? (
                             <Button
                                 key={item.name}
                                 asChild

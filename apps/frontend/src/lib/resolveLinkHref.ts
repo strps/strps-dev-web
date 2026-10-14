@@ -1,12 +1,12 @@
-import type { Page, Post } from '@strps-website/types'
+import type { Doc, Page, Post } from '@strps-website/types'
 import { localizedHref, type Locale } from '@/i18n/config'
 
 export type ResolvableLink = {
   type?: 'custom' | 'reference' | null
   url?: string | null
   reference?: {
-    relationTo: 'pages' | 'posts' | 'projects'
-    value: Page | Post | string | number
+    relationTo: 'pages' | 'posts' | 'projects' | 'docs'
+    value: Page | Post | Doc | string | number
   } | null
 }
 

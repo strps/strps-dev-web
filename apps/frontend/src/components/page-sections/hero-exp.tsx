@@ -92,23 +92,15 @@ const StatementHero: React.FC<HeroProps> = ({
             )}
 
             <div className="mt-10 flex flex-wrap gap-4">
-                {heroLinks?.map(({ link }, i) => {
-                    if (link.appearance === 'send' || link.appearance === 'github' || link.appearance === 'linkedin') {
-                        return (
-                            <SVGButton variant={link.appearance} href={link.url!} key={i}>
-                                {link.label}
-                            </SVGButton>
-                        );
-                    }
-                    return (
-                        <CMSLink
-                            key={i}
-                            {...link}
-                            appearance={link.appearance ?? 'solid'}
-                            locale={locale}
-                        />
-                    );
-                })}
+                {heroLinks?.map(({ link }, i) => (
+                    <CMSLink
+                        key={i}
+                        {...link}
+                        appearance={link.appearance ?? 'default'}
+                        variant={link.variant ?? 'solid'}
+                        locale={locale}
+                    />
+                ))}
             </div>
         </RevealGroup>
     );
@@ -169,24 +161,15 @@ const PortraitHero: React.FC<HeroProps> = ({
                         <Mail className="mr-2 h-4 w-4" /> <span>{dictionary.common.contactMe}</span>
                     </SVGButton>
                 )}
-                {heroLinks?.map(({ link }, i) => {
-                    if (link.appearance === 'send' || link.appearance === 'github' || link.appearance === 'linkedin') {
-                        return (
-                            <SVGButton variant={link.appearance} href={link.url!} key={i}>
-                                {link.label}
-                            </SVGButton>
-                        );
-                    }
-                    return (
-                        <CMSLink
-                            key={i}
-                            {...link}
-                            appearance={link.appearance ?? undefined}
-                            size="lg"
-                            locale={locale}
-                        />
-                    );
-                })}
+                {heroLinks?.map(({ link }, i) => (
+                    <CMSLink
+                        key={i}
+                        {...link}
+                        appearance={link.appearance ?? 'default'}
+                        size="lg"
+                        locale={locale}
+                    />
+                ))}
             </div>
         </div>
     );

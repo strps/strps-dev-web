@@ -1,7 +1,7 @@
 # Home Page Makeover — Handoff
 
 > **For:** whoever picks this up next (another chat, another model, future me).
-> **Full spec:** [home-page-makeover.md](home-page-makeover.md) — read that first, this doc is just
+> **Full spec:** [plan.md](plan.md) — read that first, this doc is just
 > "where things stand and what to do next." All section numbers below (`§x`) refer to it.
 > **Branch:** `makeover`. **As of:** 2026-07-23, Phases 0–5 of the §7 implementation plan are done.
 > Phase 0–4 is committed (`6a31c19` and earlier); Phase 5 is uncommitted (see suggested commit message

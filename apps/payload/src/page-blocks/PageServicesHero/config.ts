@@ -60,7 +60,9 @@ export const PageServicesHero: Block = {
             ],
         },
         linkGroup({
-            appearances: ['default', 'outline', 'send', 'github', 'linkedin'],
+            appearances: ['default', 'svgButton'],
+            variants: ['default', 'outline'],
+            svgVariants: ['default', 'send', 'github', 'linkedin'],
         }),
         {
             name: 'highlights',

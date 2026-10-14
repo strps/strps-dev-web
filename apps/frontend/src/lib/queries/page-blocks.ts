@@ -40,6 +40,8 @@ export const PAGE_BLOCK_FIELDS = gql`
         url
         label
         appearance
+        variant
+        svgVariant
         reference {
           relationTo
           value {
@@ -78,6 +80,8 @@ export const PAGE_BLOCK_FIELDS = gql`
         url
         label
         appearance
+        variant
+        svgVariant
         reference {
           relationTo
           value {
@@ -121,6 +125,8 @@ export const PAGE_BLOCK_FIELDS = gql`
       url
       label
       appearance
+      variant
+      svgVariant
       reference {
         relationTo
         value {
@@ -165,6 +171,8 @@ export const PAGE_BLOCK_FIELDS = gql`
       url
       label
       appearance
+      variant
+      svgVariant
       reference {
         relationTo
         value {
@@ -246,6 +254,7 @@ export const PAGE_BLOCK_FIELDS = gql`
         url
         label
         appearance
+        variant
         reference {
           relationTo
           value {
@@ -355,6 +364,8 @@ export const PAGE_BLOCK_FIELDS = gql`
       url
       label
       appearance
+      variant
+      svgVariant
       reference {
         relationTo
         value {
@@ -374,6 +385,8 @@ export const PAGE_BLOCK_FIELDS = gql`
         url
         label
         appearance
+        variant
+        svgVariant
         reference {
           relationTo
           value {
@@ -399,6 +412,8 @@ export const PAGE_BLOCK_FIELDS = gql`
       url
       label
       appearance
+      variant
+      svgVariant
       reference {
         relationTo
         value {
@@ -418,6 +433,8 @@ export const PAGE_BLOCK_FIELDS = gql`
         url
         label
         appearance
+        variant
+        svgVariant
         reference {
           relationTo
           value {
@@ -452,6 +469,8 @@ export const PAGE_BLOCK_FIELDS = gql`
       url
       label
       appearance
+      variant
+      svgVariant
       reference {
         relationTo
         value {

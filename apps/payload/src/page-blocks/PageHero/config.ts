@@ -127,7 +127,9 @@ export const PageHero: Block = {
             label: 'Contact Email',
         },
         linkGroup({
-            appearances: ['default', 'outline', 'solid', 'outlineGhost', 'send', 'github', 'linkedin'],
+            appearances: ['default', 'svgButton'],
+            variants: ['default', 'outline', 'solid', 'outlineGhost'],
+            svgVariants: ['default', 'send', 'github', 'linkedin', 'solid', 'outlineGhost'],
         }),
         {
             name: 'backgroundImage',

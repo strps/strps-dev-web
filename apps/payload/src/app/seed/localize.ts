@@ -56,7 +56,7 @@ const stripManaged = (doc: Json): Json => {
 }
 
 /** Create a collection doc in `en`, then write its Spanish translation at `locale: 'es'`. */
-export async function seedLocalizedDoc<TSlug extends 'pages' | 'projects' | 'forms'>(
+export async function seedLocalizedDoc<TSlug extends 'pages' | 'projects' | 'forms' | 'docs'>(
   payload: Payload,
   collection: TSlug,
   enData: Json,
@@ -66,6 +66,20 @@ export async function seedLocalizedDoc<TSlug extends 'pages' | 'projects' | 'for
   const esData = deepMergeLocalized(stripManaged(created), esPatch)
   await payload.update({ collection, id: created.id, data: esData, locale: 'es', depth: 0 })
   return created
+}
+
+/** Overwrite an existing collection doc in `en`, then its Spanish translation at `locale: 'es'`. */
+export async function updateLocalizedDoc<TSlug extends 'docs'>(
+  payload: Payload,
+  collection: TSlug,
+  id: number | string,
+  enData: Json,
+  esPatch: Json,
+) {
+  const en = await payload.update({ collection, id, data: enData, depth: 0 })
+  const esData = deepMergeLocalized(stripManaged(en), esPatch)
+  await payload.update({ collection, id, data: esData, locale: 'es', depth: 0 })
+  return en
 }
 
 /** Update a global in `en`, then write its Spanish translation at `locale: 'es'`. */

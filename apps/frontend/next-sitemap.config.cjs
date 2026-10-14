@@ -11,6 +11,7 @@ module.exports = {
     '/pages-sitemap.xml',
     '/posts-sitemap.xml',
     '/projects-sitemap.xml',
+    '/docs-sitemap.xml',
     '/*',
   ],
   robotsTxtOptions: {
@@ -18,6 +19,7 @@ module.exports = {
       `${SITE_URL}/pages-sitemap.xml`,
       `${SITE_URL}/posts-sitemap.xml`,
       `${SITE_URL}/projects-sitemap.xml`,
+      `${SITE_URL}/docs-sitemap.xml`,
     ],
   },
 }

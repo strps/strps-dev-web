@@ -3,7 +3,6 @@ import Section from '@/components/page-sections/section';
 import { CMSLink } from '@/components/cms-link';
 import type { PageServicesHeroBlock, Media } from '@strps-website/types';
 import type { Locale } from '@/i18n/config';
-import SVGButton from '../SVGButton';
 
 type ServicesHeroProps = Omit<PageServicesHeroBlock, 'links'> & {
     servicesHeroLinks?: PageServicesHeroBlock['links'];
@@ -70,24 +69,15 @@ const ServicesHeroSection: React.FC<ServicesHeroProps> = ({
                 )}
 
                 <div className="flex flex-wrap gap-4 pt-2">
-                    {servicesHeroLinks?.map(({ link }, i) => {
-                        if (link.appearance === 'send' || link.appearance === 'github' || link.appearance === 'linkedin') {
-                            return (
-                                <SVGButton variant={link.appearance} href={link.url!} key={i}>
-                                    {link.label}
-                                </SVGButton>
-                            )
-                        }
-                        return (
-                            <CMSLink
-                                key={i}
-                                {...link}
-                                appearance={link.appearance ?? undefined}
-                                size="lg"
-                                locale={locale}
-                            />
-                        )
-                    })}
+                    {servicesHeroLinks?.map(({ link }, i) => (
+                        <CMSLink
+                            key={i}
+                            {...link}
+                            appearance={link.appearance ?? 'default'}
+                            size="lg"
+                            locale={locale}
+                        />
+                    ))}
                 </div>
             </div>
 

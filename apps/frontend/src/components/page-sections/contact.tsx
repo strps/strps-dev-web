@@ -81,7 +81,7 @@ const ContactSection: React.FC<ContactProps> = ({
                             </Button>
                         )}
                         {contactLinks?.map(({ link }, i) => (
-                            <CMSLink key={i} {...link} appearance={link.appearance ?? undefined} locale={locale} />
+                            <CMSLink key={i} {...link} appearance={link.appearance ?? 'default'} locale={locale} />
                         ))}
                     </Reveal>
                 )}
