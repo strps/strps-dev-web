@@ -47,6 +47,10 @@ FORM_MIN_FILL_MS=3000
 FORM_RATE_LIMIT_MAX=20
 FORM_RATE_LIMIT_WINDOW_MIN=10
 
+# Payload log level (optional, payload app). Defaults to info; debug shows
+# reCAPTCHA scores for accepted submissions.
+PAYLOAD_LOG_LEVEL=info
+
 # Optional
 NODE_ENV=production
 PAYLOAD_PUBLIC_SERVER_URL=https://your-production-url.com
