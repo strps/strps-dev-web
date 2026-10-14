@@ -322,11 +322,13 @@ export function PayloadForm({
                         setIsLoading(false)
                         setError({
                             message:
-                                req.status === 403
-                                    ? dictionary.form.recaptchaFailed
-                                    : req.status === 429
-                                      ? dictionary.form.tooManyRequests
-                                      : dictionary.form.internalServerError,
+                                req.status === 400
+                                    ? dictionary.form.submissionRejected
+                                    : req.status === 403
+                                      ? dictionary.form.recaptchaFailed
+                                      : req.status === 429
+                                        ? dictionary.form.tooManyRequests
+                                        : dictionary.form.internalServerError,
                             status: String(req.status),
                         })
                         return
@@ -386,7 +388,11 @@ export function PayloadForm({
                 {isLoading && !hasSubmitted && <p>{dictionary.form.loading}</p>}
                 {displayedError && (
                     <div className="bg-destructive/10 text-destructive p-4 rounded-md mb-6">
-                        {`${displayedError.status || '500'}: ${displayedError.message || ''}`}
+                        {/* Client-side errors (blocked script, missing site key, network) carry
+                            no status; don't invent one. */}
+                        {displayedError.status
+                            ? `${displayedError.status}: ${displayedError.message || ''}`
+                            : displayedError.message}
                     </div>
                 )}
                 {!hasSubmitted && formInner}

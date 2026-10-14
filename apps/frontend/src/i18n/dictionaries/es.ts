@@ -45,6 +45,7 @@ export const es: Dictionary = {
     recaptchaFailed: 'La verificación de reCAPTCHA falló',
     internalServerError: 'Error interno del servidor',
     tooManyRequests: 'Hay demasiados envíos en este momento. Inténtalo de nuevo en unos minutos.',
+    submissionRejected: 'No pudimos enviar tu mensaje. Espera un momento e inténtalo de nuevo.',
     somethingWentWrong: 'Algo salió mal.',
     recaptchaNoticePrefix: 'Este sitio está protegido por reCAPTCHA y se aplican la',
     privacyPolicy: 'Política de Privacidad',
