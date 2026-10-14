@@ -66,6 +66,16 @@ footer; the Cookie Policy and Legal Notice are linked from the other documents a
 - Manual run: queue a `purgeFormSubmissions` job from the admin's Jobs collection, or call
   `/api/cron/daily` while logged in.
 
+### Form spam checks — no extra personal data
+
+- Every form runs a honeypot and a time trap
+  ([guardFormSubmission.ts](../../../apps/payload/src/hooks/guardFormSubmission.ts)). Neither
+  value is stored: the hook strips them (and the reCAPTCHA token) before the create.
+- Rate limiting is a global cap per form, counted from stored submissions. **No IP addresses
+  (or hashes) are collected or stored**, so nothing changes in the privacy policy or retention.
+- reCAPTCHA stays opt-in per form. Google's script now loads only after the visitor focuses
+  the form, and the floating badge is hidden; the notice under the form remains the disclosure.
+
 ### Seed keeps legal copy current
 
 The seed ([route.ts](../../../apps/payload/src/app/seed/route.ts)) creates missing legal docs
