@@ -1,6 +1,6 @@
 # Form Spam Protection — Implementation Plan
 
-> **Status:** In progress — Phases 1–5 done; final verification pending · **Owner:** César · **Created:** 2026-09-30
+> **Status:** Done — Phases 1–5 and final verification complete (2026-10-14) · **Owner:** César · **Created:** 2026-09-30
 >
 > **Goal:** close the gaps found in the reCAPTCHA audit (2026-09-30). Every Payload form
 > gets baseline bot protection that needs no third party, reCAPTCHA stays available per
@@ -125,6 +125,7 @@ submit in 10 minutes; a normal human submit still succeeds.
 
       | Status | Message key |
       | --- | --- |
+      | 400 | `form.submissionRejected` (new, EN + ES; added after manual testing) |
       | 403 | `form.recaptchaFailed` |
       | 429 | `form.tooManyRequests` (new, EN + ES) |
       | other ≥ 400 | `form.internalServerError` |
@@ -202,12 +203,43 @@ the env var names and the processor line in the privacy policy. Nothing in Phase
       plan touched. Remaining errors are outside it: `sharp` type in `payload.config.ts`,
       `particle-stage/shapes.ts` and the `payload` augmentation in the frontend `tsc`, and older
       `any`s in frontend lint. Payload's `pnpm lint` (`next lint`) is broken; `eslint src` is clean.
-- [ ] Manual, reCAPTCHA off: normal submit OK; honeypot filled → 400; submit under 3 s → 400;
+- [x] Manual, reCAPTCHA off: normal submit OK; honeypot filled → 400; submit under 3 s → 400;
       burst past the cap → 429 with the localized message in EN and ES.
-- [ ] Manual, reCAPTCHA on with test keys: normal submit OK, score logged at `debug`; script
-      only loads after focusing the form; no floating badge.
-- [ ] Manual, each misconfigured row of the §5 matrix behaves as listed.
-- [ ] Stored submissions contain no `hp`, `elapsedMs` or `recaptchaToken`.
+      Passed 2026-10-14 on the local Services form. API (`curl`): normal submit 201; `hp`
+      filled, `elapsedMs: 500` and `elapsedMs` missing all 400; burst got 429 once 20
+      submissions were in the window. Browser (headless Chromium, `/en|es/services`): 429
+      shows "Too many submissions right now…" / "Hay demasiados envíos en este momento…".
+      Gap found: the frontend mapped 400 to "Internal Server Error" / "Error interno del
+      servidor", so a person who submits in under 3 s saw a misleading server error. Fixed:
+      400 now shows `form.submissionRejected` ("…Please wait a moment and try again.").
+- [x] Manual, reCAPTCHA on with a v3 dev key registered for `localhost`: normal submit OK,
+      score logged at `debug`; script only loads after focusing the form; no floating badge.
+      Google's public test keys can't be used here: they are v2-only, and their `siteverify`
+      reply has no `action` or `score` and reports `hostname: testkey.google.com`, so the
+      verifier rejects them.
+      Passed 2026-10-14 on `/en/services` (headless Chromium, Services form ticked). No Google
+      request or script tag before focus; `api.js` loaded on focusing the name field; notice
+      shown; submit sent a token and got 201; log showed `reCAPTCHA verification passed`
+      with `score: 0.9`; both `.grecaptcha-badge` elements computed `visibility: hidden`.
+      Gap found: Payload's default logger is fixed at `info`, so the `debug` score line never
+      printed. Fixed: `payload.config.ts` reads the level from `PAYLOAD_LOG_LEVEL` (default
+      `info`), documented in `.env.example` and `deployment.md`.
+- [x] Manual, each misconfigured row of the §5 matrix behaves as listed.
+      Passed 2026-10-14 on `/en/services` (headless Chromium + `curl`). Keys were blanked per
+      process (`RECAPTCHA_SECRET_KEY= pnpm dev`): Next keeps a var that is already set, even
+      empty, over `.env`.
+      - Set / set / ticked: the reCAPTCHA-on check above.
+      - Set / missing / ticked: `recaptchaActive` false; no notice, no Google request on focus,
+        submit sent no token and got 201; Payload logged the "WITHOUT verification" warning.
+        Honeypot and sub-3 s submits still 400.
+      - Missing / set / ticked: form disabled with "Recaptcha verification failed"; console
+        error names `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`; no Google request. A tokenless API
+        submit got 403 (`recaptcha-missing`).
+      - Set / set / unticked: no notice, no Google request, no token, 201, no reCAPTCHA log.
+      Gap found: errors with no HTTP status (this disabled state, a blocked script, a network
+      failure) were shown as "500: …". Fixed: the status prefix only appears when there is one.
+- [x] Stored submissions contain no `hp`, `elapsedMs` or `recaptchaToken` (2026-10-14: no such
+      columns on `form_submissions*`; `submission_data` only holds the form's own fields).
 
 ## 9. Resolved questions
 
